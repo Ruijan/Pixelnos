@@ -64,8 +64,8 @@ bool Level::init()
 		for (int j(0); j < size.height; ++j){
 			std::string::size_type sz;
 			int i_dec = std::stoi (table_map[j][i],&sz,10);
-			//std::string filename = root["frames"][i_dec]["filename"].asString();
-			std::string filename = "grass8.png";
+			std::string filename = root["frames"][i_dec]["filename"].asString();
+			//std::string filename = "grass8.png";
 			
 			Cell* cell = Cell::create(filename);
 			if (table_path[j][i] == "s"){
@@ -131,39 +131,57 @@ void Level::update(float dt)
 				sugar += dango->getGain();
 			}
 			if (del){
+				for(auto& tower : turrets){
+					if(tower->getTarget() == dango){
+						tower->setTarget(nullptr);
+					}
+				}
+				for(auto& bullet : bullets){
+					if(bullet->getTarget() == dango){
+						bullet->setTarget(nullptr);
+					}
+				}
 				removeChild(dango);
 				dango = nullptr;
+				std::cerr << "Dango Destroyed !" << dangos.size()<< std::endl;
 			}
 		}
-		dangos.erase(std::remove(dangos.begin(), dangos.end(), nullptr), dangos.end());
+		
 
 		// update towers
-		for (auto& turret : turrets){
-			if (!turret->hasToBeDestroyed()){
-				if (turret->isFixed()){
-					turret->chooseTarget(dangos);
-					turret->update(dt);
+		for (auto& tower : turrets){
+			if (!tower->hasToBeDestroyed()){
+				if (tower->isFixed()){
+					tower->chooseTarget(dangos);
+					tower->update(dt);
 				}
 			}
 			else{
 				for (unsigned int i(0); i < cells.size(); ++i){
 					for (unsigned int j(0); j < cells[i].size(); j++){
-						if (cells[i][j]->getObject() == turret){
+						if (cells[i][j]->getObject() == tower){
 							cells[i][j]->setObject(nullptr);
 						}
 					}
 				}
-				removeChild(turret);
+				removeChild(tower);
 				std::cerr << "Tower Destroyed !" << std::endl;
-				turret = nullptr;
+				tower = nullptr;
 			}
 		}
-		turrets.erase(std::remove(turrets.begin(), turrets.end(), nullptr), turrets.end());
+		
+		
 		for (auto& bullet: bullets){
-			if(bullet != nullptr){
-				bullet->update(dt);
+			bullet->update(dt);
+			if(bullet->hasTouched()){
+				removeChild(bullet);
+				bullet = nullptr;
+				std::cerr << "Bullet Destroyed !" << std::endl;
 			}
 		}
+		bullets.erase(std::remove(bullets.begin(), bullets.end(), nullptr), bullets.end());
+		turrets.erase(std::remove(turrets.begin(), turrets.end(), nullptr), turrets.end());
+		dangos.erase(std::remove(dangos.begin(), dangos.end(), nullptr), dangos.end());
 	}
 }
 
@@ -244,9 +262,9 @@ void Level::resume(){
 	}
 	paused = false;
 }
-void Level::addTurret(Tower* turret){
-	turrets.push_back(turret);
-	addChild(turret);
+void Level::addTurret(Tower* tower){
+	turrets.push_back(tower);
+	addChild(tower);
 }
 
 Cell* Level::getNearestCell(cocos2d::Vec2 position){
@@ -271,6 +289,11 @@ std::vector<Cell*> Level::getPath(){
 void Level::addDango(Dango* dango){
 	dangos.push_back(dango);
 	addChild(dango);
+}
+
+void Level::addBullet(Bullet* bullet){
+	bullets.push_back(bullet);
+	addChild(bullet);
 }
 
 bool Level::hasLost(){
@@ -301,6 +324,10 @@ void Level::reorder(){
 	int i = 2;
 	for(auto& element : elements){
 		element->setLocalZOrder(i);
+		++i;
+	}
+	for(auto& bullet : bullets){
+		bullet->setLocalZOrder(i);
 		++i;
 	}
 }
@@ -388,4 +415,3 @@ std::vector<std::string> &split(const std::string &s, char delim, std::vector<st
     }
     return elems;
 }
-

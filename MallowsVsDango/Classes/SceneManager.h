@@ -5,6 +5,8 @@
 #include "Game.h"
 #include <array>
 
+class Game;
+
 class SceneManager
 {
 public:
@@ -35,8 +37,6 @@ public:
 	}
 	
 	
-
-
 private:
 	static SceneManager *manager;
 	std::array<cocos2d::Scene*,5> cacheScene;

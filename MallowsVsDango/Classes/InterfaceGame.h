@@ -76,8 +76,9 @@ public:
 	virtual void touchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
 	virtual void touchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
 	*/
-	void update();
+	void update(float dt);
 	void updateButtonDisplay();
+	void updateObjectDisplay(float dt);
 	void reset();
 };
 

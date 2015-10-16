@@ -7,12 +7,12 @@
             "damages" : 1,
             "range" : 120,
             "cost" : 30,
-            "image" : "res/turret/tower.png",
+            "image" : "res/turret/archer.png",
 			"image_menu" : "res/turret/tower_menu.png",
             "image_menu_disable" : "res/turret/tower_menu_disable.png",
 			"animation" : "res/turret/animations/archer.png",
-			"animation_size" : 15,
-			"animation_steady_size" : 3
+			"animation_attack_size" : 14,
+			"animation_steady_size" : 77
         },
         "grill" : {
 			"name" : "grill",
@@ -25,7 +25,7 @@
             "image_menu" : "res/turret/grill_menu.png",
             "image_menu_disable" : "res/turret/grill_menu_disable.png",
 			"animation" : "res/turret/animations/grill.png",
-			"animation_size" : 1,
+			"animation_attack_size" : 1,
 			"animation_steady_size" : 4
         }
     },

@@ -71,7 +71,7 @@ void Game::menuCloseCallback(Ref* pSender)
 
 void Game::update(float delta){
 	Scene::update(delta);
-	menu->update();
+	menu->update(delta);
 	cLevel->update(delta * acceleration);
 	if (cLevel->hasLost()){
 		menu->showLoose();

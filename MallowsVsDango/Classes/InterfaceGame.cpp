@@ -236,7 +236,7 @@ void InterfaceGame::setMenuVisibleCallback(Ref* sender,int origin)
 	}
 }
 
-void InterfaceGame::update(){
+void InterfaceGame::update(float dt){
 	updateButtonDisplay();
 
 	for (auto& tower : turretsMenu){
@@ -249,6 +249,8 @@ void InterfaceGame::update(){
 			tower.second.second->setVisible(false);
 		}
 	}
+	
+	updateObjectDisplay(dt);
 
 	std::string sugarText = "x" + to_string(game->getLevel()->getQuantity());
 	std::string lifeText = "x" + to_string(game->getLevel()->getLife());
@@ -522,7 +524,7 @@ void InterfaceGame::initRightPanel(){
 	cache->addSpriteFramesWithFile("res/turret/animations/archer.plist", "res/turret/animations/archer.png");
 	cache->addSpriteFramesWithFile("res/turret/animations/grill.plist", "res/turret/animations/grill.png");
 
-	Sprite* image = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("archer_movement1.png"));
+	Sprite* image = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("archer_steady_movement_000.png"));
 	image->setScale((sizeButton / image->getBoundingBox().size.width));
 	SpriteBatchNode* spriteBatchNode = SpriteBatchNode::create("res/turret/animations/archer.png");
 	spriteBatchNode->addChild(image);
@@ -534,9 +536,9 @@ void InterfaceGame::initRightPanel(){
 	cocos2d::Vector<SpriteFrame*> animFrames;
 
 	char str[100] = { 0 };
-	for (int i = 1; i < 16; ++i)
+	for (int i = 0; i < 77; ++i)
 	{
-		sprintf(str, "archer_movement%d.png", i);
+		sprintf(str, "archer_steady_movement_%03d.png", i);
 		SpriteFrame* frame = cache->getSpriteFrameByName(str);
 		animFrames.pushBack(frame);
 	}
@@ -595,62 +597,62 @@ void InterfaceGame::initRightPanel(){
 
 void InterfaceGame::displayTowerInfos(std::string itemName){
 	informationPanel->setVisible(true);
-
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string str1 = Tower::getConfig()[itemName]["damages"].asString();
-	((Label*)informationPanel->getChildByName("infoTower"))->setString("Damages: " +
-		Tower::getConfig()[itemName]["damages"].asString() + " \nSpeed: " +
-		Tower::getConfig()[itemName]["attack_speed"].asString() + "\nRange: " +
-		Tower::getConfig()[itemName]["range"].asString());
-
-	((Label*)informationPanel->getChildByName("DescriptionTower"))->setString(
-		Tower::getConfig()[itemName]["description"].asString() + "\nCost: " +
-		Tower::getConfig()[itemName]["cost"].asString());
-
 	SpriteBatchNode* batch = (SpriteBatchNode*)informationPanel->getChildByName("Animation");
 	batch->removeAllChildren();
 	informationPanel->removeChild(batch, true);
+	
+	cocos2d::Vector<SpriteFrame*> attackFrames;
+	cocos2d::Vector<SpriteFrame*> steadyFrames;
+	cocos2d::Vector<SpriteFrame*> staticFrames;
+	
+	SpriteBatchNode* spriteBatchNode;
 
-	Sprite* image = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName(itemName + "_movement1.png"));
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	if(selectedTurret == nullptr){
+		((Label*)informationPanel->getChildByName("infoTower"))->setString("Damages: " +
+			Tower::getConfig()[itemName]["damages"].asString() + " \nSpeed: " +
+			Tower::getConfig()[itemName]["attack_speed"].asString() + "\nRange: " +
+			Tower::getConfig()[itemName]["range"].asString());
 
-	SpriteBatchNode* spriteBatchNode = SpriteBatchNode::create(Tower::getConfig()[itemName]["animation"].asString());
+		((Label*)informationPanel->getChildByName("DescriptionTower"))->setString(
+			Tower::getConfig()[itemName]["description"].asString() + "\nCost: " +
+			Tower::getConfig()[itemName]["cost"].asString());
+		attackFrames = Tower::getAnimationFromName(itemName, Tower::ATTACKING);
+		steadyFrames = Tower::getAnimationFromName(itemName, Tower::IDLE);
+		staticFrames.pushBack(steadyFrames.front());
+		staticFrames.pushBack(steadyFrames.front());
+		spriteBatchNode = SpriteBatchNode::create(Tower::getConfig()[itemName]["animation"].asString());
+	}
+	else{
+		((Label*)informationPanel->getChildByName("infoTower"))->setString("Damages: " +
+			to_string(round(selectedTurret->getDamage()*10)/10) + " \nSpeed: " +
+			to_string(round(selectedTurret->getAttackSpeed()*10)/10) + "\nRange: " +
+			to_string(round(selectedTurret->getRange()*10)/10));
+
+		((Label*)informationPanel->getChildByName("DescriptionTower"))->setString(
+			selectedTurret->getSpecConfig()["description"].asString() + "\nCost: " +
+			selectedTurret->getSpecConfig()["cost"].asString());
+		attackFrames = selectedTurret->getAnimation(Tower::ATTACKING);
+		steadyFrames = selectedTurret->getAnimation(Tower::IDLE);
+		staticFrames.pushBack(steadyFrames.front());
+		staticFrames.pushBack(steadyFrames.front());
+		spriteBatchNode = SpriteBatchNode::create(selectedTurret->getSpecConfig()["animation"].asString());
+	}
+	
+	Sprite* image = Sprite::createWithSpriteFrame(staticFrames.front());
 	spriteBatchNode->addChild(image);
+	
 	image->setScale((sizeButton / image->getBoundingBox().size.width) );
 	//spriteBatchNode->setScale(0.5);
 
 	Node* background = informationPanel->getChildByName("background");
-
+	
 	spriteBatchNode->setPosition(Vec2(-background->getContentSize().width*background->getScale() / 2 + visibleSize.width / 192.0,
 		0) + image->getContentSize() * image->getScale() / 2);
 
-	cocos2d::Vector<SpriteFrame*> animFrames;
-	cocos2d::Vector<SpriteFrame*> steadyFrames;
-	cocos2d::Vector<SpriteFrame*> staticFrames;
-
-	char str[100] = { 0 };
-
-	sprintf(str, "%s_steady_movement1.png", itemName.c_str());
-	staticFrames.pushBack(SpriteFrameCache::getInstance()->getSpriteFrameByName(str));
-	staticFrames.pushBack(SpriteFrameCache::getInstance()->getSpriteFrameByName(str));
-
-	
-	unsigned int animation_size = Tower::getConfig()[itemName]["animation_size"].asInt();
-	unsigned int animation_steady_size = Tower::getConfig()[itemName]["animation_steady_size"].asInt();
-	for (int i = 1; i <= animation_size; ++i)
-	{
-		sprintf(str, "%s_movement%d.png",itemName.c_str(), i);
-		SpriteFrame* frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(str);
-		animFrames.pushBack(frame);
-	}
-	for (int i = 1; i <= animation_steady_size; ++i)
-	{
-		sprintf(str, "%s_steady_movement%d.png", itemName.c_str(), i);
-		SpriteFrame* frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(str);
-		steadyFrames.pushBack(frame);
-	}
-	Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.075f);
-	Animation* animation2 = Animation::createWithSpriteFrames(steadyFrames, 0.125f);
-	Animation* animation3 = Animation::createWithSpriteFrames(staticFrames, 1.0f);
+	Animation* animation = Animation::createWithSpriteFrames(attackFrames, 0.075f);
+	Animation* animation2 = Animation::createWithSpriteFrames(steadyFrames, 0.075f);
+	Animation* animation3 = Animation::createWithSpriteFrames(staticFrames, 0.5f);
 	Vector<FiniteTimeAction*> sequence;
 	sequence.pushBack(Animate::create(animation2));
 	sequence.pushBack(Animate::create(animation2)->reverse());
@@ -684,6 +686,7 @@ void InterfaceGame::builtCallback(Ref* sender){
 
 void InterfaceGame::upgradeCallback(Ref* sender){
 	selectedTurret->upgradeCallback(sender);
+	displayTowerInfos("");
 }
 
 void InterfaceGame::updateButtonDisplay(){
@@ -702,6 +705,12 @@ void InterfaceGame::updateButtonDisplay(){
 		menuPanel->getChildByName("toolsMenu")->setVisible(false);
 	}
 	
+}
+
+void InterfaceGame::updateObjectDisplay(float dt){
+	if(selectedTurret != nullptr){
+		selectedTurret->updateDisplay(dt);
+	}
 }
 
 std::pair<std::string, std::pair<cocos2d::Sprite*, cocos2d::Sprite*>> InterfaceGame::getTowerFromPoint(cocos2d::Vec2 location){

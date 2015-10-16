@@ -45,6 +45,7 @@ public:
 	Tower* touchingTower(cocos2d::Vec2 position);
 	std::vector<Cell*> getPath();
 	void addDango(Dango* dango);
+	void addBullet(Bullet* bullet);
 	bool hasLost();
 	bool hasWon();
 	void reset();

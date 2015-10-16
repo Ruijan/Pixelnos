@@ -1,6 +1,5 @@
 #include "SceneManager.h"
 #include "MainMenu.h"
-#include "Game.h"
 USING_NS_CC;
 
 SceneManager *SceneManager::manager;

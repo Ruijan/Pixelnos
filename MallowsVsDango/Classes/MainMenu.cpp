@@ -1,5 +1,5 @@
 #include "MainMenu.h"
-
+#include "SceneManager.h"
 
 USING_NS_CC;
 

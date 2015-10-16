@@ -2,7 +2,7 @@
 #define MAINMENU_HPP
 
 #include "cocos2d.h"
-#include "SceneManager.h"
+
 
 class MainMenu :public cocos2d::Scene
 {
