@@ -37,7 +37,7 @@ bool Game::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Point origin = Director::getInstance()->getVisibleOrigin();
 
-	cLevel = Level::create(Size(14, 12));
+	cLevel = Level::create(0);
 	menu = InterfaceGame::create(this);
 
 	addChild(cLevel,0);
@@ -84,6 +84,13 @@ void Game::update(float delta){
 	if (reloading){
 		reload();
 		reloading = false;
+	}
+	if(menu->getState() == InterfaceGame::State::NEXT_LEVEL){
+		removeChild(cLevel,1);
+		cLevel = Level::create(1);
+		menu->reset();
+		acceleration = 1.0;
+		addChild(cLevel,0);
 	}
 }
 

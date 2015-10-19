@@ -24,9 +24,30 @@ class Level : public cocos2d::Layer
 {
 	
 public:
-	Level(cocos2d::Size nsize);
+	/*enum State{
+		TITLE,
+		STARTING,
+		RUNNING,
+		DONE
+	};*/
+	/*enum TitleState{
+		titleDown,
+		titleBouncing1,
+		titleBouncing2,
+		marshmallowBouncing3,
+		dangoStart,
+		dangoBouncing1,
+		dangoBouncing2,
+		dangoBouncing3,
+		vsStart,
+		flashStart,
+		flashEnd,
+		menuShow,
+		finished
+	};*/
+	Level(int nLevel);
 	virtual ~Level();
-	static Level* create(cocos2d::Size nsize);
+	static Level* create(int nLevel);
 	virtual bool init();
 
 	virtual void update(float dt);
@@ -54,6 +75,7 @@ public:
 	//CREATE_FUNC(Level);
 
 protected:
+	int id;
 	std::vector<Dango*> dangos;
 	std::vector<Tower*> turrets;
 	std::vector<Bullet*> bullets;
@@ -67,6 +89,8 @@ protected:
 	Quantity sugar;
 	Quantity life;
 	DangoGenerator* generator;	
+	//State state;
+	
 
 	void createPath(std::vector<std::vector<std::string>> );
 	void reorder();

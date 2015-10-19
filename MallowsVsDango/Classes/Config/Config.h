@@ -8,11 +8,15 @@ class Config{
 private:
 	Json::Value root;   // will contains the root value after parsing.
 	Json::Reader reader;
-	std::string filename;
+	Json::Value rootSav;   // will contains the root value after parsing.
+	Json::Reader readerSav;
+	bool saveFile;
 
 public:
-	Config(std::string nfilename);
-	Json::Value const getValues() const;
+	Config(std::string configfilename, std::string savename);
+	Json::Value const getConfigValues() const;
+	bool isSaveFile() const;
+	Json::Value const getSaveValues() const;
 };
 
 #endif

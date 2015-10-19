@@ -40,6 +40,7 @@ public:
 	double getCost();
 	Dango* getTarget();
 	double getDamage();
+	int getLevel();
 	double getAttackSpeed();
 	Tower::State getState();
 	void setState(Tower::State state);
@@ -53,7 +54,7 @@ public:
 	virtual void update(float dt);
 	virtual void updateDisplay(float dt);
 	virtual void chooseTarget(std::vector<Dango*> targets);
-	virtual void attack();
+	virtual void reload();
 	
 	
 	// Callbacks
@@ -64,6 +65,7 @@ public:
 	// Config
 	static Json::Value getConfig();
 	virtual Json::Value getSpecConfig() = 0;
+	static const int MAXLEVEL = 5;
 
 protected:
 	
@@ -83,6 +85,7 @@ protected:
 	double damage;
 	double range;
 	double timer;
+	int level;
 	
 	//
 	cocos2d::DrawNode* loadingCircle;

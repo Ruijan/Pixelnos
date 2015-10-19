@@ -238,15 +238,12 @@ void InterfaceGame::setMenuVisibleCallback(Ref* sender,int origin)
 
 void InterfaceGame::update(float dt){
 	updateButtonDisplay();
-
 	for (auto& tower : turretsMenu){
 		if (game->getLevel()->getQuantity() < Tower::getConfig()[tower.first]["cost"].asDouble()){
-			tower.second.first->setVisible(false);
-			tower.second.second->setVisible(true);
+			tower.second->setVisible(true);
 		}
 		else{
-			tower.second.first->setVisible(true);
-			tower.second.second->setVisible(false);
+			tower.second->setVisible(false);
 		}
 	}
 	
@@ -425,7 +422,7 @@ void InterfaceGame::initWinMenu(){
 	Sprite* sprite2 = Sprite::create("res/buttons/buttonMainMenu.png");
 	sprite->setAnchorPoint(Point(0.5f, 0.5f));
 
-	MenuItemSprite* next = MenuItemSprite::create(sprite, sprite, CC_CALLBACK_1(InterfaceGame::menuMainCallback, this));
+	MenuItemSprite* next = MenuItemSprite::create(sprite, sprite, CC_CALLBACK_1(InterfaceGame::menuNextCallback, this));
 	MenuItemSprite* mainMenu = MenuItemSprite::create(sprite2, sprite2, CC_CALLBACK_1(InterfaceGame::menuMainCallback, this));
 	menuForWin->addChild(next);
 	menuForWin->addChild(mainMenu);
@@ -483,6 +480,44 @@ void InterfaceGame::initRightPanel(){
 	menuOpen->addChild(parameters);
 	menuOpen->addChild(itemToggle);
 	menuOpen->alignItemsHorizontally();
+	
+	if(Tower::getConfig().size() > 4){
+		Sprite* down = Sprite::create("res/buttons/updown_bar.png");
+		down->setAnchorPoint(Point(0.5f, 0.5f));
+		Sprite* down_arrow = Sprite::create("res/buttons/updown_button.png");
+		down_arrow->setAnchorPoint(Point(0.5f, 0.5f));
+		Sprite* down_arrow_disable = Sprite::create("res/buttons/updown_button_disable.png");
+		down_arrow_disable->setAnchorPoint(Point(0.5f, 0.5f));
+		down_arrow_disable->setVisible(false);
+		down->addChild(down_arrow,1,"down_arrow");
+		down_arrow->setPosition(Vec2(down->getContentSize().width / 2, down->getContentSize().height / 2));
+		down->addChild(down_arrow_disable,1,"down_arrow_disable");
+		down_arrow_disable->setPosition(Vec2(down->getContentSize().width / 2, down->getContentSize().height / 2));
+		MenuItemSprite* scroll_down = MenuItemSprite::create(down, down, CC_CALLBACK_1(InterfaceGame::setMenuVisibleCallback, this, 1));
+		
+		Sprite* up = Sprite::create("res/buttons/updown_bar.png");
+		up->setAnchorPoint(Point(0.5f, 0.5f));
+		Sprite* up_arrow = Sprite::create("res/buttons/updown_button.png");
+		up_arrow->setAnchorPoint(Point(0.5f, 0.5f));
+		Sprite* up_arrow_disable = Sprite::create("res/buttons/updown_button_disable.png");
+		up_arrow_disable->setAnchorPoint(Point(0.5f, 0.5f));
+		up_arrow_disable->setVisible(false);
+		up->addChild(up_arrow,1,"up_arrow");
+		up_arrow->setPosition(Vec2(up->getContentSize().width / 2, up->getContentSize().height / 2));
+		up->addChild(up_arrow_disable,1,"up_arrow_disable");
+		up_arrow_disable->setPosition(Vec2(up->getContentSize().width / 2, up->getContentSize().height / 2));
+		up->setScaleY(-1);
+		MenuItemSprite* scroll_up = MenuItemSprite::create(up, up, CC_CALLBACK_1(InterfaceGame::setMenuVisibleCallback, this, 1));
+		
+		scroll_down->setPosition(Vec2((panel->getContentSize().width - down->getContentSize().width) / 4.0,
+			-visibleSize.height * 13 / 24));
+		scroll_up->setPosition(Vec2((panel->getContentSize().width - up->getContentSize().width) / 4.0, 
+			- sizeButton / 2 + up->getContentSize().height / 2));
+		
+		menuOpen->addChild(scroll_down,3);
+		menuOpen->addChild(scroll_up,3);
+	}
+	
 	Size size = parameters->getBoundingBox().size;
 	size.width += reload->getBoundingBox().size.width + itemToggle->getBoundingBox().size.width + 45;
 	menuOpen->setPosition(0, visibleSize.height / 2 - size.height * 3 / 4.0);
@@ -490,27 +525,41 @@ void InterfaceGame::initRightPanel(){
 	// DISPLAY TOWERS
 	int j(0);
 	for (int i(0); i < Tower::getConfig().size(); ++i){
-		std::string sprite3_filename = Tower::getConfig()[Tower::getConfig().getMemberNames()[i]]["image_menu"].asString();
-		std::string sprite3_disable_filename = Tower::getConfig()[Tower::getConfig().getMemberNames()[i]]["image_menu_disable"].asString();
+		std::string sprite3_filename = Tower::getConfig()[Tower::getConfig().getMemberNames()[i]]["image"].asString();
+		std::string sprite3_background_filename = "res/buttons/tower_button.png";
+		std::string sprite3_disable_filename = "res/buttons/tower_inactive.png";
+		std::string sprite3_clip_filename = "res/buttons/tower_button_clip.png";
 
 		Sprite* sprite3 = Sprite::create(sprite3_filename);
-		sprite3->setScale(1 / (sprite3->getContentSize().width / sizeTower));
+		sprite3->setScale(0.8 / (sprite3->getContentSize().width / sizeTower));
 
-		Sprite* sprite4 = Sprite::create(sprite3_disable_filename);
+		Sprite* sprite4 = Sprite::create(sprite3_background_filename);
 		sprite4->setScale(1 / (sprite4->getContentSize().width / sizeTower));
-		sprite4->setVisible(false);
+		sprite4->setVisible(true);
+		
+		Sprite* sprite5 = Sprite::create(sprite3_clip_filename);
+		sprite5->setScale(1 / (sprite5->getContentSize().width / sizeTower));
+		sprite5->setVisible(true);
+		
+		Sprite* sprite6 = Sprite::create(sprite3_disable_filename);
+		sprite6->setScale(1 / (sprite6->getContentSize().width / sizeTower));
+		sprite6->setVisible(false);
 
 		size = sprite3->getContentSize();
 		size.width *= sprite3->getScale();
 		size.height *= sprite3->getScale();
 
-		sprite3->setPosition(Vec2((j % 2 - (j + 1) % 2)*(size.width / 2 + visibleSize.width / 96.0), 
-			visibleSize.height / 2 - size.height / 2 - visibleSize.width / 9.6 - (j / 2) * (size.height + visibleSize.width / 64)));
+		sprite3->setPosition(Vec2((j % 2 - (j + 1) % 2)*(sizeTower / 2 + visibleSize.width / 96.0), 
+			visibleSize.height / 2 - sizeTower / 2 - visibleSize.width / 9.6 - (j / 2) * (sizeTower + visibleSize.width / 64)));
 		sprite4->setPosition(sprite3->getPosition());
+		sprite5->setPosition(sprite3->getPosition() + Vec2(sizeTower/10.0,sizeTower/2.0));
+		sprite6->setPosition(sprite3->getPosition());
 
-		menuPanel->addChild(sprite3, 2);
+		menuPanel->addChild(sprite3, 3);
 		menuPanel->addChild(sprite4, 2);
-		turretsMenu[Tower::getConfig().getMemberNames()[i]] = std::make_pair(sprite3, sprite4);
+		menuPanel->addChild(sprite5, 5);
+		menuPanel->addChild(sprite6, 4);
+		turretsMenu[Tower::getConfig().getMemberNames()[i]] = sprite6;
 		++j;
 	}
 
@@ -533,18 +582,6 @@ void InterfaceGame::initRightPanel(){
 	spriteBatchNode->setPosition(Vec2(-background->getContentSize().width*background->getScale() / 2 + 5,
 		round(visibleSize.width / 32.0)));
 
-	cocos2d::Vector<SpriteFrame*> animFrames;
-
-	char str[100] = { 0 };
-	for (int i = 0; i < 77; ++i)
-	{
-		sprintf(str, "archer_steady_movement_%03d.png", i);
-		SpriteFrame* frame = cache->getSpriteFrameByName(str);
-		animFrames.pushBack(frame);
-	}
-	Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.05f);
-	image->runAction(RepeatForever::create(Animate::create(animation)));
-
 	Label* infoTower = Label::createWithSystemFont("Damages: \nSpeed: \nRange:", "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 53.0));
 	infoTower->setColor(Color3B::BLACK);
 	infoTower->setAnchorPoint(Vec2(0, 0));
@@ -561,7 +598,7 @@ void InterfaceGame::initRightPanel(){
 	informationPanel->addChild(infoTower,1,"infoTower");
 	informationPanel->addChild(descriptionTower, 1, "DescriptionTower");
 	informationPanel->addChild(spriteBatchNode, 1, "Animation");
-	informationPanel->setPosition(0, -visibleSize.height / 4.0 );
+	informationPanel->setPosition(0, -visibleSize.height * 4.0 / 15.0 );
 	informationPanel->setVisible(false);
 
 	Menu* toolsMenu = Menu::create();
@@ -624,14 +661,14 @@ void InterfaceGame::displayTowerInfos(std::string itemName){
 		spriteBatchNode = SpriteBatchNode::create(Tower::getConfig()[itemName]["animation"].asString());
 	}
 	else{
-		((Label*)informationPanel->getChildByName("infoTower"))->setString("Damages: " +
-			to_string(round(selectedTurret->getDamage()*10)/10) + " \nSpeed: " +
+		((Label*)informationPanel->getChildByName("infoTower"))->setString("Level: " +
+			to_string(selectedTurret->getLevel()) +" ->"+to_string(selectedTurret->getLevel()+1) +
+			"\nDamages: " + to_string(round(selectedTurret->getDamage()*10)/10) +" \nSpeed: " +
 			to_string(round(selectedTurret->getAttackSpeed()*10)/10) + "\nRange: " +
 			to_string(round(selectedTurret->getRange()*10)/10));
 
 		((Label*)informationPanel->getChildByName("DescriptionTower"))->setString(
-			selectedTurret->getSpecConfig()["description"].asString() + "\nCost: " +
-			selectedTurret->getSpecConfig()["cost"].asString());
+			selectedTurret->getSpecConfig()["description"].asString());
 		attackFrames = selectedTurret->getAnimation(Tower::ATTACKING);
 		steadyFrames = selectedTurret->getAnimation(Tower::IDLE);
 		staticFrames.pushBack(steadyFrames.front());
@@ -685,8 +722,17 @@ void InterfaceGame::builtCallback(Ref* sender){
 }
 
 void InterfaceGame::upgradeCallback(Ref* sender){
-	selectedTurret->upgradeCallback(sender);
-	displayTowerInfos("");
+	
+	if(game->getLevel()->getQuantity() > selectedTurret->getCost() * 0.5 * (selectedTurret->getLevel() + 1) &&
+		selectedTurret->getLevel() < Tower::MAXLEVEL){
+		game->getLevel()->decreaseQuantity(selectedTurret->getCost() * 0.5 * (selectedTurret->getLevel() + 1));
+		selectedTurret->upgradeCallback(sender);
+		displayTowerInfos(""); 
+	}
+}
+
+void InterfaceGame::menuNextCallback(Ref* sender){
+	state = State::NEXT_LEVEL;
 }
 
 void InterfaceGame::updateButtonDisplay(){
@@ -704,7 +750,6 @@ void InterfaceGame::updateButtonDisplay(){
 	else{
 		menuPanel->getChildByName("toolsMenu")->setVisible(false);
 	}
-	
 }
 
 void InterfaceGame::updateObjectDisplay(float dt){
@@ -713,22 +758,27 @@ void InterfaceGame::updateObjectDisplay(float dt){
 	}
 }
 
-std::pair<std::string, std::pair<cocos2d::Sprite*, cocos2d::Sprite*>> InterfaceGame::getTowerFromPoint(cocos2d::Vec2 location){
+std::pair<std::string, cocos2d::Sprite*> InterfaceGame::getTowerFromPoint(cocos2d::Vec2 location){
 	cocos2d::Vec2 origin = menuPanel->getBoundingBox().origin;
 	for (auto& item : turretsMenu){
-		Vec2 pointInSprite = location - item.second.first->getPosition() - origin;
-		pointInSprite.x += item.second.first->getSpriteFrame()->getRect().size.width *
-			item.second.first->getScale() / 2;
-		pointInSprite.y += item.second.first->getSpriteFrame()->getRect().size.height *
-			item.second.first->getScale() / 2;
-		Rect itemRect = Rect(0, 0, item.second.first->getSpriteFrame()->getRect().size.width *
-			item.second.first->getScale(),
-			item.second.first->getSpriteFrame()->getRect().size.height * item.second.first->getScale());
+		Vec2 pointInSprite = location - item.second->getPosition() - origin;
+		pointInSprite.x += item.second->getSpriteFrame()->getRect().size.width *
+			item.second->getScale() / 2;
+		pointInSprite.y += item.second->getSpriteFrame()->getRect().size.height *
+			item.second->getScale() / 2;
+		Rect itemRect = Rect(0, 0, item.second->getSpriteFrame()->getRect().size.width *
+			item.second->getScale(),
+			item.second->getSpriteFrame()->getRect().size.height * item.second->getScale());
 		if (itemRect.containsPoint(pointInSprite)){
 			return item;
 		}
 	}
-	std::pair<std::string, std::pair<cocos2d::Sprite*, cocos2d::Sprite*>> item;
+	std::pair<std::string, cocos2d::Sprite*> item;
 	item.first = "nullptr";
 	return item;
+}
+
+
+InterfaceGame::State InterfaceGame::getState() const{
+	return state;
 }

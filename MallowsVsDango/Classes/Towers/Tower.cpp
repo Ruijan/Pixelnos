@@ -9,7 +9,7 @@ USING_NS_CC;
 
 Tower::Tower(double nspeed = 1, double ndamage = 2, double nrange = 200, double ncost = 30) :
 state(State::IDLE), fixed(false), destroy(false), target(nullptr), cost(ncost), 
-attackSpeed(nspeed), damage(ndamage), range(nrange), timer(0) 
+attackSpeed(nspeed), damage(ndamage), range(nrange), timer(0), level(0)
 {}
 
 Tower::~Tower() {}
@@ -33,10 +33,6 @@ void Tower::initDebug(){
 	autorelease();
 
 	loadingCircle = DrawNode::create();
-	loadingCircle->setPosition(Vec2(getSpriteFrame()->getRect().size.width / 2,
-		getSpriteFrame()->getRect().size.height / 2));
-	loadingCircle->drawSolidArc(Vec2(0, 0), getRange() / getScaleX(),
-		0,2*M_PI,60,Color4F(1/127.0,1/255.0,0,0.5f));
 	loadingCircle->setVisible(false);
 	addChild(loadingCircle);
 		
@@ -60,17 +56,21 @@ void Tower::builtCallback(Ref* sender){
 }
 
 void Tower::upgradeCallback(Ref* sender){
-	range *= 1.2;
-	damage *= 1.5;
-	attackSpeed *= 0.8;
-	removeChild(getChildByName("range"),true);
-	DrawNode *circle = DrawNode::create();
-	circle->setPosition(Vec2(getSpriteFrame()->getRect().size.width / 2,
-		getSpriteFrame()->getRect().size.height / 2));
-	circle->drawCircle(Vec2(0, 0), getRange() / getScaleX(),
-		360, 60, true, 1, 1, Color4F(0, 0, 0, 1));
-	addChild(circle, 0, "range");
+	if(level < 5){
+		range *= 1.2;
+		damage *= 1.5;
+		attackSpeed *= 0.8;
+		++level;
+		removeChild(getChildByName("range"),true);
+		DrawNode *circle = DrawNode::create();
+		circle->setPosition(Vec2(getSpriteFrame()->getRect().size.width / 2,
+			getSpriteFrame()->getRect().size.height / 2));
+		circle->drawCircle(Vec2(0, 0), getRange() / getScaleX(),
+			360, 60, true, 1, 1, Color4F(0, 0, 0, 1));
+		addChild(circle, 0, "range");
+	}
 }
+
 
 bool Tower::isFixed(){
 	return fixed;
@@ -85,26 +85,24 @@ bool Tower::isSelected(){
 }
 
 void Tower::chooseTarget(std::vector<Dango*> targets){
-	if(state == State::IDLE){
-		double bestScore(0);
-		bool chosen = false;
+	double bestScore(0);
+	bool chosen = false;
 
-		for(auto cTarget : targets){
-			if(cTarget != nullptr){
-				int first = cTarget->getTargetedCell();
-				double dist = cTarget->getPosition().distanceSquared(this->getPosition());
-				double minDist = pow(getRange() + sqrt((pow(Cell::getCellWidth() * 3 / 8.0, 2) +
-					pow(Cell::getCellHeight() * 3 / 8.0, 2))), 2);
-				if (first > bestScore && dist < minDist){
-					bestScore = first;
-					target = cTarget;
-					chosen = true;
-				}
+	for(auto cTarget : targets){
+		if(cTarget != nullptr){
+			int first = cTarget->getTargetedCell();
+			double dist = cTarget->getPosition().distanceSquared(this->getPosition());
+			double minDist = pow(getRange() + sqrt((pow(Cell::getCellWidth() * 3 / 8.0, 2) +
+				pow(Cell::getCellHeight() * 3 / 8.0, 2))), 2);
+			if (first > bestScore && dist < minDist && cTarget->willBeAlive()){
+				bestScore = first;
+				target = cTarget;
+				chosen = true;
 			}
 		}
-		if(!chosen){
-			target = nullptr;
-		}
+	}
+	if(!chosen){
+		target = nullptr;
 	}
 }
 
@@ -198,12 +196,16 @@ void Tower::update(float dt) {
 		timer += dt;
 		switch(state){
 			case State::IDLE:
-				attack();
+				if (target != nullptr){
+					state = State::ATTACKING;
+					target->takePDamages(damage);
+					startAnimation();
+				}
 				break;
 			case State::ATTACKING:
 				if(currentAction->isDone()){
 					currentAction->release();
-					state = State::IDLE;
+					state = State::RELOADING;
 					timer = 0;
 					if(target != nullptr){
 						shoot();
@@ -212,6 +214,7 @@ void Tower::update(float dt) {
 				}
 				break;
 			case State::RELOADING:
+				reload();
 				break;
 			default:
 				state = IDLE;
@@ -273,25 +276,27 @@ Json::Value Tower::getConfig(){
 	return ((AppDelegate*)Application::getInstance())->getConfig()["towers"];
 }
 
-void Tower::attack(){
+void Tower::reload(){
 	
 	if (timer > attackSpeed){
-		loadingCircle->clear();
-		if (target != nullptr){
-			state = State::ATTACKING;
-			startAnimation();
-		}
+		state = State::IDLE;
 	}
 	else{
+		double iniAngle = M_PI_2;
 		loadingCircle->clear();
-		double angle1 = timer / attackSpeed * 2 * M_PI;
-		if(angle1 > M_PI){
+		loadingCircle->drawSolidCircle(Vec2(0, 0), 0.11 * 50 / getScaleX(),
+			0, 60, 1, 1, Color4F(0, 0, 0, 1));
+		loadingCircle->drawSolidCircle(Vec2(0, 0), 0.1 * timer / attackSpeed * 50 / getScaleX(),
+			0, 60, 1, 1, Color4F(1 - timer / attackSpeed, timer / attackSpeed, 0, 1));
+		/*double angle1 = timer / attackSpeed * 2 * M_PI;
+		if(-angle1 + iniAngle > M_PI){
+			loadingCircle->drawSolidArc(Vec2(0, 0), 0.1 * getRange() / getScaleX(), -M_PI + iniAngle,
+				-angle1 + iniAngle,60,Color4F(1 - timer / attackSpeed,timer / attackSpeed,0,1));
 			angle1 = M_PI;
-			loadingCircle->drawSolidArc(Vec2(0, 0), getRange() / getScaleX(), M_PI,
-				timer / attackSpeed * 2 * M_PI,60,Color4F(1/127.0,1/255.0,0,0.5f));
 		}
-		loadingCircle->drawSolidArc(Vec2(0, 0), getRange() / getScaleX(),0,
-		angle1,60,Color4F(1/127.0,1/255.0,0,0.5f));
+		loadingCircle->drawSolidArc(Vec2(0, 0), 0.1 * getRange() / getScaleX(),iniAngle,
+			-angle1 + iniAngle,60,Color4F(1 - timer / attackSpeed,timer / attackSpeed,0,1));*/
+		
 		
 	}
 }
@@ -314,6 +319,10 @@ Tower::State Tower::getState(){
 
 void Tower::setState(Tower::State nstate){
 	state = nstate;
+}
+
+int Tower::getLevel(){
+	return level;
 }
 
 void Tower::setTarget(Dango* dango){

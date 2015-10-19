@@ -27,16 +27,18 @@ public:
 
 	bool isMoving();
 	bool isAlive();
+	bool willBeAlive();
 	void update(float dt);
 	double getHitPoints();
 	double getGain();
 	void takeDamages(double damages);
+	void takePDamages(double damages);
 	bool isDone();
 	void move(float dt);
 	void updateAnimation();
 	int getTargetedCell();
 	double getSpeed();
-
+	
 
 
 private:
@@ -46,6 +48,7 @@ private:
 	double hitPoints;
 	DIRECTION cDirection;
 	cocos2d::Action* cAction;
+	double pDamages;				// prosepctive damages
 	
 };
 

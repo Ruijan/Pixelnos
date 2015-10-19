@@ -5,8 +5,8 @@
 
 USING_NS_CC;
 
-Level* Level::create(cocos2d::Size nsize){
-	Level* level = new Level(nsize);
+Level* Level::create(int nLevel){
+	Level* level = new Level(nLevel);
 	if (level->init()){
 		level->autorelease();
 		return level;
@@ -16,28 +16,32 @@ Level* Level::create(cocos2d::Size nsize){
 	return NULL;
 }
 
-Level::Level(Size nsize) : size(nsize), sugar(60), life(3), paused(false), loaded(false) {}
+Level::Level(int nLevel) : id(nLevel), size(14,12), sugar(60), life(3), paused(false), loaded(false) {}
 
 bool Level::init()
 {
 	if (!Layer::init())
 		return false;
-
+	
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id];
+	
+	std::string folder("");
+	if(CC_TARGET_PLATFORM == CC_PLATFORM_LINUX){
+		folder = "Resources/";
+	}
+	
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::vector<std::vector<std::string>> table_map = readMapFromCSV("Resources/res/map/level1_map.csv");
-	std::vector<std::vector<std::string>> table_path = readMapFromCSV("Resources/res/map/level1_path.csv");
+	std::vector<std::vector<std::string>> table_map = readMapFromCSV(folder + config["map"].asString());
+	std::vector<std::vector<std::string>> table_path = readMapFromCSV(folder + config["path"].asString());
 	
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-	cache->addSpriteFramesWithFile("res/tiles/ground.plist", "res/tiles/ground.png");
+	cache->addSpriteFramesWithFile(config["tileset"].asString(), config["tilesetpng"].asString());
 	
 	size.width = table_map[0].size();
 	size.height = table_map.size();
-	//Load images into cache
-	//Director::getInstance()->getTextureCache()->addImage("res/tiles/tile.png","tile.png");
-	srand(time(NULL));
 	
 	std::ifstream ifs;
-	std::string filename = "res/tiles/ground.json";
+	std::string filename = config["tilemaptable"].asString();
 	Json::Value root;   // will contains the root value after parsing.
 	Json::Reader reader;
 	bool parsingSuccessful(false);
@@ -91,8 +95,8 @@ bool Level::init()
 	setAnchorPoint(Vec2(0, 0));
 	setPosition(Vec2(0, 0));
 	
-	generator = DangoGenerator::createWithFilename(((AppDelegate*)Application::getInstance())->getConfig()["levels"]["level1"]["generator"].asString());
-	sugar = ((AppDelegate*)Application::getInstance())->getConfig()["levels"]["level1"]["sugar"].asDouble();
+	generator = DangoGenerator::createWithFilename(config["generator"].asString());
+	sugar = config["sugar"].asDouble();
 	loaded = true;
 	return true;
 }
@@ -100,6 +104,7 @@ bool Level::init()
 Level::~Level()
 {
 	removeAllChildren();
+	delete generator;
 }
 void Level::update(float dt)
 {
@@ -341,7 +346,7 @@ void Level::reset(){
 		removeChild(tower);
 	}
 	turrets.clear();
-	sugar = ((AppDelegate*)Application::getInstance())->getConfig()["levels"]["level1"]["sugar"].asDouble();
+	sugar = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id]["sugar"].asDouble();
 	life = 3;
 	loaded = true;
 	paused = false;

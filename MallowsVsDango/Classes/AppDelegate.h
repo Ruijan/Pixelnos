@@ -40,6 +40,8 @@ public:
     virtual void applicationWillEnterForeground();
 
 	Json::Value const getConfig() const;
+	Json::Value const getSave() const;
+	bool isSaveFile() const;
 
 	/*static AppDelegate* getInstance(){
 		if (!appDelegate)

@@ -6,7 +6,7 @@
 USING_NS_CC;
 
 Dango::Dango(std::vector<Cell*> npath, double nspeed = Dango::getConfig()["speed"].asDouble(), double hp = Dango::getConfig()["hitpoints"].asDouble()) : path(npath),
-targetedCell(0), speed(nspeed), hitPoints(hp), cAction(nullptr), cDirection(IDLE) {
+targetedCell(0), speed(nspeed), hitPoints(hp), cAction(nullptr), cDirection(IDLE), pDamages(0.0) {
 	//move = nullptr;
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
 	cache->addSpriteFramesWithFile("res/dango/animations/dango1.plist", "res/dango/animations/dango1.png");
@@ -166,10 +166,21 @@ void Dango::takeDamages(double damages){
 	
 }
 
+void Dango::takePDamages(double damages){
+	pDamages -= damages;
+}
+
+
 bool Dango::isAlive(){
 	if(hitPoints > 0){ return true;}
 	else{return false;}
 }
+
+bool Dango::willBeAlive(){
+	if(hitPoints - pDamages > 0){ return true;}
+	else{return false;}
+}
+
 bool Dango::isDone(){
 	double distance = path[targetedCell]->getPosition().distanceSquared(getPosition());
 	return (targetedCell == path.size() - 1 && distance < 10);

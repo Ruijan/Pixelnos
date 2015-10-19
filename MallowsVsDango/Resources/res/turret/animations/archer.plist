@@ -7,1211 +7,782 @@
             <key>archer_attack_movement_000.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,2},{335,346}}</string>
+                <string>{{1470,81},{86,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
+                <string>{{0,0},{86,77}}</string>
                 <key>sourceSize</key>
-                <string>{335,346}</string>
+                <string>{86,77}</string>
             </dict>
             <key>archer_attack_movement_001.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{339,2},{335,346}}</string>
+                <string>{{1558,81},{86,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
+                <string>{{0,0},{86,77}}</string>
                 <key>sourceSize</key>
-                <string>{335,346}</string>
+                <string>{86,77}</string>
             </dict>
             <key>archer_attack_movement_002.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{676,2},{335,346}}</string>
+                <string>{{2,160},{86,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
+                <string>{{0,0},{86,77}}</string>
                 <key>sourceSize</key>
-                <string>{335,346}</string>
+                <string>{86,77}</string>
             </dict>
             <key>archer_attack_movement_003.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1013,2},{335,346}}</string>
+                <string>{{266,160},{86,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
+                <string>{{0,0},{86,77}}</string>
                 <key>sourceSize</key>
-                <string>{335,346}</string>
+                <string>{86,77}</string>
             </dict>
             <key>archer_attack_movement_004.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1350,2},{335,346}}</string>
+                <string>{{90,160},{86,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
+                <string>{{0,0},{86,77}}</string>
                 <key>sourceSize</key>
-                <string>{335,346}</string>
+                <string>{86,77}</string>
             </dict>
             <key>archer_attack_movement_005.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1687,2},{335,346}}</string>
+                <string>{{178,160},{86,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
+                <string>{{0,0},{86,77}}</string>
                 <key>sourceSize</key>
-                <string>{335,346}</string>
+                <string>{86,77}</string>
             </dict>
             <key>archer_attack_movement_006.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2024,2},{335,346}}</string>
+                <string>{{1646,81},{86,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
+                <string>{{0,0},{86,77}}</string>
                 <key>sourceSize</key>
-                <string>{335,346}</string>
+                <string>{86,77}</string>
             </dict>
             <key>archer_attack_movement_007.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2361,2},{335,346}}</string>
+                <string>{{1382,81},{86,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
+                <string>{{0,0},{86,77}}</string>
                 <key>sourceSize</key>
-                <string>{335,346}</string>
+                <string>{86,77}</string>
             </dict>
             <key>archer_attack_movement_008.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2698,2},{335,346}}</string>
+                <string>{{862,81},{86,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
+                <string>{{0,0},{86,77}}</string>
                 <key>sourceSize</key>
-                <string>{335,346}</string>
+                <string>{86,77}</string>
             </dict>
             <key>archer_attack_movement_009.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{3035,2},{335,346}}</string>
+                <string>{{1036,81},{86,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
+                <string>{{0,0},{86,77}}</string>
                 <key>sourceSize</key>
-                <string>{335,346}</string>
-            </dict>
-            <key>archer_attack_movement_010.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{3372,2},{335,346}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
-                <key>sourceSize</key>
-                <string>{335,346}</string>
-            </dict>
-            <key>archer_attack_movement_011.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{3709,2},{335,346}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
-                <key>sourceSize</key>
-                <string>{335,346}</string>
-            </dict>
-            <key>archer_attack_movement_012.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{2,350},{335,346}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
-                <key>sourceSize</key>
-                <string>{335,346}</string>
-            </dict>
-            <key>archer_attack_movement_013.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{339,350},{335,346}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
-                <key>sourceSize</key>
-                <string>{335,346}</string>
-            </dict>
-            <key>archer_attack_movement_014.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{676,350},{335,346}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{335,346}}</string>
-                <key>sourceSize</key>
-                <string>{335,346}</string>
+                <string>{86,77}</string>
             </dict>
             <key>archer_steady_movement_000.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1013,350},{337,347}}</string>
+                <string>{{1296,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_001.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1352,350},{337,347}}</string>
+                <string>{{1124,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_002.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1691,350},{337,347}}</string>
+                <string>{{1210,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_003.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2030,350},{337,347}}</string>
+                <string>{{354,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_004.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2369,350},{337,347}}</string>
+                <string>{{612,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_005.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2708,350},{337,347}}</string>
+                <string>{{1128,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_006.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{3047,350},{337,347}}</string>
+                <string>{{1214,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_007.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{3386,350},{337,347}}</string>
+                <string>{{1386,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_008.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{3725,350},{337,347}}</string>
+                <string>{{1644,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_009.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,699},{337,347}}</string>
+                <string>{{1472,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_010.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{341,699},{337,347}}</string>
+                <string>{{1558,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_011.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{680,699},{337,347}}</string>
+                <string>{{1300,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_012.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1019,699},{337,347}}</string>
+                <string>{{1042,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_013.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1358,699},{337,347}}</string>
+                <string>{{440,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_014.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1697,699},{337,347}}</string>
+                <string>{{526,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_015.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2036,699},{337,347}}</string>
+                <string>{{698,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_016.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2375,699},{337,347}}</string>
+                <string>{{956,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_017.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2714,699},{337,347}}</string>
+                <string>{{784,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_018.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{3053,699},{337,347}}</string>
+                <string>{{870,160},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_019.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{3392,699},{337,347}}</string>
+                <string>{{950,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_020.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{3731,699},{337,347}}</string>
+                <string>{{776,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_021.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,1048},{337,347}}</string>
+                <string>{{604,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_022.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{341,1048},{337,347}}</string>
+                <string>{{690,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_023.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{680,1048},{337,347}}</string>
+                <string>{{862,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_024.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1019,1048},{337,347}}</string>
+                <string>{{1120,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_025.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1358,1048},{337,347}}</string>
+                <string>{{948,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_026.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1697,1048},{337,347}}</string>
+                <string>{{1034,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_027.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2036,1048},{337,347}}</string>
+                <string>{{776,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_028.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2375,1048},{337,347}}</string>
+                <string>{{518,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_029.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2714,1048},{337,347}}</string>
+                <string>{{2,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_030.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{3053,1048},{337,347}}</string>
+                <string>{{174,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_031.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{3392,1048},{337,347}}</string>
+                <string>{{432,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_032.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{3731,1048},{337,347}}</string>
+                <string>{{260,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_033.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,1397},{337,347}}</string>
+                <string>{{346,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_034.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{341,1397},{337,347}}</string>
+                <string>{{1206,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_035.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{680,1397},{337,347}}</string>
+                <string>{{1378,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_036.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1019,1397},{337,347}}</string>
+                <string>{{174,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_037.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1358,1397},{337,347}}</string>
+                <string>{{260,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_038.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1697,1397},{337,347}}</string>
+                <string>{{432,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_039.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2036,1397},{337,347}}</string>
+                <string>{{690,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_040.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2375,1397},{337,347}}</string>
+                <string>{{518,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_041.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2714,1397},{337,347}}</string>
+                <string>{{604,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_042.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{3053,1397},{337,347}}</string>
+                <string>{{346,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_043.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{3392,1397},{337,347}}</string>
+                <string>{{88,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_044.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{3731,1397},{337,347}}</string>
+                <string>{{1292,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_045.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,1746},{337,347}}</string>
+                <string>{{1464,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_046.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{341,1746},{337,347}}</string>
+                <string>{{2,81},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_047.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{680,1746},{337,347}}</string>
+                <string>{{1550,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_048.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1019,1746},{337,347}}</string>
+                <string>{{1636,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
             <key>archer_steady_movement_049.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{1358,1746},{337,347}}</string>
+                <string>{{88,2},{84,77}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
+                <string>{{0,0},{84,77}}</string>
                 <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_050.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{1697,1746},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_051.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{2036,1746},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_052.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{2375,1746},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_053.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{2714,1746},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_054.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{3053,1746},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_055.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{3392,1746},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_056.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{3731,1746},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_057.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{2,2095},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_058.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{341,2095},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_059.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{680,2095},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_060.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{1019,2095},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_061.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{1358,2095},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_062.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{1697,2095},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_063.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{2036,2095},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_064.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{2375,2095},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_065.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{2714,2095},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_066.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{3053,2095},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_067.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{3392,2095},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_068.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{3731,2095},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_069.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{2,2444},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_070.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{341,2444},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_071.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{680,2444},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_072.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{1019,2444},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_073.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{1358,2444},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_074.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{1697,2444},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_075.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{2036,2444},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_076.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{2375,2444},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
-            </dict>
-            <key>archer_steady_movement_077.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{2714,2444},{337,347}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{337,347}}</string>
-                <key>sourceSize</key>
-                <string>{337,347}</string>
+                <string>{84,77}</string>
             </dict>
         </dict>
         <key>metadata</key>
@@ -1221,9 +792,9 @@
             <key>realTextureFileName</key>
             <string>archer.png</string>
             <key>size</key>
-            <string>{4070,2793}</string>
+            <string>{1734,239}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:3f1f26a1ad45b385ee4ba7d2a8e6df0b:73948de55251a4791d1e8245add04535:fad562d0e9baf5c31b4838c1ea7e9105$</string>
+            <string>$TexturePacker:SmartUpdate:96b336b1308fead8b14537f912fcbd36:a7525c9b2c0420c6bd3f7ec2db46b121:fad562d0e9baf5c31b4838c1ea7e9105$</string>
             <key>textureFileName</key>
             <string>archer.png</string>
         </dict>

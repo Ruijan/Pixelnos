@@ -2,7 +2,7 @@
 
 USING_NS_CC;
 
-AppDelegate::AppDelegate() : config("res/config.json") {
+AppDelegate::AppDelegate() : config("res/config.json", ".sav") {
 
 }
 
@@ -70,6 +70,14 @@ void AppDelegate::applicationWillEnterForeground() {
 }
 
 Json::Value const AppDelegate::getConfig() const{
-	return config.getValues();
+	return config.getConfigValues();
+}
+
+Json::Value const AppDelegate::getSave() const{
+	return config.getSaveValues();
+}
+
+bool AppDelegate::isSaveFile() const{
+	return config.isSaveFile();
 }
 

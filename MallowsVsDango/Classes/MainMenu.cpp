@@ -1,5 +1,6 @@
 #include "MainMenu.h"
 #include "SceneManager.h"
+#include "AppDelegate.h"
 
 USING_NS_CC;
 
@@ -9,11 +10,15 @@ bool MainMenu::init()
 	if (!Scene::init()){ return false; }
 		
 	Vector<MenuItem*> items;
-	//items.pushBack(MenuItemLabel::create(Label::createWithSystemFont("Continue", "fonts/ChalkDust.ttf", 45.f), CC_CALLBACK_1(MainMenu::menuContinueCallback, this)));
-	items.pushBack(MenuItemLabel::create(Label::createWithSystemFont("New Game", "fonts/ChalkDust.ttf", 45.f), CC_CALLBACK_1(MainMenu::menuNewGameCallback, this)));
+	if(((AppDelegate*)Application::getInstance())->isSaveFile()){
+		items.pushBack(MenuItemLabel::create(Label::createWithSystemFont("Continue", "fonts/ChalkDust.ttf", 45.f), CC_CALLBACK_1(MainMenu::menuContinueCallback, this)));
+	}
+	else{
+		items.pushBack(MenuItemLabel::create(Label::createWithSystemFont("New Game", "fonts/ChalkDust.ttf", 45.f), CC_CALLBACK_1(MainMenu::menuNewGameCallback, this)));
+	}	
 	items.pushBack(MenuItemLabel::create(Label::createWithSystemFont("Load", "fonts/ChalkDust.ttf", 45.f), CC_CALLBACK_1(MainMenu::menuLoadCallback, this)));
 	items.pushBack(MenuItemLabel::create(Label::createWithSystemFont("Settings", "fonts/ChalkDust.ttf", 45.f), CC_CALLBACK_1(MainMenu::menuSettingsCallback, this)));
-	items.at(0)->setVisible(false);
+	//items.at(0)->setVisible(false);
 	for (auto el : items){
 		el->setColor(ccColor3B(255, 255, 255));
 	}
