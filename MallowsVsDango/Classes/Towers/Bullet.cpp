@@ -4,8 +4,9 @@
 
 USING_NS_CC;
 
-Bullet::Bullet(Dango* ntarget, double ndamages): target(ntarget), 
-damages(ndamages), touched(false){
+Bullet::Bullet(Dango* ntarget, double ndamages, double nspeed, 
+bool nrotate): target(ntarget), 
+damages(ndamages), touched(false), speed(nspeed), rotate(nrotate){
 	std::cerr << "bullet created" << std::endl;
 }
 
@@ -13,8 +14,9 @@ Bullet::~Bullet(){
 	
 }
 
-Bullet* Bullet::create(std::string image, Dango* ntarget, double damages){
-	Bullet* pSprite = new Bullet(ntarget, damages);
+Bullet* Bullet::create(std::string image, Dango* ntarget, double damages, 
+double nspeed, bool nrotate){
+	Bullet* pSprite = new Bullet(ntarget, damages, nspeed, nrotate);
 
 	if (pSprite->initWithFile(image))
 	{
@@ -36,7 +38,7 @@ void Bullet::update(float dt){
 		}
 		else{
 			direction.normalize();
-			setPosition(getPosition() + direction * 300 * dt);
+			setPosition(getPosition() + direction * speed * dt);
 			setRotation(getRotation() + 360 * dt);
 		}
 	}

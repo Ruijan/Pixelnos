@@ -1,7 +1,13 @@
 #include "Scorpion.h"
+#include "../Towers/Bullet.h"
+#include "../AppDelegate.h"
+
+USING_NS_CC;
 
 Scorpion::Scorpion() : Tower(Scorpion::getConfig()["attack_speed"].asDouble(), Scorpion::getConfig()["damages"].asDouble(),
-	Scorpion::getConfig()["range"].asDouble(), Scorpion::getConfig()["cost"].asDouble()){
+	Scorpion::getConfig()["range"].asDouble(), Scorpion::getConfig()["cost"].asDouble(),
+	Scorpion::getConfig()["d_damage"].asDouble(),Scorpion::getConfig()["d_range"].asDouble(),
+	Scorpion::getConfig()["d_speed"].asDouble()){
 }
 
 Scorpion* Scorpion::create()
@@ -24,4 +30,10 @@ Json::Value Scorpion::getConfig(){
 
 Json::Value Scorpion::getSpecConfig(){
 	return Tower::getConfig()["archer"];
+}
+
+void Scorpion::attack(){
+	Bullet* bullet = Bullet::create("res/turret/bullet.png", target, damage,300,true);
+	bullet->setPosition(getPosition() - Vec2(0, getSpriteFrame()->getRect().size.width / 2 * getScale()));
+	SceneManager::getInstance()->getGame()->getLevel()->addBullet(bullet);
 }

@@ -76,6 +76,9 @@ Json::Value const AppDelegate::getConfig() const{
 Json::Value const AppDelegate::getSave() const{
 	return config.getSaveValues();
 }
+Config& AppDelegate::getConfigClass(){
+	return config;
+}
 
 bool AppDelegate::isSaveFile() const{
 	return config.isSaveFile();

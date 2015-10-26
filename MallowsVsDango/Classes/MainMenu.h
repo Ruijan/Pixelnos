@@ -9,10 +9,7 @@ class MainMenu :public cocos2d::Scene
 public:
 	virtual bool init();
 	CREATE_FUNC(MainMenu);
-	void menuNewGameCallback(cocos2d::Ref* sender);
 	void menuContinueCallback(cocos2d::Ref* sender);
-	void menuLoadCallback(Ref* sender);
-	void menuSettingsCallback(Ref* sender);
 	void update(float dt);
 	enum State{
 		marshmallowStart,

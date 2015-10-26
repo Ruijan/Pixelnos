@@ -9,29 +9,18 @@ bool MainMenu::init()
 {
 	if (!Scene::init()){ return false; }
 		
-	Vector<MenuItem*> items;
-	if(((AppDelegate*)Application::getInstance())->isSaveFile()){
-		items.pushBack(MenuItemLabel::create(Label::createWithSystemFont("Continue", "fonts/ChalkDust.ttf", 45.f), CC_CALLBACK_1(MainMenu::menuContinueCallback, this)));
-	}
-	else{
-		items.pushBack(MenuItemLabel::create(Label::createWithSystemFont("New Game", "fonts/ChalkDust.ttf", 45.f), CC_CALLBACK_1(MainMenu::menuNewGameCallback, this)));
-	}	
-	items.pushBack(MenuItemLabel::create(Label::createWithSystemFont("Load", "fonts/ChalkDust.ttf", 45.f), CC_CALLBACK_1(MainMenu::menuLoadCallback, this)));
-	items.pushBack(MenuItemLabel::create(Label::createWithSystemFont("Settings", "fonts/ChalkDust.ttf", 45.f), CC_CALLBACK_1(MainMenu::menuSettingsCallback, this)));
-	//items.at(0)->setVisible(false);
-	for (auto el : items){
-		el->setColor(ccColor3B(255, 255, 255));
-	}
-
+	Label* start_label = Label::createWithTTF("START", "fonts/LICABOLD.ttf", 75.f);
+	MenuItemLabel* start = MenuItemLabel::create(start_label, CC_CALLBACK_1(MainMenu::menuContinueCallback, this));
+	start_label->setColor(Color3B::YELLOW);
+	start_label->enableOutline(Color4B::ORANGE,3);
+	
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::cerr << visibleSize.width << " / " << visibleSize.height << std::endl;
 	Point origin = Director::getInstance()->getVisibleOrigin();
 
-	menu = Menu::createWithArray(items);
-	menu->setPosition(Vec2());
-	for (int i(0); i < items.size(); ++i){
-		items.at(i)->setPosition(Point(visibleSize.width / 2, visibleSize.height / 3 - i*visibleSize.height / 12));
-	}	
+	menu = Menu::createWithItem(start);
+	menu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 4 ));
+
 	menu->setVisible(false);
 	FadeOut* hideAction = FadeOut::create(0.01f);
 	menu->runAction(hideAction);
@@ -176,21 +165,10 @@ void MainMenu::update(float dt){
 	}
 }
 
-
-void MainMenu::menuNewGameCallback(Ref* sender){
-	SceneManager::getInstance()->getGame()->createNew();
-	SceneManager::getInstance()->setScene(SceneManager::GAME);
-}
-
 void MainMenu::menuContinueCallback(Ref* sender){
-	SceneManager::getInstance()->setScene(SceneManager::GAME);
+	SceneManager::getInstance()->setScene(SceneManager::LEVELS);
 }
 
-void MainMenu::menuLoadCallback(Ref* sender){
-}
-
-void MainMenu::menuSettingsCallback(Ref* sender){
-}
 
 void MainMenu::onEnter(){
 	Scene::onEnter();

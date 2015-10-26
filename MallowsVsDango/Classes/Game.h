@@ -12,14 +12,13 @@ class Game : public cocos2d::Scene
 
 private:
 	bool touch;
-	int nextLevel;
 	Level* cLevel;
 	InterfaceGame* menu;
 	double acceleration;
 	bool paused;
 	bool launched;
 	bool reloading;
-	
+	int experience;
 
 protected:
 	virtual void onEnterTransitionDidFinish();
@@ -31,6 +30,7 @@ public:
 
 	// Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
 	virtual bool init();
+	virtual bool initLevel(int level_id);
 
 	// there's no 'id' in cpp, so we recommend returning the class instance pointer
 	static cocos2d::Scene* scene();
@@ -45,18 +45,15 @@ public:
 	virtual void resume();
 	bool isPaused();
 	bool isLaunched();
-	void createNew();
 	void increaseSpeed();
 	void setNormalSpeed();
 	bool isAccelerated();
+	bool save();
+	bool load();
 	
-
 	Level* getLevel();
 	// implement the "static node()" method manually
 	CREATE_FUNC(Game);
-
-
-
 };
 
 #endif // __Game_SCENE_H__

@@ -5,8 +5,11 @@
 
 USING_NS_CC;
 
-Dango::Dango(std::vector<Cell*> npath, double nspeed = Dango::getConfig()["speed"].asDouble(), double hp = Dango::getConfig()["hitpoints"].asDouble()) : path(npath),
-targetedCell(0), speed(nspeed), hitPoints(hp), cAction(nullptr), cDirection(IDLE), pDamages(0.0) {
+Dango::Dango(std::vector<Cell*> npath, 
+	double nspeed = Dango::getConfig()["speed"].asDouble(), 
+	double hp = Dango::getConfig()["hitpoints"].asDouble()) : 
+	path(npath), targetedCell(0), speed(nspeed), hitPoints(hp), 
+	cAction(nullptr), cDirection(RIGHT), pDamages(0.0), state(IDLE), timer(0) {
 	//move = nullptr;
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
 	cache->addSpriteFramesWithFile("res/dango/animations/dango1.plist", "res/dango/animations/dango1.png");
@@ -27,6 +30,8 @@ Dango* Dango::create(std::string image, std::vector<Cell*> npath)
 
 		pSprite->initOptions();
 		pSprite->setAnchorPoint(Point(0.5,0.25));
+		pSprite->updateAnimation();
+		//Label* pv = createWith
 		/*Node* healthBar = Node::create();
 		for(int i(0); i < pSprite->getHitPoints(); ++i){
 			auto rectNode = DrawNode::create();
@@ -65,6 +70,14 @@ void Dango::initOptions()
 
 void Dango::update(float dt) {
 	move(dt);
+	if(state == HIT){
+		timer += dt;
+		setVisible(false);
+		if(timer > 0.1){
+			state = IDLE;
+			setVisible(true);
+		}
+	}
 }
 
 void Dango::move(float dt){
@@ -156,7 +169,10 @@ double Dango::getGain(){
 }
 
 void Dango::takeDamages(double damages){
+	state = HIT;
+	timer = 0;
 	hitPoints -= damages;
+	pDamages -= damages;
 	if(hitPoints < 0){
 		hitPoints = 0;
 	}
@@ -167,7 +183,7 @@ void Dango::takeDamages(double damages){
 }
 
 void Dango::takePDamages(double damages){
-	pDamages -= damages;
+	pDamages += damages;
 }
 
 

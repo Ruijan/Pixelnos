@@ -1,28 +1,34 @@
 {
     "towers" : {
-	    "archer" : {
-			"name" : "archer",
-			"description" : "Archer: This mallow is a long distance attacker.",
-            "attack_speed" : 1.5,
-            "damages" : 1,
-            "range" : 120,
-            "cost" : 30,
-            "image" : "res/turret/archer.png",
-			"animation" : "res/turret/animations/archer.png",
-			"animation_attack_size" : 9,
-			"animation_steady_size" : 49
+	"archer" : {
+		"name" : "archer",
+		"description" : "Archer: This mallow is a long distance attacker.",
+           	"attack_speed" : 1.5,
+            	"damages" : 1,
+            	"range" : 120,
+            	"cost" : 30,
+		"d_speed" : 0.25,
+		"d_damage" : 0.5,
+		"d_range" : 0.25,
+            	"image" : "res/turret/archer.png",
+		"animation" : "res/turret/animations/archer.png",
+		"animation_attack_size" : 9,
+		"animation_steady_size" : 49
         },
-        "grill" : {
-			"name" : "grill",
-			"description" : "Flame Thrower: Select a target and burn it over time.",
-            "attack_speed" : 2.5,
-            "damages" : 1,
-            "range" : 80,
-            "cost" : 50,
-            "image" : "res/turret/grill.png",
-			"animation" : "res/turret/animations/grill.png",
-			"animation_attack_size" : 1,
-			"animation_steady_size" : 4
+        "cutter" : {
+		"name" : "cutter",
+		"description" : "Sword Master: Attack all the dangos around him",
+    		"attack_speed" : 2.5,
+    		"damages" : 1,
+    		"range" : 80,
+    		"cost" : 50,
+		"d_speed" : 0.25,
+		"d_damage" : 0.25,
+		"d_range" : 0.125,
+    		"image" : "res/turret/cutter.png",
+		"animation" : "res/turret/animations/cutter.png",
+		"animation_attack_size" : 9,
+		"animation_steady_size" : 49
         }
     },
     "dangos" : {
@@ -42,7 +48,10 @@
 			"tilesetpng" : "res/tiles/ground.png",
 			"tilemaptable" : "res/tiles/ground.json",
 			"generator" : "res/level1_generator.json",
-			"sugar" : 80
+			"sugar" : 80,
+			"exp" : 150,
+			"x" : 70,
+			"y" : 325
 		},
 		{
 			"width" : 14,
@@ -53,7 +62,10 @@
 			"tilesetpng" : "res/tiles/ground.png",
 			"tilemaptable" : "res/tiles/ground.json",
 			"generator" : "res/level2_generator.json",
-			"sugar" : 80
+			"sugar" : 80,
+			"exp" : 150,
+			"x" : 240,
+			"y" : 350
 		}
 	]
 }

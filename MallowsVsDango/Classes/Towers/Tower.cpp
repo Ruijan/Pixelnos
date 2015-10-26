@@ -7,9 +7,11 @@
 
 USING_NS_CC;
 
-Tower::Tower(double nspeed = 1, double ndamage = 2, double nrange = 200, double ncost = 30) :
+Tower::Tower(double nspeed, double ndamage, double nrange, double ncost,
+ double nd_damage, double nd_range, double nd_speed) :
 state(State::IDLE), fixed(false), destroy(false), target(nullptr), cost(ncost), 
-attackSpeed(nspeed), damage(ndamage), range(nrange), timer(0), level(0)
+attackSpeed(nspeed), damage(ndamage), range(nrange), timer(0), timerIDLE(0), level(0), 
+currentAction(nullptr), d_speed(nd_speed), d_damage(nd_damage), d_range(nd_range)
 {}
 
 Tower::~Tower() {}
@@ -43,6 +45,7 @@ void Tower::initDebug(){
 		0, 60, false, 1, 1, Color4F(0, 0, 0, 1));
 	circle->setVisible(false);
 	addChild(circle, 0, "range");
+	std::cerr << "range has been added" << std::endl;
 }
 
 
@@ -57,16 +60,16 @@ void Tower::builtCallback(Ref* sender){
 
 void Tower::upgradeCallback(Ref* sender){
 	if(level < 5){
-		range *= 1.2;
-		damage *= 1.5;
-		attackSpeed *= 0.8;
+		range *= (1 + d_range);
+		damage *= (1 + d_damage);
+		attackSpeed *= (1 - d_speed);
 		++level;
 		removeChild(getChildByName("range"),true);
 		DrawNode *circle = DrawNode::create();
 		circle->setPosition(Vec2(getSpriteFrame()->getRect().size.width / 2,
 			getSpriteFrame()->getRect().size.height / 2));
 		circle->drawCircle(Vec2(0, 0), getRange() / getScaleX(),
-			360, 60, true, 1, 1, Color4F(0, 0, 0, 1));
+			360, 60, false, 1, 1, Color4F(0, 0, 0, 1));
 		addChild(circle, 0, "range");
 	}
 }
@@ -85,30 +88,36 @@ bool Tower::isSelected(){
 }
 
 void Tower::chooseTarget(std::vector<Dango*> targets){
-	double bestScore(0);
-	bool chosen = false;
+	if(state != State::ATTACKING){
+		double bestScore(0);
+		bool chosen = false;
 
-	for(auto cTarget : targets){
-		if(cTarget != nullptr){
-			int first = cTarget->getTargetedCell();
-			double dist = cTarget->getPosition().distanceSquared(this->getPosition());
-			double minDist = pow(getRange() + sqrt((pow(Cell::getCellWidth() * 3 / 8.0, 2) +
-				pow(Cell::getCellHeight() * 3 / 8.0, 2))), 2);
-			if (first > bestScore && dist < minDist && cTarget->willBeAlive()){
-				bestScore = first;
-				target = cTarget;
-				chosen = true;
+		for(auto cTarget : targets){
+			if(cTarget != nullptr){
+				int first = cTarget->getTargetedCell();
+				double dist = cTarget->getPosition().distanceSquared(this->getPosition());
+				double minDist = pow(getRange() + sqrt((pow(Cell::getCellWidth() * 3 / 8.0, 2) +
+					pow(Cell::getCellHeight() * 3 / 8.0, 2))), 2);
+				if (first > bestScore && dist < minDist && cTarget->willBeAlive()){
+					bestScore = first;
+					target = cTarget;
+					chosen = true;
+				}
 			}
 		}
-	}
-	if(!chosen){
-		target = nullptr;
+		if(!chosen){
+			target = nullptr;
+		}
 	}
 }
 
 double Tower::getRange(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	return range * visibleSize.width / 960.0;
+}
+
+double Tower::getNextLevelRange(){
+	return d_range;
 }
 
 double Tower::getCost(){
@@ -122,8 +131,15 @@ Dango* Tower::getTarget(){
 double Tower::getDamage(){
 	return damage;
 }
+double Tower::getNextLevelDamage(){
+	return d_damage;
+}
+
 double Tower::getAttackSpeed(){
 	return attackSpeed;
+}
+double Tower::getNextLevelSpeed(){
+	return d_speed;
 }
 
 cocos2d::Vector<SpriteFrame*> Tower::getAnimation(Tower::State animState){
@@ -197,8 +213,19 @@ void Tower::update(float dt) {
 		switch(state){
 			case State::IDLE:
 				if (target != nullptr){
+					state = State::AWARE;
+				}
+				break;
+			case State::AWARE:
+				timerIDLE += dt;
+				if (target != nullptr){
 					state = State::ATTACKING;
 					target->takePDamages(damage);
+					startAnimation();
+				}
+				if(timerIDLE > 2){
+					state = State::IDLE;
+					timerIDLE = 0;
 					startAnimation();
 				}
 				break;
@@ -206,10 +233,12 @@ void Tower::update(float dt) {
 				if(currentAction->isDone()){
 					currentAction->release();
 					state = State::RELOADING;
+					std::string frameName =  getSpecConfig()["name"].asString()+"_attack_movement_000.png";
+					SpriteFrameCache* cache = SpriteFrameCache::getInstance();
+					setDisplayFrame(cache->getSpriteFrameByName(frameName.c_str()));
 					timer = 0;
 					if(target != nullptr){
-						shoot();
-						
+						attack();
 					}
 				}
 				break;
@@ -261,14 +290,21 @@ bool Tower::hasToBeDestroyed(){
 }
 
 void Tower::displayRange(bool disp){
+	std::cerr << "ok1" << std::endl;
 	getChildByName("range")->setVisible(disp);
+	std::cerr << "ok2" << std::endl;
 	loadingCircle->setVisible(disp);
+	std::cerr << "ok4" << std::endl;
 }
 
+
 void Tower::startAnimation(){
+	if(currentAction != nullptr){
+		stopAction(currentAction);
+	}
 	cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(state);
-	Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.05f);
-	currentAction = runAction(Animate::create(animation));
+	Animation* currentAnimation = Animation::createWithSpriteFrames(animFrames, 0.05f);
+	currentAction = runAction(Animate::create(currentAnimation));
 	currentAction->retain();
 }
 
@@ -279,7 +315,7 @@ Json::Value Tower::getConfig(){
 void Tower::reload(){
 	
 	if (timer > attackSpeed){
-		state = State::IDLE;
+		state = State::AWARE;
 	}
 	else{
 		double iniAngle = M_PI_2;
@@ -305,8 +341,8 @@ Tower::TowerType Tower::getTowerTypeFromString(std::string type){
 	if (!strcmp(type.c_str(), "archer")){
 		return Tower::TowerType::ARCHER;
 	}
-	else if (!strcmp(type.c_str(), "grill")){
-		return Tower::TowerType::GRILL;
+	else if (!strcmp(type.c_str(), "cutter")){
+		return Tower::TowerType::CUTTER;
 	}
 	else{
 		return Tower::TowerType::ARCHER;
@@ -333,8 +369,8 @@ void Tower::setSelected(bool select){
 	selected = select;
 }
 
-void Tower::shoot(){
+/*void Tower::attack(){
 	Bullet* bullet = Bullet::create("res/turret/bullet.png", target, damage);
 	bullet->setPosition(getPosition() - Vec2(0, getSpriteFrame()->getRect().size.width / 2 * getScale()));
 	SceneManager::getInstance()->getGame()->getLevel()->addBullet(bullet);
-}
+}*/

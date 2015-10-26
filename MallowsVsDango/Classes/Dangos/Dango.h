@@ -11,7 +11,10 @@ class Dango : public cocos2d::Sprite{
 		RIGHT,
 		UP,
 		DOWN,
-		LEFT,
+		LEFT
+	};
+	enum STATE{
+		HIT,
 		IDLE
 	};
 
@@ -49,6 +52,8 @@ private:
 	DIRECTION cDirection;
 	cocos2d::Action* cAction;
 	double pDamages;				// prosepctive damages
+	STATE state;
+	double timer;
 	
 };
 

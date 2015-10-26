@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "AppDelegate.h"
 
 USING_NS_CC;
 
@@ -34,15 +35,25 @@ bool Game::init()
 		return false;
 	}
 
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Point origin = Director::getInstance()->getVisibleOrigin();
+	cLevel = nullptr;
+	menu = nullptr;
+	load();
 
-	cLevel = Level::create(0);
-	menu = InterfaceGame::create(this);
-
-	addChild(cLevel,0);
-	addChild(menu,2);
 	return true;
+}
+
+bool Game::initLevel(int level_id){
+	removeChild(cLevel,1);
+	cLevel = Level::create(level_id);
+	addChild(cLevel,0);
+	if(menu == nullptr){
+		menu = InterfaceGame::create(this);
+		addChild(menu,2);
+	}
+	else{
+		menu->reset();
+	}
+	acceleration = 1.0;
 }
 
 void Game::onEnterTransitionDidFinish(){
@@ -52,7 +63,7 @@ void Game::onEnterTransitionDidFinish(){
 		launched = true;
 	}
 	else{
-		pause();
+		//pause();
 	}
 }
 
@@ -77,20 +88,28 @@ void Game::update(float delta){
 		menu->showLoose();
 		cLevel->pause();
 	}
-	else if (cLevel->hasWon()){
+	else if (cLevel->hasWon() && !cLevel->isPaused()){
 		menu->showWin();
 		cLevel->pause();
+		experience += cLevel->getTotalExperience();
+		save();
 	}
 	if (reloading){
 		reload();
 		reloading = false;
 	}
 	if(menu->getState() == InterfaceGame::State::NEXT_LEVEL){
-		removeChild(cLevel,1);
-		cLevel = Level::create(1);
-		menu->reset();
-		acceleration = 1.0;
-		addChild(cLevel,0);
+		Json::Value levels = ((AppDelegate*)Application::getInstance())->getConfig()["levels"];
+		if(levels.size() > cLevel->getLevelId() + 1){
+			removeChild(cLevel,1);
+			cLevel = Level::create(cLevel->getLevelId() + 1);
+			menu->reset();
+			acceleration = 1.0;
+			addChild(cLevel,0);
+		}
+		else{
+			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+		}
 	}
 }
 
@@ -132,10 +151,6 @@ void Game::setReloading(bool nreloading){
 	reloading = nreloading;
 }
 
-void Game::createNew(){
-	reload();
-	launched = false;
-}
 void Game::increaseSpeed(){
 	acceleration = 4.0;
 }
@@ -145,4 +160,18 @@ void Game::setNormalSpeed(){
 
 bool Game::isAccelerated(){
 	return acceleration != 1.0;
+}
+
+bool Game::save(){
+	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave();
+	if(root["level"].asInt() < cLevel->getLevelId()+1){
+		root["level"] = cLevel->getLevelId()+1;
+	}
+	root["exp"] = experience;
+	((AppDelegate*)Application::getInstance())->getConfigClass().setSave(root);
+	((AppDelegate*)Application::getInstance())->getConfigClass().save();
+}
+
+bool Game::load(){
+	experience = ((AppDelegate*)Application::getInstance())->getSave()["exp"].asInt();
 }

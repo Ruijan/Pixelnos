@@ -11,6 +11,8 @@ public:
 	static Scorpion* create();
 	static Json::Value getConfig();
 	virtual Json::Value getSpecConfig();
+	
+	virtual void attack();
 
 };
 

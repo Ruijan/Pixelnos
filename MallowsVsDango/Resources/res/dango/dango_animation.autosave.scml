@@ -51,13 +51,13 @@
                     <object folder="1" file="1" x="17" y="117" angle="0"/>
                 </key>
                 <key id="1" time="397" spin="-1">
-                    <object folder="1" file="1" x="9.382005" y="181.115362" angle="0.760519" scale_x="1" scale_y="1"/>
+                    <object folder="1" file="1" x="9.382005" y="181.115362" angle="0.760519"/>
                 </key>
                 <key id="2" time="802" spin="-1">
-                    <object folder="1" file="1" x="16.498569" y="123.052805" angle="0.249723" scale_y="1"/>
+                    <object folder="1" file="1" x="16.498569" y="123.052805" angle="0.249723"/>
                 </key>
                 <key id="3" time="900" spin="-1">
-                    <object folder="1" file="1" x="9.746752" y="106.056972" angle="0.126123" scale_y="1"/>
+                    <object folder="1" file="1" x="9.746752" y="106.056972" angle="0.126123"/>
                 </key>
             </timeline>
             <timeline id="2" name="flush">
@@ -65,13 +65,13 @@
                     <object folder="1" file="2" x="-35" y="95" angle="0"/>
                 </key>
                 <key id="1" time="397" spin="-1">
-                    <object folder="1" file="2" x="-42.321404" y="158.427095" angle="0.760519" scale_x="1" scale_y="1"/>
+                    <object folder="1" file="2" x="-42.321404" y="158.427095" angle="0.760519"/>
                 </key>
                 <key id="2" time="802" spin="-1">
-                    <object folder="1" file="2" x="-35.404043" y="100.826807" angle="0.249723" scale_y="1"/>
+                    <object folder="1" file="2" x="-35.404043" y="100.826807" angle="0.249723"/>
                 </key>
                 <key id="3" time="900" spin="-1">
-                    <object folder="1" file="2" x="-42.204062" y="83.942832" angle="0.126123" scale_y="1"/>
+                    <object folder="1" file="2" x="-42.204062" y="83.942832" angle="0.126123"/>
                 </key>
             </timeline>
         </animation>
@@ -117,13 +117,13 @@
                     <object folder="1" file="1" x="-6.079929" y="123.275612" angle="356.181722" scale_x="0.988038" scale_y="0.970255"/>
                 </key>
                 <key id="1" time="397" spin="-1">
-                    <object folder="1" file="1" x="-9.617995" y="184.115362" angle="0.760519" scale_x="1" scale_y="1"/>
+                    <object folder="1" file="1" x="-9.617995" y="184.115362" angle="0.760519"/>
                 </key>
                 <key id="2" time="802" spin="-1">
-                    <object folder="1" file="1" x="-8.501431" y="131.052805" angle="0.249723" scale_y="1"/>
+                    <object folder="1" file="1" x="-8.501431" y="131.052805" angle="0.249723"/>
                 </key>
                 <key id="3" time="900" spin="-1">
-                    <object folder="1" file="1" x="-8.253248" y="106.056972" angle="0.126123" scale_y="1"/>
+                    <object folder="1" file="1" x="-8.253248" y="106.056972" angle="0.126123"/>
                 </key>
             </timeline>
             <timeline id="2" name="flush">
@@ -131,13 +131,13 @@
                     <object folder="1" file="2" x="-59" y="102" angle="0"/>
                 </key>
                 <key id="1" time="397" spin="-1">
-                    <object folder="1" file="2" x="-61.321404" y="161.427095" angle="0.760519" scale_x="1" scale_y="1"/>
+                    <object folder="1" file="2" x="-61.321404" y="161.427095" angle="0.760519"/>
                 </key>
                 <key id="2" time="802" spin="-1">
-                    <object folder="1" file="2" x="-60.404043" y="108.826807" angle="0.249723" scale_y="1"/>
+                    <object folder="1" file="2" x="-60.404043" y="108.826807" angle="0.249723"/>
                 </key>
                 <key id="3" time="900" spin="-1">
-                    <object folder="1" file="2" x="-60.204062" y="83.942832" angle="0.126123" scale_y="1"/>
+                    <object folder="1" file="2" x="-60.204062" y="83.942832" angle="0.126123"/>
                 </key>
             </timeline>
         </animation>

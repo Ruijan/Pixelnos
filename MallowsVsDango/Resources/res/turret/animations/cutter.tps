@@ -4,9 +4,9 @@
         <key>fileFormatVersion</key>
         <int>3</int>
         <key>texturePackerVersion</key>
-        <string>3.9.2</string>
+        <string>3.9.4</string>
         <key>fileName</key>
-        <string>C:/Users/Ruijan/Programmation/MarshmallowVsDango/MarshmallowVsDango/Resources/res/turret/animations/grill.tps</string>
+        <string>/home/ruijan/Pixelnos/MallowsVsDango/Resources/res/turret/animations/grill.tps</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -147,7 +147,7 @@
             <key>data</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>grill.plist</filename>
+                <filename>cutter.plist</filename>
             </struct>
         </map>
         <key>multiPack</key>
@@ -190,7 +190,7 @@
         </struct>
         <key>fileList</key>
         <array>
-            <filename>../grill</filename>
+            <filename>../animation/cutter</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

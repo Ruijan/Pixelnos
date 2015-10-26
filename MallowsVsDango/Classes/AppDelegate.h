@@ -41,6 +41,7 @@ public:
 
 	Json::Value const getConfig() const;
 	Json::Value const getSave() const;
+	Config& getConfigClass();
 	bool isSaveFile() const;
 
 	/*static AppDelegate* getInstance(){

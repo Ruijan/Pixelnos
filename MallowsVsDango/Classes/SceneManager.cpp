@@ -1,20 +1,19 @@
 #include "SceneManager.h"
 #include "MainMenu.h"
+#include "StoryMenu.h"
 USING_NS_CC;
 
 SceneManager *SceneManager::manager;
 
 SceneManager::SceneManager(){
-	cacheScene[SETTINGS] = nullptr;
-	cacheScene[GAME] = nullptr;
-	cacheScene[LOADING] = nullptr;
-
 	cacheScene[GAME] = Game::create();
 	cacheScene[GAME]->retain();
 	cacheScene[MENU] = MainMenu::create();
 	cacheScene[MENU]->retain();
+	cacheScene[LEVELS] = StoryMenu::create();
+	cacheScene[LEVELS]->retain();
 
-	currentscene = cacheScene[GAME];
+	currentscene = cacheScene[LEVELS];
 	Director::getInstance()->runWithScene(currentscene);
 }
 

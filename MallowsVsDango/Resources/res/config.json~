@@ -1,32 +1,28 @@
 {
     "towers" : {
-	    "archer" : {
-			"name" : "archer",
-			"description" : "Archer: This mallow is a long distance attacker.",
-            "attack_speed" : 1.5,
-            "damages" : 1,
-            "range" : 120,
-            "cost" : 30,
-            "image" : "res/turret/archer.png",
-			"image_menu" : "res/turret/tower_menu.png",
-            "image_menu_disable" : "res/turret/tower_menu_disable.png",
-			"animation" : "res/turret/animations/archer.png",
-			"animation_size" : 14,
-			"animation_steady_size" : 77
+	"archer" : {
+		"name" : "archer",
+		"description" : "Archer: This mallow is a long distance attacker.",
+           	"attack_speed" : 1.5,
+            	"damages" : 1,
+            	"range" : 120,
+            	"cost" : 30,
+            	"image" : "res/turret/archer.png",
+		"animation" : "res/turret/animations/archer.png",
+			"animation_attack_size" : 9,
+			"animation_steady_size" : 49
         },
-        "grill" : {
-			"name" : "grill",
-			"description" : "Flame Thrower: Select a target and burn it over time.",
-            "attack_speed" : 2.5,
-            "damages" : 1,
-            "range" : 80,
-            "cost" : 50,
-            "image" : "res/turret/grill.png",
-            "image_menu" : "res/turret/grill_menu.png",
-            "image_menu_disable" : "res/turret/grill_menu_disable.png",
-			"animation" : "res/turret/animations/grill.png",
-			"animation_size" : 1,
-			"animation_steady_size" : 4
+        "cutter" : {
+		"name" : "cutter",
+		"description" : "Sword Master: Attack all the dangos around him",
+    		"attack_speed" : 2.5,
+    		"damages" : 1,
+    		"range" : 80,
+    		"cost" : 50,
+    		"image" : "res/turret/cutter.png",
+		"animation" : "res/turret/animations/cutter.png",
+		"animation_attack_size" : 9,
+		"animation_steady_size" : 49
         }
     },
     "dangos" : {
@@ -36,10 +32,28 @@
 	    "gain" : 2
         }
     },
-	"levels" : {
-		"level1" : {
+	"levels" : [
+		{
+			"width" : 14,
+			"height" : 12,
+			"map" : "res/map/level1_map.csv",
+			"path" : "res/map/level1_path.csv",
+			"tileset" : "res/tiles/ground.plist",
+			"tilesetpng" : "res/tiles/ground.png",
+			"tilemaptable" : "res/tiles/ground.json",
 			"generator" : "res/level1_generator.json",
 			"sugar" : 80
+		},
+		{
+			"width" : 14,
+			"height" : 12,
+			"map" : "res/map/level1_map.csv",
+			"path" : "res/map/level1_path.csv",
+			"tileset" : "res/tiles/ground.plist",
+			"tilesetpng" : "res/tiles/ground.png",
+			"tilemaptable" : "res/tiles/ground.json",
+			"generator" : "res/level2_generator.json",
+			"sugar" : 80
 		}
-	}
+	]
 }

@@ -2,7 +2,7 @@
 #include "SceneManager.h"
 #include "AppDelegate.h"
 #include "Game.h"
-#include "Towers/Grill.h"
+#include "Towers/Cutter.h"
 #include "Towers/Scorpion.h"
 #include <iostream>
 #include <string>
@@ -195,11 +195,7 @@ void InterfaceGame::menuGameCallback(Ref* sender){
 }
 
 void InterfaceGame::menuMainCallback(Ref* sender){
-	SceneManager::getInstance()->setScene(SceneManager::MENU);
-}
-
-void InterfaceGame::menuSaveCallback(Ref* sender){
-	//SceneManager::sharedManager()->setScene(type);
+	SceneManager::getInstance()->setScene(SceneManager::LEVELS);
 }
 
 void InterfaceGame::reloadCallback(Ref* sender){
@@ -265,8 +261,8 @@ void InterfaceGame::menuTurretTouchCallback(Tower::TowerType turret){
 			game->getLevel()->addTurret(createdTurret);
 			selectedTurret = createdTurret;
 		}
-		else if (turret == Tower::TowerType::GRILL){
-			Grill* createdTurret = Grill::create();
+		else if (turret == Tower::TowerType::CUTTER){
+			Cutter* createdTurret = Cutter::create();
 			game->getLevel()->addTurret(createdTurret);
 			selectedTurret = createdTurret;
 		}
@@ -319,12 +315,9 @@ void InterfaceGame::initParametersMenu(){
 	menuPause->setPosition(Vec2(Point(visibleSize.width / 2, visibleSize.height / 2)));
 
 	Vector<MenuItem*> items;
-	Label* label1 = Label::createWithSystemFont("Continue", "fonts/ChalkDust.ttf", 45.f);
+	Label* label1 = Label::createWithSystemFont("Resume", "fonts/ChalkDust.ttf", 45.f);
 	label1->enableShadow(Color4B::BLACK, Size(0, 0), 1);
 	items.pushBack(MenuItemLabel::create(label1, CC_CALLBACK_1(InterfaceGame::menuGameCallback, this)));
-	Label* label2 = Label::createWithSystemFont("Save", "fonts/ChalkDust.ttf", 45.f);
-	label2->enableShadow(Color4B::BLACK, Size(0, 0), 1);
-	items.pushBack(MenuItemLabel::create(label2, CC_CALLBACK_1(InterfaceGame::menuSaveCallback, this)));
 	Label* label3 = Label::createWithSystemFont("Main Menu", "fonts/ChalkDust.ttf", 45.f);
 	label3->enableShadow(Color4B::BLACK, Size(0, 0), 1);
 	items.pushBack(MenuItemLabel::create(label3, CC_CALLBACK_1(InterfaceGame::menuMainCallback, this)));
@@ -350,30 +343,47 @@ void InterfaceGame::initParametersMenu(){
 
 void InterfaceGame::initLabels(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+	
+	Node* node_top = Node::create();
+	node_top->setScale(0.75);
+	node_top->setPosition(0,visibleSize.height);
+	
 
 	Label* label = Label::createWithSystemFont("", "fonts/ChalkDust.ttf", round(visibleSize.width /27.0));
 	Label* label_life = Label::createWithSystemFont("", "fonts/ChalkDust.ttf", round(visibleSize.width / 27.0));
 	infos["sugar"] = label;
 	infos["life"] = label_life;
-	label->setPosition(Point(sizeButton * 1.35, visibleSize.height - sizeButton * 0.25));
-	label_life->setPosition(Point(2 * sizeButton * 1.35 + sizeButton * 0.75, visibleSize.height - sizeButton * 0.25));
+	label->setPosition(Point(sizeButton * 1.25,  - sizeButton * 0.125));
+	label_life->setPosition(Point(2 * sizeButton * 1.35 + sizeButton * 0.75,  - sizeButton * 0.125));
 
 	Sprite* sugar = Sprite::create("res/buttons/sugar.png");
-	sugar->setPosition(Point(sizeButton * 0.25, visibleSize.height - sizeButton * 0.25));
+	sugar->setPosition(Point(sizeButton * 0.125, - sizeButton * 0.125));
 	sugar->setAnchorPoint(Point(0.0f, 1.0f));
 	sugar->setScale(sizeButton / sugar->getContentSize().width);
-	addChild(sugar, 4);
+	node_top->addChild(sugar, 4);
 	Sprite* life = Sprite::create("res/buttons/life.png");
-	life->setPosition(Point(sizeButton * 2.5, visibleSize.height - sizeButton * 0.25));
+	life->setPosition(Point(sizeButton * 2.5, - sizeButton * 0.125));
 	life->setAnchorPoint(Point(0.0f, 1.0f));
 	life->setScale(sizeButton / life->getContentSize().width);
-	addChild(life, 4);
+	node_top->addChild(life, 4);
+	Sprite* panel_top = Sprite::create("res/buttons/panel_top.png");
+	panel_top->setPosition(Point(0, 0));
+	panel_top->setAnchorPoint(Point(0.0f, 1.0f));
+	panel_top->setScale(sizeButton / sugar->getContentSize().width);
+	node_top->addChild(panel_top, 3);
+	Sprite* panel_top_shadow = Sprite::create("res/buttons/panel_top_shadow.png");
+	panel_top_shadow->setPosition(Point(-15, 15));
+	panel_top_shadow->setAnchorPoint(Point(0.0f, 1.0f));
+	panel_top_shadow->setScale(sizeButton / sugar->getContentSize().width);
+	node_top->addChild(panel_top_shadow, 2);
 	
 	for (auto el : infos){
 		el.second->setColor(Color3B::WHITE);
 		el.second->setAnchorPoint(Point(0.0f, 1.0f));
-		addChild(el.second);
+		node_top->addChild(el.second,4);
 	}
+	
+	addChild(node_top);
 }
 
 void InterfaceGame::initLooseMenu(){
@@ -400,9 +410,10 @@ void InterfaceGame::initLooseMenu(){
 
 	menuLoose->addChild(mask);
 	menuLoose->addChild(menuForLoose);
-	Label* youloose = Label::createWithSystemFont("YOU LOOSE !", "fonts/ChalkDust.ttf", 45.f);
+	Label* youloose = Label::createWithSystemFont("YOU LOSE !", "fonts/ChalkDust.ttf", 45.f);
 	youloose->enableShadow(Color4B::BLACK, Size(0, 0), 1);
 	youloose->setPosition(0, 20);
+	youloose->setColor(Color3B::BLACK);
 	menuLoose->addChild(youloose);
 	menuLoose->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
 	menuLoose->setScale(1.25);
@@ -432,8 +443,8 @@ void InterfaceGame::initWinMenu(){
 	Sprite* mask2 = Sprite::create("res/buttons/centralMenuPanel.png");
 	menuWin->addChild(mask2);
 	menuWin->addChild(menuForWin);
-	Label* youwin = Label::createWithSystemFont("Level Cleared !", "fonts/ChalkDust.ttf", 28.f);
-	youwin->enableShadow(Color4B::BLACK, Size(0, 0), 1);
+	Label* youwin = Label::createWithTTF("Level Cleared !", "fonts/ChalkDust.ttf", 28.f);
+	youwin->enableShadow(Color4B::BLACK, Size(0, 0), 2);
 	youwin->setPosition(0, 20);
 	menuWin->addChild(youwin);
 	menuWin->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
@@ -552,7 +563,7 @@ void InterfaceGame::initRightPanel(){
 		sprite3->setPosition(Vec2((j % 2 - (j + 1) % 2)*(sizeTower / 2 + visibleSize.width / 96.0), 
 			visibleSize.height / 2 - sizeTower / 2 - visibleSize.width / 9.6 - (j / 2) * (sizeTower + visibleSize.width / 64)));
 		sprite4->setPosition(sprite3->getPosition());
-		sprite5->setPosition(sprite3->getPosition() + Vec2(sizeTower/10.0,sizeTower/2.0));
+		sprite5->setPosition(sprite3->getPosition() + Vec2(sizeTower/30.0,sizeTower/2.0));
 		sprite6->setPosition(sprite3->getPosition());
 
 		menuPanel->addChild(sprite3, 3);
@@ -571,7 +582,7 @@ void InterfaceGame::initRightPanel(){
 
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
 	cache->addSpriteFramesWithFile("res/turret/animations/archer.plist", "res/turret/animations/archer.png");
-	cache->addSpriteFramesWithFile("res/turret/animations/grill.plist", "res/turret/animations/grill.png");
+	cache->addSpriteFramesWithFile("res/turret/animations/cutter.plist", "res/turret/animations/cutter.png");
 
 	Sprite* image = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("archer_steady_movement_000.png"));
 	image->setScale((sizeButton / image->getBoundingBox().size.width));
@@ -587,15 +598,35 @@ void InterfaceGame::initRightPanel(){
 	infoTower->setAnchorPoint(Vec2(0, 0));
 	infoTower->setPosition(-round(visibleSize.width / 32.0), 0);
 
-	Label* descriptionTower = Label::createWithSystemFont("\n Cost:", "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 53.0));
+	Sprite* sugar = Sprite::create("res/buttons/sugar.png");
+	sugar->setScale(0.5);
+	sugar->setAnchorPoint(Point(0.0f, -0.5f));
+	sugar->setPosition(Vec2(-background->getContentSize().width*background->getScale() / 2 + visibleSize.width / 192.0,
+		-image->getContentSize().width * image->getScale() - visibleSize.width / 96.0));
+	Label* sugar_label = Label::createWithTTF("\n Cost:", "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 44.0));
+	sugar_label->setColor(Color3B::GREEN);
+	sugar_label->setPosition(Vec2(sizeButton*2/3.0-background->getContentSize().width*background->getScale() / 2 + visibleSize.width / 192.0,
+		sizeButton/3.0-image->getContentSize().width * image->getScale() - visibleSize.width / 96.0));
+	sugar_label->enableOutline(Color4B::BLACK, 1);
+
+	Label* descriptionTower = Label::createWithTTF("\n Cost:", "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 53.0));
 	descriptionTower->setDimensions(round(visibleSize.width / 4.44), round(visibleSize.width / 12.8));
 	descriptionTower->setColor(Color3B::BLACK);
 	descriptionTower->setAnchorPoint(Vec2(0, 0));
 	descriptionTower->setPosition(Vec2(-background->getContentSize().width*background->getScale() / 2 + visibleSize.width / 192.0,
 		-image->getContentSize().width * image->getScale() - visibleSize.width / 96.0));
+	Label* nextLevel = Label::createWithTTF("", "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 55.0));
+	nextLevel->setColor(Color3B::GREEN);
+	nextLevel->setPosition(round(visibleSize.width / 16.0), 0);
+	nextLevel->enableOutline(Color4B::BLACK, 1);
+	nextLevel->setAnchorPoint(Vec2(0,0));
+		
 
 	informationPanel->addChild(background,0,"background");
+	informationPanel->addChild(sugar_label,1,"sugar_label");
+	informationPanel->addChild(sugar,1,"sugar");
 	informationPanel->addChild(infoTower,1,"infoTower");
+	informationPanel->addChild(nextLevel,1,"nextLevel");
 	informationPanel->addChild(descriptionTower, 1, "DescriptionTower");
 	informationPanel->addChild(spriteBatchNode, 1, "Animation");
 	informationPanel->setPosition(0, -visibleSize.height * 4.0 / 15.0 );
@@ -641,10 +672,14 @@ void InterfaceGame::displayTowerInfos(std::string itemName){
 	cocos2d::Vector<SpriteFrame*> attackFrames;
 	cocos2d::Vector<SpriteFrame*> steadyFrames;
 	cocos2d::Vector<SpriteFrame*> staticFrames;
+	std::string firstFrame;
+	
+	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
 	
 	SpriteBatchNode* spriteBatchNode;
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+	int required_quantity(0);
 	if(selectedTurret == nullptr){
 		((Label*)informationPanel->getChildByName("infoTower"))->setString("Damages: " +
 			Tower::getConfig()[itemName]["damages"].asString() + " \nSpeed: " +
@@ -652,34 +687,57 @@ void InterfaceGame::displayTowerInfos(std::string itemName){
 			Tower::getConfig()[itemName]["range"].asString());
 
 		((Label*)informationPanel->getChildByName("DescriptionTower"))->setString(
-			Tower::getConfig()[itemName]["description"].asString() + "\nCost: " +
+			Tower::getConfig()[itemName]["description"].asString());
+		
+		((Label*)informationPanel->getChildByName("sugar_label"))->setString(
 			Tower::getConfig()[itemName]["cost"].asString());
+		required_quantity = Tower::getConfig()[itemName]["cost"].asDouble();
 		attackFrames = Tower::getAnimationFromName(itemName, Tower::ATTACKING);
 		steadyFrames = Tower::getAnimationFromName(itemName, Tower::IDLE);
 		staticFrames.pushBack(steadyFrames.front());
 		staticFrames.pushBack(steadyFrames.front());
 		spriteBatchNode = SpriteBatchNode::create(Tower::getConfig()[itemName]["animation"].asString());
+		firstFrame = Tower::getConfig()[itemName]["image"].asString();
+		informationPanel->getChildByName("nextLevel")->setVisible(false);
 	}
 	else{
+		int next_L = selectedTurret->getLevel() + 1;
 		((Label*)informationPanel->getChildByName("infoTower"))->setString("Level: " +
-			to_string(selectedTurret->getLevel()) +" ->"+to_string(selectedTurret->getLevel()+1) +
+			to_string(selectedTurret->getLevel()) +
 			"\nDamages: " + to_string(round(selectedTurret->getDamage()*10)/10) +" \nSpeed: " +
 			to_string(round(selectedTurret->getAttackSpeed()*10)/10) + "\nRange: " +
 			to_string(round(selectedTurret->getRange()*10)/10));
+		((Label*)informationPanel->getChildByName("nextLevel"))->setString(
+			" ->"+to_string(next_L) + "\n ->" + to_string(round((1+selectedTurret->getNextLevelDamage())*
+			selectedTurret->getDamage()*10)/10) +"\n ->" + to_string(round((1+selectedTurret->getNextLevelSpeed())*
+			selectedTurret->getAttackSpeed()*10)/10) + "\n ->" + to_string(round((1+selectedTurret->getNextLevelRange())*
+			selectedTurret->getRange()*10)/10) );
 
 		((Label*)informationPanel->getChildByName("DescriptionTower"))->setString(
 			selectedTurret->getSpecConfig()["description"].asString());
+		((Label*)informationPanel->getChildByName("sugar_label"))->setString(
+			to_string(selectedTurret->getCost() * 0.5 * (selectedTurret->getLevel() + 1)));
+		required_quantity = selectedTurret->getCost() * 0.5 * (selectedTurret->getLevel() + 1);
 		attackFrames = selectedTurret->getAnimation(Tower::ATTACKING);
 		steadyFrames = selectedTurret->getAnimation(Tower::IDLE);
 		staticFrames.pushBack(steadyFrames.front());
 		staticFrames.pushBack(steadyFrames.front());
 		spriteBatchNode = SpriteBatchNode::create(selectedTurret->getSpecConfig()["animation"].asString());
+		firstFrame = selectedTurret->getSpecConfig()["image"].asString();
+		informationPanel->getChildByName("nextLevel")->setVisible(true);
 	}
-	
+	if (game->getLevel()->getQuantity() < required_quantity){
+		((Label*)informationPanel->getChildByName("sugar_label"))->setColor(Color3B::RED);
+	}
+	else{
+		((Label*)informationPanel->getChildByName("sugar_label"))->setColor(Color3B::GREEN);
+	}
+	Sprite* image2 = Sprite::create(firstFrame);
 	Sprite* image = Sprite::createWithSpriteFrame(staticFrames.front());
+	
 	spriteBatchNode->addChild(image);
 	
-	image->setScale((sizeButton / image->getBoundingBox().size.width) );
+	image->setScale((sizeButton / image2->getBoundingBox().size.width) );
 	//spriteBatchNode->setScale(0.5);
 
 	Node* background = informationPanel->getChildByName("background");

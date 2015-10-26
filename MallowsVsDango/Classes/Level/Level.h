@@ -18,33 +18,19 @@ Like a specific screen with all the caracteristics. It's an abstract class.
 std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
 std::vector<std::vector<std::string>> readMapFromCSV(std::string filename);
 std::vector<std::string> readPathFromCSV(std::string filename);
+bool sortZOrder(cocos2d::Sprite* sprite1, cocos2d::Sprite* sprite2);
 typedef unsigned int Quantity;
 
 class Level : public cocos2d::Layer
 {
 	
 public:
-	/*enum State{
+	enum State{
 		TITLE,
 		STARTING,
 		RUNNING,
 		DONE
-	};*/
-	/*enum TitleState{
-		titleDown,
-		titleBouncing1,
-		titleBouncing2,
-		marshmallowBouncing3,
-		dangoStart,
-		dangoBouncing1,
-		dangoBouncing2,
-		dangoBouncing3,
-		vsStart,
-		flashStart,
-		flashEnd,
-		menuShow,
-		finished
-	};*/
+	};
 	Level(int nLevel);
 	virtual ~Level();
 	static Level* create(int nLevel);
@@ -55,8 +41,11 @@ public:
 	void setSize(cocos2d::Size nsize);
 	bool isFinished();
 	bool isLoaded();
+	bool isPaused();
 	Quantity getQuantity();
 	Quantity getLife();
+	bool getTotalExperience();
+	int getLevelId();
 	void increaseQuantity(Quantity add);
 	bool decreaseQuantity(Quantity removed);
 	virtual void pause();
@@ -86,10 +75,13 @@ protected:
 	bool loaded;
 	cocos2d::Point start;
 	cocos2d::Point end;
+	int zGround;
 	Quantity sugar;
 	Quantity life;
 	DangoGenerator* generator;	
-	//State state;
+	State state;
+	double timer;
+	int experience;
 	
 
 	void createPath(std::vector<std::vector<std::string>> );

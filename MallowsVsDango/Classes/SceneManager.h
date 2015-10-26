@@ -15,9 +15,7 @@ public:
 	{
 		MENU = 0,
 		GAME = 1,
-		SCORE = 2,
-		SETTINGS = 3,
-		LOADING = 4
+		LEVELS = 2
 	};
 
 	//Constructor & destructor

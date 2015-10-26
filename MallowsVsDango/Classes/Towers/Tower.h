@@ -7,26 +7,26 @@
 
 class Cell;
 class Dango;
-class Scorpion;
-class Grill;
 
 class Tower : public cocos2d::Sprite{
 
 public:
 	enum State{
 		IDLE = 0,
-		ATTACKING = 1,
-		RELOADING = 2,
-		BLINKING_UP = 3,
-		BLINKING_DOWN = 4
+		AWARE,
+		ATTACKING,
+		RELOADING,
+		BLINKING_UP,
+		BLINKING_DOWN 
 	};
 
 	enum TowerType{
 		ARCHER,
-		GRILL
+		CUTTER
 	};
 
-	Tower(double nspeed, double ndamage, double nrange, double ncost);
+	Tower(double nspeed, double ndamage, double nrange, double ncost,
+		double nd_damage, double nd_range, double nd_speed);
 	virtual ~Tower();
 	void initDebug();
 
@@ -37,11 +37,14 @@ public:
 	void setSelected(bool select);
 	bool hasToBeDestroyed();
 	double getRange();
+	double getNextLevelRange();
 	double getCost();
 	Dango* getTarget();
 	double getDamage();
-	int getLevel();
+	double getNextLevelDamage();
 	double getAttackSpeed();
+	double getNextLevelSpeed();
+	int getLevel();
 	Tower::State getState();
 	void setState(Tower::State state);
 	void setTarget(Dango* dango);
@@ -82,17 +85,22 @@ protected:
 	// Characteristics
 	double cost;
 	double attackSpeed;
+	double d_speed;
 	double damage;
+	double d_damage;
 	double range;
+	double d_range;
 	double timer;
+	double timerIDLE;
 	int level;
 	
 	//
 	cocos2d::DrawNode* loadingCircle;
 	cocos2d::Action* currentAction;
+	cocos2d::Animation currentAnimation;
 	
 	//methods
-	void shoot();
+	virtual void attack() = 0;
 	void startAnimation();
 	
 };
