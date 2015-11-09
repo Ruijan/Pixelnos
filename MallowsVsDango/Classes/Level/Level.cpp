@@ -1,6 +1,7 @@
 #include "Level.h"
 #include "../AppDelegate.h"
-#include "Config/json.h"
+#include "../Config/json.h"
+#include "../Functions.h"
 #include <fstream>
 
 USING_NS_CC;
@@ -26,14 +27,9 @@ bool Level::init()
 	
 	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id];
 	
-	std::string folder("");
-	if(CC_TARGET_PLATFORM == CC_PLATFORM_LINUX){
-		folder = "Resources/";
-	}
-	
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::vector<std::vector<std::string>> table_map = readMapFromCSV(folder + config["map"].asString());
-	std::vector<std::vector<std::string>> table_path = readMapFromCSV(folder + config["path"].asString());
+	std::vector<std::vector<std::string>> table_map = readMapFromCSV(config["map"].asString());
+	std::vector<std::vector<std::string>> table_path = readMapFromCSV(config["path"].asString());
 	
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
 	cache->addSpriteFramesWithFile(config["tileset"].asString(), config["tilesetpng"].asString());
@@ -41,22 +37,14 @@ bool Level::init()
 	size.width = table_map[0].size();
 	size.height = table_map.size();
 	
-	std::ifstream ifs;
-	std::string filename = config["tilemaptable"].asString();
+	auto fileUtils = FileUtils::getInstance();
+	std::string tilemaptable = fileUtils->getStringFromFile(config["tilemaptable"].asString());
+
 	Json::Value root;   // will contains the root value after parsing.
 	Json::Reader reader;
 	bool parsingSuccessful(false);
-	if(CC_TARGET_PLATFORM == CC_PLATFORM_LINUX){
-		filename = "Resources/" + filename;
-	}
-	if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID){
-		std::string document = "{\"towers\":{\"archer\":{\"name\":\"archer\",\"description\":\"Archer:Thismallowisalongdistanceattacker.\",\"attack_speed\":1.5,\"damages\":1,\"range\":120,\"cost\":30,\"image\":\"res/turret/tower.png\",\"image_menu\":\"res/turret/tower_menu.png\",\"image_menu_disable\":\"res/turret/tower_menu_disable.png\",\"animation\":\"res/turret/animations/archer.png\",\"animation_size\":15,\"animation_steady_size\":3},\"grill\":{\"name\":\"grill\",\"description\":\"FlameThrower:Selectatargetandburnitovertime.\",\"attack_speed\":2.5,\"damages\":1,\"range\":80,\"cost\":50,\"image\":\"res/turret/grill.png\",\"image_menu\":\"res/turret/grill_menu.png\",\"image_menu_disable\":\"res/turret/grill_menu_disable.png\",\"animation\":\"res/turret/animations/grill.png\",\"animation_size\":1,\"animation_steady_size\":4}},\"dangos\":{\"dango\":{\"speed\":100,\"hitpoints\":2}},\"levels\":{\"level1\":{\"generator\":\"res/level1_generator.json\",\"sugar\":40}}}";
-		parsingSuccessful = reader.parse(document, root, false);
-	}
-	else{
-		ifs.open(filename, std::ifstream::binary);
-		parsingSuccessful = reader.parse(ifs, root, false);
-	}
+	parsingSuccessful = reader.parse(tilemaptable, root, false);
+
 	if (!parsingSuccessful)
 	{
 		// report to the user the failure and their locations in the document.
@@ -68,10 +56,9 @@ bool Level::init()
 		std::vector<Cell*> row;
 		for (int j(0); j < size.height; ++j){
 			std::string::size_type sz;
-			int i_dec = std::stoi (table_map[j][i],&sz,10);
+			int i_dec = Value(table_map[j][i]).asInt();
 			std::string filename = root["frames"][i_dec]["filename"].asString();
-			//std::string filename = "grass8.png";
-			
+
 			Cell* cell = Cell::create(filename);
 			if (table_path[j][i] == "s"){
 				start = Point(j,i);
@@ -82,10 +69,6 @@ bool Level::init()
 			row.push_back(cell);
 			cell->setPosition(Vec2((i + 0.5) * Cell::getCellWidth() , (size.height - j - 1 + 0.5) * Cell::getCellHeight())); 
 			cell->setVisible(false);
-			/*if(i == 4)
-			{
-				cell->setPosition(Vec2( 0.5 * Cell::getCellHeight() , (size.height - j - 1 + 0.5) * Cell::getCellHeight())); 
-			}*/
 			
 			addChild(cell);
 		}
@@ -97,7 +80,7 @@ bool Level::init()
 	setAnchorPoint(Vec2(0, 0));
 	setPosition(Vec2(0, 0));
 	
-	Label* title = Label::createWithTTF("Level " + std::to_string(id), "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 12.0));
+	Label* title = Label::createWithTTF("Level " + Value(id).asString(), "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 12.0));
 	title->setColor(Color3B::YELLOW);
 	title->enableOutline(Color4B::BLACK,3);
 	title->setPosition(round(visibleSize.width * 3 / 8.0), round(visibleSize.height / 2.0));
@@ -116,7 +99,7 @@ bool Level::init()
 	
 	TMXTiledMap* tileMap = new  TMXTiledMap();
     tileMap->initWithTMXFile("res/map/level1v2.tmx");
-    Sprite* filter = Sprite::create("res/map/background.png");
+    Sprite* filter = Sprite::create("res/map/background2.png");
     //filter->setScale(2);
     filter->setAnchorPoint(Vec2(0,0));
     //addChild(background);
@@ -134,7 +117,6 @@ bool Level::init()
 		addChild(obj);
 		elements.push_back(obj);
 	}
-	
 	std::sort (elements.begin(), elements.end(), sortZOrder);
 	int i = 1;
 	for(auto& element : elements){
@@ -223,7 +205,7 @@ void Level::update(float dt)
 						}
 						removeChild(dango);
 						dango = nullptr;
-						std::cerr << "Dango Destroyed !" << dangos.size()<< std::endl;
+						//std::cerr << "Dango Destroyed !" << dangos.size()<< std::endl;
 					}
 				}
 				
@@ -245,7 +227,7 @@ void Level::update(float dt)
 							}
 						}
 						removeChild(tower);
-						std::cerr << "Tower Destroyed !" << std::endl;
+						//std::cerr << "Tower Destroyed !" << std::endl;
 						tower = nullptr;
 					}
 				}
@@ -253,10 +235,10 @@ void Level::update(float dt)
 				
 				for (auto& bullet: bullets){
 					bullet->update(dt);
-					if(bullet->hasTouched()){
+					if(bullet->isDone()){
 						removeChild(bullet);
 						bullet = nullptr;
-						std::cerr << "Bullet Destroyed !" << std::endl;
+						//std::cerr << "Bullet Destroyed !" << std::endl;
 					}
 				}
 				bullets.erase(std::remove(bullets.begin(), bullets.end(), nullptr), bullets.end());
@@ -312,7 +294,7 @@ bool Level::isLoaded(){
 bool Level::isPaused(){
 	return paused;
 }
-bool Level::getTotalExperience(){
+int Level::getTotalExperience(){
 	return experience;
 }
 
@@ -384,6 +366,7 @@ std::vector<Cell*> Level::getPath(){
 
 void Level::addDango(Dango* dango){
 	dangos.push_back(dango);
+	dango->setVisible(true);
 	addChild(dango);
 }
 
@@ -482,43 +465,27 @@ Tower* Level::touchingTower(cocos2d::Vec2 position){
 }
 
 std::vector<std::string> readPathFromCSV(std::string filename){
-	std::ifstream myfile(filename);
+	auto fileUtils = FileUtils::getInstance();
+	std::string pathtable = fileUtils->getStringFromFile(filename);
 	std::vector<std::string> table_map;
-	std::string line;
-	if(myfile.is_open()){
-		while ( getline (myfile,line) ){
-			table_map.push_back(line);
-		}
-		myfile.close();
-	}
-	else std::cout << "Unable to open file";
-  return table_map;
-	
+	split(pathtable,'\n',table_map);
+	return table_map;
 }
 
 
 std::vector<std::vector<std::string>> readMapFromCSV(std::string filename){
-	std::ifstream myfile(filename);
+
+	auto fileUtils = FileUtils::getInstance();
+	std::string tilemaptable = fileUtils->getStringFromFile(filename);
 	std::vector<std::vector<std::string>> table_map;
-	std::string line;
-	if(myfile.is_open()){
-		while ( getline (myfile,line) ){
-			std::vector<std::string> elems;
-			split(line, ',', elems);
-			table_map.push_back(elems);
-		}
-		myfile.close();
+	std::vector<std::string> lines;
+	split(tilemaptable,'\n',lines);
+	for(int i(0); i < lines.size(); ++i){
+		std::vector<std::string> elems;
+		split(lines[i], ',', elems);
+		table_map.push_back(elems);
 	}
-	else std::cout << "Unable to open file";
-  return table_map;
+	return table_map;
 	
 }
 
-std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
-    std::stringstream ss(s);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        elems.push_back(item);
-    }
-    return elems;
-}

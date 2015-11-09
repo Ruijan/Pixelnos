@@ -8,14 +8,12 @@ USING_NS_CC;
 bool MainMenu::init()
 {
 	if (!Scene::init()){ return false; }
-		
-	Label* start_label = Label::createWithTTF("START", "fonts/LICABOLD.ttf", 75.f);
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Label* start_label = Label::createWithTTF("START", "fonts/LICABOLD.ttf", 75.f * visibleSize.width / 960);
 	MenuItemLabel* start = MenuItemLabel::create(start_label, CC_CALLBACK_1(MainMenu::menuContinueCallback, this));
 	start_label->setColor(Color3B::YELLOW);
 	start_label->enableOutline(Color4B::ORANGE,3);
 	
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::cerr << visibleSize.width << " / " << visibleSize.height << std::endl;
 	Point origin = Director::getInstance()->getVisibleOrigin();
 
 	menu = Menu::createWithItem(start);
@@ -172,9 +170,9 @@ void MainMenu::menuContinueCallback(Ref* sender){
 
 void MainMenu::onEnter(){
 	Scene::onEnter();
-	if (SceneManager::getInstance()->getGame()->isLaunched()){
+	/*if (SceneManager::getInstance()->getGame()->isLaunched()){
 		menu->getChildren().at(0)->setVisible(true);
-	}
+	}*/
 }
 
 void MainMenu::onEnterTransitionDidFinish(){

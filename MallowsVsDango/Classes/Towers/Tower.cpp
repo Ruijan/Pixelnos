@@ -3,7 +3,6 @@
 #include "../Dangos/Dango.h"
 #include "../Towers/Bullet.h"
 #include "../AppDelegate.h"
-#include <iostream>
 
 USING_NS_CC;
 
@@ -45,7 +44,6 @@ void Tower::initDebug(){
 		0, 60, false, 1, 1, Color4F(0, 0, 0, 1));
 	circle->setVisible(false);
 	addChild(circle, 0, "range");
-	std::cerr << "range has been added" << std::endl;
 }
 
 
@@ -88,7 +86,7 @@ bool Tower::isSelected(){
 }
 
 void Tower::chooseTarget(std::vector<Dango*> targets){
-	if(state != State::ATTACKING){
+	if(state != State::ATTACKING && state != State::RELOADING){
 		double bestScore(0);
 		bool chosen = false;
 
@@ -109,6 +107,12 @@ void Tower::chooseTarget(std::vector<Dango*> targets){
 			target = nullptr;
 		}
 	}
+	else if(state == State::RELOADING){
+		target = nullptr;
+	}
+}
+void Tower::givePDamages(double damage){
+	target->takePDamages(damage);
 }
 
 double Tower::getRange(){
@@ -163,8 +167,7 @@ cocos2d::Vector<SpriteFrame*> Tower::getAnimation(Tower::State animState){
 	cocos2d::Vector<SpriteFrame*> animFrames;
 
 	char str[100] = { 0 };
-	for (int i = 0; i <= animation_size; ++i)
-	{
+	for (int i = 0; i <= animation_size; ++i){
 		std::string frameName =  getSpecConfig()["name"].asString()+"_"+action+"_movement_%03d.png";
 		sprintf(str, frameName.c_str(), i);
 		SpriteFrame* frame = cache->getSpriteFrameByName(str);
@@ -220,7 +223,7 @@ void Tower::update(float dt) {
 				timerIDLE += dt;
 				if (target != nullptr){
 					state = State::ATTACKING;
-					target->takePDamages(damage);
+					givePDamages(damage);
 					startAnimation();
 				}
 				if(timerIDLE > 2){
@@ -235,7 +238,7 @@ void Tower::update(float dt) {
 					state = State::RELOADING;
 					std::string frameName =  getSpecConfig()["name"].asString()+"_attack_movement_000.png";
 					SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-					setDisplayFrame(cache->getSpriteFrameByName(frameName.c_str()));
+					setSpriteFrame(cache->getSpriteFrameByName(frameName.c_str()));
 					timer = 0;
 					if(target != nullptr){
 						attack();
@@ -290,11 +293,8 @@ bool Tower::hasToBeDestroyed(){
 }
 
 void Tower::displayRange(bool disp){
-	std::cerr << "ok1" << std::endl;
 	getChildByName("range")->setVisible(disp);
-	std::cerr << "ok2" << std::endl;
 	loadingCircle->setVisible(disp);
-	std::cerr << "ok4" << std::endl;
 }
 
 

@@ -14,6 +14,7 @@ private:
 
 public:
 	Config(std::string configfilename, std::string savename);
+	void init();
 	Json::Value const getConfigValues() const;
 	bool isSaveFile() const;
 	Json::Value const getSaveValues() const;

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="153.57143"
+   height="114.28571"
+   id="svg3866"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="New document 7">
+  <defs
+     id="defs3868" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="-176.78571"
+     inkscape:cy="-277.14286"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="438"
+     inkscape:window-height="409"
+     inkscape:window-x="0"
+     inkscape:window-y="370"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata3871">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-551.78571,-140.93361)">
+    <path
+       style="fill:#ffffbe;fill-opacity:1;stroke:none"
+       d="m 551.78571,140.93361 75.71429,37.14286 57.14286,-25 -36.07143,41.42857 56.78571,60.71428 L 625,215.57647 l -51.78572,19.64285 33.21429,-35.71428 z"
+       id="rect3073"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccc"
+       inkscape:export-filename="/home/ruijan/Pixelnos/MallowsVsDango/Resources/res/turret/animation/bullet_cut.png"
+       inkscape:export-xdpi="89.875404"
+       inkscape:export-ydpi="89.875404" />
+  </g>
+</svg>

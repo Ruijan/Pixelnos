@@ -1,72 +1,17 @@
 #include "Dango.h"
 #include "../Level/Cell.h"
 #include "../AppDelegate.h"
-#include <iostream>
 
 USING_NS_CC;
 
-Dango::Dango(std::vector<Cell*> npath, 
-	double nspeed = Dango::getConfig()["speed"].asDouble(), 
-	double hp = Dango::getConfig()["hitpoints"].asDouble()) : 
-	path(npath), targetedCell(0), speed(nspeed), hitPoints(hp), 
+Dango::Dango(std::vector<Cell*> npath, double nspeed, double hp, int nlevel) :
+	path(npath), targetedCell(0), speed(nspeed), hitPoints(hp), level(nlevel),
 	cAction(nullptr), cDirection(RIGHT), pDamages(0.0), state(IDLE), timer(0) {
-	//move = nullptr;
-	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-	cache->addSpriteFramesWithFile("res/dango/animations/dango1.plist", "res/dango/animations/dango1.png");
 }
 
 Dango::~Dango() { 
-	std::cerr << "Dango Destroyed ! confirmed !" << std::endl;
+	//std::cerr << "Dango Destroyed ! confirmed !" << std::endl;
 }
-
-Dango* Dango::create(std::string image, std::vector<Cell*> npath)
-{
-	Dango* pSprite = new Dango(npath);
-
-	if (pSprite->initWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName(image)))
-	{
-		pSprite->setScale(Cell::getCellWidth() / pSprite->getContentSize().width);
-		pSprite->autorelease();
-
-		pSprite->initOptions();
-		pSprite->setAnchorPoint(Point(0.5,0.25));
-		pSprite->updateAnimation();
-		//Label* pv = createWith
-		/*Node* healthBar = Node::create();
-		for(int i(0); i < pSprite->getHitPoints(); ++i){
-			auto rectNode = DrawNode::create();
-			
-			Vec2 rectangle[4];
-			int shift1(25);
-			int width(10);
-			int height(15);
-			int shift2(pSprite->getSpriteFrame()->getRect().size.height);
-			rectangle[0] = Vec2(-width+i*shift1, -height + shift2);
-			rectangle[1] = Vec2(width+i*shift1, -height + shift2);
-			rectangle[2] = Vec2(width+i*shift1, height + shift2);
-			rectangle[3] = Vec2(-width+i*shift1, height + shift2);
-
-			Color4F green(0, 1, 0, 1);
-			Color4F black(0, 0, 0, 1);
-			rectNode->drawPolygon(rectangle, 4, green, 0, black);
-			healthBar->addChild(rectNode,0,i);
-			
-		}
-		pSprite->addChild(healthBar,0,1);*/
-
-		return pSprite;
-	}
-
-	CC_SAFE_DELETE(pSprite);
-	return NULL;
-}
-
-
-void Dango::initOptions()
-{
-	// do things here like setTag(), setPosition(), any custom logic.
-}
-
 
 void Dango::update(float dt) {
 	move(dt);
@@ -127,24 +72,24 @@ void Dango::updateAnimation(){
 		stopAction(cAction);
 	}
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-	
-	std::string preString;
+	std::string preString(getSpecConfig()["level"][level]["name"].asString());
+	log("prestring %s", preString.c_str());
 	double x = this->getScaleX();
 	switch(cDirection){
 		case UP:
-			preString = "dango1_ju_";
+			preString += "_ju_";
 			break;
 		case RIGHT:
 			this->setScaleX(((x > 0) - (x < 0))* x);
-			preString = "dango1_j_";
+			preString += "_j_";
 			break;
 		case LEFT:
 			this->setScaleX(-((x > 0) - (x < 0))*x);
-			preString = "dango1_j_";
+			preString += "_j_";
 			break;
 		case DOWN:
 			this->setScaleX(-((x > 0) - (x < 0))*x);
-			preString = "dango1_jd_";
+			preString += "_jd_";
 			break;
 	}
 	cocos2d::Vector<SpriteFrame*> animFrames;
@@ -154,7 +99,6 @@ void Dango::updateAnimation(){
 		SpriteFrame* frame = cache->getSpriteFrameByName(str);
 		animFrames.pushBack(frame);
 	}
-	//Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.041f);
 	Animation* animation = Animation::createWithSpriteFrames(animFrames, 
 		Cell::getCellWidth() / getSpeed() / 24 * 1.1);
 	cAction = runAction(RepeatForever::create(Animate::create(animation)));
@@ -165,7 +109,7 @@ double Dango::getHitPoints(){
 }
 
 double Dango::getGain(){
-	return ((AppDelegate*)Application::getInstance())->getConfig()["dangos"]["dango"]["gain"].asDouble();
+	return getSpecConfig()["level"][level]["gain"].asDouble();
 }
 
 void Dango::takeDamages(double damages){
@@ -176,10 +120,6 @@ void Dango::takeDamages(double damages){
 	if(hitPoints < 0){
 		hitPoints = 0;
 	}
-	/*for(int i(damages-1); i >= 0; --i){
-		getChildByTag(1)->removeChild(getChildByTag(1)->getChildByTag(hitPoints+i));
-	}*/
-	
 }
 
 void Dango::takePDamages(double damages){
@@ -203,7 +143,7 @@ bool Dango::isDone(){
 }
 
 Json::Value Dango::getConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfig()["dangos"]["dango"];
+	return ((AppDelegate*)Application::getInstance())->getConfig()["dangos"];
 }
 
 int Dango::getTargetedCell(){

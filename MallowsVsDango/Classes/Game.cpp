@@ -34,7 +34,10 @@ bool Game::init()
 	{
 		return false;
 	}
-
+	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
+	cache->addSpriteFramesWithFile("res/turret/animations/archer.plist", "res/turret/animations/archer.png");
+	cache->addSpriteFramesWithFile("res/turret/animations/cutter.plist", "res/turret/animations/cutter.png");
+	
 	cLevel = nullptr;
 	menu = nullptr;
 	load();
@@ -54,11 +57,13 @@ bool Game::initLevel(int level_id){
 		menu->reset();
 	}
 	acceleration = 1.0;
+	return true;
 }
 
 void Game::onEnterTransitionDidFinish(){
 	Scene::onEnterTransitionDidFinish();
 	scheduleUpdate();
+	menu->setListening(true);
 	if (!launched){
 		launched = true;
 	}
@@ -170,8 +175,10 @@ bool Game::save(){
 	root["exp"] = experience;
 	((AppDelegate*)Application::getInstance())->getConfigClass().setSave(root);
 	((AppDelegate*)Application::getInstance())->getConfigClass().save();
+	return true;
 }
 
 bool Game::load(){
 	experience = ((AppDelegate*)Application::getInstance())->getSave()["exp"].asInt();
+	return true;
 }

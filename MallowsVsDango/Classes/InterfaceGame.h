@@ -34,6 +34,7 @@ public:
 	void menuTurretTouchCallback(Tower::TowerType turret);
 	void reloadCallback(cocos2d::Ref* sender);
 	void accelerateOnOffCallback(Ref* sender);
+	void setListening(bool listening);
 	
 	void touchEvent(cocos2d::Touch* touch, cocos2d::Vec2 point);
 
@@ -52,7 +53,7 @@ public:
 
 private:
 	
-	std::unordered_map<std::string, cocos2d::Sprite*> turretsMenu;
+	std::unordered_map<std::string, std::pair<cocos2d::Sprite*, cocos2d::Sprite*>> turretsMenu;
 	cocos2d::Menu* menuOpen;
 	cocos2d::Node* menuLoose;
 	cocos2d::Node* menuWin;
@@ -61,6 +62,7 @@ private:
 	cocos2d::Node* informationPanel;
 	cocos2d::Node* menuPanel;
 	cocos2d::DrawNode* blackMask;
+	cocos2d::EventListenerTouchOneByOne* listener;
 
 	Game* game;
 	State state;
@@ -78,11 +80,13 @@ protected:
 	void initRightPanel();
 	void initLabels();
 	void displayTowerInfos(std::string itemName);
+	void resetTowerMenu();
 
 	void destroyCallback(Ref* sender);
 	void builtCallback(Ref* sender);
 	void upgradeCallback(Ref* sender);
-	std::pair<std::string, cocos2d::Sprite*> getTowerFromPoint(cocos2d::Vec2 location);
+	std::pair<std::string, std::pair<cocos2d::Sprite*, cocos2d::Sprite*>> getTowerFromPoint(cocos2d::Vec2 location);
+	void displayTowerMenu(cocos2d::Sprite*);
 	
 
 };

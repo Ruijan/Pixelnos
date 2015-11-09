@@ -6,14 +6,14 @@ USING_NS_CC;
 SceneManager *SceneManager::manager;
 
 SceneManager::SceneManager(){
-	cacheScene[GAME] = Game::create();
-	cacheScene[GAME]->retain();
 	cacheScene[MENU] = MainMenu::create();
 	cacheScene[MENU]->retain();
+	cacheScene[GAME] = Game::create();
+	cacheScene[GAME]->retain();
 	cacheScene[LEVELS] = StoryMenu::create();
 	cacheScene[LEVELS]->retain();
 
-	currentscene = cacheScene[LEVELS];
+	currentscene = cacheScene[MENU];
 	Director::getInstance()->runWithScene(currentscene);
 }
 

@@ -36,30 +36,42 @@ Json::Value Cutter::getSpecConfig(){
 }
 
 void Cutter::chooseTarget(std::vector<Dango*> targets){
-	otherTargets.clear();
-	for(auto cTarget : targets){
-		if(cTarget != nullptr){
-			int first = cTarget->getTargetedCell();
-			double dist = cTarget->getPosition().distanceSquared(this->getPosition());
-			double minDist = pow(getRange() + sqrt((pow(Cell::getCellWidth() * 3 / 8.0, 2) +
-				pow(Cell::getCellHeight() * 3 / 8.0, 2))), 2);
-			if (dist < minDist){
-				otherTargets.push_back(cTarget);
+	if(state != State::ATTACKING && state != State::RELOADING){
+		otherTargets.clear();
+		for(auto cTarget : targets){
+			if(cTarget != nullptr){
+				int first = cTarget->getTargetedCell();
+				double dist = cTarget->getPosition().distanceSquared(this->getPosition());
+				double minDist = pow(getRange() + sqrt((pow(Cell::getCellWidth() * 3 / 8.0, 2) +
+					pow(Cell::getCellHeight() * 3 / 8.0, 2))), 2);
+				if (dist < minDist && cTarget->willBeAlive()){
+					otherTargets.push_back(cTarget);
+				}
 			}
 		}
+		if(otherTargets.size() > 0){
+			target = otherTargets[0];
+		}
+		else{
+			target = nullptr;
+		}
 	}
-	if(otherTargets.size() > 0){
-		target = otherTargets[0]; 
-	}
-	else{
-		target = nullptr;
+	else if(state == State::RELOADING){
+			target = nullptr;
+		}
+}
+
+void Cutter::givePDamages(double damage){
+	for (auto& cTarget : otherTargets){
+		cTarget->takePDamages(damage);
 	}
 }
 
 void Cutter::attack(){
 	for (auto& cTarget : otherTargets){
 		if (cTarget != nullptr){
-			Bullet* bullet = Bullet::create("res/turret/bullet.png", cTarget, damage,500,true);
+			Bullet* bullet = Bullet::create("res/turret/bullet.png", cTarget, damage,500,false);
+			bullet->setOwner("cutter");
 			bullet->setPosition(cTarget->getPosition());
 			bullet->setVisible(false);
 			SceneManager::getInstance()->getGame()->getLevel()->addBullet(bullet);

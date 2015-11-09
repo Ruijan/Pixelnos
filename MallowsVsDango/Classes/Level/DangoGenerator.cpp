@@ -1,8 +1,8 @@
 #include "DangoGenerator.h"
 #include "Level.h"
 #include "../Config/json.h"
-#include <iostream>
-#include <fstream>
+
+USING_NS_CC;
 
 DangoGenerator::DangoGenerator(): timer(0),step(0),cWave(0){
 
@@ -15,35 +15,22 @@ DangoGenerator* DangoGenerator::createWithFilename(std::string filename){
 	Json::Value root;   // will contains the root value after parsing.
 	Json::Reader reader;
 	bool parsingSuccessful(false);
-
-
-	if(CC_TARGET_PLATFORM == CC_PLATFORM_LINUX){
-		filename = "Resources/" + filename;
-	}
-	if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID){
-		std::string document = "{\"nbwaves\":3,\"dangosChain\":[[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]],\"dangosTime\":[[2,2,2,2,2,2,2,2,2,2],[2,0.75,2,0.75,2,0.75,2,0.75,2,0.75],[3,0.75,0.75,3,0.75,0.75,4,0.75,0.75,0.75]]}";
-		parsingSuccessful = reader.parse(document, root, false);
-	}
-	else{
-		std::ifstream ifs;
-		ifs.open(filename, std::ifstream::binary);
-		parsingSuccessful = reader.parse(ifs, root, false);
-	}
+	auto fileUtils = FileUtils::getInstance();
+	std::string document = fileUtils->getStringFromFile(filename);
+	parsingSuccessful = reader.parse(document, root, false);
 		
 	if (!parsingSuccessful)
 	{
 		// report to the user the failure and their locations in the document.
 		std::string error = reader.getFormattedErrorMessages();
-		//CCLOG(error.c_str());
-		//CCLOG("Failed to parse configuration\n");
-		std::cerr << error<<std::endl;
+		log("error : %s",error.c_str());
 		return nullptr;
 	}
 	else{
 		for (unsigned int i(0); i < root["nbwaves"].asInt(); ++i){
 			generator->addWave();
 			for (unsigned int j(0); j < root["dangosChain"][i].size(); ++j){
-				generator->addStep(root["dangosChain"][i][j].asInt(), root["dangosTime"][i][j].asDouble(),i);
+				generator->addStep(root["dangosChain"][i][j].asString(), root["dangosTime"][i][j].asDouble(),i);
 			}
 		}
 	}
@@ -51,34 +38,27 @@ DangoGenerator* DangoGenerator::createWithFilename(std::string filename){
 	return generator;
 }
 
-DangoGenerator* DangoGenerator::createWithDefaultValues(){
-	DangoGenerator* generator = new DangoGenerator();
-	/*generator->addStep(0, 2.0);
-	generator->addStep(0, 2.0);
-	for(int i(0); i < 10; ++i){
-		generator->addStep(0,1.0);
-	}
-	for(int i(0); i < 10; ++i){
-		generator->addStep(0,0.5);
-	}
-	for(int i(0); i < 10; ++i){
-		generator->addStep(0,0.1);
-	}*/
-	return generator;
-}
 
 void DangoGenerator::update(double dt, Level* level){
 	timer += dt;
 	if (step < sequenceTimer[cWave].size()){
 		if (timer > sequenceTimer[cWave][step]){
-			if (step < sequenceTimer[cWave].size() - 1){
+			if (step < sequenceTimer[cWave].size()){
 				Dango* dango(nullptr);
-				switch (sequenceDango[cWave][step]){
-					case 0:
-						dango = Dango::create("dango1_attack_000.png", level->getPath());
-						dango->setPosition(level->getPath()[0]->getPosition());
-						break;
+				log("Dango : %s",sequenceDango[cWave][step].c_str());
+				std::string dango_type = sequenceDango[cWave][step].substr(0,sequenceDango[cWave][step].size()-1);
+				log("Dango : %s",sequenceDango[cWave][step].c_str());
+				int levelDango = Value(sequenceDango[cWave][step].substr(sequenceDango[cWave][step].size()-1,1)).asInt();
+				log("Type of Dango : %s",dango_type.c_str());
+				log("Level of Dango : %s",sequenceDango[cWave][step].substr(sequenceDango[cWave][step].size()-1,1).c_str());
+				log("Level of Dango : %i",levelDango);
+				if (dango_type == "dangosimple"){
+					dango = Dangosimple::create(level->getPath(),levelDango);
 				}
+				else if(dango_type == "dangobese"){
+					dango = Dangobese::create(level->getPath(),levelDango);
+				}
+				dango->setPosition(level->getPath()[0]->getPosition());
 				level->addDango(dango);
 				++step;
 				timer = 0;
@@ -87,7 +67,7 @@ void DangoGenerator::update(double dt, Level* level){
 	}
 }
 
-bool DangoGenerator::addStep(unsigned int dango, double time, int wave){
+bool DangoGenerator::addStep(std::string dango, double time, int wave){
 	if (wave < sequenceTimer.size()){
 		sequenceTimer[wave].push_back(time);
 		sequenceDango[wave].push_back(dango);
@@ -99,7 +79,7 @@ bool DangoGenerator::addStep(unsigned int dango, double time, int wave){
 }
 
 void DangoGenerator::addWave(){
-	std::vector<unsigned int> dangos;
+	std::vector<std::string> dangos;
 	std::vector<double> timers;
 	sequenceDango.push_back(dangos);
 	sequenceTimer.push_back(timers);

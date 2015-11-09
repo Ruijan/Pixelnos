@@ -57,6 +57,7 @@ public:
 	virtual void update(float dt);
 	virtual void updateDisplay(float dt);
 	virtual void chooseTarget(std::vector<Dango*> targets);
+	virtual void givePDamages(double damage);
 	virtual void reload();
 	
 	

@@ -18,6 +18,7 @@ public:
 	virtual Json::Value getSpecConfig();
 
 	virtual void chooseTarget(std::vector<Dango*> targets);
+	virtual void givePDamages(double damage);
 	virtual void attack();
 };
 

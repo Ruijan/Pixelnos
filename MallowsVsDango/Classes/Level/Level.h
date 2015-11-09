@@ -15,7 +15,6 @@
 
 Like a specific screen with all the caracteristics. It's an abstract class.
 */
-std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
 std::vector<std::vector<std::string>> readMapFromCSV(std::string filename);
 std::vector<std::string> readPathFromCSV(std::string filename);
 bool sortZOrder(cocos2d::Sprite* sprite1, cocos2d::Sprite* sprite2);
@@ -44,7 +43,7 @@ public:
 	bool isPaused();
 	Quantity getQuantity();
 	Quantity getLife();
-	bool getTotalExperience();
+	int getTotalExperience();
 	int getLevelId();
 	void increaseQuantity(Quantity add);
 	bool decreaseQuantity(Quantity removed);

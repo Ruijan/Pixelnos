@@ -7,10 +7,15 @@
             	"damages" : 1,
             	"range" : 120,
             	"cost" : 30,
+		"d_speed" : 0.25,
+		"d_damage" : 0.5,
+		"d_range" : 0.125,
             	"image" : "res/turret/archer.png",
 		"animation" : "res/turret/animations/archer.png",
-			"animation_attack_size" : 9,
-			"animation_steady_size" : 49
+		"animation_bullet" : "res/turret/animations/splash.png",
+		"animation_attack_size" : 9,
+		"animation_steady_size" : 49,
+		"animation_bullet_size" : 14
         },
         "cutter" : {
 		"name" : "cutter",
@@ -19,17 +24,57 @@
     		"damages" : 1,
     		"range" : 80,
     		"cost" : 50,
+		"d_speed" : 0.25,
+		"d_damage" : 0.25,
+		"d_range" : 0.05,
     		"image" : "res/turret/cutter.png",
 		"animation" : "res/turret/animations/cutter.png",
+		"animation_bullet" : "res/turret/animations/cut.png",
 		"animation_attack_size" : 9,
-		"animation_steady_size" : 49
+		"animation_steady_size" : 49,
+		"animation_bullet_size" : 14
         }
     },
     "dangos" : {
-        "dango" : {
-            "speed" : 100,
-            "hitpoints" : 2,
-	    "gain" : 2
+        "dangosimple" : {
+		"level" : [
+            		{
+				"speed" : 100,
+				"hitpoints" : 2,
+				"gain" : 2,
+				"image" : "res/dango/dango1.png",
+				"name" : "dango1",
+				"animation" : "res/dango/animations/dango1.png"
+			},
+			{
+				"speed" : 100,
+				"hitpoints" : 4,
+				"gain" : 5,
+				"image" : "res/dango/dango2.png",
+				"name" : "dango2",
+				"animation" : "res/dango/animations/dango2.png"
+			}
+		],
+		
+		"description" : "Simple dango you can find everywhere."
+        },
+	"dangobese" : {
+		"name" : "dangobese",
+		"level" : [
+            		{
+				"speed" : 100,
+				"hitpoints" : 2,
+				"gain" : 2
+			},
+			{
+				"speed" : 100,
+				"hitpoints" : 4,
+				"gain" : 5
+			}
+		],
+		"image" : "res/dango/dangobese.png",
+		"animation" : "res/dango/animations/dangobese.png",
+		"description" : "This...f*****...slippery...dango...STAY HERE !"
         }
     },
 	"levels" : [
@@ -42,7 +87,16 @@
 			"tilesetpng" : "res/tiles/ground.png",
 			"tilemaptable" : "res/tiles/ground.json",
 			"generator" : "res/level1_generator.json",
-			"sugar" : 80
+			"sugar" : 80,
+			"exp" : 150,
+			"x" : 70,
+			"y" : 325,
+			"introDialogue" : [
+				{
+					"speaker" : "res/turret/general.png",
+					"text" : "WE ARE AT WAR !"
+				}
+			]
 		},
 		{
 			"width" : 14,
@@ -53,7 +107,24 @@
 			"tilesetpng" : "res/tiles/ground.png",
 			"tilemaptable" : "res/tiles/ground.json",
 			"generator" : "res/level2_generator.json",
-			"sugar" : 80
+			"sugar" : 80,
+			"exp" : 150,
+			"x" : 240,
+			"y" : 350
+		},
+		{
+			"width" : 14,
+			"height" : 12,
+			"map" : "res/map/level1_map.csv",
+			"path" : "res/map/level1_path.csv",
+			"tileset" : "res/tiles/ground.plist",
+			"tilesetpng" : "res/tiles/ground.png",
+			"tilemaptable" : "res/tiles/ground.json",
+			"generator" : "res/level3_generator.json",
+			"sugar" : 80,
+			"exp" : 150,
+			"x" : 400,
+			"y" : 265
 		}
 	]
 }

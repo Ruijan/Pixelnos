@@ -20,13 +20,12 @@ class Dango : public cocos2d::Sprite{
 
 
 public:
-	Dango(std::vector<Cell*> npath, double nspeed, double hp);
+	Dango(std::vector<Cell*> npath, double nspeed, double hp, int level);
 	virtual ~Dango();
-	static Dango* create(std::string image, std::vector<Cell*> npath);
+	//static Dango* create(std::string image, std::vector<Cell*> npath, int level);
 
 	static Json::Value getConfig();
-
-	void initOptions();
+	virtual Json::Value getSpecConfig() = 0;
 
 	bool isMoving();
 	bool isAlive();
@@ -54,8 +53,7 @@ private:
 	double pDamages;				// prosepctive damages
 	STATE state;
 	double timer;
+	int level;
 	
 };
-
-
 #endif

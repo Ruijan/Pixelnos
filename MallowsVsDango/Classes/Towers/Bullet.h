@@ -13,16 +13,21 @@ class Bullet : public cocos2d::Sprite{
 	
 	void update(float dt);
 	bool hasTouched();
+	bool isDone();
 	Dango* getTarget();
 	void setTarget(Dango* dango);
+	void setOwner(std::string nowner);
+	void startAnimation();
 	
 	private:
 	Dango* target;
 	double damages;
 	bool touched;
+	bool hasToBeDeleted;
 	bool rotate;
 	double speed;
-	std::string animation;
+	std::string owner;
+	cocos2d::Action* action;
 	
 };
 

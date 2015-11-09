@@ -14,9 +14,9 @@
   </data>
  </layer>
  <objectgroup name="Object">
-  <object id="1" type="grass8.png" gid="8" x="116" y="128" width="60" height="60"/>
+  <object id="1" type="grass8.png" gid="8" x="110" y="167" width="60" height="60"/>
   <object id="5" type="grass7.png" gid="7" x="45" y="154" width="60" height="60"/>
-  <object id="6" type="grass6.png" gid="6" x="110" y="189" width="60" height="60"/>
+  <object id="6" type="grass6.png" gid="6" x="222" y="199" width="60" height="60"/>
   <object id="8" type="grass2.png" gid="2" x="367" y="245" width="60" height="60"/>
   <object id="9" type="grass5.png" gid="5" x="478" y="478" width="60" height="60"/>
   <object id="10" type="grass3.png" gid="3" x="444" y="338" width="60" height="60"/>
@@ -28,7 +28,7 @@
   <object id="17" type="grass2.png" gid="2" x="101" y="631" width="60" height="60"/>
   <object id="19" type="grass5.png" gid="2147483653" x="359" y="537" width="60" height="60"/>
   <object id="21" type="grass2.png" gid="2" x="118" y="361" width="60" height="60"/>
-  <object id="22" type="grass8.png" gid="8" x="717" y="663" width="60" height="60"/>
+  <object id="22" type="grass8.png" gid="8" x="610" y="278" width="60" height="60"/>
   <object id="24" type="grass3.png" gid="3" x="26" y="571" width="60" height="60"/>
  </objectgroup>
 </map>

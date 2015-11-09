@@ -4,26 +4,13 @@
 #include "Game.h"
 #include "Towers/Cutter.h"
 #include "Towers/Scorpion.h"
+#include "Functions.h"
 #include <iostream>
 #include <string>
 #include <sstream>
 
 
 USING_NS_CC;
-
-
-template <typename T>
-std::string to_string(T value)
-{
-  //create an output string stream
-  std::ostringstream os ;
-
-  //throw the value into the string stream
-  os << value ;
-
-  //convert the string stream into a string and return
-  return os.str() ;
-}
 
 InterfaceGame::InterfaceGame() : sizeButton(cocos2d::Director::getInstance()->getVisibleSize().width / 15),
 	sizeTower(cocos2d::Director::getInstance()->getVisibleSize().width / 10)
@@ -88,46 +75,81 @@ InterfaceGame* InterfaceGame::create(Game* ngame){
 
 void InterfaceGame::addEvents()
 {
-    auto listener = cocos2d::EventListenerTouchOneByOne::create();
+    listener = cocos2d::EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
 
     listener->onTouchBegan = [&](cocos2d::Touch* touch, cocos2d::Event* event){
+		std::cerr << "State : " << state << std::endl;
         cocos2d::Vec2 p = touch->getLocation();
         cocos2d::Rect rect = this->getBoundingBox();
+        cocos2d::Rect rectrightpanel = menuPanel->getChildByName("panel")->getBoundingBox();
+        rectrightpanel.origin += menuPanel->getBoundingBox().origin;
 
         if(rect.containsPoint(p)){
-			
-			Tower* tower = game->getLevel()->touchingTower(p);
-			if (tower != nullptr && state != TURRET_CHOSEN){
-				if (state == TURRET_SELECTED){
-					selectedTurret->displayRange(false);
+			if(rectrightpanel.containsPoint(p)){
+				std::cerr << "Touch interface game " << state << std::endl;
+				resetTowerMenu();
+				auto item = getTowerFromPoint(touch->getStartLocation());
+				if (item.first != "nullptr"){
+					if (state == TURRET_SELECTED){
+						selectedTurret->displayRange(false);
+						selectedTurret = nullptr;
+					}
+					else if(state == TURRET_CHOSEN){
+						if(selectedTurret != nullptr){
+							destroyCallback(nullptr);
+						}
+					}
+					state = State::TOUCHED;
+					menuPanel->getChildByName("toolsMenu")->setVisible(true);
+					displayTowerInfos(item.first);
+					displayTowerMenu(item.second.second);
 				}
-				menuPanel->getChildByName("toolsMenu")->setVisible(true);
-				informationPanel->setVisible(true);
-				selectedTurret = tower;
-				selectedTurret->displayRange(true);
-				state = TURRET_SELECTED;
+				else{
+					if(selectedTurret != nullptr && state == TURRET_CHOSEN){
+						destroyCallback(nullptr);
+					}
+					state = State::IDLE;
+				}
 			}
-			else if (tower == nullptr && state == TURRET_SELECTED ){
-				state = IDLE;
-				menuPanel->getChildByName("toolsMenu")->setVisible(false);
-				informationPanel->setVisible(false);
-				selectedTurret->displayRange(false);
-				selectedTurret = nullptr;
-			}
-			auto item = getTowerFromPoint(touch->getStartLocation());
-			if (item.first != "nullptr"){
-				if (state == TURRET_SELECTED){
+			else{
+				Tower* tower = game->getLevel()->touchingTower(p);
+				if (tower != nullptr && state != TURRET_CHOSEN){
+					if (state == TURRET_SELECTED){
+						selectedTurret->displayRange(false);
+					}
+					menuPanel->getChildByName("toolsMenu")->setVisible(true);
+					informationPanel->setVisible(true);
+					selectedTurret = tower;
+					selectedTurret->displayRange(true);
+					state = TURRET_SELECTED;
+				}
+				else if (tower == nullptr && state == TURRET_SELECTED ){
+					state = IDLE;
+					menuPanel->getChildByName("toolsMenu")->setVisible(false);
+					informationPanel->setVisible(false);
+					selectedTurret->displayRange(false);
 					selectedTurret = nullptr;
-					selectedTurret->displayRange(false);
+					resetTowerMenu();
 				}
-				state = State::TOUCHED;
-				menuPanel->getChildByName("toolsMenu")->setVisible(true);
-				displayTowerInfos(item.first);
-			}
-			if (selectedTurret != nullptr && !game->isPaused() && state == TURRET_CHOSEN){
-				Vec2 pos = touch->getLocation();
-				moveSelectedTurret(pos);
+				else if(state == TOUCHED){ 
+					auto item = getTowerFromPoint(touch->getStartLocation());
+					if (item.first != "nullptr"){
+						if (game->getLevel()->getQuantity() >= Tower::getConfig()[item.first]["cost"].asDouble()){
+							state = State::TURRET_CHOSEN;
+							Tower::TowerType tape = Tower::getTowerTypeFromString(item.first);
+							menuTurretTouchCallback(Tower::getTowerTypeFromString(item.first));
+							moveSelectedTurret(touch->getLocation());
+							selectedTurret->displayRange(true);
+							selectedTurret->setVisible(true);
+						}
+					}
+				}
+				else if (selectedTurret != nullptr && !game->isPaused() && state == TURRET_CHOSEN){
+					Vec2 pos = touch->getLocation();
+					moveSelectedTurret(pos);
+					selectedTurret->setVisible(true);
+				}
 			}
 			return true; // to indicate that we have consumed it.
         }
@@ -135,15 +157,11 @@ void InterfaceGame::addEvents()
     };
 
     listener->onTouchEnded = [=](cocos2d::Touch* touch, cocos2d::Event* event){
-        if(state == State::TOUCHED || state == State::SCROLL){
-			auto item = getTowerFromPoint(touch->getStartLocation());
-			if (item.first == "nullptr"){
-				//displayTowerInfos(item.first);
-			}
-			state = State::IDLE;
-		}
-		else if (state == TURRET_SELECTED){
-			Tower* tower = game->getLevel()->touchingTower(touch->getLocation());
+		cocos2d::Vec2 p = touch->getLocation();
+		cocos2d::Rect rectrightpanel = menuPanel->getChildByName("panel")->getBoundingBox();
+        rectrightpanel.origin += menuPanel->getBoundingBox().origin;
+		if (state == TURRET_SELECTED){
+			Tower* tower = game->getLevel()->touchingTower(p);
 			if (tower != nullptr){
 				std::string name = tower->getSpecConfig()["name"].asString();
 				displayTowerInfos(tower->getSpecConfig()["name"].asString());
@@ -154,6 +172,31 @@ void InterfaceGame::addEvents()
 				selectedTurret->displayRange(false);
 				selectedTurret = nullptr;
 				state = IDLE;
+			}
+			resetTowerMenu();
+		}
+		else if(state == TURRET_CHOSEN){
+			if( !rectrightpanel.containsPoint(p)){
+				builtCallback(nullptr);
+			}
+		}
+		else if(state == TOUCHED){
+			if(selectedTurret != nullptr){
+				destroyCallback(nullptr);
+			}
+			auto item = getTowerFromPoint(p);
+			if (item.first != "nullptr"){
+				if (game->getLevel()->getQuantity() >= Tower::getConfig()[item.first]["cost"].asDouble()){
+					state = State::TURRET_CHOSEN;
+					Tower::TowerType tape = Tower::getTowerTypeFromString(item.first);
+					menuTurretTouchCallback(Tower::getTowerTypeFromString(item.first));
+					selectedTurret->setVisible(false);
+					selectedTurret->displayRange(true);
+				}
+				else{
+					state = IDLE;
+					resetTowerMenu();
+				}
 			}
 		}
     };
@@ -166,11 +209,13 @@ void InterfaceGame::addEvents()
 				auto item = getTowerFromPoint(touch->getStartLocation());
 				if (item.first != "nullptr"){
 					if (game->getLevel()->getQuantity() >= Tower::getConfig()[item.first]["cost"].asDouble()){
+						resetTowerMenu();
 						state = State::TURRET_CHOSEN;
 						Tower::TowerType tape = Tower::getTowerTypeFromString(item.first);
 						menuTurretTouchCallback(Tower::getTowerTypeFromString(item.first));
 						moveSelectedTurret(touch->getLocation());
 						selectedTurret->displayRange(true);
+						selectedTurret->setVisible(true);
 					}
 				}
 			}
@@ -195,6 +240,7 @@ void InterfaceGame::menuGameCallback(Ref* sender){
 }
 
 void InterfaceGame::menuMainCallback(Ref* sender){
+	setListening(false);
 	SceneManager::getInstance()->setScene(SceneManager::LEVELS);
 }
 
@@ -236,10 +282,10 @@ void InterfaceGame::update(float dt){
 	updateButtonDisplay();
 	for (auto& tower : turretsMenu){
 		if (game->getLevel()->getQuantity() < Tower::getConfig()[tower.first]["cost"].asDouble()){
-			tower.second->setVisible(true);
+			tower.second.first->setVisible(true);
 		}
 		else{
-			tower.second->setVisible(false);
+			tower.second.first->setVisible(false);
 		}
 	}
 	
@@ -304,6 +350,7 @@ void InterfaceGame::reset(){
 	menuWin->setVisible(false);
 	menuPause->setVisible(false);
 	blackMask->setVisible(false);
+	resetTowerMenu();
 }
 
 void InterfaceGame::initParametersMenu(){
@@ -540,6 +587,7 @@ void InterfaceGame::initRightPanel(){
 		std::string sprite3_background_filename = "res/buttons/tower_button.png";
 		std::string sprite3_disable_filename = "res/buttons/tower_inactive.png";
 		std::string sprite3_clip_filename = "res/buttons/tower_button_clip.png";
+		std::string sprite7_active_filename = "res/buttons/tower_active.png";
 
 		Sprite* sprite3 = Sprite::create(sprite3_filename);
 		sprite3->setScale(0.8 / (sprite3->getContentSize().width / sizeTower));
@@ -555,6 +603,10 @@ void InterfaceGame::initRightPanel(){
 		Sprite* sprite6 = Sprite::create(sprite3_disable_filename);
 		sprite6->setScale(1 / (sprite6->getContentSize().width / sizeTower));
 		sprite6->setVisible(false);
+		
+		Sprite* sprite7 = Sprite::create(sprite7_active_filename);
+		sprite7->setScale(1 / (sprite6->getContentSize().width / sizeTower));
+		sprite7->setVisible(false);
 
 		size = sprite3->getContentSize();
 		size.width *= sprite3->getScale();
@@ -565,12 +617,15 @@ void InterfaceGame::initRightPanel(){
 		sprite4->setPosition(sprite3->getPosition());
 		sprite5->setPosition(sprite3->getPosition() + Vec2(sizeTower/30.0,sizeTower/2.0));
 		sprite6->setPosition(sprite3->getPosition());
+		sprite7->setPosition(sprite3->getPosition());
 
+		menuPanel->addChild(sprite7, 2);
 		menuPanel->addChild(sprite3, 3);
 		menuPanel->addChild(sprite4, 2);
 		menuPanel->addChild(sprite5, 5);
 		menuPanel->addChild(sprite6, 4);
-		turretsMenu[Tower::getConfig().getMemberNames()[i]] = sprite6;
+		
+		turretsMenu[Tower::getConfig().getMemberNames()[i]] = std::pair<Sprite*,Sprite*>(sprite6,sprite7);
 		++j;
 	}
 
@@ -583,30 +638,34 @@ void InterfaceGame::initRightPanel(){
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
 	cache->addSpriteFramesWithFile("res/turret/animations/archer.plist", "res/turret/animations/archer.png");
 	cache->addSpriteFramesWithFile("res/turret/animations/cutter.plist", "res/turret/animations/cutter.png");
+	cache->addSpriteFramesWithFile("res/turret/animations/cut.plist", "res/turret/animations/cut.png");
+	cache->addSpriteFramesWithFile("res/turret/animations/splash.plist", "res/turret/animations/splash.png");
+	cache->addSpriteFramesWithFile("res/dango/animations/dango1.plist", "res/dango/animations/dango1.png");
+	cache->addSpriteFramesWithFile("res/dango/animations/dango2.plist", "res/dango/animations/dango2.png");
+	cache->addSpriteFramesWithFile("res/dango/animations/dangobese.plist", "res/dango/animations/dangobese.png");
 
 	Sprite* image = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("archer_steady_movement_000.png"));
 	image->setScale((sizeButton / image->getBoundingBox().size.width));
 	SpriteBatchNode* spriteBatchNode = SpriteBatchNode::create("res/turret/animations/archer.png");
-	spriteBatchNode->addChild(image);
 	//spriteBatchNode->setScale();
 
 	spriteBatchNode->setPosition(Vec2(-background->getContentSize().width*background->getScale() / 2 + 5,
-		round(visibleSize.width / 32.0)));
+		round(visibleSize.width / 32.0) - sizeButton));
 
 	Label* infoTower = Label::createWithSystemFont("Damages: \nSpeed: \nRange:", "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 53.0));
 	infoTower->setColor(Color3B::BLACK);
 	infoTower->setAnchorPoint(Vec2(0, 0));
-	infoTower->setPosition(-round(visibleSize.width / 32.0), 0);
+	infoTower->setPosition(-round(visibleSize.width / 32.0), -sizeButton);
 
 	Sprite* sugar = Sprite::create("res/buttons/sugar.png");
 	sugar->setScale(0.5);
 	sugar->setAnchorPoint(Point(0.0f, -0.5f));
 	sugar->setPosition(Vec2(-background->getContentSize().width*background->getScale() / 2 + visibleSize.width / 192.0,
-		-image->getContentSize().width * image->getScale() - visibleSize.width / 96.0));
+		-image->getContentSize().width * image->getScale() - visibleSize.width / 96.0 - sizeButton));
 	Label* sugar_label = Label::createWithTTF("\n Cost:", "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 44.0));
 	sugar_label->setColor(Color3B::GREEN);
 	sugar_label->setPosition(Vec2(sizeButton*2/3.0-background->getContentSize().width*background->getScale() / 2 + visibleSize.width / 192.0,
-		sizeButton/3.0-image->getContentSize().width * image->getScale() - visibleSize.width / 96.0));
+		sizeButton/3.0-image->getContentSize().width * image->getScale() - visibleSize.width / 96.0 - sizeButton));
 	sugar_label->enableOutline(Color4B::BLACK, 1);
 
 	Label* descriptionTower = Label::createWithTTF("\n Cost:", "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 53.0));
@@ -614,13 +673,12 @@ void InterfaceGame::initRightPanel(){
 	descriptionTower->setColor(Color3B::BLACK);
 	descriptionTower->setAnchorPoint(Vec2(0, 0));
 	descriptionTower->setPosition(Vec2(-background->getContentSize().width*background->getScale() / 2 + visibleSize.width / 192.0,
-		-image->getContentSize().width * image->getScale() - visibleSize.width / 96.0));
+		-image->getContentSize().width * image->getScale() - visibleSize.width / 96.0 - sizeButton));
 	Label* nextLevel = Label::createWithTTF("", "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 55.0));
 	nextLevel->setColor(Color3B::GREEN);
-	nextLevel->setPosition(round(visibleSize.width / 16.0), 0);
+	nextLevel->setPosition(round(visibleSize.width / 16.0), -sizeButton);
 	nextLevel->enableOutline(Color4B::BLACK, 1);
-	nextLevel->setAnchorPoint(Vec2(0,0));
-		
+	nextLevel->setAnchorPoint(Vec2(0,0));		
 
 	informationPanel->addChild(background,0,"background");
 	informationPanel->addChild(sugar_label,1,"sugar_label");
@@ -633,33 +691,41 @@ void InterfaceGame::initRightPanel(){
 	informationPanel->setVisible(false);
 
 	Menu* toolsMenu = Menu::create();
-	Sprite* button = Sprite::create("res/buttons/delete_wood.png");
+	Sprite* button = Sprite::create("res/buttons/sell.png");
 	button->setAnchorPoint(Point(0.5f, 0.5f));
 
-	Sprite* button1 = Sprite::create("res/buttons/build_wood.png");
-	button1->setAnchorPoint(Point(0.5f, 0.5f));
-
-	Sprite* button2 = Sprite::create("res/buttons/upgrade_wood.png");
+	Sprite* button2 = Sprite::create("res/buttons/upgrade_bg.png");
 	button2->setAnchorPoint(Point(0.5f, 0.5f));
 
 	MenuItemSprite* destroy = MenuItemSprite::create(button, button, CC_CALLBACK_1(InterfaceGame::destroyCallback, this));
-	MenuItemSprite* built = MenuItemSprite::create(button1, button1, CC_CALLBACK_1(InterfaceGame::builtCallback, this));
+
 	MenuItemSprite* upgrade = MenuItemSprite::create(button2, button2, CC_CALLBACK_1(InterfaceGame::upgradeCallback, this));
-	destroy->setScale(1 / (destroy->getBoundingBox().size.width / sizeButton));
-	built->setScale(1 / (built->getBoundingBox().size.width / sizeButton));
-	upgrade->setScale(1 / (upgrade->getBoundingBox().size.width / sizeButton));
+	//destroy->setScale(1 / (destroy->getBoundingBox().size.height / sizeButton));
+	upgrade->setPosition(informationPanel->getPosition() + nextLevel->getPosition() + Vec2(sizeButton/6.0,0));
+	upgrade->setAnchorPoint(Vec2(0.5,0));
+	destroy->setPosition(destroy->getContentSize().width / 4.0, -visibleSize.height / 2
+	 + destroy->getContentSize().height / 2 * destroy->getScale() + visibleSize.width / 64.0);
+	Label* sell = Label::createWithTTF("Sell", "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 45.0));
+	sell->setColor(Color3B::BLACK);
+	sell->setAnchorPoint(Vec2(0,0));
+	sell->setPosition(5,5);
+	Sprite* sugar_destroy = Sprite::create("res/buttons/sugar.png");
+	sugar_destroy->setScale(0.5);
+	sugar_destroy->setPosition(destroy->getContentSize().width - sugar_destroy->getContentSize().width/4  - 5, sugar_destroy->getContentSize().height/4 + 5);
+	destroy->addChild(sell,1,"quantity");
+	destroy->addChild(sugar_destroy);
+	//upgrade->setScale(1 / (upgrade->getBoundingBox().size.width / sizeButton));
 	toolsMenu->addChild(destroy,1,"destroy");
-	toolsMenu->addChild(built,1,"built");
 	toolsMenu->addChild(upgrade,1,"upgrade");
-	toolsMenu->alignItemsHorizontally();
-	toolsMenu->setPosition(0, -visibleSize.height / 2 + destroy->getContentSize().width / 2 * destroy->getScale() + visibleSize.width / 64.0);
-	upgrade->setPosition(built->getPosition());
+	//toolsMenu->alignItemsHorizontally();
+	//toolsMenu->setPosition(destroy->getContentSize().width / 2.0, -visibleSize.height / 2 + destroy->getContentSize().width / 2 * destroy->getScale() + visibleSize.width / 64.0);
+	toolsMenu->setPosition(0,0);
 	toolsMenu->setVisible(false);
 
 
-	menuPanel->addChild(panel);
+	menuPanel->addChild(panel,0,"panel");
 	menuPanel->addChild(menuOpen);
-	menuPanel->addChild(informationPanel);
+	menuPanel->addChild(informationPanel,2,"informationPanel");
 	menuPanel->addChild(toolsMenu,1,"toolsMenu");
 }
 
@@ -702,21 +768,23 @@ void InterfaceGame::displayTowerInfos(std::string itemName){
 	}
 	else{
 		int next_L = selectedTurret->getLevel() + 1;
-		((Label*)informationPanel->getChildByName("infoTower"))->setString("Level: " +
+		((Label*)informationPanel->getChildByName("infoTower"))->setString("LVL: " +
 			to_string(selectedTurret->getLevel()) +
-			"\nDamages: " + to_string(round(selectedTurret->getDamage()*10)/10) +" \nSpeed: " +
-			to_string(round(selectedTurret->getAttackSpeed()*10)/10) + "\nRange: " +
+			"\nDMG: " + to_string(round(selectedTurret->getDamage()*10)/10) +" \nSPD: " +
+			to_string(round(selectedTurret->getAttackSpeed()*10)/10) + "\nRNG: " +
 			to_string(round(selectedTurret->getRange()*10)/10));
 		((Label*)informationPanel->getChildByName("nextLevel"))->setString(
-			" ->"+to_string(next_L) + "\n ->" + to_string(round((1+selectedTurret->getNextLevelDamage())*
-			selectedTurret->getDamage()*10)/10) +"\n ->" + to_string(round((1+selectedTurret->getNextLevelSpeed())*
-			selectedTurret->getAttackSpeed()*10)/10) + "\n ->" + to_string(round((1+selectedTurret->getNextLevelRange())*
+			" "+to_string(next_L) + "\n " + to_string(round((1+selectedTurret->getNextLevelDamage())*
+			selectedTurret->getDamage()*10)/10) +"\n " + to_string(round((1+selectedTurret->getNextLevelSpeed())*
+			selectedTurret->getAttackSpeed()*10)/10) + "\n " + to_string(round((1+selectedTurret->getNextLevelRange())*
 			selectedTurret->getRange()*10)/10) );
 
 		((Label*)informationPanel->getChildByName("DescriptionTower"))->setString(
 			selectedTurret->getSpecConfig()["description"].asString());
 		((Label*)informationPanel->getChildByName("sugar_label"))->setString(
 			to_string(selectedTurret->getCost() * 0.5 * (selectedTurret->getLevel() + 1)));
+		((Label*)menuPanel->getChildByName("toolsMenu")->getChildByName("destroy")->getChildByName("quantity"))->setString("Sell for " + 
+			to_string(round(selectedTurret->getCost() * 0.75 * (selectedTurret->getLevel() + 1))));
 		required_quantity = selectedTurret->getCost() * 0.5 * (selectedTurret->getLevel() + 1);
 		attackFrames = selectedTurret->getAnimation(Tower::ATTACKING);
 		steadyFrames = selectedTurret->getAnimation(Tower::IDLE);
@@ -743,7 +811,7 @@ void InterfaceGame::displayTowerInfos(std::string itemName){
 	Node* background = informationPanel->getChildByName("background");
 	
 	spriteBatchNode->setPosition(Vec2(-background->getContentSize().width*background->getScale() / 2 + visibleSize.width / 192.0,
-		0) + image->getContentSize() * image->getScale() / 2);
+		-sizeButton) + image->getContentSize() * image->getScale() / 2);
 
 	Animation* animation = Animation::createWithSpriteFrames(attackFrames, 0.075f);
 	Animation* animation2 = Animation::createWithSpriteFrames(steadyFrames, 0.075f);
@@ -764,24 +832,26 @@ void InterfaceGame::displayTowerInfos(std::string itemName){
 
 
 void InterfaceGame::destroyCallback(Ref* sender){
+	game->getLevel()->increaseQuantity(selectedTurret->getCost() * 0.5 * (selectedTurret->getLevel() + 1));
 	selectedTurret->destroyCallback(sender);
 	selectedTurret = nullptr;
 	state = State::IDLE;
+	resetTowerMenu();
 }
 
 void InterfaceGame::builtCallback(Ref* sender){
 	selectedTurret->builtCallback(sender);
 	selectedTurret->setFixed(true);
 	game->getLevel()->decreaseQuantity(selectedTurret->getCost());
-	informationPanel->setVisible(false);
-	selectedTurret->displayRange(false);
-	selectedTurret = nullptr;
-	state = State::IDLE;
+	selectedTurret->displayRange(true);
+	state = State::TURRET_SELECTED;
+	resetTowerMenu();
+	displayTowerInfos("");
 }
 
 void InterfaceGame::upgradeCallback(Ref* sender){
 	
-	if(game->getLevel()->getQuantity() > selectedTurret->getCost() * 0.5 * (selectedTurret->getLevel() + 1) &&
+	if(game->getLevel()->getQuantity() >= selectedTurret->getCost() * 0.5 * (selectedTurret->getLevel() + 1) &&
 		selectedTurret->getLevel() < Tower::MAXLEVEL){
 		game->getLevel()->decreaseQuantity(selectedTurret->getCost() * 0.5 * (selectedTurret->getLevel() + 1));
 		selectedTurret->upgradeCallback(sender);
@@ -797,12 +867,18 @@ void InterfaceGame::updateButtonDisplay(){
 	if (selectedTurret != nullptr){
 		menuPanel->getChildByName("toolsMenu")->setVisible(true);
 		if (selectedTurret->isFixed()){
-			menuPanel->getChildByName("toolsMenu")->getChildByName("built")->setVisible(false);
 			menuPanel->getChildByName("toolsMenu")->getChildByName("upgrade")->setVisible(true);
+			menuPanel->getChildByName("toolsMenu")->getChildByName("destroy")->setVisible(true);
+			if (game->getLevel()->getQuantity() < Value(((Label*)informationPanel->getChildByName("sugar_label"))->getString()).asInt()){
+				((Label*)informationPanel->getChildByName("sugar_label"))->setColor(Color3B::RED);
+			}
+			else{
+				((Label*)informationPanel->getChildByName("sugar_label"))->setColor(Color3B::GREEN);
+			}
 		}
 		else{
-			menuPanel->getChildByName("toolsMenu")->getChildByName("built")->setVisible(true);
 			menuPanel->getChildByName("toolsMenu")->getChildByName("upgrade")->setVisible(false);
+			menuPanel->getChildByName("toolsMenu")->getChildByName("destroy")->setVisible(false);
 		}
 	}
 	else{
@@ -816,22 +892,22 @@ void InterfaceGame::updateObjectDisplay(float dt){
 	}
 }
 
-std::pair<std::string, cocos2d::Sprite*> InterfaceGame::getTowerFromPoint(cocos2d::Vec2 location){
+std::pair<std::string, std::pair<cocos2d::Sprite*, cocos2d::Sprite*>> InterfaceGame::getTowerFromPoint(cocos2d::Vec2 location){
 	cocos2d::Vec2 origin = menuPanel->getBoundingBox().origin;
 	for (auto& item : turretsMenu){
-		Vec2 pointInSprite = location - item.second->getPosition() - origin;
-		pointInSprite.x += item.second->getSpriteFrame()->getRect().size.width *
-			item.second->getScale() / 2;
-		pointInSprite.y += item.second->getSpriteFrame()->getRect().size.height *
-			item.second->getScale() / 2;
-		Rect itemRect = Rect(0, 0, item.second->getSpriteFrame()->getRect().size.width *
-			item.second->getScale(),
-			item.second->getSpriteFrame()->getRect().size.height * item.second->getScale());
+		Vec2 pointInSprite = location - item.second.first->getPosition() - origin;
+		pointInSprite.x += item.second.first->getSpriteFrame()->getRect().size.width *
+			item.second.first->getScale() / 2;
+		pointInSprite.y += item.second.first->getSpriteFrame()->getRect().size.height *
+			item.second.first->getScale() / 2;
+		Rect itemRect = Rect(0, 0, item.second.first->getSpriteFrame()->getRect().size.width *
+			item.second.first->getScale(),
+			item.second.first->getSpriteFrame()->getRect().size.height * item.second.first->getScale());
 		if (itemRect.containsPoint(pointInSprite)){
 			return item;
 		}
 	}
-	std::pair<std::string, cocos2d::Sprite*> item;
+	std::pair<std::string, std::pair<Sprite*,Sprite*>> item;
 	item.first = "nullptr";
 	return item;
 }
@@ -839,4 +915,25 @@ std::pair<std::string, cocos2d::Sprite*> InterfaceGame::getTowerFromPoint(cocos2
 
 InterfaceGame::State InterfaceGame::getState() const{
 	return state;
+}
+
+void InterfaceGame::resetTowerMenu(){
+	for (auto& tower : turretsMenu){
+		if (tower.second.second->isVisible()){
+			tower.second.second->stopAllActions();
+			tower.second.second->setVisible(false);
+		}
+	}
+}
+
+void InterfaceGame::displayTowerMenu(Sprite* sprite){
+	sprite->setVisible(true);
+	sprite->setOpacity(0.5);
+	auto action1 = FadeIn::create(0.5f);
+    auto action1Back = action1->reverse();
+    sprite->runAction( RepeatForever::create(Sequence::create( action1, action1Back, nullptr)));
+}
+
+void InterfaceGame::setListening(bool listening){
+	listener->setEnabled(listening);
 }
