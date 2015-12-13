@@ -1,0 +1,6 @@
+# exclude everything except directory Classes, Resources & CMakeLists
+/MallowsVsDango/*
+!/MallowsVsDango/Classes
+!/MallowsVsDango/Resources
+!/MallowsVsDango/CMakeLists.txt
+

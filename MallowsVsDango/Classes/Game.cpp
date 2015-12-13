@@ -72,24 +72,11 @@ void Game::onEnterTransitionDidFinish(){
 	}
 }
 
-
-void Game::menuCloseCallback(Ref* pSender)
-{
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) || (CC_TARGET_PLATFORM == CC_PLATFORM_WP8)
-	CCMessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
-#else
-	Director::getInstance()->end();
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	exit(0);
-#endif
-#endif
-}
-
 void Game::update(float delta){
 	Scene::update(delta);
 	menu->update(delta);
 	cLevel->update(delta * acceleration);
-	if (cLevel->hasLost()){
+	if (cLevel->hasLost() && !cLevel->isPaused()){
 		menu->showLoose();
 		cLevel->pause();
 	}

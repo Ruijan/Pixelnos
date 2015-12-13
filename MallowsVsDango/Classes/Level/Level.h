@@ -7,6 +7,7 @@
 #include "../Towers/Tower.h"
 #include "../Towers/Bullet.h"
 #include "DangoGenerator.h"
+#include "../Dialogue.h"
 #include <iostream>
 
 
@@ -25,6 +26,7 @@ class Level : public cocos2d::Layer
 	
 public:
 	enum State{
+		INTRO,
 		TITLE,
 		STARTING,
 		RUNNING,
@@ -67,6 +69,7 @@ protected:
 	std::vector<Dango*> dangos;
 	std::vector<Tower*> turrets;
 	std::vector<Bullet*> bullets;
+	Dialogue* introDialogue;
 	std::vector<std::vector<Cell*>> cells;
 	cocos2d::Size size;
 	std::vector<Cell*> path;

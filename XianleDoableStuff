@@ -1,0 +1,17 @@
+Liste de choses que tu peux faire:
+
+PROG:
+- Commenter le code (désolé, c'est ingrat mais c'est un peu la seule manière que j'ai trouvée pour que tu puisses te familiariser avec le code)
+- Modifier le MainMenu afin d'afficher d'abord le logo de Pixelnos sur un fond noir. Très bon début et simple à faire, ça te permettra de regarder dans la doc de cocos2d-x 3.XX et de voir ce que j'ai fait avant. Un seul fichier à modifier.
+- Changer la manière dont on crée les chemins. C'est n'importe quoi ce que j'ai fait. Ca fonctionne mais si on veut faire 2 chemins différents ou des cases qui sont juste à côté l'une de l'autre ça passe pas. Pas besoin de graphismes, une seule fonction à modifier.
+- Generateur de mode infini, simple d'abord : on définit la difficulté d'une vague par la difficulté des ennemis et leur fréquence d'apparition. On crée une courbe de difficulté pour le mode infini. Créer un générateur automatique de dango qui va créer les dangos pour la vague en fonction de la difficulté attribuée. On peut faire ça avec un seul ennemi et une seule tourelle d'abord et puis voir comment faire avec plusieurs ennemis. On fait les choses simples. Vraiment simples.
+
+LEVEL DESIGN:
+- Améliorer la difficulté des lvl 1, 2 et 3 de manière à ce que ce soit plus marrant.
+- Créer/revoir les dialogues pour les levels existants (faut penser à ce qu'on leur raconte dans l'histoire)
+- Créer une carte par lvl. Pour le moment il n'y a qu'une seule carte disponible, un seul chemin. C'est chiant pour le joueur.
+
+GRAPHISMES:
+- Créer une barricade avec 2-3 états différents (niquel, amochée, délabrée).
+- Logo pour le jeu
+- Animation de chargement

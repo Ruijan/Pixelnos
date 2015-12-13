@@ -55,26 +55,32 @@
 				"animation" : "res/dango/animations/dango2.png"
 			}
 		],
-		
+		"cellperanim" : 1.1,
 		"description" : "Simple dango you can find everywhere."
         },
 	"dangobese" : {
-		"name" : "dangobese",
+
+		
 		"level" : [
             		{
-				"speed" : 100,
-				"hitpoints" : 2,
-				"gain" : 2
+				"speed" : 50,
+				"hitpoints" :6,
+				"gain" : 5,
+				"image" : "res/dango/dangobese1.png",
+				"name" : "dangobese1",
+				"animation" : "res/dango/animations/dangobese1.png"
 			},
 			{
-				"speed" : 100,
-				"hitpoints" : 4,
-				"gain" : 5
+				"speed" : 60,
+				"hitpoints" : 8,
+				"gain" : 7,
+				"image" : "res/dango/dangobese2.png",
+				"name" : "dangobese2",
+				"animation" : "res/dango/animations/dangobese2.png"
 			}
 		],
-		"image" : "res/dango/dangobese.png",
-		"animation" : "res/dango/animations/dangobese.png",
-		"description" : "This...f*****...slippery...dango...STAY HERE !"
+		"cellperanim" : 0.55,
+		"description" : "So big ! So fat ! Wait... is that my sock ?"
         }
     },
 	"levels" : [
@@ -94,13 +100,26 @@
 			"introDialogue" : [
 				{
 					"speaker" : "res/turret/general.png",
+					"side" : "LEFT",
 					"text" : [
 						"WE ARE AT WAR !",
-						"You entered into a new age of syrup and powder sugar. The Japanese have just decided to get back what we stole them centuries ago : the sacred sugar maker. Thanks to it, our nation have seen an age of prosperity and sweetness."
-
+						"Our spies told me a small group of dangos have been seen near the border.",
+						"General Mallow strawberry perfume commands you to protect our nation!",
+						"The Mallow Nation won't fall !"
+					]
+				},
+				{
+					"speaker" : "res/turret/general.png",
+					"side" : "RIGHT",
+					"text" : [
+						"CAPTAIN !",
+						"I am here to assist you during this invasion.",
+						"I am also new at this job don't be too harsh on me.",
+						"The General told us to defend the road, why not using a water tower near it?"
 					]
 				}
-			]
+			],
+			"reward" : "res/levels/plan1.png"
 		},
 		{
 			"width" : 14,
@@ -114,7 +133,20 @@
 			"sugar" : 80,
 			"exp" : 150,
 			"x" : 240,
-			"y" : 350
+			"y" : 350,
+			"introDialogue" : [
+				{
+					"speaker" : "res/turret/general.png",
+					"side" : "LEFT",
+					"text" : [
+						"We don't know what this small group wanted to do here.",
+						"Maybe they were lost.",
+						"Wait, an another group have been seen near your area.",
+						"Stop them all ! General Mallow strawberry perfume is counting on you!"
+					]
+				}
+			]
+
 		},
 		{
 			"width" : 14,
@@ -128,7 +160,34 @@
 			"sugar" : 80,
 			"exp" : 150,
 			"x" : 400,
-			"y" : 265
+			"y" : 265,
+			"introDialogue" : [
+				{
+					"speaker" : "res/turret/general.png",
+					"side" : "LEFT",
+					"text" : [
+						"Apparently they are looking for one of our great treasure but which one.",
+						"Our nation is wide and ancient, our vaults are full of precious items.",
+						"We will think about it late. Another group is willing to invade our territory.",
+						"Make a syrupshed ! General Mallow strawberry perfume is counting on you!"
+					]
+				}
+			]
+
+		},
+		{
+			"width" : 14,
+			"height" : 12,
+			"map" : "res/map/level1_map.csv",
+			"path" : "res/map/level1_path.csv",
+			"tileset" : "res/tiles/ground.plist",
+			"tilesetpng" : "res/tiles/ground.png",
+			"tilemaptable" : "res/tiles/ground.json",
+			"generator" : "res/level4_generator.json",
+			"sugar" : 80,
+			"exp" : 150,
+			"x" : 560,
+			"y" : 240
 		}
 	]
 }

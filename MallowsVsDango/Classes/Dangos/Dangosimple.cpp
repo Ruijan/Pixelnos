@@ -10,7 +10,7 @@ Dango(npath, Dangosimple::getConfig()["level"][nlevel]["speed"].asDouble(),
 }
 
 Dangosimple::~Dangosimple() {
-	std::cerr << "Dangobese Destroyed ! confirmed !" << std::endl;
+	//std::cerr << "Dangosimple Destroyed ! confirmed !" << std::endl;
 }
 
 Dangosimple* Dangosimple::create(std::vector<Cell*> npath, int nlevel)

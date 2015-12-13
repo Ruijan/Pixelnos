@@ -28,8 +28,8 @@ bool MainMenu::init()
 	bg1->setScaleY(visibleSize.height / bg1->getTextureRect().size.height);
 	bg1->setAnchorPoint(Point(0, 0));
 	bg2 = Sprite::create("res/background/menu_background_battle.png");
-	bg2->setScaleX(visibleSize.width / bg1->getTextureRect().size.width);
-	bg2->setScaleY(visibleSize.height / bg1->getTextureRect().size.height);
+	bg2->setScaleX(visibleSize.width / bg2->getTextureRect().size.width);
+	bg2->setScaleY(visibleSize.height / bg2->getTextureRect().size.height);
 	bg2->setAnchorPoint(Point(0, 0));
 	bg2->setVisible(false);
 	flash = Sprite::create("res/background/flash.png");

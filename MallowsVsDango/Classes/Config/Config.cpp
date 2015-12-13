@@ -38,16 +38,16 @@ void Config::save(){
 void Config::init(){
 	auto fileUtils =  FileUtils::getInstance();
 
-	std::string saveFile = fileUtils->getStringFromFile(config_filename);
-	std::string configFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + save_filename);
+	std::string configFile = fileUtils->getStringFromFile(config_filename);
+	std::string saveFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + save_filename);
 
 	Json::Reader reader;
 	Json::Reader readerSav;
 	bool parsingConfigSuccessful(false);
 	bool parsingSaveSuccessful(false);
 
-	parsingConfigSuccessful = reader.parse(saveFile, root, false);
-	parsingSaveSuccessful = readerSav.parse(configFile, rootSav, false);
+	parsingConfigSuccessful = reader.parse(saveFile, rootSav, false);
+	parsingSaveSuccessful = readerSav.parse(configFile, root, false);
 
 	if (!parsingConfigSuccessful){
 		// report to the user the failure and their locations in the document.

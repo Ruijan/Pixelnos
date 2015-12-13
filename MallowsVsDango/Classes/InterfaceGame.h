@@ -52,7 +52,7 @@ public:
 	State getState() const;
 
 private:
-	
+
 	std::unordered_map<std::string, std::pair<cocos2d::Sprite*, cocos2d::Sprite*>> turretsMenu;
 	cocos2d::Menu* menuOpen;
 	cocos2d::Node* menuLoose;
@@ -74,6 +74,7 @@ private:
 	
 protected:
 	void moveSelectedTurret(cocos2d::Vec2 pos);
+	bool isOnTower(cocos2d::Vec2 pos);
 	void initParametersMenu();
 	void initLooseMenu();
 	void initWinMenu();
@@ -82,6 +83,7 @@ protected:
 	void displayTowerInfos(std::string itemName);
 	void resetTowerMenu();
 
+	void removeTower();
 	void destroyCallback(Ref* sender);
 	void builtCallback(Ref* sender);
 	void upgradeCallback(Ref* sender);

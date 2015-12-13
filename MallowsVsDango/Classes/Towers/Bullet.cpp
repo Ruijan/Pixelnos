@@ -34,7 +34,8 @@ void Bullet::update(float dt){
 	if(target != nullptr){
 		Vec2 direction = target->getPosition() - getPosition();
 		double distance = sqrt(direction.x*direction.x + direction.y*direction.y);
-		if(distance < 10 && !touched){
+		Size visibleSize = Director::getInstance()->getVisibleSize();
+		if(distance < 10*visibleSize.width/960 && !touched){
 			touched = true;
 			target->takeDamages(damages);
 			startAnimation();
@@ -56,14 +57,11 @@ bool Bullet::hasTouched(){
 
 bool Bullet::isDone(){
 	if(touched){
-		if(action->isDone()){
-			return true;
-		}
+		return action->isDone();
 	}
-	else if(hasToBeDeleted){
-		return true;
+	else{
+		return hasToBeDeleted;
 	}
-	return false;
 }
 
 Dango* Bullet::getTarget(){

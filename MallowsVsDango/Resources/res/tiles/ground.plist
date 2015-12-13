@@ -6,275 +6,330 @@
         <dict>
             <key>grass1.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{0,0},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>grass2.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{60,0},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{120,0},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>grass3.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{120,0},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{240,0},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>grass4.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{180,0},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{360,0},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>grass5.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{240,0},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{480,0},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>grass6.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{0,60},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{0,120},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>grass7.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{60,60},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{120,120},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>grass8.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{120,60},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{240,120},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>path4.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{180,60},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{360,120},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>path5.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{240,60},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{480,120},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>path6.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{0,120},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{0,240},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>path7.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{60,120},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{120,240},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>path_br.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{120,120},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{240,240},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>path_lb.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{180,120},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{360,240},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>path_lt.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{240,120},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{480,240},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>path_tr.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{0,180},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{0,360},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>pathv1.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{60,180},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{120,360},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>pathv2.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{120,180},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{240,360},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>pathv3.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{180,180},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{360,360},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
             </dict>
             <key>pathv4.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{240,180},{60,60}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{480,360},{120,120}}</string>
+                <key>textureRotated</key>
                 <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{60,60}}</string>
-                <key>sourceSize</key>
-                <string>{60,60}</string>
+            </dict>
+            <key>vindicator.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{120,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{120,120}</string>
+                <key>textureRect</key>
+                <string>{{0,480},{120,120}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
         </dict>
         <key>metadata</key>
         <dict>
             <key>format</key>
-            <integer>2</integer>
+            <integer>3</integer>
             <key>realTextureFileName</key>
             <string>ground.png</string>
             <key>size</key>
-            <string>{300,240}</string>
+            <string>{600,600}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:4df91f62f9d93a835214707c84918c38:4edd297406e8cbb2aab57ffea053b57e:16aee92c76fe9b774da8adeacfa7d805$</string>
+            <string>$TexturePacker:SmartUpdate:500ea776bc68088d50889ff22723189d:2f0660239a7415d1d78dae00b8c26956:16aee92c76fe9b774da8adeacfa7d805$</string>
             <key>textureFileName</key>
             <string>ground.png</string>
         </dict>

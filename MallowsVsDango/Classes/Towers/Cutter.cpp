@@ -42,9 +42,8 @@ void Cutter::chooseTarget(std::vector<Dango*> targets){
 			if(cTarget != nullptr){
 				int first = cTarget->getTargetedCell();
 				double dist = cTarget->getPosition().distanceSquared(this->getPosition());
-				double minDist = pow(getRange() + sqrt((pow(Cell::getCellWidth() * 3 / 8.0, 2) +
-					pow(Cell::getCellHeight() * 3 / 8.0, 2))), 2);
-				if (dist < minDist && cTarget->willBeAlive()){
+				double minDist = pow(getRange() , 2);
+				if (dist <= minDist && cTarget->willBeAlive()){
 					otherTargets.push_back(cTarget);
 				}
 			}
@@ -68,11 +67,13 @@ void Cutter::givePDamages(double damage){
 }
 
 void Cutter::attack(){
+	Size visibleSize = Director::getInstance()->getVisibleSize();
 	for (auto& cTarget : otherTargets){
 		if (cTarget != nullptr){
 			Bullet* bullet = Bullet::create("res/turret/bullet.png", cTarget, damage,500,false);
 			bullet->setOwner("cutter");
 			bullet->setPosition(cTarget->getPosition());
+			bullet->setScale(visibleSize.width/960);
 			bullet->setVisible(false);
 			SceneManager::getInstance()->getGame()->getLevel()->addBullet(bullet);
 			//cTarget->takePDamages(damage);

@@ -33,8 +33,10 @@ Json::Value Scorpion::getSpecConfig(){
 }
 
 void Scorpion::attack(){
-	Bullet* bullet = Bullet::create("res/turret/bullet.png", target, damage,300,true);
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Bullet* bullet = Bullet::create("res/turret/bullet.png", target, damage,300*visibleSize.width/960,true);
 	bullet->setOwner("archer");
 	bullet->setPosition(getPosition() - Vec2(0, getSpriteFrame()->getRect().size.width / 2 * getScale()));
+	bullet->setScale(visibleSize.width/960);
 	SceneManager::getInstance()->getGame()->getLevel()->addBullet(bullet);
 }

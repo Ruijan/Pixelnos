@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="13" height="11" tilewidth="60" tileheight="60" nextobjectid="27">
+ <tileset firstgid="1" name="ground" tilewidth="60" tileheight="60" tilecount="20">
+  <image source="../tiles/ground.png" width="300" height="240"/>
+ </tileset>
+ <layer name="Background" width="13" height="11" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYBzFo5gMDACjHACQ
+  </data>
+ </layer>
+ <layer name="Path" width="13" height="11">
+  <data encoding="base64" compression="zlib">
+   eJxjYBg4wAvEXEDMCcR8ROoRQWILYZHnhJrJg2SmIA792IAQGg0CwgT0wMyHqQP5ix+JDXMTNntg7hFEUs/PgB0IADE3kjyIz4NHPa0BAPbrAeY=
+  </data>
+ </layer>
+ <objectgroup name="Object">
+  <object id="1" type="grass8.png" gid="8" x="110" y="167" width="60" height="60"/>
+  <object id="5" type="grass7.png" gid="7" x="45" y="154" width="60" height="60"/>
+  <object id="6" type="grass6.png" gid="6" x="222" y="199" width="60" height="60"/>
+  <object id="8" type="grass2.png" gid="2" x="367" y="245" width="60" height="60"/>
+  <object id="9" type="grass5.png" gid="5" x="478" y="478" width="60" height="60"/>
+  <object id="10" type="grass3.png" gid="3" x="444" y="338" width="60" height="60"/>
+  <object id="11" type="grass5.png" gid="5" x="649" y="168" width="60" height="60"/>
+  <object id="12" type="grass5.png" gid="1073741829" x="115" y="494" width="60" height="60"/>
+  <object id="13" type="grass8.png" gid="2147483656" x="61" y="583" width="60" height="60"/>
+  <object id="14" type="grass7.png" gid="2147483655" x="124" y="579" width="60" height="60"/>
+  <object id="15" type="grass4.png" gid="4" x="85" y="531" width="60" height="60"/>
+  <object id="17" type="grass2.png" gid="2" x="101" y="631" width="60" height="60"/>
+  <object id="19" type="grass5.png" gid="2147483653" x="359" y="537" width="60" height="60"/>
+  <object id="21" type="grass2.png" gid="2" x="118" y="361" width="60" height="60"/>
+  <object id="22" type="grass8.png" gid="8" x="610" y="278" width="60" height="60"/>
+  <object id="24" type="grass3.png" gid="3" x="26" y="571" width="60" height="60"/>
+ </objectgroup>
+</map>

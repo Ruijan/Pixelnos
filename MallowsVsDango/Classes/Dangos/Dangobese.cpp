@@ -10,7 +10,7 @@ Dango(npath, Dangobese::getConfig()["level"][nlevel]["speed"].asDouble(),
 }
 
 Dangobese::~Dangobese() {
-	std::cerr << "Dangobese Destroyed ! confirmed !" << std::endl;
+	//std::cerr << "Dangobese Destroyed ! confirmed !" << std::endl;
 }
 
 Dangobese* Dangobese::create(std::vector<Cell*> npath, int nlevel)

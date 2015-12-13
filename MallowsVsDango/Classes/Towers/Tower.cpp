@@ -94,9 +94,8 @@ void Tower::chooseTarget(std::vector<Dango*> targets){
 			if(cTarget != nullptr){
 				int first = cTarget->getTargetedCell();
 				double dist = cTarget->getPosition().distanceSquared(this->getPosition());
-				double minDist = pow(getRange() + sqrt((pow(Cell::getCellWidth() * 3 / 8.0, 2) +
-					pow(Cell::getCellHeight() * 3 / 8.0, 2))), 2);
-				if (first > bestScore && dist < minDist && cTarget->willBeAlive()){
+				double minDist = pow(getRange(), 2);
+				if (first > bestScore && dist <= minDist && cTarget->willBeAlive()){
 					bestScore = first;
 					target = cTarget;
 					chosen = true;
@@ -186,8 +185,8 @@ cocos2d::Vector<SpriteFrame*> Tower::getAnimationFromName(std::string name, Towe
 			action = "attack";
 			break;
 		default:
-			std::cerr << "No animation found for this state.";
-			std::cerr << "Steady state animation used instead." << std::endl;
+			log("No animation found for this state.");
+			log("Steady state animation used instead.");
 			action = "steady";
 			break;
 	};
@@ -225,6 +224,7 @@ void Tower::update(float dt) {
 					state = State::ATTACKING;
 					givePDamages(damage);
 					startAnimation();
+					timerIDLE = 0;
 				}
 				if(timerIDLE > 2){
 					state = State::IDLE;
@@ -233,6 +233,7 @@ void Tower::update(float dt) {
 				}
 				break;
 			case State::ATTACKING:
+				timerIDLE += dt;
 				if(currentAction->isDone()){
 					currentAction->release();
 					state = State::RELOADING;
@@ -240,9 +241,13 @@ void Tower::update(float dt) {
 					SpriteFrameCache* cache = SpriteFrameCache::getInstance();
 					setSpriteFrame(cache->getSpriteFrameByName(frameName.c_str()));
 					timer = 0;
+					timerIDLE = 0;
 					if(target != nullptr){
 						attack();
 					}
+				}
+				if(timerIDLE > 2){
+					log("ERROR WITH TIMER !!!");
 				}
 				break;
 			case State::RELOADING:
@@ -300,7 +305,7 @@ void Tower::displayRange(bool disp){
 
 void Tower::startAnimation(){
 	if(currentAction != nullptr){
-		stopAction(currentAction);
+		stopAllActions();
 	}
 	cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(state);
 	Animation* currentAnimation = Animation::createWithSpriteFrames(animFrames, 0.05f);
