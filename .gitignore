@@ -1,0 +1,10 @@
+# exclude everything except directory Classes, Resources & CMakeLists
+*.ogv
+/MallowsVsDango/*
+!.gitignore
+!/MallowsVsDango/Classes
+!/MallowsVsDango/Resources
+/MallowsVsDango/Resources/ScreenShots
+!/MallowsVsDango/CMakeLists.txt
+
+/.project
