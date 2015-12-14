@@ -1,0 +1,23 @@
+TO CORRECT
+anchor points for animation of towers
+scale and positions of some buttons 
+size of images for different resolutions
+
+
+DONE
+color text cost towers
+select enemy is bugged -> tower throw to a dead dango.
+make follow the bullet even if it touched
+segmentation fault at the end of the level if lose
+position of objects for different resolutions
+size of images for different resolutions (SCALE EVERYTHING)
+????state of towers blocked when the animation is over in android????
+????invicible dango????
+move existing tower from the menu (delete existing tower to put a new one)
+????infinity of sugar????
+remove tower gain 
+when we don't want to build a tower, going to the menu back destroy the tower
+seg fault dialogue when multiple characters have to speak.
+range of attack (select middle instead of border)
+dialogue segfault cause of animation when tap
+dialogue last letter of sentence not displayed

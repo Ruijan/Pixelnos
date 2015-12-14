@@ -45,13 +45,13 @@ void DangoGenerator::update(double dt, Level* level){
 		if (timer > sequenceTimer[cWave][step]){
 			if (step < sequenceTimer[cWave].size()){
 				Dango* dango(nullptr);
-				log("Dango : %s",sequenceDango[cWave][step].c_str());
+				//log("Dango : %s",sequenceDango[cWave][step].c_str());
 				std::string dango_type = sequenceDango[cWave][step].substr(0,sequenceDango[cWave][step].size()-1);
-				log("Dango : %s",sequenceDango[cWave][step].c_str());
+				//log("Dango : %s",sequenceDango[cWave][step].c_str());
 				int levelDango = Value(sequenceDango[cWave][step].substr(sequenceDango[cWave][step].size()-1,1)).asInt();
-				log("Type of Dango : %s",dango_type.c_str());
-				log("Level of Dango : %s",sequenceDango[cWave][step].substr(sequenceDango[cWave][step].size()-1,1).c_str());
-				log("Level of Dango : %i",levelDango);
+				//log("Type of Dango : %s",dango_type.c_str());
+				//log("Level of Dango : %s",sequenceDango[cWave][step].substr(sequenceDango[cWave][step].size()-1,1).c_str());
+				//log("Level of Dango : %i",levelDango);
 				if (dango_type == "dangosimple"){
 					dango = Dangosimple::create(level->getPath(),levelDango);
 				}

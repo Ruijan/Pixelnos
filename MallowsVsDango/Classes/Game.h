@@ -7,7 +7,7 @@
 
 
 
-class Game : public cocos2d::Scene
+class MvDGame : public cocos2d::Scene
 {
 
 private:
@@ -25,8 +25,8 @@ protected:
 	void reload();
 
 public:
-	Game();
-	~Game();
+	MvDGame();
+	~MvDGame();
 
 	// Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
 	virtual bool init();
@@ -39,7 +39,6 @@ public:
 
 
 	// a selector callback
-	void menuCloseCallback(cocos2d::Ref* pSender);
 	void setReloading(bool nreloading);
 	virtual void pause();
 	virtual void resume();
@@ -53,7 +52,7 @@ public:
 	
 	Level* getLevel();
 	// implement the "static node()" method manually
-	CREATE_FUNC(Game);
+	CREATE_FUNC(MvDGame);
 };
 
 #endif // __Game_SCENE_H__

@@ -8,7 +8,7 @@ SceneManager *SceneManager::manager;
 SceneManager::SceneManager(){
 	cacheScene[MENU] = MainMenu::create();
 	cacheScene[MENU]->retain();
-	cacheScene[GAME] = Game::create();
+	cacheScene[GAME] = MvDGame::create();
 	cacheScene[GAME]->retain();
 	cacheScene[LEVELS] = StoryMenu::create();
 	cacheScene[LEVELS]->retain();
@@ -29,6 +29,6 @@ void SceneManager::setScene(SceneManager::SceneType type){
 	Director::getInstance()->replaceScene(transition);// , false));
 }
 
-Game* SceneManager::getGame(){
-	return  ((Game*)cacheScene[GAME]);
+MvDGame* SceneManager::getGame(){
+	return  ((MvDGame*)cacheScene[GAME]);
 }

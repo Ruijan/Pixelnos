@@ -5,7 +5,7 @@
 #include "Game.h"
 #include <array>
 
-class Game;
+class MvDGame;
 
 class SceneManager
 {
@@ -24,7 +24,7 @@ public:
 
 	//Add a scene
 	void setScene(SceneManager::SceneType type);
-	Game* getGame();
+	MvDGame* getGame();
 
 	// Create a new Instance of SceneManager*
 	static SceneManager* getInstance()

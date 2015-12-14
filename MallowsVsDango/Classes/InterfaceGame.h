@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include "Towers/Tower.h"
 
-class Game;
+class MvDGame;
 
 class InterfaceGame : public cocos2d::Layer
 {	
@@ -22,9 +22,9 @@ public:
 	InterfaceGame();
 	virtual bool init();
 	void addEvents();
-	static InterfaceGame* create(Game* ngame);
+	static InterfaceGame* create(MvDGame* ngame);
 	
-	void setGame(Game* ngame);
+	void setGame(MvDGame* ngame);
 	void menuGameCallback(cocos2d::Ref* sender);
 	void menuMainCallback(cocos2d::Ref* sender);
 	void menuNextCallback(cocos2d::Ref* sender);
@@ -52,7 +52,7 @@ public:
 	State getState() const;
 
 private:
-	
+
 	std::unordered_map<std::string, std::pair<cocos2d::Sprite*, cocos2d::Sprite*>> turretsMenu;
 	cocos2d::Menu* menuOpen;
 	cocos2d::Node* menuLoose;
@@ -64,7 +64,7 @@ private:
 	cocos2d::DrawNode* blackMask;
 	cocos2d::EventListenerTouchOneByOne* listener;
 
-	Game* game;
+	MvDGame* game;
 	State state;
 	Tower* selectedTurret;
 
@@ -74,6 +74,7 @@ private:
 	
 protected:
 	void moveSelectedTurret(cocos2d::Vec2 pos);
+	bool isOnTower(cocos2d::Vec2 pos);
 	void initParametersMenu();
 	void initLooseMenu();
 	void initWinMenu();
@@ -82,6 +83,7 @@ protected:
 	void displayTowerInfos(std::string itemName);
 	void resetTowerMenu();
 
+	void removeTower();
 	void destroyCallback(Ref* sender);
 	void builtCallback(Ref* sender);
 	void upgradeCallback(Ref* sender);

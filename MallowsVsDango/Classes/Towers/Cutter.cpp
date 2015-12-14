@@ -68,11 +68,13 @@ void Cutter::givePDamages(double damage){
 }
 
 void Cutter::attack(){
+	Size visibleSize = Director::getInstance()->getVisibleSize();
 	for (auto& cTarget : otherTargets){
 		if (cTarget != nullptr){
 			Bullet* bullet = Bullet::create("res/turret/bullet.png", cTarget, damage,500,false);
 			bullet->setOwner("cutter");
 			bullet->setPosition(cTarget->getPosition());
+			bullet->setScale(visibleSize.width/960);
 			bullet->setVisible(false);
 			SceneManager::getInstance()->getGame()->getLevel()->addBullet(bullet);
 			//cTarget->takePDamages(damage);

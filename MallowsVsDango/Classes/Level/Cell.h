@@ -16,7 +16,7 @@ public:
 	void addEvents();
 	void touchEvent(cocos2d::Touch* touch, cocos2d::Vec2 _p);
 
-	Node* getObject() { return object; }
+	const Node* getObject() { return object; }
 	void setObject(Node* nObject);
 	bool isFree();
 	bool isPath();
@@ -24,7 +24,7 @@ public:
 protected:
 
 private:
-	//La case sais qu'elle possède un object (Dango ou tourelle)
+	//La case sais qu'elle possï¿½de un object (Dango ou tourelle)
 	cocos2d::Node* object;
 	bool path;
 	

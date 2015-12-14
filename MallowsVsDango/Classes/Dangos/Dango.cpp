@@ -73,7 +73,6 @@ void Dango::updateAnimation(){
 	}
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
 	std::string preString(getSpecConfig()["level"][level]["name"].asString());
-	log("prestring %s", preString.c_str());
 	double x = this->getScaleX();
 	switch(cDirection){
 		case UP:
@@ -100,7 +99,7 @@ void Dango::updateAnimation(){
 		animFrames.pushBack(frame);
 	}
 	Animation* animation = Animation::createWithSpriteFrames(animFrames, 
-		Cell::getCellWidth() / getSpeed() / 24 * 1.1);
+		Cell::getCellWidth() / getSpeed() / 24 * getSpecConfig()["cellperanim"].asFloat());
 	cAction = runAction(RepeatForever::create(Animate::create(animation)));
 }
 

@@ -70,9 +70,9 @@ if(MSVC)
                   -wd4251 -wd4244 -wd4334 -wd4005 -wd4820 -wd4710
                   -wd4514 -wd4056 -wd4996 -wd4099)
 else()
-  set(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -DCOCOS2D_DEBUG=0")
+  set(CMAKE_C_FLAGS_DEBUG "-g -Wall -DCOCOS2D_DEBUG=1")
   set(CMAKE_CXX_FLAGS_DEBUG ${CMAKE_C_FLAGS_DEBUG})
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wextra -std=c99")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-deprecated-declarations -Wno-reorder")
   if(CLANG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
@@ -122,32 +122,15 @@ if ( WIN32 )
 )
 endif( WIN32 )
 
-file(GLOB FILE_SRC
-  "Classes/*.cpp"
-  "Classes/Level/*.cpp"
-  "Classes/Config/*.cpp"
-  "Classes/Dangos/*.cpp"
-  "Classes/Towers/*.cpp"
-)
-
-file(GLOB FILE_HPP
-  "Classes/*.h"
-  "Classes/Level/*.h"
-  "Classes/Config/*.h"
-  "Classes/Dangos/*.h"
-  "Classes/Towers/*.h"
-)
-
 set(GAME_SRC
-  ${FILE_SRC}
+  Classes/AppDelegate.cpp
+  Classes/HelloWorldScene.cpp
   ${PLATFORM_SPECIFIC_SRC}
 )
 
-
-
-
 set(GAME_HEADERS
-  ${FILE_HPP}
+  Classes/AppDelegate.h
+  Classes/HelloWorldScene.h
   ${PLATFORM_SPECIFIC_HEADERS}
 )
 

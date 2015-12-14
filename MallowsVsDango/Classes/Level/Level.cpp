@@ -18,7 +18,7 @@ Level* Level::create(int nLevel){
 }
 
 Level::Level(int nLevel) : id(nLevel), size(14,12), sugar(60), life(3), 
-paused(false), loaded(false), state(TITLE), timer(0),zGround(0) {}
+paused(false), loaded(false), state(INTRO), timer(0),zGround(0) {}
 
 bool Level::init()
 {
@@ -50,7 +50,8 @@ bool Level::init()
 		// report to the user the failure and their locations in the document.
 		std::string error = reader.getFormattedErrorMessages();
 	}
-	
+	double factor = visibleSize.height / (size.height * Cell::getCellHeight());
+	double ratioX = visibleSize.width / 960;
 	
 	for (int i(0); i < size.width ; ++i){
 		std::vector<Cell*> row;
@@ -58,7 +59,6 @@ bool Level::init()
 			std::string::size_type sz;
 			int i_dec = Value(table_map[j][i]).asInt();
 			std::string filename = root["frames"][i_dec]["filename"].asString();
-
 			Cell* cell = Cell::create(filename);
 			if (table_path[j][i] == "s"){
 				start = Point(j,i);
@@ -67,7 +67,8 @@ bool Level::init()
 				end = Point(j,i);
 			}
 			row.push_back(cell);
-			cell->setPosition(Vec2((i + 0.5) * Cell::getCellWidth() , (size.height - j - 1 + 0.5) * Cell::getCellHeight())); 
+			cell->setPosition(Vec2((i + 0.5) * Cell::getCellWidth(), (size.height - j - 1 + 0.5) * Cell::getCellHeight()));
+			//cell->setScale(Cell::getCellWidth()/cell->getContentSize().width);
 			cell->setVisible(false);
 			
 			addChild(cell);
@@ -76,11 +77,11 @@ bool Level::init()
 	}
 	createPath(table_path);
 
-	double factor = visibleSize.height / (size.height * Cell::getCellHeight());
+
 	setAnchorPoint(Vec2(0, 0));
 	setPosition(Vec2(0, 0));
 	
-	Label* title = Label::createWithTTF("Level " + Value(id).asString(), "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 12.0));
+	Label* title = Label::createWithTTF("Level " + Value(id+1).asString(), "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 12.0));
 	title->setColor(Color3B::YELLOW);
 	title->enableOutline(Color4B::BLACK,3);
 	title->setPosition(round(visibleSize.width * 3 / 8.0), round(visibleSize.height / 2.0));
@@ -97,23 +98,24 @@ bool Level::init()
 	DrawNode* background = DrawNode::create();
 	background->drawSolidRect(Vec2(0,0), Vec2(visibleSize.width,visibleSize.height),Color4F::GREEN);
 	
-	TMXTiledMap* tileMap = new  TMXTiledMap();
-    tileMap->initWithTMXFile("res/map/level1v2.tmx");
+	std::string mapFile = fileUtils->fullPathForFilename("res/map/level1v2.tmx");
+	TMXTiledMap* tileMap = TMXTiledMap::create(mapFile);
+    tileMap->setScale(ratioX * 0.5);
     Sprite* filter = Sprite::create("res/map/background2.png");
-    //filter->setScale(2);
+    filter->setScale(ratioX);
     filter->setAnchorPoint(Vec2(0,0));
-    //addChild(background);
     addChild(filter);
     addChild(tileMap);
-    
     
     ValueVector objects = tileMap->getObjectGroup ("Object")->getObjects();
     std::vector<Sprite*> elements;
     for(auto object : objects){
+
 		Sprite* obj = Sprite::createWithSpriteFrameName(object.asValueMap()["type"].asString());
-		obj->setPosition(Vec2(object.asValueMap()["x"].asInt(),
-		object.asValueMap()["y"].asInt()+Cell::getCellHeight()));
+		obj->setPosition(Vec2(object.asValueMap()["x"].asInt() * ratioX * 0.5,
+		object.asValueMap()["y"].asInt() * ratioX * 0.5 + Cell::getCellHeight()));
 		obj->setAnchorPoint(Vec2(0,0));
+		obj->setScale(ratioX* 0.5);
 		addChild(obj);
 		elements.push_back(obj);
 	}
@@ -124,7 +126,26 @@ bool Level::init()
 		++i;
 	}
 	zGround = i;
-   
+	/*std::vector<std::string> text;
+	std::vector<std::string> heads;
+
+	for(int i(0); i < config["introDialogue"].size(); ++i){
+		for(int j(0); j < config["introDialogue"][i]["text"].size(); ++j){
+			heads.push_back(config["introDialogue"][i]["speaker"].asString());
+			text.push_back(config["introDialogue"][i]["text"][j].asString());
+		}
+	}*/
+	if(config["introDialogue"].size() != 0){
+		introDialogue = Dialogue::createFromConfig(config["introDialogue"]);
+		addChild(introDialogue,zGround,"dialogue");
+		introDialogue->launch();
+		getChildByName("title")->setVisible(false);
+	}
+	else {
+		state = TITLE;
+	}
+
+
 	generator = DangoGenerator::createWithFilename(config["generator"].asString());
 	sugar = config["sugar"].asDouble();
 	experience = config["exp"].asInt();
@@ -140,6 +161,14 @@ Level::~Level()
 void Level::update(float dt)
 {
 	switch(state){
+		case INTRO:
+			introDialogue->update();
+			if(introDialogue->hasFinished()){
+				getChildByName("title")->setVisible(true);
+				removeChild(introDialogue);
+				state = TITLE;
+			}
+			break;
 		case TITLE:
 			timer += dt;
 			if(timer > 3){
