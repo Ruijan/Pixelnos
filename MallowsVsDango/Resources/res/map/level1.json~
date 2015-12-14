@@ -1,0 +1,57 @@
+{ "height":9,
+ "layers":[
+        {
+         "compression":"zlib",
+         "data":"eJxjYmBgYCIRs6LxWdD4zCSYxYZmHjsQcwAxJxBzATEPiW7jxyHODTUXXVwAi3vZsJjDBqX5sLgRxOZF8gczlI0eLvgwsWEGADunAYs=",
+         "encoding":"base64",
+         "height":9,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":false,
+         "width":12,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "compression":"zlib",
+         "data":"eJxjYmBgYCKAmYGYFYhZiFALw2wkqEXG7EDMAcScQMwF5fOQaIYgFjFuqHnY1Atg8Rs\/Hr\/wYXEjLzSMmMgIK2YS1AIAPDsBhw==",
+         "encoding":"base64",
+         "height":9,
+         "name":"Tile Layer 2",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":12,
+         "x":0,
+         "y":0
+        }],
+ "nextobjectid":1,
+ "orientation":"orthogonal",
+ "properties":
+    {
+
+    },
+ "renderorder":"right-down",
+ "tileheight":64,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"..\/..\/..\/..\/..\/ground.png",
+         "imageheight":192,
+         "imagewidth":384,
+         "margin":0,
+         "name":"ground",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tilecount":18,
+         "tileheight":64,
+         "tilewidth":64
+        }],
+ "tilewidth":64,
+ "version":1,
+ "width":12
+}
