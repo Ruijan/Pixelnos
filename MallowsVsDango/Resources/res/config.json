@@ -1,4 +1,9 @@
 {
+	"sound_transition" : [
+		["music/On-Tiptoe.mp3.mp3","music/bensound-jazzyfrenchy.mp3.mp3","none"],
+		["music/On-Tiptoe.mp3.mp3","music/bensound-jazzyfrenchy.mp3.mp3","music/On-Tiptoe.mp3.mp3"],
+		["none","music/bensound-jazzyfrenchy.mp3.mp3","music/On-Tiptoe.mp3.mp3"]
+	],
     "towers" : {
 	"archer" : {
 		"name" : "archer",

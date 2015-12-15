@@ -1,5 +1,7 @@
 #include "Game.h"
 #include "AppDelegate.h"
+#include "Lib/FadeMusic.h"
+#include "audio/include/SimpleAudioEngine.h"
 
 USING_NS_CC;
 
@@ -73,6 +75,11 @@ void MvDGame::onEnterTransitionDidFinish(){
 }
 
 void MvDGame::update(float delta){
+
+void Game::onExitTransitionDidStart(){
+	Scene::onExitTransitionDidStart();
+}
+
 
 	Scene::update(delta);
 	menu->update(delta);

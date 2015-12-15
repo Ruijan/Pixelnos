@@ -2,7 +2,9 @@
 #include "Config/Config.h"
 #include "AppDelegate.h"
 #include "SceneManager.h"
-#include "Functions.h"
+#include "Lib/Functions.h"
+#include "Lib/FadeMusic.h"
+#include "audio/include/SimpleAudioEngine.h"
 
 USING_NS_CC;
 

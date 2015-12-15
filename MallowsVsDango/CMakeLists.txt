@@ -122,6 +122,24 @@ if ( WIN32 )
 )
 endif( WIN32 )
 
+file(GLOB FILE_SRC
+  "Classes/*.cpp"
+  "Classes/Level/*.cpp"
+  "Classes/Config/*.cpp"
+  "Classes/Dangos/*.cpp"
+  "Classes/Towers/*.cpp"
+  "Classes/Lib/*.cpp"
+)
+
+file(GLOB FILE_HPP
+  "Classes/*.h"
+  "Classes/Level/*.h"
+  "Classes/Config/*.h"
+  "Classes/Dangos/*.h"
+  "Classes/Towers/*.h"
+  "Classes/Lib/*.h"
+)
+
 set(GAME_SRC
   Classes/AppDelegate.cpp
   Classes/HelloWorldScene.cpp

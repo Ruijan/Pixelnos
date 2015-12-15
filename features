@@ -1,4 +1,9 @@
 FEATURES TO CODE/DESIGN
+add sound effetcs for cutting
+add sound effects for splash
+parameters screen with volume for sound and effects
+loading screen for sprites and background music.
+reward for story at the end of the levels
 make tutorial (1st level)
 dialogues:
 	- animate character during speech (new folder with dialogues->mustache is moving)
@@ -31,6 +36,11 @@ add dialogs to tell a story
 dialogues:
 	- close and open speechbubble between each speech 
 	- new speaker means opening to the left or right with move to animation
+	- tap to skip
 design of main menu (first screen)
 story menu (access to previous levels and next ones)
+Sound:
+	-add background sound
+	-smooth transition between background musics
+
 

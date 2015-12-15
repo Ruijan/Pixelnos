@@ -1,7 +1,7 @@
 #include "Level.h"
 #include "../AppDelegate.h"
 #include "../Config/json.h"
-#include "../Functions.h"
+#include "../Lib/Functions.h"
 #include <fstream>
 
 USING_NS_CC;
@@ -273,7 +273,13 @@ void Level::update(float dt)
 				bullets.erase(std::remove(bullets.begin(), bullets.end(), nullptr), bullets.end());
 				turrets.erase(std::remove(turrets.begin(), turrets.end(), nullptr), turrets.end());
 				dangos.erase(std::remove(dangos.begin(), dangos.end(), nullptr), dangos.end());
+				if(hasWon()){
+					state = ENDING;
+
+				}
 			}
+			break;
+		case ENDING:
 			break;
 		case DONE:
 			break;
@@ -317,6 +323,10 @@ void Level::createPath(std::vector<std::vector<std::string>> table){
 void Level::setSize(cocos2d::Size nsize){
 	size = nsize;
 }
+bool Level::isFinishing(){
+	return state == ENDING;
+}
+
 bool Level::isLoaded(){ 
 	return loaded; 
 }

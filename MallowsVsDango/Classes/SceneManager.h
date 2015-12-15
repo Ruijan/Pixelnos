@@ -39,6 +39,7 @@ private:
 	static SceneManager *manager;
 	std::array<cocos2d::Scene*,5> cacheScene;
 	cocos2d::Scene* currentscene;
+	int c_index;
 };
 
 #endif
