@@ -94,9 +94,8 @@ void Tower::chooseTarget(std::vector<Dango*> targets){
 			if(cTarget != nullptr){
 				int first = cTarget->getTargetedCell();
 				double dist = cTarget->getPosition().distanceSquared(this->getPosition());
-				double minDist = pow(getRange() + sqrt((pow(Cell::getCellWidth() * 3 / 8.0, 2) +
-					pow(Cell::getCellHeight() * 3 / 8.0, 2))), 2);
-				if (first > bestScore && dist < minDist && cTarget->willBeAlive()){
+				double minDist = pow(getRange(), 2);
+				if (first > bestScore && dist <= minDist && cTarget->willBeAlive()){
 					bestScore = first;
 					target = cTarget;
 					chosen = true;

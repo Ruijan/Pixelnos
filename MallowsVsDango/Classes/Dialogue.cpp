@@ -7,6 +7,7 @@ using namespace std;
 
 Dialogue::Dialogue(std::vector<string> text, std::vector<std::string>speakers, std::vector<Direction> direction) : running(false), finished(false),
 posCurrentCaract(0), currentSpeech(0), type(PROGRESSIVE), speech(nullptr), state(HEAD_APPEAR){
+
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	directions = direction;
 	if (text.size() == speakers.size()){
@@ -26,8 +27,9 @@ Dialogue* Dialogue::createFromConfig(Json::Value config){
 	std::vector<std::string> heads;
 	std::vector<Direction> direction;
 
-	for (int i(0); i < config.size(); ++i){
-		for (int j(0); j < config[i]["text"].size(); ++j){
+
+	for(int i(0); i < config.size(); ++i){
+		for(int j(0); j < config[i]["text"].size(); ++j){
 			heads.push_back(config[i]["speaker"].asString());
 			text.push_back(config[i]["text"][j].asString());
 			Direction dir = config[i]["side"].asString() == "LEFT" ? Dialogue::Direction::LEFT : Dialogue::Direction::RIGHT;
@@ -35,6 +37,7 @@ Dialogue* Dialogue::createFromConfig(Json::Value config){
 		}
 	}
 	return new Dialogue(text, heads, direction);
+
 }
 
 void Dialogue::launch(){
@@ -61,10 +64,12 @@ void Dialogue::launch(){
 	speech->setAlignment(TextHAlignment::CENTER);
 	tapToContinue = Label::createWithSystemFont("Tap to continue", "Arial", 25.f);
 	tapToContinue->setPosition(Point(speech->getPosition().x, speechBubble->getPosition().y - speechBubble->getContentSize().height*speechBubble->getScale() / 4));
+
 	tapToContinue->setColor(Color3B::BLACK);
 	tapToContinue->setVisible(false);
 	FadeIn* fadeIn = FadeIn::create(0.5f);
 	FadeOut* fadeout = FadeOut::create(0.5f);
+
 	tapToContinue->runAction(RepeatForever::create(Sequence::create(fadeIn, fadeout, NULL)));
 	speechBubble->setScale(0.01f);
 	addChild(currentHead);
@@ -78,6 +83,7 @@ void Dialogue::launch(){
 void Dialogue::addEvents(){
 	listener = cocos2d::EventListenerTouchOneByOne::create();
 	listener->setSwallowTouches(true);
+
 	listener->onTouchBegan = [&](cocos2d::Touch* touch, cocos2d::Event* event) -> bool{
 		return true;
 	};
@@ -86,6 +92,7 @@ void Dialogue::addEvents(){
 	listener->onTouchEnded = [=](cocos2d::Touch* touch, cocos2d::Event* event) -> void{
 		if (cAction == nullptr || cAction->isDone()){
 			if ((unsigned int)posCurrentCaract < textes[currentSpeech].first.length() - 1){
+
 				posCurrentCaract = textes[currentSpeech].first.length();
 				std::string text = textes[currentSpeech].first;
 				speech->setString(text);
@@ -103,6 +110,7 @@ void Dialogue::addEvents(){
 				++currentSpeech;
 			}
 		}
+
 	};
 	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 29);
 }

@@ -73,6 +73,7 @@ void MvDGame::onEnterTransitionDidFinish(){
 }
 
 void MvDGame::update(float delta){
+
 	Scene::update(delta);
 	menu->update(delta);
 	cLevel->update(delta * acceleration);

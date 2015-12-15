@@ -79,7 +79,6 @@ void InterfaceGame::addEvents()
     listener->setSwallowTouches(true);
 
     listener->onTouchBegan = [&](cocos2d::Touch* touch, cocos2d::Event* event){
-		//log("State : %i" ,state );
         cocos2d::Vec2 p = touch->getLocation();
         cocos2d::Rect rect = this->getBoundingBox();
         cocos2d::Rect rectrightpanel = menuPanel->getChildByName("panel")->getBoundingBox();
@@ -265,9 +264,11 @@ void InterfaceGame::reloadCallback(Ref* sender){
 }
 void InterfaceGame::accelerateOnOffCallback(Ref* sender){
 	if (game->isAccelerated()){
+		game->pause();
 		game->setNormalSpeed();
 	}
 	else{
+		game->resume();
 		game->increaseSpeed();
 	}
 }
@@ -513,12 +514,19 @@ void InterfaceGame::initWinMenu(){
 	menuForWin->setPosition(0, -75);
 
 	Sprite* mask2 = Sprite::create("res/buttons/centralMenuPanel.png");
+	
+	Label* youwin = Label::createWithTTF("Level Cleared !", "fonts/ChalkDust.ttf", 28.f);
+	youwin->enableOutline(Color4B::BLACK, 1);
+	youwin->setPosition(0, 50);
+	Sprite* winMallow = Sprite::create("res/buttons/win.png");
+	winMallow->setPosition(0, -10);
+	winMallow->setScale(0.5);
+	
+	//adding children
 	menuWin->addChild(mask2);
 	menuWin->addChild(menuForWin);
-	Label* youwin = Label::createWithTTF("Level Cleared !", "fonts/ChalkDust.ttf", 28.f);
-	youwin->enableShadow(Color4B::BLACK, Size(0, 0), 2);
-	youwin->setPosition(0, 20);
 	menuWin->addChild(youwin);
+	menuWin->addChild(winMallow);
 	menuWin->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
 	menuWin->setScale(1.5);
 	menuWin->setVisible(false);
@@ -554,14 +562,14 @@ void InterfaceGame::initRightPanel(){
 	MenuItemSprite* reload = MenuItemSprite::create(sprite2, sprite2, CC_CALLBACK_1(InterfaceGame::reloadCallback, this));
 	MenuItemSprite* acc = MenuItemSprite::create(accelerate, accelerate, NULL);
 	MenuItemSprite* play = MenuItemSprite::create(normal, normal, NULL);
-	MenuItemToggle* itemToggle = MenuItemToggle::createWithCallback(CC_CALLBACK_1(InterfaceGame::accelerateOnOffCallback, this), acc, play, NULL);
+	//MenuItemToggle* itemToggle = MenuItemToggle::createWithCallback(CC_CALLBACK_1(InterfaceGame::accelerateOnOffCallback, this), acc, play, NULL);
 	reload->setScale(1 / (reload->getBoundingBox().size.width / sizeButton));
 	parameters->setScale(1 / (parameters->getBoundingBox().size.width / sizeButton));
-	itemToggle->setScale(1 / (itemToggle->getBoundingBox().size.width / sizeButton));
+	//itemToggle->setScale(1 / (itemToggle->getBoundingBox().size.width / sizeButton));
 	menuOpen = Menu::create();
 	menuOpen->addChild(reload);
 	menuOpen->addChild(parameters);
-	menuOpen->addChild(itemToggle);
+	//menuOpen->addChild(itemToggle);
 	menuOpen->alignItemsHorizontally();
 	
 	if(Tower::getConfig().size() > 4){
@@ -602,7 +610,8 @@ void InterfaceGame::initRightPanel(){
 	}
 	
 	Size size = parameters->getBoundingBox().size;
-	size.width += reload->getBoundingBox().size.width + itemToggle->getBoundingBox().size.width + 45;
+	size.width += reload->getBoundingBox().size.width + 45;
+	//size.width += reload->getBoundingBox().size.width + itemToggle->getBoundingBox().size.width + 45;
 	menuOpen->setPosition(0, visibleSize.height / 2 - size.height * 3 / 4.0);
 
 	// DISPLAY TOWERS
