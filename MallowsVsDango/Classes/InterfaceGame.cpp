@@ -1,7 +1,7 @@
 #include "InterfaceGame.h"
 #include "SceneManager.h"
 #include "AppDelegate.h"
-#include "Game.h"
+#include "MyGame.h"
 #include "Towers/Cutter.h"
 #include "Towers/Scorpion.h"
 #include "Lib/Functions.h"
@@ -54,7 +54,7 @@ bool InterfaceGame::init(){
 	return true;
 }
 
-InterfaceGame* InterfaceGame::create(MvDGame* ngame){
+InterfaceGame* InterfaceGame::create(MyGame* ngame){
 
 	InterfaceGame* interfaceGame = new InterfaceGame();
 	interfaceGame->setGame(ngame);
@@ -245,7 +245,7 @@ void InterfaceGame::addEvents()
     cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 30);
 }
 
-void InterfaceGame::setGame(MvDGame* ngame){
+void InterfaceGame::setGame(MyGame* ngame){
 	game = ngame;
 }
 
