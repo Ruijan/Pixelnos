@@ -12,7 +12,7 @@ SceneManager *SceneManager::manager;
 SceneManager::SceneManager(){
 	cacheScene[MENU] = MainMenu::create();
 	cacheScene[MENU]->retain();
-	cacheScene[GAME] = MvDGame::create();
+	cacheScene[GAME] = MyGame::create();
 	cacheScene[GAME]->retain();
 	cacheScene[LEVELS] = StoryMenu::create();
 	cacheScene[LEVELS]->retain();
@@ -47,6 +47,6 @@ void SceneManager::setScene(SceneManager::SceneType type){
 	c_index = (int)type;
 }
 
-MvDGame* SceneManager::getGame(){
-	return  ((MvDGame*)cacheScene[GAME]);
+MyGame* SceneManager::getGame(){
+	return  ((MyGame*)cacheScene[GAME]);
 }

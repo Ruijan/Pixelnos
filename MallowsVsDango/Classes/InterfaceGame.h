@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include "Towers/Tower.h"
 
-class MvDGame;
+class MyGame;
 
 class InterfaceGame : public cocos2d::Layer
 {	
@@ -22,9 +22,9 @@ public:
 	InterfaceGame();
 	virtual bool init();
 	void addEvents();
-	static InterfaceGame* create(MvDGame* ngame);
+	static InterfaceGame* create(MyGame* ngame);
 	
-	void setGame(MvDGame* ngame);
+	void setGame(MyGame* ngame);
 	void menuGameCallback(cocos2d::Ref* sender);
 	void menuMainCallback(cocos2d::Ref* sender);
 	void menuNextCallback(cocos2d::Ref* sender);
@@ -64,7 +64,7 @@ private:
 	cocos2d::DrawNode* blackMask;
 	cocos2d::EventListenerTouchOneByOne* listener;
 
-	MvDGame* game;
+	MyGame* game;
 	State state;
 	Tower* selectedTurret;
 

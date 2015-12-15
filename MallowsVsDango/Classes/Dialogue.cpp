@@ -1,5 +1,5 @@
 #include "Dialogue.h"
-#include "Game.h"
+#include "MyGame.h"
 
 USING_NS_CC;
 using namespace std::chrono;

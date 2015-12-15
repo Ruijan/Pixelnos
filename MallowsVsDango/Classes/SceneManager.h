@@ -2,10 +2,10 @@
 #define SCENEMANAGER_HPP
 
 #include "cocos2d.h"
-#include "Game.h"
+#include "MyGame.h"
 #include <array>
 
-class MvDGame;
+class MyGame;
 
 class SceneManager
 {
@@ -24,7 +24,7 @@ public:
 
 	//Add a scene
 	void setScene(SceneManager::SceneType type);
-	MvDGame* getGame();
+	MyGame* getGame();
 
 	// Create a new Instance of SceneManager*
 	static SceneManager* getInstance()

@@ -4,7 +4,7 @@
 #include "cocos2d.h"
 #include "audio/include/SimpleAudioEngine.h"
 
-class CC_DLL FadeMusic : public cocos2d::ActionInterval{
+class FadeMusic : public cocos2d::ActionInterval{
 public:
 	static FadeMusic* create(float duration, float volume);
 	//
@@ -33,7 +33,7 @@ CC_CONSTRUCTOR_ACCESS:
 	    CC_DISALLOW_COPY_AND_ASSIGN(FadeMusic);
 };
 
-class CC_DLL FadeInMusic : public FadeMusic
+class FadeInMusic : public FadeMusic
 {
 public:
     /**
@@ -68,7 +68,7 @@ private:
  * @brief Fades Out an object that implements the RGBAProtocol protocol. It modifies the opacity from 255 to 0.
  The "reverse" of this action is FadeIn
 */
-class CC_DLL FadeOutMusic : public FadeMusic
+class FadeOutMusic : public FadeMusic
 {
 public:
     /**
@@ -98,7 +98,7 @@ private:
 };
 
 
-class CC_DLL ChangeMusic : public cocos2d::ActionInstant
+class ChangeMusic : public cocos2d::ActionInstant
 {
 public:
     /** Allocates and initializes the action.
