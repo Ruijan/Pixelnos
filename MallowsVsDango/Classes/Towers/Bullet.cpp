@@ -1,7 +1,7 @@
 #include "Bullet.h"
 #include "../Dangos/Dango.h"
 #include "../Towers/Tower.h"
-#include "../Functions.h"
+#include "../Lib/Functions.h"
 
 USING_NS_CC;
 

@@ -30,6 +30,7 @@ public:
 		TITLE,
 		STARTING,
 		RUNNING,
+		ENDING,
 		DONE
 	};
 	Level(int nLevel);
@@ -40,7 +41,7 @@ public:
 	virtual void update(float dt);
 
 	void setSize(cocos2d::Size nsize);
-	bool isFinished();
+	bool isFinishing();
 	bool isLoaded();
 	bool isPaused();
 	Quantity getQuantity();

@@ -22,6 +22,7 @@ private:
 
 protected:
 	virtual void onEnterTransitionDidFinish();
+	virtual void onExitTransitionDidStart();
 	void reload();
 
 public:

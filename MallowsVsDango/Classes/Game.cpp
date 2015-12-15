@@ -1,5 +1,7 @@
 #include "Game.h"
 #include "AppDelegate.h"
+#include "Lib/FadeMusic.h"
+#include "audio/include/SimpleAudioEngine.h"
 
 USING_NS_CC;
 
@@ -70,6 +72,10 @@ void Game::onEnterTransitionDidFinish(){
 	else{
 		//pause();
 	}
+}
+
+void Game::onExitTransitionDidStart(){
+	Scene::onExitTransitionDidStart();
 }
 
 void Game::update(float delta){

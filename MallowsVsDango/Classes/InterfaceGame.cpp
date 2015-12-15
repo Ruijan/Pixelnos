@@ -4,7 +4,7 @@
 #include "Game.h"
 #include "Towers/Cutter.h"
 #include "Towers/Scorpion.h"
-#include "Functions.h"
+#include "Lib/Functions.h"
 #include <iostream>
 #include <string>
 #include <sstream>

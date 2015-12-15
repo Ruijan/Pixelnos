@@ -1,6 +1,7 @@
 #include "MainMenu.h"
 #include "SceneManager.h"
 #include "AppDelegate.h"
+#include "audio/include/SimpleAudioEngine.h"
 
 USING_NS_CC;
 

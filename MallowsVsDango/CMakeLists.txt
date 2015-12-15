@@ -128,6 +128,7 @@ file(GLOB FILE_SRC
   "Classes/Config/*.cpp"
   "Classes/Dangos/*.cpp"
   "Classes/Towers/*.cpp"
+  "Classes/Lib/*.cpp"
 )
 
 file(GLOB FILE_HPP
@@ -136,6 +137,7 @@ file(GLOB FILE_HPP
   "Classes/Config/*.h"
   "Classes/Dangos/*.h"
   "Classes/Towers/*.h"
+  "Classes/Lib/*.h"
 )
 
 set(GAME_SRC
