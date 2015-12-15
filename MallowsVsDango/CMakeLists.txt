@@ -141,15 +141,13 @@ file(GLOB FILE_HPP
 )
 
 set(GAME_SRC
-  Classes/AppDelegate.cpp
-  Classes/HelloWorldScene.cpp
-  ${PLATFORM_SPECIFIC_SRC}
+	${FILE_SRC}
+	${PLATFORM_SPECIFIC_SRC}
 )
 
 set(GAME_HEADERS
-  Classes/AppDelegate.h
-  Classes/HelloWorldScene.h
-  ${PLATFORM_SPECIFIC_HEADERS}
+	${FILE_HPP}
+	${PLATFORM_SPECIFIC_HEADERS}
 )
 
 if(GAME_HEADERS)
