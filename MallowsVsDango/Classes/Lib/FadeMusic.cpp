@@ -1,8 +1,10 @@
 #include "FadeMusic.h"
-
+#include "../Config/AudioController.h"
+#include "../AppDelegate.h"
 //
 // FadeInMusic
 //
+USING_NS_CC;
 
 FadeInMusic* FadeInMusic::create(float d)
 {
@@ -159,7 +161,7 @@ void FadeMusic::update(float time)
 {
     if (_target)
     {
-    	CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume((float)(_fromVolume + (_toVolume - _fromVolume) * time));
+    	((AppDelegate*)Application::getInstance())->setVolumeMusic((float)(_fromVolume + (_toVolume - _fromVolume) * time));
     }
     /*_target->setOpacity((GLubyte)(_fromOpacity + (_toOpacity - _fromOpacity) * time));*/
 }

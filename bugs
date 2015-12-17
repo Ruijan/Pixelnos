@@ -1,7 +1,12 @@
 TO CORRECT
+positions of parameters menu
+sound reset everytime a new music is playing
 anchor points for animation of towers
 scale and positions of some buttons 
 size of images for different resolutions
+during dialogues, buttons of right panel are still active
+after going back to menu, dialogues are not updated anymore (pause...)
+
 
 
 DONE

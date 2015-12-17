@@ -5,6 +5,8 @@
 #include "cocos2d.h"
 #include "SceneManager.h"
 #include "Config/Config.h"
+#include "Config/AudioController.h"
+#include "Lib/AudioSlider.h"
 #include "Config/json.h"
 
 /**
@@ -44,6 +46,9 @@ public:
 	Config& getConfigClass();
 	bool isSaveFile() const;
 
+	void addAudioSlider(AudioSlider* slider, AudioController::SOUNDTYPE type);
+	void setVolumeMusic(double volume);
+
 	/*static AppDelegate* getInstance(){
 		if (!appDelegate)
 			appDelegate = new AppDelegate();
@@ -54,6 +59,7 @@ protected:
 	static AppDelegate* appDelegate;
 	SceneManager* manager;
 	Config config;
+	AudioController* controller;
 
 };
 

@@ -2,8 +2,9 @@
 	"sound_transition" : [
 		["music/On-Tiptoe.mp3.mp3","music/bensound-jazzyfrenchy.mp3.mp3","none"],
 		["music/On-Tiptoe.mp3.mp3","music/bensound-jazzyfrenchy.mp3.mp3","music/On-Tiptoe.mp3.mp3"],
-		["none","music/bensound-jazzyfrenchy.mp3.mp3","music/On-Tiptoe.mp3.mp3"]
+		["none","music/bensound-jazzyfrenchy.mp3.mp3","music/On-Tiptoe.mp3.mp3	"]
 	],
+	"play_sound" : true,
     "towers" : {
 	"archer" : {
 		"name" : "archer",
@@ -18,23 +19,25 @@
             	"image" : "res/turret/archer.png",
 		"animation" : "res/turret/animations/archer.png",
 		"animation_bullet" : "res/turret/animations/splash.png",
+		"sound_bullet" : "music/splash.mp3",
 		"animation_attack_size" : 9,
 		"animation_steady_size" : 49,
 		"animation_bullet_size" : 14
-        },
-        "cutter" : {
+    },
+    "cutter" : {
 		"name" : "cutter",
 		"description" : "Sword Master: Attack all the dangos around him",
-    		"attack_speed" : 2.5,
-    		"damages" : 1,
-    		"range" : 80,
-    		"cost" : 50,
+		"attack_speed" : 2.5,
+		"damages" : 1,
+		"range" : 80,
+		"cost" : 50,
 		"d_speed" : 0.25,
 		"d_damage" : 0.25,
 		"d_range" : 0.05,
-    		"image" : "res/turret/cutter.png",
+		"image" : "res/turret/cutter.png",
 		"animation" : "res/turret/animations/cutter.png",
 		"animation_bullet" : "res/turret/animations/cut.png",
+		"sound_bullet" : "music/slash.mp3",
 		"animation_attack_size" : 9,
 		"animation_steady_size" : 49,
 		"animation_bullet_size" : 14

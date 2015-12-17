@@ -20,10 +20,14 @@ SceneManager::SceneManager(){
 	currentscene = cacheScene[MENU];
 	c_index = 0;
 	Director::getInstance()->runWithScene(currentscene);
+	if(((AppDelegate*)Application::getInstance())->getConfig()["play_sound"].asBool()){
+		CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0);
+		CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(0);
+		std::string music = ((AppDelegate*)Application::getInstance())->getConfig()["sound_transition"][c_index][c_index].asString();
+		auto action = ChangeMusic::create(music);
+		Director::getInstance()->getActionManager()->addAction(action,currentscene,false);
+	}
 
-	std::string music = ((AppDelegate*)Application::getInstance())->getConfig()["sound_transition"][c_index][c_index].asString();
-	auto action = ChangeMusic::create(music);
-	Director::getInstance()->getActionManager()->addAction(action,currentscene,false);
 }
 
 
@@ -38,11 +42,12 @@ void SceneManager::setScene(SceneManager::SceneType type){
 	TransitionFade* transition = TransitionFade::create(0.5f, currentscene);
 	Director::getInstance()->replaceScene(transition);// , false));
 	std::string music = ((AppDelegate*)Application::getInstance())->getConfig()["sound_transition"][c_index][(int)type].asString();
-	log("musique : %s",music.c_str());
-	if(music != "none"){
+
+	if(music != "none" && ((AppDelegate*)Application::getInstance())->getConfig()["play_sound"].asBool()){
 		auto action1 = FadeOutMusic::create(0.5f);
 		auto action2 = ChangeMusic::create(music);
-		Director::getInstance()->getActionManager()->addAction(Sequence::create(action1, action2, nullptr), currentscene, false);
+		auto action3 = FadeInMusic::create(0.5f);
+		Director::getInstance()->getActionManager()->addAction(Sequence::create(action1, action2, action3, nullptr), currentscene, false);
 	}
 	c_index = (int)type;
 }

@@ -1,7 +1,4 @@
 FEATURES TO CODE/DESIGN
-add sound effetcs for cutting
-add sound effects for splash
-parameters screen with volume for sound and effects
 loading screen for sprites and background music.
 reward for story at the end of the levels
 make tutorial (1st level)
@@ -27,6 +24,7 @@ animation direction for towers (left,right,up and down)
 loading screen for scaling sprites to speed up the process
 improve design dangos (border black or one color, I have to chose)
 
+======================================================================================
 FEATURES CODED (since november 2015)
 animation touch of bullet
 levels of dango
@@ -42,5 +40,8 @@ story menu (access to previous levels and next ones)
 Sound:
 	-add background sound
 	-smooth transition between background musics
+	-add sound effetcs for cutting
+	-add sound effects for splash
+parameters screen with volume for sound and effects
 
 
