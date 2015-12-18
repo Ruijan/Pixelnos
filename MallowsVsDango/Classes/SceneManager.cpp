@@ -21,11 +21,10 @@ SceneManager::SceneManager(){
 	c_index = 0;
 	Director::getInstance()->runWithScene(currentscene);
 	if(((AppDelegate*)Application::getInstance())->getConfig()["play_sound"].asBool()){
-		CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0);
-		CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(0);
 		std::string music = ((AppDelegate*)Application::getInstance())->getConfig()["sound_transition"][c_index][c_index].asString();
-		auto action = ChangeMusic::create(music);
-		Director::getInstance()->getActionManager()->addAction(action,currentscene,false);
+		auto action1 = ChangeMusic::create(music);
+		auto action2 = FadeInMusic::create(0.5f);
+		Director::getInstance()->getActionManager()->addAction(Sequence::create(action1,action2,nullptr),currentscene,false);
 	}
 
 }

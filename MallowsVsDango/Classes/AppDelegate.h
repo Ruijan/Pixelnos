@@ -46,6 +46,7 @@ public:
 	Config& getConfigClass();
 	bool isSaveFile() const;
 
+	AudioController* getAudioController();
 	void addAudioSlider(AudioSlider* slider, AudioController::SOUNDTYPE type);
 	void setVolumeMusic(double volume);
 

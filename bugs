@@ -1,6 +1,6 @@
 TO CORRECT
 positions of parameters menu
-sound reset everytime a new music is playing
+
 anchor points for animation of towers
 scale and positions of some buttons 
 size of images for different resolutions
@@ -26,3 +26,4 @@ seg fault dialogue when multiple characters have to speak.
 range of attack (select middle instead of border)
 dialogue segfault cause of animation when tap
 dialogue last letter of sentence not displayed
+sound reset everytime a new music is playing

@@ -439,12 +439,12 @@ void InterfaceGame::initParametersMenu(){
 	mask->setScaleY((size_menu.height * 1.5) / mask->getContentSize().height);
 
 	AudioSlider* sliderMusicVolume = AudioSlider::create(AudioSlider::Horizontal);
-	sliderMusicVolume->setValue(0, 1, CocosDenshion::SimpleAudioEngine::getInstance()->getBackgroundMusicVolume());
+	sliderMusicVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()->getMaxMusicVolume());
 	sliderMusicVolume->setPosition(mask->getPosition().x + mask->getContentSize().width*mask->getScaleX()/4,30);
 	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderMusicVolume, AudioController::SOUNDTYPE::MUSIC);
 
 	AudioSlider* sliderEffectsVolume = AudioSlider::create(AudioSlider::Horizontal);
-	sliderEffectsVolume->setValue(0, 1, CocosDenshion::SimpleAudioEngine::getInstance()->getEffectsVolume());
+	sliderEffectsVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()->getMaxEffectsVolume());
 	sliderEffectsVolume->setPosition(mask->getPosition().x + mask->getContentSize().width*mask->getScaleX()/4,-15);
 	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderEffectsVolume, AudioController::SOUNDTYPE::EFFECT);
 

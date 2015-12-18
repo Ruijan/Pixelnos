@@ -10,7 +10,7 @@ FadeInMusic* FadeInMusic::create(float d)
 {
     FadeInMusic* action = new (std::nothrow) FadeInMusic();
 
-    action->initWithDuration(d,1.0f);
+    action->initWithDuration(d,((AppDelegate*)Application::getInstance())->getAudioController()->getMaxMusicVolume());
     action->autorelease();
 
     return action;
@@ -20,7 +20,7 @@ FadeInMusic* FadeInMusic::clone() const
 {
     // no copy constructor
     auto a = new (std::nothrow) FadeInMusic();
-    a->initWithDuration(_duration,1.0f);
+    a->initWithDuration(_duration,((AppDelegate*)Application::getInstance())->getAudioController()->getMaxMusicVolume());
     a->autorelease();
     return a;
 }
@@ -46,11 +46,11 @@ void FadeInMusic::startWithTarget(cocos2d::Node* target)
     if (nullptr != _reverseAction) {
         this->_toVolume = this->_reverseAction->_fromVolume;
     }else{
-        _toVolume = 255.0f;
+        _toVolume = ((AppDelegate*)Application::getInstance())->getAudioController()->getMaxMusicVolume();
     }
 
     if (target) {
-        _fromVolume = CocosDenshion::SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
+        _fromVolume = 0.0f;
     }
 }
 
@@ -90,7 +90,7 @@ void FadeOutMusic::startWithTarget(cocos2d::Node* target)
     }
 
     if (target) {
-    	_fromVolume = CocosDenshion::SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
+    	_fromVolume = ((AppDelegate*)Application::getInstance())->getAudioController()->getMaxMusicVolume();
     }
 }
 
@@ -98,7 +98,6 @@ void FadeOutMusic::setReverseAction(FadeMusic *ac)
 {
     _reverseAction = ac;
 }
-
 
 FadeMusic* FadeOutMusic::reverse() const
 {
@@ -110,7 +109,6 @@ FadeMusic* FadeOutMusic::reverse() const
 //
 // FadeMusic
 //
-
 FadeMusic* FadeMusic::create(float duration, float volume)
 {
     FadeMusic *fademusic = new (std::nothrow) FadeMusic();
@@ -169,7 +167,6 @@ void FadeMusic::update(float time)
 //
 // Change Music
 //
-
 ChangeMusic* ChangeMusic::create(std::string to_music)
 {
 	ChangeMusic* ret = new (std::nothrow) ChangeMusic();

@@ -134,3 +134,7 @@ void AppDelegate::addAudioSlider(AudioSlider* slider, AudioController::SOUNDTYPE
 void AppDelegate::setVolumeMusic(double volume){
 	controller->setVolumeMusic(volume);
 }
+
+AudioController* AppDelegate::getAudioController(){
+	return controller;
+}
