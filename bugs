@@ -1,13 +1,8 @@
 TO CORRECT
-positions of parameters menu
-
 anchor points for animation of towers
 scale and positions of some buttons 
 size of images for different resolutions
 during dialogues, buttons of right panel are still active
-after going back to menu, dialogues are not updated anymore (pause...)
-
-
 
 DONE
 color text cost towers
@@ -27,3 +22,6 @@ range of attack (select middle instead of border)
 dialogue segfault cause of animation when tap
 dialogue last letter of sentence not displayed
 sound reset everytime a new music is playing
+after going back to menu, dialogues are not updated anymore (pause)
+sound sliders still active in background
+positions of parameters menu

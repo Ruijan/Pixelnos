@@ -1,31 +1,45 @@
 FEATURES TO CODE/DESIGN
-loading screen for sprites and background music.
-reward for story at the end of the levels
+reward for story at the end of the levels (pause after the end of the level)
+experience system and skill tree to code and design
+sound :
+	-losing
+	-winning
+	-sound for dialogue ???
 make tutorial (1st level)
 dialogues:
 	- animate character during speech (new folder with dialogues->mustache is moving)
+	- change bubblespeech sprite depending on the emotional state of the character.
+wall to block dangos
+code behavior dangosimple
 code behavior dangobese (aspiring bullets)
 display information about dango on click/tap
 improve gameplay and level design:
-	-level 4 generator
-	-level 5 generator
-	-level 6 generator
+	-level 1 map
+	-level 2 map & generator
+	-level 3 map & generator
+	-level 4 map & generator
+	-level 5 map & generator
+	-level 6 map & generator
+	-level 7 map & generator
+	-level 8 map & generator
+	-level 9 map & generator
+	-level 10 map & generator
 
 -->First Release
-wall to block dangos
-code behavior dangosimple
 create dangosoy
 create mama dango
 improve the design for story menu (levels) -> rethink the mine design. Does not fit.
-animations of background on story menu
-animations of background on level
+animations in the background of story menu
+animations in the background background on level
+animations in the background main menu
 animation of death of dango
 animation direction for towers (left,right,up and down)
 loading screen for scaling sprites to speed up the process
 improve design dangos (border black or one color, I have to chose)
+improve design towers (chosing one design)
 
-======================================================================================
-FEATURES CODED (since november 2015)
+============================================================================
+FEATURES CODED (since 1st november 2015)
 animation touch of bullet
 levels of dango
 create design/animations for dangobese1
@@ -43,5 +57,7 @@ Sound:
 	-add sound effetcs for cutting
 	-add sound effects for splash
 parameters screen with volume for sound and effects
+loading screen for sprites and background music.
+
 
 

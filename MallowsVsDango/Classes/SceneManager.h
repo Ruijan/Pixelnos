@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "MyGame.h"
+#include "Lib/Loader.h"
 #include <array>
 
 class MyGame;
@@ -15,7 +16,8 @@ public:
 	{
 		MENU = 0,
 		GAME = 1,
-		LEVELS = 2
+		LEVELS = 2,
+		LOADING = 3
 	};
 
 	//Constructor & destructor

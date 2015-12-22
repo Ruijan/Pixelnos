@@ -2,9 +2,10 @@
 #define MAINMENU_HPP
 
 #include "cocos2d.h"
+#include "Lib/Loader.h"
 
 
-class MainMenu :public cocos2d::Scene
+class MainMenu :public cocos2d::Scene, public Loader
 {
 public:
 	virtual bool init();

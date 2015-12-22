@@ -33,6 +33,10 @@ void AudioSlider::setValue(float value){
 	_slider->setValue(value);
 }
 
+void AudioSlider::enable(bool enabled){
+	_slider->setEnabled(enabled);
+}
+
 bool AudioSlider::init(){
 	_slider = extension::ControlSlider::create("res/buttons/sliderTrack.png","res/buttons/sliderProgress.png" ,"res/buttons/sliderThumb.png");
 	if (_direction == Vertical)

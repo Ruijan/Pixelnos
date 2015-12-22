@@ -95,16 +95,14 @@ bool Level::init()
 	
 	addChild(title,100,"title");
 	addChild(start_counter,100,"start_counter");
-	DrawNode* background = DrawNode::create();
-	background->drawSolidRect(Vec2(0,0), Vec2(visibleSize.width,visibleSize.height),Color4F::GREEN);
 	
 	std::string mapFile = fileUtils->fullPathForFilename("res/map/level1v2.tmx");
 	TMXTiledMap* tileMap = TMXTiledMap::create(mapFile);
     tileMap->setScale(ratioX * 0.5);
-    Sprite* filter = Sprite::create("res/map/background2.png");
-    filter->setScale(ratioX);
-    filter->setAnchorPoint(Vec2(0,0));
-    addChild(filter);
+    Sprite* background = Sprite::create(config["background"].asString());
+    background->setScale(ratioX);
+    background->setAnchorPoint(Vec2(0,0));
+    addChild(background);
     addChild(tileMap);
     
     ValueVector objects = tileMap->getObjectGroup ("Object")->getObjects();
@@ -126,15 +124,7 @@ bool Level::init()
 		++i;
 	}
 	zGround = i;
-	/*std::vector<std::string> text;
-	std::vector<std::string> heads;
 
-	for(int i(0); i < config["introDialogue"].size(); ++i){
-		for(int j(0); j < config["introDialogue"][i]["text"].size(); ++j){
-			heads.push_back(config["introDialogue"][i]["speaker"].asString());
-			text.push_back(config["introDialogue"][i]["text"][j].asString());
-		}
-	}*/
 	if(config["introDialogue"].size() != 0){
 		introDialogue = Dialogue::createFromConfig(config["introDialogue"]);
 		addChild(introDialogue,zGround,"dialogue");
@@ -145,7 +135,6 @@ bool Level::init()
 		state = TITLE;
 	}
 
-
 	generator = DangoGenerator::createWithFilename(config["generator"].asString());
 	sugar = config["sugar"].asDouble();
 	experience = config["exp"].asInt();
@@ -155,8 +144,12 @@ bool Level::init()
 
 Level::~Level()
 {
+	log("deletion of level");
 	removeAllChildren();
+	delete introDialogue;
+	log("deleted dialogue");
 	delete generator;
+	log("deleted generator");
 }
 void Level::update(float dt)
 {
@@ -275,7 +268,6 @@ void Level::update(float dt)
 				dangos.erase(std::remove(dangos.begin(), dangos.end(), nullptr), dangos.end());
 				if(hasWon()){
 					state = ENDING;
-
 				}
 			}
 			break;

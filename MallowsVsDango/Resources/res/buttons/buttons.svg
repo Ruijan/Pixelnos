@@ -19,6 +19,28 @@
   <defs
      id="defs4">
     <linearGradient
+       id="linearGradient3865">
+      <stop
+         style="stop-color:#fbc800;stop-opacity:1;"
+         offset="0"
+         id="stop3867" />
+      <stop
+         style="stop-color:#fff0b5;stop-opacity:1;"
+         offset="1"
+         id="stop3869" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3857">
+      <stop
+         style="stop-color:#ffdd55;stop-opacity:1;"
+         offset="0"
+         id="stop3859" />
+      <stop
+         style="stop-color:#ffdd55;stop-opacity:0;"
+         offset="1"
+         id="stop3861" />
+    </linearGradient>
+    <linearGradient
        id="linearGradient3876">
       <stop
          style="stop-color:#ffa468;stop-opacity:1;"
@@ -100,6 +122,16 @@
        fx="361.63461"
        fy="806.64246"
        r="11.61878" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3865"
+       id="linearGradient3871"
+       x1="194.70423"
+       y1="860.71845"
+       x2="437.64748"
+       y2="860.71845"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(1.0101525,31.819805)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -109,15 +141,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="285.57371"
+     inkscape:cx="196.68029"
      inkscape:cy="186.65742"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="782"
-     inkscape:window-x="0"
-     inkscape:window-y="18"
+     inkscape:window-width="1920"
+     inkscape:window-height="1176"
+     inkscape:window-x="1280"
+     inkscape:window-y="24"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -616,12 +648,21 @@
        inkscape:export-xdpi="85.012535"
        inkscape:export-ydpi="85.012535" />
     <path
+       inkscape:export-ydpi="85.012535"
+       inkscape:export-xdpi="85.012535"
+       inkscape:export-filename="/home/ruijan/Pixelnos/MallowsVsDango/Resources/res/buttons/loaderBackground.png"
+       sodipodi:nodetypes="sssss"
+       inkscape:connector-curvature="0"
+       id="path3087"
+       d="m 196.34492,851.55511 c 59.45563,0.75591 186.40701,0.43196 240.16733,0 4.88135,-0.0392 4.8803,18.4582 0,18.32614 -15.96415,-0.43195 -180.7117,-0.10797 -240.16733,0 -4.88145,0.009 -4.8812,-18.3882 0,-18.32614 z"
+       style="fill:#552200;fill-opacity:1;stroke:none" />
+    <path
        sodipodi:nodetypes="sssss"
        inkscape:connector-curvature="0"
        id="path3086"
-       d="m 200.29587,854.08044 c 57.99959,0.50592 181.84197,0.28911 234.28572,0 4.76181,-0.0263 4.76079,12.3539 0,12.26551 -15.57319,-0.2891 -176.28613,-0.0723 -234.28572,0 -4.7619,0.006 -4.76166,-12.30705 0,-12.26551 z"
-       style="fill:#00ff00;fill-opacity:1;stroke:none"
-       inkscape:export-filename="/home/ruijan/Pixelnos/MallowsVsDango/Resources/res/buttons/sliderProgress.png"
+       d="m 199.30813,885.39518 c 58.36359,0.58925 182.98323,0.33673 235.75611,0 4.7917,-0.0307 4.79067,14.38867 0,14.28572 -15.67093,-0.33671 -177.39252,-0.0842 -235.75611,0 -4.79179,0.007 -4.79155,-14.3341 0,-14.28572 z"
+       style="fill:url(#linearGradient3871);fill-opacity:1;stroke:none"
+       inkscape:export-filename="/home/ruijan/Pixelnos/MallowsVsDango/Resources/res/buttons/loaderProgress.png"
        inkscape:export-xdpi="85.012535"
        inkscape:export-ydpi="85.012535" />
     <path

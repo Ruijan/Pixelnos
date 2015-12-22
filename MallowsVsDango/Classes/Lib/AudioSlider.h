@@ -19,6 +19,7 @@ public:
 
     void setValue(float minValue, float maxValue, float value);
     void setValue(float value);
+    void enable(bool enabled);
 
 private:
     AudioSlider(Direction direction);

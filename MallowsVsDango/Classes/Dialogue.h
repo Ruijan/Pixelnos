@@ -48,7 +48,7 @@ class Dialogue: public cocos2d::Layer{
 
 	public:
 		Dialogue(std::vector<std::string> text, std::vector<std::string>speakers, std::vector<Direction> direction);
-		~Dialogue();
+		virtual ~Dialogue();
 		static Dialogue* createFromConfig(Json::Value config);
 		void addEvents();
 		void launch();

@@ -253,7 +253,6 @@ void InterfaceGame::setGame(MyGame* ngame){
 
 void InterfaceGame::menuGameCallback(Ref* sender){
 	setMenuVisibleCallback(sender,0);
-
 }
 
 void InterfaceGame::menuMainCallback(Ref* sender){
@@ -279,6 +278,8 @@ void InterfaceGame::accelerateOnOffCallback(Ref* sender){
 void InterfaceGame::setMenuVisibleCallback(Ref* sender,int origin)
 {
 	if (!menuPause->isVisible()){
+		((AudioSlider*) menuPause->getChildByName("MusicVolume"))->enable(true);
+		((AudioSlider*) menuPause ->getChildByName("EffectsVolume"))->enable(true);
 		Show* showAction = Show::create();
 		showAction->setDuration(0.5f);
 		menuPause->runAction(showAction);
@@ -288,6 +289,8 @@ void InterfaceGame::setMenuVisibleCallback(Ref* sender,int origin)
 	}
 	else{
 		if(origin == 0){
+			((AudioSlider*) menuPause->getChildByName("MusicVolume"))->enable(false);
+			((AudioSlider*) menuPause->getChildByName("EffectsVolume"))->enable(false);
 			Hide* hideAction = Hide::create();
 			hideAction->setDuration(0.5f);
 			menuPause->runAction(hideAction);
@@ -386,6 +389,8 @@ void InterfaceGame::showWin(){
 void InterfaceGame::reset(){
 	state = IDLE;
 	selectedTurret = nullptr;
+	((AudioSlider*)menuPause->getChildByName("MusicVolume"))->enable(false);
+	((AudioSlider*)menuPause->getChildByName("EffectsVolume"))->enable(false);
 	menuLoose->setVisible(false);
 	menuWin->setVisible(false);
 	menuPause->setVisible(false);
@@ -413,9 +418,6 @@ void InterfaceGame::initParametersMenu(){
 	menu->alignItemsHorizontallyWithPadding(20);
 	menu->setPosition(0, -75);
 
-
-
-
 	Label* music = Label::createWithTTF("Music", "fonts/ChalkDust.ttf", 30.f);
 	Label* effects = Label::createWithTTF("Effects", "fonts/ChalkDust.ttf", 30.f);
 	music->setPosition(-resume->getContentSize().width*3/4,30);
@@ -440,13 +442,15 @@ void InterfaceGame::initParametersMenu(){
 
 	AudioSlider* sliderMusicVolume = AudioSlider::create(AudioSlider::Horizontal);
 	sliderMusicVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()->getMaxMusicVolume());
-	sliderMusicVolume->setPosition(mask->getPosition().x + mask->getContentSize().width*mask->getScaleX()/4,30);
+	sliderMusicVolume->setPosition(mask->getContentSize().width*mask->getScaleX()/5,30);
 	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderMusicVolume, AudioController::SOUNDTYPE::MUSIC);
+	sliderMusicVolume->enable(false);
 
 	AudioSlider* sliderEffectsVolume = AudioSlider::create(AudioSlider::Horizontal);
 	sliderEffectsVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()->getMaxEffectsVolume());
-	sliderEffectsVolume->setPosition(mask->getPosition().x + mask->getContentSize().width*mask->getScaleX()/4,-15);
+	sliderEffectsVolume->setPosition(mask->getContentSize().width*mask->getScaleX()/5,-15);
 	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderEffectsVolume, AudioController::SOUNDTYPE::EFFECT);
+	sliderEffectsVolume->enable(false);
 
 	menu->setPosition(0, -mask->getContentSize().height*mask->getScaleY()/2);
 
@@ -727,13 +731,13 @@ void InterfaceGame::initRightPanel(){
 	background->setScale(panel->getTextureRect().size.width * panel->getScaleX() / background->getContentSize().width * 90.0 / 100.0);
 
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-	cache->addSpriteFramesWithFile("res/turret/animations/archer.plist", "res/turret/animations/archer.png");
-	cache->addSpriteFramesWithFile("res/turret/animations/cutter.plist", "res/turret/animations/cutter.png");
-	cache->addSpriteFramesWithFile("res/turret/animations/cut.plist", "res/turret/animations/cut.png");
+	/*cache->addSpriteFramesWithFile("res/turret/animations/archer.plist", "res/turret/animations/archer.png");
+	cache->addSpriteFramesWithFile("res/turret/animations/cutter.plist", "res/turret/animations/cutter.png");*/
+	/*cache->addSpriteFramesWithFile("res/turret/animations/cut.plist", "res/turret/animations/cut.png");
 	cache->addSpriteFramesWithFile("res/turret/animations/splash.plist", "res/turret/animations/splash.png");
 	cache->addSpriteFramesWithFile("res/dango/animations/dango1.plist", "res/dango/animations/dango1.png");
 	cache->addSpriteFramesWithFile("res/dango/animations/dango2.plist", "res/dango/animations/dango2.png");
-	cache->addSpriteFramesWithFile("res/dango/animations/dangobese1.plist", "res/dango/animations/dangobese1.png");
+	cache->addSpriteFramesWithFile("res/dango/animations/dangobese1.plist", "res/dango/animations/dangobese1.png");*/
 
 	Sprite* image = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("archer_steady_movement_000.png"));
 	image->setScale(sizeButton / image->getBoundingBox().size.width);

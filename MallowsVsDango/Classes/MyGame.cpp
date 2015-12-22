@@ -1,24 +1,18 @@
 #include "MyGame.h"
 #include "AppDelegate.h"
 
+
+
 USING_NS_CC;
 
-MyGame::MyGame() : touch(true), paused(false), launched(false), reloading(false), acceleration(1.0){}
+MyGame::MyGame() : Loader(), touch(true), paused(false), reloading(false), acceleration(1.0),id_level(0){}
 
 Scene* MyGame::scene()
 {
-	// 'scene' is an autorelease object
-	//CCScene *scene = CCScene::create();
-
 	// 'layer' is an autorelease object
 	MyGame *layer = MyGame::create();
-
-	// add layer as a child to scene
-	//scene->addChild(layer);
-
 	// return the scene
 	return layer;
-	//    return scene;
 }
 
 MyGame::~MyGame()
@@ -28,50 +22,63 @@ MyGame::~MyGame()
 // on "init" you need to initialize your instance
 bool MyGame::init()
 {
+	Size visibleSize = Director::getInstance()->getVisibleSize();
 	//////////////////////////////
 	// 1. super init first
 	if (!CCScene::init())
 	{
 		return false;
 	}
-	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-	cache->addSpriteFramesWithFile("res/turret/animations/archer.plist", "res/turret/animations/archer.png");
-	cache->addSpriteFramesWithFile("res/turret/animations/cutter.plist", "res/turret/animations/cutter.png");
 	
 	cLevel = nullptr;
 	menu = nullptr;
 	load();
 
+	loadingScreen = LoadingScreen::create();
+	addChild(loadingScreen,3);
+
 	return true;
 }
 
 bool MyGame::initLevel(int level_id){
-	removeChild(cLevel,1);
-	cLevel = Level::create(level_id);
-	addChild(cLevel,0);
-	if(menu == nullptr){
-		menu = InterfaceGame::create(this);
-		addChild(menu,2);
+	reset();
+	if(cLevel != nullptr){
+		removeChild(cLevel,1);
 	}
-	else{
-		menu->reset();
+	if(menu != nullptr){
+		menu->setVisible(false);
 	}
-	acceleration = 1.0;
+
+	id_level = level_id;
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][level_id];
+	for(int i(0); i < config["animations"].size(); ++i){
+		addAnimation(config["animations"][i].asString());
+	}
+	for(int i(0); i < config["musics"].size(); ++i){
+		addMusic(config["musics"][i].asString());
+	}
+	for(int i(0); i < config["effects"].size(); ++i){
+		addEffect(config["effects"][i].asString());
+	}
+	for(int i(0); i < config["tileset"].size(); ++i){
+		addTileset(config["tileset"].asString());
+	}
+	unload();
+	schedule(CC_SCHEDULE_SELECTOR(MyGame::loading));
+	loadingScreen->setVisible(true);
+	loadingScreen->start();
 	return true;
 }
 
 void MyGame::onEnterTransitionDidFinish(){
 	Scene::onEnterTransitionDidFinish();
-	scheduleUpdate();
-	menu->setListening(true);
-	if (!launched){
-		launched = true;
-	}
-	else{
-		//pause();
-	}
 }
-
+void MyGame::onExitTransitionDidStart(){
+	Scene::onExitTransitionDidStart();
+	unload();
+	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
+	cache->removeUnusedSpriteFrames();
+}
 
 void MyGame::menuCloseCallback(Ref* pSender)
 {
@@ -79,9 +86,9 @@ void MyGame::menuCloseCallback(Ref* pSender)
 	CCMessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
 #else
 	Director::getInstance()->end();
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	exit(0);
-#endif
+	#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+		exit(0);
+	#endif
 #endif
 }
 
@@ -148,10 +155,6 @@ bool MyGame::isPaused(){
 	return paused;
 }
 
-bool MyGame::isLaunched(){
-	return launched;
-}
-
 void MyGame::setReloading(bool nreloading){
 	reloading = nreloading;
 }
@@ -179,6 +182,53 @@ bool MyGame::save(){
 }
 
 bool MyGame::load(){
+	// load experience saved from .sav file
 	experience = ((AppDelegate*)Application::getInstance())->getSave()["exp"].asInt();
 	return true;
+}
+
+void MyGame::initAttributes(){
+	// create new level and add it to the game
+	cLevel = Level::create(id_level);
+	addChild(cLevel,0);
+
+	/* create new interface in case this one hasn't been created and add it to the game.
+	 * If already created, reset it to initial parameters.
+	 */
+	if(menu == nullptr){
+		menu = InterfaceGame::create(this);
+		addChild(menu,2);
+	}
+	else{
+		menu->reset();
+	}
+
+	// reset attributes
+	acceleration = 1.0;
+	paused = false;
+
+	// call the function of the mother class
+	Loader::initAttributes();
+
+	unschedule(CC_SCHEDULE_SELECTOR(MyGame::loading));
+	scheduleUpdate();
+
+	// set interface visible and listening to input (touch)
+	loadingScreen->setLoadingPercent(100);
+	FadeOut* fade = FadeOut::create(0.5f);
+	Hide* hide = Hide::create();
+	loadingScreen->runAction(Sequence::create(fade,hide,nullptr));
+	loadingScreen->stop();
+	menu->setVisible(true);
+	menu->setListening(true);
+}
+
+void MyGame::loading(float dt){
+	/* PUTAIN DE COCOS2D DE MERDE. Si tu veux comprendre ici, contacte moi...
+	 * c'est trop compliqué par écrit.
+	 */
+	Loader::loading(dt);
+	loadingScreen->setLoadingPercent(getProgress()*100);
+	// update loading bar to the exact percentage
+
 }
