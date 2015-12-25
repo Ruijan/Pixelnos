@@ -18,7 +18,7 @@ Level* Level::create(int nLevel){
 }
 
 Level::Level(int nLevel) : id(nLevel), size(14,12), sugar(60), life(3), 
-paused(false), loaded(false), state(INTRO), timer(0),zGround(0) {}
+paused(false), state(INTRO), timer(0),zGround(0) {}
 
 bool Level::init()
 {
@@ -138,7 +138,6 @@ bool Level::init()
 	generator = DangoGenerator::createWithFilename(config["generator"].asString());
 	sugar = config["sugar"].asDouble();
 	experience = config["exp"].asInt();
-	loaded = true;
 	return true;
 }
 
@@ -225,6 +224,68 @@ void Level::update(float dt)
 								bullet->setTarget(nullptr);
 							}
 						}
+						if(generator->isDone() && dangos.size() == 1){
+							Size visibleSize = Director::getInstance()->getVisibleSize();
+							Node* node = Node::create();
+							Sprite* sugar = Sprite::create("res/buttons/life.png");
+							Sprite* shining = Sprite::create("res/levels/shining.png");
+
+							sugar->setScale(Cell::getCellWidth()/sugar->getContentSize().width);
+							shining->setScale(2*Cell::getCellWidth()/(sugar->getContentSize().width));
+							node->addChild(shining);
+							node->addChild(sugar);
+
+							Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id];
+							EaseOut* move1 = EaseOut::create(MoveBy::create(0.25f,Vec2(0, 75)),2);
+							EaseIn* move2 = EaseIn::create(MoveBy::create(0.25f,Vec2(0, -75)),2);
+							EaseOut* move3 = EaseOut::create(MoveBy::create(0.125f,Vec2(0, 40)),2);
+							EaseIn* move4 = EaseIn::create(MoveBy::create(0.125f,Vec2(0, -40)),2);
+							EaseOut* move5 = EaseOut::create(MoveBy::create(0.075f,Vec2(0, 20)),2);
+							EaseIn* move6 = EaseIn::create(MoveBy::create(0.075f,Vec2(0, -20)),2);
+
+							if(config["reward"] != "none"){
+								Menu* menu = Menu::create();
+								Sprite* reward = Sprite::create(config["reward"].asString());
+								MenuItemSprite* reward_item = MenuItemSprite::create(reward, reward, CC_CALLBACK_1(Level::rewardCallback, this));
+								menu->addChild(reward_item);
+								menu->setPosition(dango->getPosition());
+								menu->setScale(Cell::getCellWidth()/reward->getContentSize().width);
+								addChild(menu);
+								MoveBy* right1 = MoveBy::create(0.25f,Vec2(30, 0));
+								MoveBy* right2 = MoveBy::create(0.125f,Vec2(20, 0));
+								MoveBy* right3 = MoveBy::create(0.125f,Vec2(10, 0));
+								EaseOut* scale = EaseOut::create(ScaleTo::create(1.0f,1),2);
+
+								menu->runAction(Sequence::create(Spawn::createWithTwoActions(move1->clone(),right1),
+										Spawn::createWithTwoActions(move2->clone(),right1),
+										Spawn::createWithTwoActions(move3->clone(),right2),
+										Spawn::createWithTwoActions(move4->clone(),right2),
+										Spawn::createWithTwoActions(move5->clone(),right3),
+										Spawn::createWithTwoActions(move6->clone(),right3),
+										scale,nullptr));
+							}
+
+							node->setPosition(dango->getPosition());
+							addChild(node);
+
+							RotateBy* rotation = RotateBy::create(3.0f,360);
+							shining->runAction(RepeatForever::create(rotation));
+
+							MoveBy* left = MoveBy::create(0.25f,Vec2(-30, 0));
+							MoveBy* left2 = MoveBy::create(0.125f,Vec2(-20, 0));
+							MoveBy* left3 = MoveBy::create(0.125f,Vec2(-10, 0));
+
+							EaseIn* move = EaseIn::create(MoveTo::create(2.0,Vec2(visibleSize.width/2,visibleSize.height)),2);
+							ScaleTo* scale = ScaleTo::create(2.0f,0.01);
+
+							node->runAction(Sequence::create(Spawn::createWithTwoActions(move1,left),
+										Spawn::createWithTwoActions(move2,left),
+										Spawn::createWithTwoActions(move3,left2),
+										Spawn::createWithTwoActions(move4,left2),
+										Spawn::createWithTwoActions(move5,left3),
+										Spawn::createWithTwoActions(move6,left3),
+										Spawn::createWithTwoActions(move, scale),nullptr));
+						}
 						removeChild(dango);
 						dango = nullptr;
 						//std::cerr << "Dango Destroyed !" << dangos.size()<< std::endl;
@@ -266,8 +327,9 @@ void Level::update(float dt)
 				bullets.erase(std::remove(bullets.begin(), bullets.end(), nullptr), bullets.end());
 				turrets.erase(std::remove(turrets.begin(), turrets.end(), nullptr), turrets.end());
 				dangos.erase(std::remove(dangos.begin(), dangos.end(), nullptr), dangos.end());
-				if(hasWon()){
-					state = ENDING;
+				if(generator->isDone() && dangos.empty()){
+					//state = ENDING;
+
 				}
 			}
 			break;
@@ -319,9 +381,6 @@ bool Level::isFinishing(){
 	return state == ENDING;
 }
 
-bool Level::isLoaded(){ 
-	return loaded; 
-}
 bool Level::isPaused(){
 	return paused;
 }
@@ -459,7 +518,6 @@ void Level::reset(){
 	bullets.clear();
 	sugar = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id]["sugar"].asDouble();
 	life = 3;
-	loaded = true;
 	paused = false;
 	state = TITLE;
 	getChildByName("title")->setVisible(true);
@@ -475,7 +533,7 @@ void Level::reset(){
 }
 
 bool Level::hasWon(){
-	return (generator->isDone() && dangos.empty());
+	return (state == DONE);
 }
 
 Tower* Level::touchingTower(cocos2d::Vec2 position){
@@ -520,3 +578,10 @@ std::vector<std::vector<std::string>> readMapFromCSV(std::string filename){
 	
 }
 
+void Level::rewardCallback(Level* sender){
+	state = DONE;
+}
+
+Level::State Level::getState(){
+	return state;
+}
