@@ -18,6 +18,7 @@ Level* Level::create(int nLevel){
 }
 
 Level::Level(int nLevel) : id(nLevel), size(14,12), sugar(60), life(3), 
+
 paused(false), loaded(false), state(INTRO), timer(0),zGround(0), experience(0){}
 
 bool Level::init()
@@ -95,16 +96,14 @@ bool Level::init()
 	
 	addChild(title,100,"title");
 	addChild(start_counter,100,"start_counter");
-	DrawNode* background = DrawNode::create();
-	background->drawSolidRect(Vec2(0,0), Vec2(visibleSize.width,visibleSize.height),Color4F::GREEN);
 	
 	std::string mapFile = fileUtils->fullPathForFilename("res/map/level1v2.tmx");
 	TMXTiledMap* tileMap = TMXTiledMap::create(mapFile);
     tileMap->setScale(ratioX * 0.5);
-    Sprite* filter = Sprite::create("res/map/background2.png");
-    filter->setScale(ratioX);
-    filter->setAnchorPoint(Vec2(0,0));
-    addChild(filter);
+    Sprite* background = Sprite::create(config["background"].asString());
+    background->setScale(ratioX);
+    background->setAnchorPoint(Vec2(0,0));
+    addChild(background);
     addChild(tileMap);
     
     ValueVector objects = tileMap->getObjectGroup ("Object")->getObjects();
@@ -126,16 +125,8 @@ bool Level::init()
 		++i;
 	}
 	zGround = i;
-	/*std::vector<std::string> text;
-	std::vector<std::string> heads;
-
-	for(int i(0); i < config["introDialogue"].size(); ++i){
-		for(int j(0); j < config["introDialogue"][i]["text"].size(); ++j){
-			heads.push_back(config["introDialogue"][i]["speaker"].asString());
-			text.push_back(config["introDialogue"][i]["text"][j].asString());
-		}
-	}*/
-	if(config["introDialogue"].size() != 0){
+	bool play_dialogue = ((AppDelegate*)Application::getInstance())->getConfig()["play_dialogue"].asInt();
+	if(config["introDialogue"].size() != 0 && play_dialogue){
 		introDialogue = Dialogue::createFromConfig(config["introDialogue"]);
 		addChild(introDialogue,zGround,"dialogue");
 		introDialogue->launch();
@@ -143,20 +134,26 @@ bool Level::init()
 	}
 	else {
 		state = TITLE;
+		introDialogue = nullptr;
 	}
-
 
 	generator = DangoGenerator::createWithFilename(config["generator"].asString());
 	sugar = config["sugar"].asDouble();
 	experience = config["exp"].asInt();
-	loaded = true;
 	return true;
 }
 
 Level::~Level()
 {
+	log("deletion of level");
 	removeAllChildren();
+	log("All children deleted");
+	if(introDialogue != nullptr){
+		delete introDialogue;
+		log("deleted dialogue");
+	}
 	delete generator;
+	log("deleted generator");
 }
 void Level::update(float dt)
 {
@@ -232,13 +229,87 @@ void Level::update(float dt)
 								bullet->setTarget(nullptr);
 							}
 						}
+						if(generator->isDone() && dangos.size() == 1){
+							Size visibleSize = Director::getInstance()->getVisibleSize();
+							Node* node = Node::create();
+							Sprite* sugar = Sprite::create("res/buttons/life.png");
+							Sprite* shining = Sprite::create("res/buttons/life.png");
+
+							sugar->setScale(Cell::getCellWidth()/sugar->getContentSize().width);
+							shining->setScale(2*Cell::getCellWidth()/(sugar->getContentSize().width));
+							node->addChild(shining);
+							node->addChild(sugar);
+
+							Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id];
+							auto* move1 = EaseOut::create(MoveBy::create(0.25f,Vec2(0, 75)),2);
+							auto* move2 = EaseBounceOut::create(MoveBy::create(1.0f,Vec2(0, -75)));
+
+							node->setPosition(dango->getPosition());
+							addChild(node,300);
+
+							RotateBy* rotation = RotateBy::create(3.0f,360);
+							shining->runAction(RepeatForever::create(rotation));
+
+							MoveBy* move_h1 = nullptr;
+							MoveBy* move_h2 = nullptr;
+							if(dango->getPosition().x - 60 < 0){
+								move_h1 = MoveBy::create(0.25f,Vec2(25, 0));
+								move_h2 = MoveBy::create(1.0f,Vec2(75, 0));
+							}
+							else{
+								move_h1 = MoveBy::create(0.25f,Vec2(-15, 0));
+								move_h2 = MoveBy::create(1.0f,Vec2(-45, 0));
+							}
+
+							EaseIn* move = EaseIn::create(MoveTo::create(1.5f,Vec2(visibleSize.width/2,visibleSize.height)),2);
+							EaseIn* scale = EaseIn::create(ScaleTo::create(1.5f,0.01),2);
+
+							Action* action = node->runAction(Sequence::create(Spawn::createWithTwoActions(move1,move_h1),
+										Spawn::createWithTwoActions(move2,move_h2),
+										Spawn::createWithTwoActions(move, scale),nullptr));
+							action->retain();
+
+							if(config["reward"] != "none"){
+								auto menu 			= Menu::create();
+								auto reward 		= Sprite::create(config["reward"].asString());
+								//auto reward_item 	= MenuItemSprite::create(reward, reward, reward, CC_CALLBACK_1(Level::rewardCallback, this));
+								auto reward_item 	= MenuItemSprite::create(reward, reward, reward, [&](Ref *sender){
+                                               rewardCallback(this);
+                                           });
+								menu->addChild(reward_item);
+								menu->setPosition(Vec2(0,0));
+								reward_item->setPosition(dango->getPosition());
+								reward_item->setScale(Cell::getCellWidth()/reward->getContentSize().width);
+								addChild(menu,300);
+								MoveBy* move_h1 = nullptr;
+								MoveBy* move_h2 = nullptr;
+								if(60 + dango->getPosition().x <  visibleSize.width * 2 / 3){
+									move_h1 = MoveBy::create(0.25f,Vec2(15, 0));
+									move_h2 = MoveBy::create(1.0f,Vec2(45, 0));
+								}
+								else{
+									move_h1 = MoveBy::create(0.25f,Vec2(-25, 0));
+									move_h2 = MoveBy::create(1.0f,Vec2(-75, 0));
+								}
+								auto* scale = EaseOut::create(ScaleTo::create(1.0f,1),2);
+								auto* movetocenter = EaseIn::create(MoveTo::create(0.5f,Vec2(visibleSize.width/2,visibleSize.height/2)),2);
+
+								reward_item->runAction(Sequence::create(Spawn::createWithTwoActions(move1->clone(),move_h1),
+										Spawn::createWithTwoActions(move2->clone(),move_h2),
+										Spawn::createWithTwoActions(scale,movetocenter),nullptr));
+							}
+							else{
+								state = ENDING;
+								c_action = action;
+							}
+
+							
+						}
 						removeChild(dango);
 						dango = nullptr;
-						//std::cerr << "Dango Destroyed !" << dangos.size()<< std::endl;
 					}
 				}
 				
-
 				// update towers
 				for (auto& tower : turrets){
 					if (!tower->hasToBeDestroyed()){
@@ -256,7 +327,6 @@ void Level::update(float dt)
 							}
 						}
 						removeChild(tower);
-						//std::cerr << "Tower Destroyed !" << std::endl;
 						tower = nullptr;
 					}
 				}
@@ -267,19 +337,19 @@ void Level::update(float dt)
 					if(bullet->isDone()){
 						removeChild(bullet);
 						bullet = nullptr;
-						//std::cerr << "Bullet Destroyed !" << std::endl;
 					}
 				}
 				bullets.erase(std::remove(bullets.begin(), bullets.end(), nullptr), bullets.end());
 				turrets.erase(std::remove(turrets.begin(), turrets.end(), nullptr), turrets.end());
 				dangos.erase(std::remove(dangos.begin(), dangos.end(), nullptr), dangos.end());
-				if(hasWon()){
-					state = ENDING;
-
-				}
 			}
 			break;
 		case ENDING:
+			if (c_action->isDone())
+			{
+				state = DONE;
+				c_action->release();
+			}
 			break;
 		case DONE:
 			break;
@@ -321,8 +391,6 @@ bool Level::isCellInPath(Cell* cell){
 		}
 	}
 	return false;
-}
-
 void Level::setSize(cocos2d::Size nsize){
 	size = nsize;
 }
@@ -330,9 +398,6 @@ bool Level::isFinishing(){
 	return state == ENDING;
 }
 
-bool Level::isLoaded(){ 
-	return loaded; 
-}
 bool Level::isPaused(){
 	return paused;
 }
@@ -470,7 +535,6 @@ void Level::reset(){
 	bullets.clear();
 	sugar = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id]["sugar"].asDouble();
 	life = 3;
-	loaded = true;
 	paused = false;
 	state = TITLE;
 	getChildByName("title")->setVisible(true);
@@ -486,7 +550,7 @@ void Level::reset(){
 }
 
 bool Level::hasWon(){
-	return (generator->isDone() && dangos.empty());
+	return (state == DONE);
 }
 
 Tower* Level::touchingTower(cocos2d::Vec2 position){
@@ -531,3 +595,10 @@ std::vector<std::vector<std::string>> readMapFromCSV(std::string filename){
 	
 }
 
+void Level::rewardCallback(Level* sender){
+	state = DONE;
+}
+
+Level::State Level::getState(){
+	return state;
+}

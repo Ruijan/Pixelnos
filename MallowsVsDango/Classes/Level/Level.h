@@ -42,11 +42,11 @@ public:
 
 	void setSize(cocos2d::Size nsize);
 	bool isFinishing();
-	bool isLoaded();
 	bool isPaused();
 	bool isCellInPath(Cell* cell);
 	Quantity getQuantity();
 	Quantity getLife();
+	State getState();
 	int getTotalExperience();
 	int getLevelId();
 	void increaseQuantity(Quantity add);
@@ -63,6 +63,8 @@ public:
 	bool hasWon();
 	void reset();
 	
+	void rewardCallback(Level* sender);
+
 
 	//CREATE_FUNC(Level);
 
@@ -76,7 +78,6 @@ protected:
 	cocos2d::Size size;
 	std::vector<Cell*> path;
 	bool paused;
-	bool loaded;
 	cocos2d::Point start;
 	cocos2d::Point end;
 	int zGround;
@@ -86,6 +87,7 @@ protected:
 	State state;
 	double timer;
 	int experience;
+	cocos2d::Action* c_action; 
 	
 
 	void createPath(std::vector<std::vector<std::string>> );

@@ -20,6 +20,9 @@ posCurrentCaract(0), currentSpeech(0), type(PROGRESSIVE), speech(nullptr), state
 	}
 }
 Dialogue::~Dialogue(){
+	log("delete dialogue");
+	removeAllChildren();
+	cocos2d::Director::getInstance()->getEventDispatcher()->removeEventListener (listener);
 }
 
 Dialogue* Dialogue::createFromConfig(Json::Value config){
@@ -208,9 +211,6 @@ void Dialogue::update(){
 							Vec2(visibleSize.width * 3 / 4 - currentHead->getTextureRect().size.width*currentHead->getScale() / 2,
 							visibleSize.height / 3));
 					}
-
-
-
 					cAction = currentHead->runAction(moveto);
 					cAction->retain();
 					addChild(currentHead);

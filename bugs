@@ -2,7 +2,7 @@ TO CORRECT
 anchor points for animation of towers
 scale and positions of some buttons 
 size of images for different resolutions
-
+during dialogues, buttons of right panel are still active
 
 DONE
 color text cost towers
@@ -21,3 +21,7 @@ seg fault dialogue when multiple characters have to speak.
 range of attack (select middle instead of border)
 dialogue segfault cause of animation when tap
 dialogue last letter of sentence not displayed
+sound reset everytime a new music is playing
+after going back to menu, dialogues are not updated anymore (pause)
+sound sliders still active in background
+positions of parameters menu

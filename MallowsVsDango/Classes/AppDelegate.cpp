@@ -9,7 +9,7 @@ static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
 static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
 static cocos2d::Size designResolutionSize = cocos2d::Size(960,640);
 
-AppDelegate::AppDelegate() : config("res/config.json", "MvDSave") {
+AppDelegate::AppDelegate() : config("res/config.json", "MvDSave"), controller(new AudioController()) {
 }
 
 AppDelegate::~AppDelegate()
@@ -85,13 +85,14 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto fileUtils = FileUtils::getInstance();
     config.init();
 
+
+
     register_all_packages();
 
     // create a scene. it's an autorelease object
 	//auto scene = HelloWorld::createScene();
 	//director->runWithScene(scene);
 	manager = SceneManager::getInstance();
-
     return true;
 }
 
@@ -126,3 +127,14 @@ bool AppDelegate::isSaveFile() const{
 	return config.isSaveFile();
 }
 
+void AppDelegate::addAudioSlider(AudioSlider* slider, AudioController::SOUNDTYPE type){
+	controller->addSlider(slider, type);
+}
+
+void AppDelegate::setVolumeMusic(double volume){
+	controller->setVolumeMusic(volume);
+}
+
+AudioController* AppDelegate::getAudioController(){
+	return controller;
+}

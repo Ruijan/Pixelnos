@@ -4,33 +4,40 @@
 #include "cocos2d.h"
 #include "Level/Level.h"
 #include "InterfaceGame.h"
+#include "Lib/Loader.h"
+#include "LoadingScreen.h"
 
 
 
-class MyGame : public cocos2d::Scene
+class MyGame : public cocos2d::Scene, public Loader
 {
 
 private:
+	int id_level;
 	bool touch;
 	Level* cLevel;
 	InterfaceGame* menu;
+	LoadingScreen* loadingScreen;
 	double acceleration;
 	bool paused;
-	bool launched;
 	bool reloading;
 	int experience;
 
 protected:
 	virtual void onEnterTransitionDidFinish();
+	virtual void onExitTransitionDidStart();
 	void reload();
 
 public:
 	MyGame();
-	~MyGame();
+	virtual ~MyGame();
 
 	// Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
 	virtual bool init();
 	virtual bool initLevel(int level_id);
+	void initAttributes();
+
+	virtual void loading(float dt);
 
 	// there's no 'id' in cpp, so we recommend returning the class instance pointer
 	static cocos2d::Scene* scene();
@@ -44,7 +51,6 @@ public:
 	virtual void pause();
 	virtual void resume();
 	bool isPaused();
-	bool isLaunched();
 	void increaseSpeed();
 	void setNormalSpeed();
 	bool isAccelerated();

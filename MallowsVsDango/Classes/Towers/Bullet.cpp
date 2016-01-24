@@ -2,6 +2,7 @@
 #include "../Dangos/Dango.h"
 #include "../Towers/Tower.h"
 #include "../Lib/Functions.h"
+#include "audio/include/SimpleAudioEngine.h"
 
 USING_NS_CC;
 
@@ -94,6 +95,8 @@ void Bullet::startAnimation(){
 	Animation* currentAnimation = Animation::createWithSpriteFrames(animFrames, 0.016f);
 	action = runAction(Animate::create(currentAnimation));
 	action->retain();
+	std::string sound = Tower::getConfig()[owner]["sound_bullet"].asString();
+	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(sound.c_str(),false);
 }
 
 void Bullet::setOwner(std::string nowner){

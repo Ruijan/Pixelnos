@@ -307,7 +307,6 @@ void Tower::startAnimation(){
 	if(currentAction != nullptr){
 		stopAllActions();
 	}
-	log("State = %i", ((int)state));
 	cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(state);
 	Animation* currentAnimation = Animation::createWithSpriteFrames(animFrames, 0.05f);
 	currentAction = runAction(Animate::create(currentAnimation));

@@ -5,6 +5,8 @@
 #include "Towers/Cutter.h"
 #include "Towers/Scorpion.h"
 #include "Lib/Functions.h"
+#include "Lib/AudioSlider.h"
+#include "Config/AudioController.h"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -251,7 +253,6 @@ void InterfaceGame::setGame(MyGame* ngame){
 
 void InterfaceGame::menuGameCallback(Ref* sender){
 	setMenuVisibleCallback(sender,0);
-
 }
 
 void InterfaceGame::menuMainCallback(Ref* sender){
@@ -277,6 +278,8 @@ void InterfaceGame::accelerateOnOffCallback(Ref* sender){
 void InterfaceGame::setMenuVisibleCallback(Ref* sender,int origin)
 {
 	if (!menuPause->isVisible()){
+		((AudioSlider*) menuPause->getChildByName("MusicVolume"))->enable(true);
+		((AudioSlider*) menuPause ->getChildByName("EffectsVolume"))->enable(true);
 		Show* showAction = Show::create();
 		showAction->setDuration(0.5f);
 		menuPause->runAction(showAction);
@@ -286,6 +289,8 @@ void InterfaceGame::setMenuVisibleCallback(Ref* sender,int origin)
 	}
 	else{
 		if(origin == 0){
+			((AudioSlider*) menuPause->getChildByName("MusicVolume"))->enable(false);
+			((AudioSlider*) menuPause->getChildByName("EffectsVolume"))->enable(false);
 			Hide* hideAction = Hide::create();
 			hideAction->setDuration(0.5f);
 			menuPause->runAction(hideAction);
@@ -372,6 +377,8 @@ void InterfaceGame::showWin(){
 void InterfaceGame::reset(){
 	state = IDLE;
 	selectedTurret = nullptr;
+	((AudioSlider*)menuPause->getChildByName("MusicVolume"))->enable(false);
+	((AudioSlider*)menuPause->getChildByName("EffectsVolume"))->enable(false);
 	menuLoose->setVisible(false);
 	menuWin->setVisible(false);
 	menuPause->setVisible(false);
@@ -387,29 +394,57 @@ void InterfaceGame::initParametersMenu(){
 	menu->setPosition(Vec2());
 	menuPause->setPosition(Vec2(Point(visibleSize.width / 2, visibleSize.height / 2)));
 
-	Vector<MenuItem*> items;
-	Label* label1 = Label::createWithTTF("Resume", "fonts/ChalkDust.ttf", 45.f);
-	label1->enableShadow(Color4B::BLACK, Size(0, 0), 1);
-	items.pushBack(MenuItemLabel::create(label1, CC_CALLBACK_1(InterfaceGame::menuGameCallback, this)));
-	Label* label3 = Label::createWithTTF("Main Menu", "fonts/ChalkDust.ttf", 45.f);
-	label3->enableShadow(Color4B::BLACK, Size(0, 0), 1);
-	items.pushBack(MenuItemLabel::create(label3, CC_CALLBACK_1(InterfaceGame::menuMainCallback, this)));
+	Sprite* sprite = Sprite::create("res/buttons/buttonResume.png");
+	sprite->setAnchorPoint(Point(0.5f, 0.5f));
+	Sprite* sprite2 = Sprite::create("res/buttons/buttonMainMenu.png");
+	sprite->setAnchorPoint(Point(0.5f, 0.5f));
 
-	Size size_menu = Size(0.0f, 0.0f);
+	MenuItemSprite* resume = MenuItemSprite::create(sprite, sprite, CC_CALLBACK_1(InterfaceGame::menuGameCallback, this));
+	MenuItemSprite* mainMenu = MenuItemSprite::create(sprite2, sprite2, CC_CALLBACK_1(InterfaceGame::menuMainCallback, this));
+	menu->addChild(resume);
+	menu->addChild(mainMenu);
+	menu->alignItemsHorizontallyWithPadding(20);
+	menu->setPosition(0, -75);
+
+	Label* music = Label::createWithTTF("Music", "fonts/ChalkDust.ttf", 30.f);
+	Label* effects = Label::createWithTTF("Effects", "fonts/ChalkDust.ttf", 30.f);
+	music->setPosition(-resume->getContentSize().width*3/4,30);
+	effects->setPosition(-resume->getContentSize().width*3/4,-15);
+	Vector<Label*> items;
+	items.pushBack(music);
+	items.pushBack(effects);
+	Size size_menu = Size(2*sprite->getContentSize().width, 0.0f);
 	for (auto el : items){
 		el->setColor(Color3B::BLACK);
 		if (el->getContentSize().width > size_menu.width){
 			size_menu.width = el->getContentSize().width;
 		}
 		size_menu.height += el->getContentSize().height;
-		menu->addChild(el);
+		menuPause->addChild(el,5);
 	}
-	menu->alignItemsVertically();
+	size_menu.height += resume->getContentSize().height/2;
 
 	Sprite* mask = Sprite::create("res/buttons/centralMenuPanel.png");
-	mask->setScaleX((size_menu.width * 1.5) / mask->getContentSize().width);
+	mask->setScaleX((size_menu.width * 1.15) / mask->getContentSize().width);
 	mask->setScaleY((size_menu.height * 1.5) / mask->getContentSize().height);
+
+	AudioSlider* sliderMusicVolume = AudioSlider::create(AudioSlider::Horizontal);
+	sliderMusicVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()->getMaxMusicVolume());
+	sliderMusicVolume->setPosition(mask->getContentSize().width*mask->getScaleX()/5,30);
+	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderMusicVolume, AudioController::SOUNDTYPE::MUSIC);
+	sliderMusicVolume->enable(false);
+
+	AudioSlider* sliderEffectsVolume = AudioSlider::create(AudioSlider::Horizontal);
+	sliderEffectsVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()->getMaxEffectsVolume());
+	sliderEffectsVolume->setPosition(mask->getContentSize().width*mask->getScaleX()/5,-15);
+	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderEffectsVolume, AudioController::SOUNDTYPE::EFFECT);
+	sliderEffectsVolume->enable(false);
+
+	menu->setPosition(0, -mask->getContentSize().height*mask->getScaleY()/2);
+
 	menuPause->addChild(mask, 4);
+	menuPause->addChild(sliderEffectsVolume,5,"EffectsVolume");
+	menuPause->addChild(sliderMusicVolume,5,"MusicVolume");
 	menuPause->addChild(menu, 5);
 	menuPause->setVisible(false);
 }
@@ -479,17 +514,25 @@ void InterfaceGame::initLooseMenu(){
 	menuForLoose->addChild(mainMenu);
 	menuForLoose->alignItemsHorizontallyWithPadding(20);
 	menuForLoose->setPosition(0, -75);
-	Sprite* mask = Sprite::create("res/buttons/centralMenuPanel.png");
 
-	menuLoose->addChild(mask);
-	menuLoose->addChild(menuForLoose);
 	Label* youloose = Label::createWithTTF("YOU LOSE !", "fonts/ChalkDust.ttf", 45.f);
 	youloose->enableShadow(Color4B::BLACK, Size(0, 0), 1);
 	youloose->setPosition(0, 20);
 	youloose->setColor(Color3B::BLACK);
+
+	Size size_menu = Size(2*sprite->getContentSize().width,
+			youloose->getContentSize().height*youloose->getScale() +
+			mainMenu->getContentSize().height/2);
+
+	Sprite* mask = Sprite::create("res/buttons/centralMenuPanel.png");
+	mask->setScaleX((size_menu.width * 1.15) / mask->getContentSize().width);
+	mask->setScaleY((size_menu.height * 1.5) / mask->getContentSize().height);
+	menuForLoose->setPosition(0, -mask->getContentSize().height*mask->getScaleY()/2);
+
+	menuLoose->addChild(mask);
+	menuLoose->addChild(menuForLoose);
 	menuLoose->addChild(youloose);
 	menuLoose->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
-	menuLoose->setScale(1.25);
 	menuLoose->setVisible(false);
 }
 
@@ -511,10 +554,7 @@ void InterfaceGame::initWinMenu(){
 	menuForWin->addChild(next);
 	menuForWin->addChild(mainMenu);
 	menuForWin->alignItemsHorizontallyWithPadding(20);
-	menuForWin->setPosition(0, -75);
 
-	Sprite* mask2 = Sprite::create("res/buttons/centralMenuPanel.png");
-	
 	Label* youwin = Label::createWithTTF("Level Cleared !", "fonts/ChalkDust.ttf", 28.f);
 	youwin->enableOutline(Color4B::BLACK, 1);
 	youwin->setPosition(0, 50);
@@ -522,13 +562,22 @@ void InterfaceGame::initWinMenu(){
 	winMallow->setPosition(0, -10);
 	winMallow->setScale(0.5);
 	
+	Size size_menu = Size(2*sprite->getContentSize().width,
+			winMallow->getContentSize().height*winMallow->getScale() +
+			youwin->getContentSize().height +
+			next->getContentSize().height/2);
+
+	Sprite* mask = Sprite::create("res/buttons/centralMenuPanel.png");
+	mask->setScaleX((size_menu.width * 1.15) / mask->getContentSize().width);
+	mask->setScaleY((size_menu.height * 1.5) / mask->getContentSize().height);
+	menuForWin->setPosition(0, -mask->getContentSize().height*mask->getScaleY()/2);
+
 	//adding children
-	menuWin->addChild(mask2);
+	menuWin->addChild(mask);
 	menuWin->addChild(menuForWin);
 	menuWin->addChild(youwin);
 	menuWin->addChild(winMallow);
 	menuWin->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
-	menuWin->setScale(1.5);
 	menuWin->setVisible(false);
 }
 
@@ -670,13 +719,6 @@ void InterfaceGame::initRightPanel(){
 	background->setScale(panel->getTextureRect().size.width * panel->getScaleX() / background->getContentSize().width * 90.0 / 100.0);
 
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-	cache->addSpriteFramesWithFile("res/turret/animations/archer.plist", "res/turret/animations/archer.png");
-	cache->addSpriteFramesWithFile("res/turret/animations/cutter.plist", "res/turret/animations/cutter.png");
-	cache->addSpriteFramesWithFile("res/turret/animations/cut.plist", "res/turret/animations/cut.png");
-	cache->addSpriteFramesWithFile("res/turret/animations/splash.plist", "res/turret/animations/splash.png");
-	cache->addSpriteFramesWithFile("res/dango/animations/dango1.plist", "res/dango/animations/dango1.png");
-	cache->addSpriteFramesWithFile("res/dango/animations/dango2.plist", "res/dango/animations/dango2.png");
-	cache->addSpriteFramesWithFile("res/dango/animations/dangobese1.plist", "res/dango/animations/dangobese1.png");
 
 	Sprite* image = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("archer_steady_movement_000.png"));
 	image->setScale(sizeButton / image->getBoundingBox().size.width);
@@ -749,8 +791,7 @@ void InterfaceGame::initRightPanel(){
 	destroy->addChild(sugar_destroy);
 	toolsMenu->addChild(destroy,1,"destroy");
 	toolsMenu->addChild(upgrade,1,"upgrade");
-	//toolsMenu->alignItemsHorizontally();
-	//toolsMenu->setPosition(destroy->getContentSize().width / 2.0, -visibleSize.height / 2 + destroy->getContentSize().width / 2 * destroy->getScale() + visibleSize.width / 64.0);
+
 	toolsMenu->setPosition(0,0);
 	toolsMenu->setVisible(false);
 

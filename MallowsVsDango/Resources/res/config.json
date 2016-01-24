@@ -1,9 +1,12 @@
 {
 	"sound_transition" : [
-		["music/On-Tiptoe.mp3.mp3","music/bensound-jazzyfrenchy.mp3.mp3","none"],
-		["music/On-Tiptoe.mp3.mp3","music/bensound-jazzyfrenchy.mp3.mp3","music/On-Tiptoe.mp3.mp3"],
-		["none","music/bensound-jazzyfrenchy.mp3.mp3","music/On-Tiptoe.mp3.mp3"]
+		["music/On-Tiptoe.mp3.mp3","music/bensound-jazzyfrenchy.mp3.mp3","none","none"],
+		["music/On-Tiptoe.mp3.mp3","music/bensound-jazzyfrenchy.mp3.mp3","music/On-Tiptoe.mp3.mp3","music/On-Tiptoe.mp3.mp3"],
+		["none","music/bensound-jazzyfrenchy.mp3.mp3","music/On-Tiptoe.mp3.mp3","none"],
+		["none","music/bensound-jazzyfrenchy.mp3.mp3","none","music/On-Tiptoe.mp3.mp3"]
 	],
+	"play_sound" : true,
+	"play_dialogue" : true,
     "towers" : {
 	"archer" : {
 		"name" : "archer",
@@ -18,23 +21,25 @@
             	"image" : "res/turret/archer.png",
 		"animation" : "res/turret/animations/archer.png",
 		"animation_bullet" : "res/turret/animations/splash.png",
+		"sound_bullet" : "music/splash.mp3",
 		"animation_attack_size" : 9,
 		"animation_steady_size" : 49,
 		"animation_bullet_size" : 14
-        },
-        "cutter" : {
+    },
+    "cutter" : {
 		"name" : "cutter",
 		"description" : "Sword Master: Attack all the dangos around him",
-    		"attack_speed" : 2.5,
-    		"damages" : 1,
-    		"range" : 80,
-    		"cost" : 50,
+		"attack_speed" : 2.5,
+		"damages" : 1,
+		"range" : 80,
+		"cost" : 50,
 		"d_speed" : 0.25,
 		"d_damage" : 0.25,
 		"d_range" : 0.05,
-    		"image" : "res/turret/cutter.png",
+		"image" : "res/turret/cutter.png",
 		"animation" : "res/turret/animations/cutter.png",
 		"animation_bullet" : "res/turret/animations/cut.png",
+		"sound_bullet" : "music/slash.mp3",
 		"animation_attack_size" : 9,
 		"animation_steady_size" : 49,
 		"animation_bullet_size" : 14
@@ -63,30 +68,30 @@
 		"cellperanim" : 1.1,
 		"description" : "Simple dango you can find everywhere."
         },
-	"dangobese" : {
+		"dangobese" : {
 
-		
-		"level" : [
-            		{
-				"speed" : 50,
-				"hitpoints" :6,
-				"gain" : 5,
-				"image" : "res/dango/dangobese1.png",
-				"name" : "dangobese1",
-				"animation" : "res/dango/animations/dangobese1.png"
-			},
-			{
-				"speed" : 60,
-				"hitpoints" : 8,
-				"gain" : 7,
-				"image" : "res/dango/dangobese2.png",
-				"name" : "dangobese2",
-				"animation" : "res/dango/animations/dangobese2.png"
-			}
-		],
-		"cellperanim" : 0.55,
-		"description" : "So big ! So fat ! Wait... is that my sock ?"
-        }
+			
+			"level" : [
+	            		{
+					"speed" : 50,
+					"hitpoints" :6,
+					"gain" : 5,
+					"image" : "res/dango/dangobese1.png",
+					"name" : "dangobese1",
+					"animation" : "res/dango/animations/dangobese1.png"
+				},
+				{
+					"speed" : 60,
+					"hitpoints" : 8,
+					"gain" : 7,
+					"image" : "res/dango/dangobese2.png",
+					"name" : "dangobese2",
+					"animation" : "res/dango/animations/dangobese2.png"
+				}
+			],
+			"cellperanim" : 0.55,
+			"description" : "So big ! So fat ! Wait... is that my sock ?"
+	    }
     },
 	"levels" : [
 		{
@@ -97,6 +102,7 @@
 			"tileset" : "res/tiles/ground.plist",
 			"tilesetpng" : "res/tiles/ground.png",
 			"tilemaptable" : "res/tiles/ground.json",
+			"background" : "res/map/background2.png",
 			"generator" : "res/level1_generator.json",
 			"sugar" : 80,
 			"exp" : 150,
@@ -124,6 +130,9 @@
 					]
 				}
 			],
+			"animations" : ["res/turret/animations/archer.plist","res/turret/animations/cutter.plist","res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist","res/dango/animations/dango2.plist"],
+			"musics" : ["music/On-Tiptoe.mp3.mp3"],
+			"effects" : ["music/splash.mp3","music/slash.mp3"],
 			"reward" : "res/levels/plan1.png"
 		},
 		{
@@ -134,6 +143,7 @@
 			"tileset" : "res/tiles/ground.plist",
 			"tilesetpng" : "res/tiles/ground.png",
 			"tilemaptable" : "res/tiles/ground.json",
+			"background" : "res/map/background2.png",
 			"generator" : "res/level2_generator.json",
 			"sugar" : 80,
 			"exp" : 150,
@@ -150,7 +160,11 @@
 						"Stop them all ! General Mallow strawberry perfume is counting on you!"
 					]
 				}
-			]
+			],
+			"animations" : ["res/turret/animations/archer.plist","res/turret/animations/cutter.plist","res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist","res/dango/animations/dango2.plist"],
+			"musics" : ["music/On-Tiptoe.mp3.mp3"],
+			"effects" : ["music/splash.mp3","music/slash.mp3"],
+			"reward" : "res/levels/plan1.png"
 
 		},
 		{
@@ -161,6 +175,7 @@
 			"tileset" : "res/tiles/ground.plist",
 			"tilesetpng" : "res/tiles/ground.png",
 			"tilemaptable" : "res/tiles/ground.json",
+			"background" : "res/map/background2.png",
 			"generator" : "res/level3_generator.json",
 			"sugar" : 80,
 			"exp" : 150,
@@ -177,7 +192,11 @@
 						"Make a syrupshed ! General Mallow strawberry perfume is counting on you!"
 					]
 				}
-			]
+			],
+			"animations" : ["res/turret/animations/archer.plist","res/turret/animations/cutter.plist","res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist","res/dango/animations/dango2.plist"],
+			"musics" : ["music/On-Tiptoe.mp3.mp3"],
+			"effects" : ["music/splash.mp3","music/slash.mp3"],
+			"reward" : "res/levels/plan1.png"
 
 		},
 		{
@@ -188,11 +207,16 @@
 			"tileset" : "res/tiles/ground.plist",
 			"tilesetpng" : "res/tiles/ground.png",
 			"tilemaptable" : "res/tiles/ground.json",
+			"background" : "res/map/background2.png",
 			"generator" : "res/level4_generator.json",
 			"sugar" : 80,
 			"exp" : 150,
 			"x" : 560,
-			"y" : 240
+			"y" : 240,
+			"animations" : ["res/turret/animations/archer.plist","res/turret/animations/cutter.plist","res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist","res/dango/animations/dango2.plist","res/dango/animations/dangobese1.plist"],
+			"musics" : ["music/On-Tiptoe.mp3.mp3"],
+			"effects" : ["music/splash.mp3","music/slash.mp3"],
+			"reward" : "res/levels/plan1.png"
 		}
 	]
 }

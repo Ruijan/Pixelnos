@@ -28,7 +28,6 @@ class Bullet : public cocos2d::Sprite{
 	double speed;
 	std::string owner;
 	cocos2d::Action* action;
-	
 };
 
 #endif
