@@ -44,6 +44,7 @@ public:
 	bool isFinishing();
 	bool isLoaded();
 	bool isPaused();
+	bool isCellInPath(Cell* cell);
 	Quantity getQuantity();
 	Quantity getLife();
 	int getTotalExperience();
