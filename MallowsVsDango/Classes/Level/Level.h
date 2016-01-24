@@ -86,6 +86,7 @@ protected:
 	State state;
 	double timer;
 	int experience;
+	cocos2d::Action* c_action; 
 	
 
 	void createPath(std::vector<std::vector<std::string>> );

@@ -6,6 +6,7 @@
 		["none","music/bensound-jazzyfrenchy.mp3.mp3","none","music/On-Tiptoe.mp3.mp3"]
 	],
 	"play_sound" : true,
+	"play_dialogue" : true,
     "towers" : {
 	"archer" : {
 		"name" : "archer",

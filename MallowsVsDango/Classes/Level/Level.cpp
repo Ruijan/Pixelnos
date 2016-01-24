@@ -124,8 +124,8 @@ bool Level::init()
 		++i;
 	}
 	zGround = i;
-
-	if(config["introDialogue"].size() != 0){
+	bool play_dialogue = ((AppDelegate*)Application::getInstance())->getConfig()["play_dialogue"].asInt();
+	if(config["introDialogue"].size() != 0 && play_dialogue){
 		introDialogue = Dialogue::createFromConfig(config["introDialogue"]);
 		addChild(introDialogue,zGround,"dialogue");
 		introDialogue->launch();
@@ -133,6 +133,7 @@ bool Level::init()
 	}
 	else {
 		state = TITLE;
+		introDialogue = nullptr;
 	}
 
 	generator = DangoGenerator::createWithFilename(config["generator"].asString());
@@ -145,8 +146,11 @@ Level::~Level()
 {
 	log("deletion of level");
 	removeAllChildren();
-	delete introDialogue;
-	log("deleted dialogue");
+	log("All children deleted");
+	if(introDialogue != nullptr){
+		delete introDialogue;
+		log("deleted dialogue");
+	}
 	delete generator;
 	log("deleted generator");
 }
@@ -228,7 +232,7 @@ void Level::update(float dt)
 							Size visibleSize = Director::getInstance()->getVisibleSize();
 							Node* node = Node::create();
 							Sprite* sugar = Sprite::create("res/buttons/life.png");
-							Sprite* shining = Sprite::create("res/levels/shining.png");
+							Sprite* shining = Sprite::create("res/buttons/life.png");
 
 							sugar->setScale(Cell::getCellWidth()/sugar->getContentSize().width);
 							shining->setScale(2*Cell::getCellWidth()/(sugar->getContentSize().width));
@@ -236,63 +240,75 @@ void Level::update(float dt)
 							node->addChild(sugar);
 
 							Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id];
-							EaseOut* move1 = EaseOut::create(MoveBy::create(0.25f,Vec2(0, 75)),2);
-							EaseIn* move2 = EaseIn::create(MoveBy::create(0.25f,Vec2(0, -75)),2);
-							EaseOut* move3 = EaseOut::create(MoveBy::create(0.125f,Vec2(0, 40)),2);
-							EaseIn* move4 = EaseIn::create(MoveBy::create(0.125f,Vec2(0, -40)),2);
-							EaseOut* move5 = EaseOut::create(MoveBy::create(0.075f,Vec2(0, 20)),2);
-							EaseIn* move6 = EaseIn::create(MoveBy::create(0.075f,Vec2(0, -20)),2);
-
-							if(config["reward"] != "none"){
-								Menu* menu = Menu::create();
-								Sprite* reward = Sprite::create(config["reward"].asString());
-								MenuItemSprite* reward_item = MenuItemSprite::create(reward, reward, CC_CALLBACK_1(Level::rewardCallback, this));
-								menu->addChild(reward_item);
-								menu->setPosition(dango->getPosition());
-								menu->setScale(Cell::getCellWidth()/reward->getContentSize().width);
-								addChild(menu);
-								MoveBy* right1 = MoveBy::create(0.25f,Vec2(30, 0));
-								MoveBy* right2 = MoveBy::create(0.125f,Vec2(20, 0));
-								MoveBy* right3 = MoveBy::create(0.125f,Vec2(10, 0));
-								EaseOut* scale = EaseOut::create(ScaleTo::create(1.0f,1),2);
-
-								menu->runAction(Sequence::create(Spawn::createWithTwoActions(move1->clone(),right1),
-										Spawn::createWithTwoActions(move2->clone(),right1),
-										Spawn::createWithTwoActions(move3->clone(),right2),
-										Spawn::createWithTwoActions(move4->clone(),right2),
-										Spawn::createWithTwoActions(move5->clone(),right3),
-										Spawn::createWithTwoActions(move6->clone(),right3),
-										scale,nullptr));
-							}
+							auto* move1 = EaseOut::create(MoveBy::create(0.25f,Vec2(0, 75)),2);
+							auto* move2 = EaseBounceOut::create(MoveBy::create(1.0f,Vec2(0, -75)));
 
 							node->setPosition(dango->getPosition());
-							addChild(node);
+							addChild(node,300);
 
 							RotateBy* rotation = RotateBy::create(3.0f,360);
 							shining->runAction(RepeatForever::create(rotation));
 
-							MoveBy* left = MoveBy::create(0.25f,Vec2(-30, 0));
-							MoveBy* left2 = MoveBy::create(0.125f,Vec2(-20, 0));
-							MoveBy* left3 = MoveBy::create(0.125f,Vec2(-10, 0));
+							MoveBy* move_h1 = nullptr;
+							MoveBy* move_h2 = nullptr;
+							if(dango->getPosition().x - 60 < 0){
+								move_h1 = MoveBy::create(0.25f,Vec2(25, 0));
+								move_h2 = MoveBy::create(1.0f,Vec2(75, 0));
+							}
+							else{
+								move_h1 = MoveBy::create(0.25f,Vec2(-15, 0));
+								move_h2 = MoveBy::create(1.0f,Vec2(-45, 0));
+							}
 
-							EaseIn* move = EaseIn::create(MoveTo::create(2.0,Vec2(visibleSize.width/2,visibleSize.height)),2);
-							ScaleTo* scale = ScaleTo::create(2.0f,0.01);
+							EaseIn* move = EaseIn::create(MoveTo::create(1.5f,Vec2(visibleSize.width/2,visibleSize.height)),2);
+							EaseIn* scale = EaseIn::create(ScaleTo::create(1.5f,0.01),2);
 
-							node->runAction(Sequence::create(Spawn::createWithTwoActions(move1,left),
-										Spawn::createWithTwoActions(move2,left),
-										Spawn::createWithTwoActions(move3,left2),
-										Spawn::createWithTwoActions(move4,left2),
-										Spawn::createWithTwoActions(move5,left3),
-										Spawn::createWithTwoActions(move6,left3),
+							Action* action = node->runAction(Sequence::create(Spawn::createWithTwoActions(move1,move_h1),
+										Spawn::createWithTwoActions(move2,move_h2),
 										Spawn::createWithTwoActions(move, scale),nullptr));
+							action->retain();
+
+							if(config["reward"] != "none"){
+								auto menu 			= Menu::create();
+								auto reward 		= Sprite::create(config["reward"].asString());
+								//auto reward_item 	= MenuItemSprite::create(reward, reward, reward, CC_CALLBACK_1(Level::rewardCallback, this));
+								auto reward_item 	= MenuItemSprite::create(reward, reward, reward, [&](Ref *sender){
+                                               rewardCallback(this);
+                                           });
+								menu->addChild(reward_item);
+								menu->setPosition(Vec2(0,0));
+								reward_item->setPosition(dango->getPosition());
+								reward_item->setScale(Cell::getCellWidth()/reward->getContentSize().width);
+								addChild(menu,300);
+								MoveBy* move_h1 = nullptr;
+								MoveBy* move_h2 = nullptr;
+								if(60 + dango->getPosition().x <  visibleSize.width * 2 / 3){
+									move_h1 = MoveBy::create(0.25f,Vec2(15, 0));
+									move_h2 = MoveBy::create(1.0f,Vec2(45, 0));
+								}
+								else{
+									move_h1 = MoveBy::create(0.25f,Vec2(-25, 0));
+									move_h2 = MoveBy::create(1.0f,Vec2(-75, 0));
+								}
+								auto* scale = EaseOut::create(ScaleTo::create(1.0f,1),2);
+								auto* movetocenter = EaseIn::create(MoveTo::create(0.5f,Vec2(visibleSize.width/2,visibleSize.height/2)),2);
+
+								reward_item->runAction(Sequence::create(Spawn::createWithTwoActions(move1->clone(),move_h1),
+										Spawn::createWithTwoActions(move2->clone(),move_h2),
+										Spawn::createWithTwoActions(scale,movetocenter),nullptr));
+							}
+							else{
+								state = ENDING;
+								c_action = action;
+							}
+
+							
 						}
 						removeChild(dango);
 						dango = nullptr;
-						//std::cerr << "Dango Destroyed !" << dangos.size()<< std::endl;
 					}
 				}
 				
-
 				// update towers
 				for (auto& tower : turrets){
 					if (!tower->hasToBeDestroyed()){
@@ -310,7 +326,6 @@ void Level::update(float dt)
 							}
 						}
 						removeChild(tower);
-						//std::cerr << "Tower Destroyed !" << std::endl;
 						tower = nullptr;
 					}
 				}
@@ -321,19 +336,19 @@ void Level::update(float dt)
 					if(bullet->isDone()){
 						removeChild(bullet);
 						bullet = nullptr;
-						//std::cerr << "Bullet Destroyed !" << std::endl;
 					}
 				}
 				bullets.erase(std::remove(bullets.begin(), bullets.end(), nullptr), bullets.end());
 				turrets.erase(std::remove(turrets.begin(), turrets.end(), nullptr), turrets.end());
 				dangos.erase(std::remove(dangos.begin(), dangos.end(), nullptr), dangos.end());
-				if(generator->isDone() && dangos.empty()){
-					//state = ENDING;
-
-				}
 			}
 			break;
 		case ENDING:
+			if (c_action->isDone())
+			{
+				state = DONE;
+				c_action->release();
+			}
 			break;
 		case DONE:
 			break;
@@ -369,9 +384,6 @@ void Level::createPath(std::vector<std::vector<std::string>> table){
 			}
 		}
 	}
-	/*for (unsigned int i(0); i < path.size(); ++i){
-		path[i]->setVisible(false);
-	}*/
 }
 
 void Level::setSize(cocos2d::Size nsize){

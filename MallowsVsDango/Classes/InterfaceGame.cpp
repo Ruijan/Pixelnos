@@ -320,18 +320,6 @@ void InterfaceGame::update(float dt){
 	infos["sugar"]->enableOutline(Color4B::BLACK, 1.0);
 	infos["life"]->setString(lifeText);
 	infos["life"]->enableOutline(Color4B::BLACK, 1.0);
-
-    /*const float musicVolume = ((AudioSlider*)menuPause->getChildByName("MusicVolume"))->getValue();
-    const float cmusicVolume = CocosDenshion::SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
-    log("slider : %f / cmusicVolume : %f",musicVolume,cmusicVolume);
-    if (fabs(musicVolume - cmusicVolume) > 0.001) {
-    	CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(musicVolume);
-    }
-    const float effectsVolume = ((AudioSlider*)menuPause->getChildByName("EffectsVolume"))->getValue();
-    const float ceffectsVolume = CocosDenshion::SimpleAudioEngine::getInstance()->getEffectsVolume();
-    if (fabs(effectsVolume - ceffectsVolume) > 0.001) {
-    	CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(effectsVolume);
-    }*/
 }
 
 void InterfaceGame::menuTurretTouchCallback(Tower::TowerType turret){
@@ -731,13 +719,6 @@ void InterfaceGame::initRightPanel(){
 	background->setScale(panel->getTextureRect().size.width * panel->getScaleX() / background->getContentSize().width * 90.0 / 100.0);
 
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-	/*cache->addSpriteFramesWithFile("res/turret/animations/archer.plist", "res/turret/animations/archer.png");
-	cache->addSpriteFramesWithFile("res/turret/animations/cutter.plist", "res/turret/animations/cutter.png");*/
-	/*cache->addSpriteFramesWithFile("res/turret/animations/cut.plist", "res/turret/animations/cut.png");
-	cache->addSpriteFramesWithFile("res/turret/animations/splash.plist", "res/turret/animations/splash.png");
-	cache->addSpriteFramesWithFile("res/dango/animations/dango1.plist", "res/dango/animations/dango1.png");
-	cache->addSpriteFramesWithFile("res/dango/animations/dango2.plist", "res/dango/animations/dango2.png");
-	cache->addSpriteFramesWithFile("res/dango/animations/dangobese1.plist", "res/dango/animations/dangobese1.png");*/
 
 	Sprite* image = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("archer_steady_movement_000.png"));
 	image->setScale(sizeButton / image->getBoundingBox().size.width);
@@ -810,8 +791,7 @@ void InterfaceGame::initRightPanel(){
 	destroy->addChild(sugar_destroy);
 	toolsMenu->addChild(destroy,1,"destroy");
 	toolsMenu->addChild(upgrade,1,"upgrade");
-	//toolsMenu->alignItemsHorizontally();
-	//toolsMenu->setPosition(destroy->getContentSize().width / 2.0, -visibleSize.height / 2 + destroy->getContentSize().width / 2 * destroy->getScale() + visibleSize.width / 64.0);
+
 	toolsMenu->setPosition(0,0);
 	toolsMenu->setVisible(false);
 
