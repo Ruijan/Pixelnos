@@ -19,7 +19,7 @@ Level* Level::create(int nLevel){
 
 Level::Level(int nLevel) : id(nLevel), size(14,12), sugar(60), life(3), 
 
-paused(false), loaded(false), state(INTRO), timer(0),zGround(0), experience(0){}
+paused(false), state(INTRO), timer(0),zGround(0), experience(0){}
 
 bool Level::init()
 {
@@ -391,9 +391,12 @@ bool Level::isCellInPath(Cell* cell){
 		}
 	}
 	return false;
+}
+
 void Level::setSize(cocos2d::Size nsize){
 	size = nsize;
 }
+
 bool Level::isFinishing(){
 	return state == ENDING;
 }
