@@ -6,7 +6,7 @@
 
 USING_NS_CC;
 
-Level* Level::create(int nLevel){
+Level* Level::create(unsigned int nLevel){
 	Level* level = new Level(nLevel);
 	if (level->init()){
 		level->autorelease();
@@ -17,8 +17,9 @@ Level* Level::create(int nLevel){
 	return NULL;
 }
 
-Level::Level(int nLevel) : id(nLevel), size(14,12), sugar(60), life(3), 
-paused(false), state(INTRO), timer(0),zGround(0) {}
+Level::Level(unsigned int nLevel) : id(nLevel), size(14,12), sugar(60), life(3),
+
+paused(false), state(INTRO), timer(0),zGround(0), experience(0){}
 
 bool Level::init()
 {
@@ -56,7 +57,6 @@ bool Level::init()
 	for (int i(0); i < size.width ; ++i){
 		std::vector<Cell*> row;
 		for (int j(0); j < size.height; ++j){
-			std::string::size_type sz;
 			int i_dec = Value(table_map[j][i]).asInt();
 			std::string filename = root["frames"][i_dec]["filename"].asString();
 			Cell* cell = Cell::create(filename);
@@ -81,7 +81,7 @@ bool Level::init()
 	setAnchorPoint(Vec2(0, 0));
 	setPosition(Vec2(0, 0));
 	
-	Label* title = Label::createWithTTF("Level " + Value(id+1).asString(), "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 12.0));
+	Label* title = Label::createWithTTF("Level " + Value((int)(id+1)).asString(), "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 12.0));
 	title->setColor(Color3B::YELLOW);
 	title->enableOutline(Color4B::BLACK,3);
 	title->setPosition(round(visibleSize.width * 3 / 8.0), round(visibleSize.height / 2.0));
@@ -124,7 +124,7 @@ bool Level::init()
 		++i;
 	}
 	zGround = i;
-	bool play_dialogue = ((AppDelegate*)Application::getInstance())->getConfig()["play_dialogue"].asInt();
+	bool play_dialogue = ((AppDelegate*)Application::getInstance())->getConfig()["play_dialogue"].asInt() > 0;
 	if(config["introDialogue"].size() != 0 && play_dialogue){
 		introDialogue = Dialogue::createFromConfig(config["introDialogue"]);
 		addChild(introDialogue,zGround,"dialogue");
@@ -261,7 +261,7 @@ void Level::update(float dt)
 							}
 
 							EaseIn* move = EaseIn::create(MoveTo::create(1.5f,Vec2(visibleSize.width/2,visibleSize.height)),2);
-							EaseIn* scale = EaseIn::create(ScaleTo::create(1.5f,0.01),2);
+							EaseIn* scale = EaseIn::create(ScaleTo::create(1.5f,0.01f),2);
 
 							Action* action = node->runAction(Sequence::create(Spawn::createWithTwoActions(move1,move_h1),
 										Spawn::createWithTwoActions(move2,move_h2),
@@ -364,21 +364,18 @@ void Level::createPath(std::vector<std::vector<std::string>> table){
 	while (!end_reached){
 		for (int i(-1); i < 2; ++i){
 			for (int j(-1); j < 2; ++j){
-				if (!((i == -1 && j == -1) || (i == -1 && j == 1) || (i == 1 && j == 1) || (i == 1 && j == -1) || (i == 0 && j == 0))){
-					if (ccell.x + i > 0 && ccell.x + i < size.height && ccell.y + j > 0 && ccell.y + j < size.width){
-						if (table[ccell.x + i][ccell.y + j] != "-1" && (path.size() < 3 || 
-							(cells[ccell.y + j][ccell.x + i] != path[path.size() - 2] && 
-							cells[ccell.y + j][ccell.x + i] != path[path.size() - 3]))){
-							
+				if (!((i == -1 && j == -1) || (i == -1 && j == 1) || (i == 1 && j == 1) || (i == 1 && j == -1) || (i == 0 && j == 0))){ /**/
+					if (ccell.x + i >= 0 && ccell.x + i < size.height && ccell.y + j >= 0 && ccell.y + j < size.width){
+						if (strcmp(table[ccell.x + i][ccell.y + j].c_str(), "-1\r") != 0 && 
+							strcmp(table[ccell.x + i][ccell.y + j].c_str(), "-1") != 0 && !isCellInPath(cells[ccell.y + j][ccell.x + i])){
 							path.push_back(cells[ccell.y + j][ccell.x + i]);
 							cells[ccell.y + j][ccell.x + i]->setPath(true);
+							if (strcmp(table[ccell.x + i][ccell.y + j].c_str(), "e") == 0 || strcmp(table[ccell.x + i][ccell.y + j].c_str(), "e\r") == 0){
+								end_reached = true;
+							}
 							ccell = Point(ccell.x + i, ccell.y + j);
 						}
-						if (table[ccell.x + i][ccell.y + j] == "e"){
-							end_reached = true;
-							path.push_back(cells[ccell.y + j][ccell.x + i]);
-							cells[ccell.y + j][ccell.x + i]->setPath(true);
-						}
+						
 					}
 				}
 			}
@@ -386,9 +383,19 @@ void Level::createPath(std::vector<std::vector<std::string>> table){
 	}
 }
 
+bool Level::isCellInPath(Cell* cell){
+	for (unsigned int i(0); i < path.size(); ++i){
+		if (cell == path[i]){
+			return true;
+		}
+	}
+	return false;
+}
+
 void Level::setSize(cocos2d::Size nsize){
 	size = nsize;
 }
+
 bool Level::isFinishing(){
 	return state == ENDING;
 }
@@ -408,7 +415,7 @@ Quantity Level::getLife(){
 	return life;
 }
 
-int Level::getLevelId(){
+unsigned int Level::getLevelId(){
 	return id;
 }
 
@@ -581,7 +588,7 @@ std::vector<std::vector<std::string>> readMapFromCSV(std::string filename){
 	std::vector<std::vector<std::string>> table_map;
 	std::vector<std::string> lines;
 	split(tilemaptable,'\n',lines);
-	for(int i(0); i < lines.size(); ++i){
+	for(unsigned int i(0); i < lines.size(); ++i){
 		std::vector<std::string> elems;
 		split(lines[i], ',', elems);
 		table_map.push_back(elems);

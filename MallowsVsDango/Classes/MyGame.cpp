@@ -51,20 +51,22 @@ bool MyGame::initLevel(int level_id){
 
 	id_level = level_id;
 	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][level_id];
-	for(int i(0); i < config["animations"].size(); ++i){
+	for(unsigned int i(0); i < config["animations"].size(); ++i){
 		addAnimation(config["animations"][i].asString());
 	}
-	for(int i(0); i < config["musics"].size(); ++i){
+	for(unsigned int i(0); i < config["musics"].size(); ++i){
 		addMusic(config["musics"][i].asString());
 	}
-	for(int i(0); i < config["effects"].size(); ++i){
+	for(unsigned int i(0); i < config["effects"].size(); ++i){
 		addEffect(config["effects"][i].asString());
 	}
-	for(int i(0); i < config["tileset"].size(); ++i){
+	for(unsigned int i(0); i < config["tileset"].size(); ++i){
 		addTileset(config["tileset"].asString());
 	}
 	unload();
-	schedule(CC_SCHEDULE_SELECTOR(MyGame::loading));
+	//schedule(CC_SCHEDULE_SELECTOR(MyGame::update));
+	schedule(CC_SCHEDULE_SELECTOR(MyGame::updateLoading));
+
 	loadingScreen->setVisible(true);
 	loadingScreen->start();
 	return true;
@@ -113,8 +115,9 @@ void MyGame::update(float delta){
 	if(menu->getState() == InterfaceGame::State::NEXT_LEVEL){
 		Json::Value levels = ((AppDelegate*)Application::getInstance())->getConfig()["levels"];
 		if(levels.size() > cLevel->getLevelId() + 1){
+			int new_level_id = cLevel->getLevelId() + 1;
 			removeChild(cLevel,1);
-			cLevel = Level::create(cLevel->getLevelId() + 1);
+			cLevel = Level::create(new_level_id);
 			menu->reset();
 			acceleration = 1.0;
 			addChild(cLevel,0);
@@ -172,7 +175,7 @@ bool MyGame::isAccelerated(){
 
 bool MyGame::save(){
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave();
-	if(root["level"].asInt() < cLevel->getLevelId()+1){
+	if(root["level"].asInt() < (int)cLevel->getLevelId()+1){
 		root["level"] = cLevel->getLevelId()+1;
 	}
 	root["exp"] = experience;
@@ -210,7 +213,7 @@ void MyGame::initAttributes(){
 	// call the function of the mother class
 	Loader::initAttributes();
 
-	unschedule(CC_SCHEDULE_SELECTOR(MyGame::loading));
+	unschedule(CC_SCHEDULE_SELECTOR(MyGame::updateLoading));
 	scheduleUpdate();
 
 	// set interface visible and listening to input (touch)
@@ -223,7 +226,7 @@ void MyGame::initAttributes(){
 	menu->setListening(true);
 }
 
-void MyGame::loading(float dt){
+void MyGame::updateLoading(float dt){
 	/* PUTAIN DE COCOS2D DE MERDE. Si tu veux comprendre ici, contacte moi...
 	 * c'est trop compliqué par écrit.
 	 */

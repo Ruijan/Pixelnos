@@ -107,6 +107,8 @@ double Loader::getProgress(){
 			return 1.0;
 		case LOADED:
 			return 1.0;
+		default:
+			return 0.0;
 	}
 }
 
@@ -139,12 +141,12 @@ void Loader::reset(){
 void Loader::unload(){
 	TextureCache* cache = Director::getInstance()->getTextureCache();
 	SpriteFrameCache* Spritecache = SpriteFrameCache::getInstance();
-	for(int i(0); i < tilesets.size(); ++i){
+	for(unsigned int i(0); i < tilesets.size(); ++i){
 		int pos = tilesets[i].find(".plist");
 		cache->removeTextureForKey((tilesets[i].substr(0,pos)).append(".png"));
 		Spritecache->removeSpriteFramesFromFile(tilesets[i]);
 	}
-	for(int i(0); i < animations.size(); ++i){
+	for(unsigned int i(0); i < animations.size(); ++i){
 		int pos = animations[i].find(".plist");
 		cache->removeTextureForKey((animations[i].substr(0,pos)).append(".png"));
 		Spritecache->removeSpriteFramesFromFile(animations[i]);

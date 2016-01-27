@@ -665,7 +665,7 @@ void InterfaceGame::initRightPanel(){
 
 	// DISPLAY TOWERS
 	int j(0);
-	for (int i(0); i < Tower::getConfig().size(); ++i){
+	for (unsigned int i(0); i < Tower::getConfig().size(); ++i){
 		std::string sprite3_filename = Tower::getConfig()[Tower::getConfig().getMemberNames()[i]]["image"].asString();
 		std::string sprite3_background_filename = "res/buttons/tower_button.png";
 		std::string sprite3_disable_filename = "res/buttons/tower_inactive.png";
@@ -818,7 +818,7 @@ void InterfaceGame::displayTowerInfos(std::string itemName){
 	SpriteBatchNode* spriteBatchNode;
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	int required_quantity(0);
+	unsigned int required_quantity(0);
 	if(selectedTurret == nullptr){
 		((Label*)informationPanel->getChildByName("infoTower"))->setString("Damages: " +
 			Tower::getConfig()[itemName]["damages"].asString() + " \nSpeed: " +

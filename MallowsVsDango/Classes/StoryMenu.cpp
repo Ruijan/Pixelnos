@@ -22,7 +22,7 @@ bool StoryMenu::init(){
 	menu = Menu::create();
 	Json::Value levels = ((AppDelegate*)Application::getInstance())->getConfig()["levels"];
 	int cLevel = ((AppDelegate*)Application::getInstance())->getSave()["level"].asInt();
-	for(int i(0); i < levels.size(); ++i){
+	for(unsigned int i(0); i < levels.size(); ++i){
 		std::string filename;
 		Color3B color;
 		bool enable(true);

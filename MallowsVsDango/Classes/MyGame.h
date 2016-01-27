@@ -37,7 +37,7 @@ public:
 	virtual bool initLevel(int level_id);
 	void initAttributes();
 
-	virtual void loading(float dt);
+	void updateLoading(float dt);
 
 	// there's no 'id' in cpp, so we recommend returning the class instance pointer
 	static cocos2d::Scene* scene();

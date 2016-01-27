@@ -33,9 +33,9 @@ public:
 		ENDING,
 		DONE
 	};
-	Level(int nLevel);
+	Level(unsigned int nLevel);
 	virtual ~Level();
-	static Level* create(int nLevel);
+	static Level* create(unsigned int nLevel);
 	virtual bool init();
 
 	virtual void update(float dt);
@@ -43,11 +43,12 @@ public:
 	void setSize(cocos2d::Size nsize);
 	bool isFinishing();
 	bool isPaused();
+	bool isCellInPath(Cell* cell);
 	Quantity getQuantity();
 	Quantity getLife();
 	State getState();
 	int getTotalExperience();
-	int getLevelId();
+	unsigned int getLevelId();
 	void increaseQuantity(Quantity add);
 	bool decreaseQuantity(Quantity removed);
 	virtual void pause();
@@ -68,7 +69,7 @@ public:
 	//CREATE_FUNC(Level);
 
 protected:
-	int id;
+	unsigned int id;
 	std::vector<Dango*> dangos;
 	std::vector<Tower*> turrets;
 	std::vector<Bullet*> bullets;

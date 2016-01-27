@@ -38,7 +38,7 @@ private:
 	std::vector<std::string> animations;
 	std::vector<std::string> musics;
 	std::vector<std::string> effects;
-	int c_index;
+	unsigned int c_index;
 	bool sprite_loaded;
 };
 
