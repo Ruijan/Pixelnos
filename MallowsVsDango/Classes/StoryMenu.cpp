@@ -56,6 +56,23 @@ bool StoryMenu::init(){
 		menu->addChild(level);
 	}
 	menu->setPosition(0, 0);
+
+	//Definition du crédit. A mettre dans une fonction plus tard
+	std::string credit_icon = "res/buttons/level_button.png";
+	Color3B credit_icon_color = Color3B::WHITE;
+
+	Sprite* credit_sprite = Sprite::create(credit_icon);
+	credit_sprite->setAnchorPoint(Point(0.5f, 0.5f));
+
+	MenuItemSprite* credit_item = MenuItemSprite::create(credit_sprite, credit_sprite, CC_CALLBACK_1(StoryMenu::selectLevelCallBack, this, 1));
+	credit_item->setPosition(Vec2(visibleSize.width - 30, visibleSize.height - 30));
+	credit_item->setEnabled(true);
+	credit_item->setScale(ratioX);
+
+	menu->addChild(credit_item);
+	menu->setPosition(0, 0);
+	//Fin fonction appelle crédit
+
 	addChild(menu,2);
 	
 	return true;
