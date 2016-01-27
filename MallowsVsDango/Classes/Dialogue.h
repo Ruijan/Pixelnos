@@ -36,7 +36,7 @@ class Dialogue: public cocos2d::Layer{
 		cocos2d::Sprite* currentHead;
 
 		// Dialogue parameters
-		int currentSpeech;
+		unsigned int currentSpeech;
 		bool running;
 		bool finished;
 		int posCurrentCaract;

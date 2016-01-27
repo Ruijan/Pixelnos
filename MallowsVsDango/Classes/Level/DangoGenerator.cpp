@@ -27,7 +27,7 @@ DangoGenerator* DangoGenerator::createWithFilename(std::string filename){
 		return nullptr;
 	}
 	else{
-		for (unsigned int i(0); i < root["nbwaves"].asInt(); ++i){
+		for (int i(0); i < root["nbwaves"].asInt(); ++i){
 			generator->addWave();
 			for (unsigned int j(0); j < root["dangosChain"][i].size(); ++j){
 				generator->addStep(root["dangosChain"][i][j].asString(), root["dangosTime"][i][j].asDouble(),i);
@@ -67,7 +67,7 @@ void DangoGenerator::update(double dt, Level* level){
 	}
 }
 
-bool DangoGenerator::addStep(std::string dango, double time, int wave){
+bool DangoGenerator::addStep(std::string dango, double time,unsigned int wave){
 	if (wave < sequenceTimer.size()){
 		sequenceTimer[wave].push_back(time);
 		sequenceDango[wave].push_back(dango);

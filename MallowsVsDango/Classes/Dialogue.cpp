@@ -31,8 +31,8 @@ Dialogue* Dialogue::createFromConfig(Json::Value config){
 	std::vector<Direction> direction;
 
 
-	for(int i(0); i < config.size(); ++i){
-		for(int j(0); j < config[i]["text"].size(); ++j){
+	for(unsigned int i(0); i < config.size(); ++i){
+		for(unsigned int j(0); j < config[i]["text"].size(); ++j){
 			heads.push_back(config[i]["speaker"].asString());
 			text.push_back(config[i]["text"][j].asString());
 			Direction dir = config[i]["side"].asString() == "LEFT" ? Dialogue::Direction::LEFT : Dialogue::Direction::RIGHT;

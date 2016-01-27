@@ -29,7 +29,7 @@ void Dango::move(float dt){
 	double distance = path[targetedCell]->getPosition().distanceSquared(getPosition());
 	double distance2(0);
 	double distance3(0);
-	if (targetedCell - 1 >= 0){
+	if (targetedCell >= 1){
 		distance2 = path[targetedCell]->getPosition().distanceSquared(path[targetedCell - 1]->getPosition());
 		distance3 = path[targetedCell-1]->getPosition().distanceSquared(getPosition());
 	}

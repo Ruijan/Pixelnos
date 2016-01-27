@@ -44,7 +44,7 @@ public:
 
 
 private:
-	int targetedCell;
+	unsigned int targetedCell;
 	std::vector<Cell*> path;
 	double speed;
 	double hitPoints;

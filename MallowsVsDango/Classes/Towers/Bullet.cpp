@@ -83,7 +83,7 @@ void Bullet::startAnimation(){
 	std::vector<std::string> elements;
 	std::string animation = split(Tower::getConfig()[owner]["animation_bullet"].asString(),'/',elements).back();
 	animation = animation.substr(0,animation.size()-4);
-	for (int i = 0; i <= animation_size; ++i)
+	for (unsigned int i = 0; i <= animation_size; ++i)
 	{
 		std::string frameName =  animation+"_%03d.png";
 		sprintf(str, frameName.c_str(), i);
@@ -91,7 +91,7 @@ void Bullet::startAnimation(){
 		animFrames.pushBack(frame);
 	}
 	setVisible(true);
-	setScale(1 / 6.0);
+	setScale(1 / 6.0f);
 	Animation* currentAnimation = Animation::createWithSpriteFrames(animFrames, 0.016f);
 	action = runAction(Animate::create(currentAnimation));
 	action->retain();
