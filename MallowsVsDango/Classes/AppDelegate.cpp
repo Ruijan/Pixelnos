@@ -85,7 +85,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto fileUtils = FileUtils::getInstance();
     config.init();
 
-
+	controller->initFromConfig(getSave());
 
     register_all_packages();
 

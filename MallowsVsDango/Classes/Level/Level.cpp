@@ -139,6 +139,7 @@ bool Level::init()
 	generator = DangoGenerator::createWithFilename(config["generator"].asString());
 	sugar = config["sugar"].asDouble();
 	experience = config["exp"].asInt();
+
 	return true;
 }
 
@@ -268,10 +269,9 @@ void Level::update(float dt)
 										Spawn::createWithTwoActions(move, scale),nullptr));
 							action->retain();
 
-							if(config["reward"] != "none"){
+							if(config["reward"].asString() != "none"){
 								auto menu 			= Menu::create();
 								auto reward 		= Sprite::create(config["reward"].asString());
-								//auto reward_item 	= MenuItemSprite::create(reward, reward, reward, CC_CALLBACK_1(Level::rewardCallback, this));
 								auto reward_item 	= MenuItemSprite::create(reward, reward, reward, [&](Ref *sender){
                                                rewardCallback(this);
                                            });
@@ -291,18 +291,31 @@ void Level::update(float dt)
 									move_h2 = MoveBy::create(1.0f,Vec2(-75, 0));
 								}
 								auto* scale = EaseOut::create(ScaleTo::create(1.0f,1),2);
-								auto* movetocenter = EaseIn::create(MoveTo::create(0.5f,Vec2(visibleSize.width/2,visibleSize.height/2)),2);
+								// Since the level takes 3/4 of the screen. The center of the level is at 3/8.
+								auto* movetocenter = EaseIn::create(MoveTo::create(0.5f,Vec2(visibleSize.width * 3 / 8,
+									visibleSize.height/2)),2);
 
 								reward_item->runAction(Sequence::create(Spawn::createWithTwoActions(move1->clone(),move_h1),
 										Spawn::createWithTwoActions(move2->clone(),move_h2),
 										Spawn::createWithTwoActions(scale,movetocenter),nullptr));
+
+								// Add a Tap to continue to inform the user what to do.
+								auto tapToContinue = Label::createWithSystemFont("Tap to continue", "Arial", 25.f);
+								tapToContinue->setPosition(Vec2(visibleSize.width * 3 / 8, 50));
+
+								tapToContinue->setColor(Color3B::WHITE);
+								tapToContinue->setVisible(true);
+								FadeIn* fadeIn = FadeIn::create(0.75f);
+								FadeOut* fadeout = FadeOut::create(0.75f);
+
+								tapToContinue->runAction(RepeatForever::create(Sequence::create(fadeIn, fadeout, NULL)));
+								addChild(tapToContinue, 1000);
+								
 							}
 							else{
-								state = ENDING;
 								c_action = action;
 							}
-
-							
+							state = ENDING;							
 						}
 						removeChild(dango);
 						dango = nullptr;
@@ -344,16 +357,16 @@ void Level::update(float dt)
 			}
 			break;
 		case ENDING:
-			if (c_action->isDone())
-			{
-				state = DONE;
-				c_action->release();
+			if (((AppDelegate*)Application::getInstance())->getConfig()["levels"][id]["reward"].asString() == "none") {
+				if (c_action->isDone()){
+					state = DONE;
+					c_action->release();
+				}
 			}
 			break;
 		case DONE:
 			break;
-	};
-	
+	};	
 }
 
 

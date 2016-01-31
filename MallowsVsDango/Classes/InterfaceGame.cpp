@@ -43,7 +43,6 @@ bool InterfaceGame::init(){
 	blackMask->setPosition(visibleSize.width / 2, visibleSize.height / 2);
 	blackMask->setVisible(false);
 
-
 	selectedTurret = nullptr;
 	addChild(menuPause, 5);
 	addChild(menuLoose,4);
@@ -408,12 +407,17 @@ void InterfaceGame::initParametersMenu(){
 
 	Label* music = Label::createWithTTF("Music", "fonts/ChalkDust.ttf", 30.f);
 	Label* effects = Label::createWithTTF("Effects", "fonts/ChalkDust.ttf", 30.f);
-	music->setPosition(-resume->getContentSize().width*3/4,30);
-	effects->setPosition(-resume->getContentSize().width*3/4,-15);
+	Label* loop = Label::createWithTTF("Loop Music", "fonts/ChalkDust.ttf", 25.f);
+
+	music->setPosition(-resume->getContentSize().width*3/4,45);
+	effects->setPosition(-resume->getContentSize().width*3/4,0);
+	loop->setPosition(-resume->getContentSize().width * 3 / 4, -50);
 	Vector<Label*> items;
 	items.pushBack(music);
 	items.pushBack(effects);
-	Size size_menu = Size(2*sprite->getContentSize().width, 0.0f);
+	items.pushBack(loop);
+
+	Size size_menu = Size(2.5*sprite->getContentSize().width, 0.0f);
 	for (auto el : items){
 		el->setColor(Color3B::BLACK);
 		if (el->getContentSize().width > size_menu.width){
@@ -422,29 +426,80 @@ void InterfaceGame::initParametersMenu(){
 		size_menu.height += el->getContentSize().height;
 		menuPause->addChild(el,5);
 	}
+	auto checkbox_music = cocos2d::ui::CheckBox::create("res/buttons/music.png", "res/buttons/music.png",
+		"res/buttons/disable.png", "res/buttons/music.png", "res/buttons/music.png");
+	auto checkbox_effects = cocos2d::ui::CheckBox::create("res/buttons/music.png", "res/buttons/music.png",
+		"res/buttons/disable.png", "res/buttons/music.png", "res/buttons/music.png");
+	auto checkbox_loop = cocos2d::ui::CheckBox::create("res/buttons/checkbox.png", "res/buttons/checkbox.png",
+		"res/buttons/filled.png", "res/buttons/checkbox.png", "res/buttons/checkbox.png");
 	size_menu.height += resume->getContentSize().height/2;
+	//size_menu.height += checkbox_loop->getContentSize().height;
 
 	Sprite* mask = Sprite::create("res/buttons/centralMenuPanel.png");
 	mask->setScaleX((size_menu.width * 1.15) / mask->getContentSize().width);
-	mask->setScaleY((size_menu.height * 1.5) / mask->getContentSize().height);
+	mask->setScaleY((size_menu.height * 1.75) / mask->getContentSize().height);
 
 	AudioSlider* sliderMusicVolume = AudioSlider::create(AudioSlider::Horizontal);
-	sliderMusicVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()->getMaxMusicVolume());
-	sliderMusicVolume->setPosition(mask->getContentSize().width*mask->getScaleX()/5,30);
-	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderMusicVolume, AudioController::SOUNDTYPE::MUSIC);
+	sliderMusicVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()
+		->getMaxMusicVolume());
+	sliderMusicVolume->setPosition(mask->getContentSize().width*mask->getScaleX()/7,45);
+	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderMusicVolume, 
+		AudioController::SOUNDTYPE::MUSIC);
 	sliderMusicVolume->enable(false);
 
 	AudioSlider* sliderEffectsVolume = AudioSlider::create(AudioSlider::Horizontal);
-	sliderEffectsVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()->getMaxEffectsVolume());
-	sliderEffectsVolume->setPosition(mask->getContentSize().width*mask->getScaleX()/5,-15);
-	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderEffectsVolume, AudioController::SOUNDTYPE::EFFECT);
+	sliderEffectsVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()
+		->getMaxEffectsVolume());
+	sliderEffectsVolume->setPosition(mask->getContentSize().width*mask->getScaleX()/7, 0);
+	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderEffectsVolume, 
+		AudioController::SOUNDTYPE::EFFECT);
 	sliderEffectsVolume->enable(false);
+
+	checkbox_music->setPosition(Vec2(mask->getContentSize().width*mask->getScaleX()* 2 / 5, 45));
+	checkbox_effects->setPosition(Vec2(mask->getContentSize().width*mask->getScaleX() * 2 / 5, 0));
+	checkbox_loop->setPosition(Vec2(mask->getContentSize().width*mask->getScaleX() * 2 / 5, -50));
+
+	((AppDelegate*)Application::getInstance())->getAudioController()->addButton(checkbox_music, 
+		AudioController::SOUNDTYPE::MUSIC);
+	((AppDelegate*)Application::getInstance())->getAudioController()->addButton(checkbox_effects, 
+		AudioController::SOUNDTYPE::EFFECT);
+	((AppDelegate*)Application::getInstance())->getAudioController()->addButtonLoop(checkbox_loop);
+
+
+	checkbox_music->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		switch (type){
+			case ui::Widget::TouchEventType::ENDED:
+				((AppDelegate*)Application::getInstance())->getAudioController()->enableMusic(
+					!((cocos2d::ui::CheckBox*)sender)->isSelected());
+				break;
+		}
+	});
+	checkbox_effects->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		switch (type) {
+		case ui::Widget::TouchEventType::ENDED:
+			((AppDelegate*)Application::getInstance())->getAudioController()->enableEffects(
+				!((cocos2d::ui::CheckBox*)sender)->isSelected());
+			break;
+		}
+	});
+	checkbox_loop->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		switch (type) {
+		case ui::Widget::TouchEventType::ENDED:
+			((AppDelegate*)Application::getInstance())->getAudioController()->enableLoop(
+				((cocos2d::ui::CheckBox*)sender)->isSelected());
+			break;
+		}
+	});
 
 	menu->setPosition(0, -mask->getContentSize().height*mask->getScaleY()/2);
 
 	menuPause->addChild(mask, 4);
 	menuPause->addChild(sliderEffectsVolume,5,"EffectsVolume");
 	menuPause->addChild(sliderMusicVolume,5,"MusicVolume");
+	menuPause->addChild(checkbox_music, 6, "MusicEnable");
+	menuPause->addChild(checkbox_effects, 6, "EffectsEnable");
+	menuPause->addChild(checkbox_loop, 6, "LoopEnable");
+
 	menuPause->addChild(menu, 5);
 	menuPause->setVisible(false);
 }
