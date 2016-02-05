@@ -2,6 +2,7 @@
 #include "../AppDelegate.h"
 #include "../Config/json.h"
 #include "../Lib/Functions.h"
+#include "Wall.h"
 #include <fstream>
 
 USING_NS_CC;
@@ -53,7 +54,10 @@ bool Level::init()
 	}
 	double factor = visibleSize.height / (size.height * Cell::getCellHeight());
 	double ratioX = visibleSize.width / 960;
-	
+
+	cocos2d::Point start;
+	cocos2d::Point end;
+
 	for (int i(0); i < size.width ; ++i){
 		std::vector<Cell*> row;
 		for (int j(0); j < size.height; ++j){
@@ -75,8 +79,7 @@ bool Level::init()
 		}
 		cells.push_back(row);
 	}
-	createPath(table_path);
-
+	createPath(table_path,start,end);
 
 	setAnchorPoint(Vec2(0, 0));
 	setPosition(Vec2(0, 0));
@@ -106,9 +109,8 @@ bool Level::init()
     addChild(tileMap);
     
     ValueVector objects = tileMap->getObjectGroup ("Object")->getObjects();
-    std::vector<Sprite*> elements;
+    std::vector<Node*> elements;
     for(auto object : objects){
-
 		Sprite* obj = Sprite::createWithSpriteFrameName(object.asValueMap()["type"].asString());
 		obj->setPosition(Vec2(object.asValueMap()["x"].asInt() * ratioX * 0.5,
 		object.asValueMap()["y"].asInt() * ratioX * 0.5 + Cell::getCellHeight()));
@@ -117,6 +119,13 @@ bool Level::init()
 		addChild(obj);
 		elements.push_back(obj);
 	}
+	wall = Wall::create();
+	path[path.size() - 2]->setObject(wall);
+	wall->setPosition(path[path.size() - 2]->getPosition());
+	wall->setPosition(wall->getPositionX(), wall->getPositionY() + Cell::getCellHeight() / 4);
+	wall->setScale(Cell::getCellWidth() / wall->getChildren().at(0)->getContentSize().width);
+	addChild(wall);
+	elements.push_back(wall);
 	std::sort (elements.begin(), elements.end(), sortZOrder);
 	int i = 1;
 	for(auto& element : elements){
@@ -209,9 +218,8 @@ void Level::update(float dt)
 					bool del = false;
 					if (dango->isDone()){
 						del = true;
-						life -= 1;
-						if (life < 0){
-							life = 0;
+						if (life > 0){
+							life -= 1;
 						}
 					}
 					if (!dango->isAlive()){
@@ -233,10 +241,10 @@ void Level::update(float dt)
 							Size visibleSize = Director::getInstance()->getVisibleSize();
 							Node* node = Node::create();
 							Sprite* sugar = Sprite::create("res/buttons/life.png");
-							Sprite* shining = Sprite::create("res/buttons/life.png");
+							Sprite* shining = Sprite::create("res/buttons/shining.png");
 
 							sugar->setScale(Cell::getCellWidth()/sugar->getContentSize().width);
-							shining->setScale(2*Cell::getCellWidth()/(sugar->getContentSize().width));
+							shining->setScale(2*Cell::getCellWidth()/(shining->getContentSize().width));
 							node->addChild(shining);
 							node->addChild(sugar);
 
@@ -342,14 +350,25 @@ void Level::update(float dt)
 						tower = nullptr;
 					}
 				}
-				
-				
+
+				// update bullets
 				for (auto& bullet: bullets){
 					bullet->update(dt);
 					if(bullet->isDone()){
 						removeChild(bullet);
 						bullet = nullptr;
 					}
+				}
+
+				//update wall
+				if (wall != nullptr && wall->isDestroyed()) {
+					for (auto& cell : path) {
+						if (cell->getObject() == wall) {
+							cell->setObject(nullptr);
+						}
+					}
+					removeChild(wall);
+					wall = nullptr;
 				}
 				bullets.erase(std::remove(bullets.begin(), bullets.end(), nullptr), bullets.end());
 				turrets.erase(std::remove(turrets.begin(), turrets.end(), nullptr), turrets.end());
@@ -370,7 +389,9 @@ void Level::update(float dt)
 }
 
 
-void Level::createPath(std::vector<std::vector<std::string>> table){
+void Level::createPath(std::vector<std::vector<std::string>> table, 
+	cocos2d::Point start, cocos2d::Point end){
+
 	bool end_reached = false;
 	Point ccell = start;
 	path.push_back(cells[ccell.y][ccell.x]);
@@ -501,12 +522,12 @@ bool Level::hasLost(){
 	return (life == 0);
 }
 
-bool sortZOrder(Sprite* sprite1, Sprite* sprite2){
+bool sortZOrder(Node* sprite1, Node* sprite2){
 	if(sprite1->getPosition().y > sprite2->getPosition().y){
 		return true;
 	}
 	else if(sprite1->getPosition().y == sprite2->getPosition().y){
-		return !(sprite1->getPosition().x < sprite2->getPosition().x);
+		return !(sprite1->getPosition().x <= sprite2->getPosition().x);
 	}
 	else{
 		return false;
@@ -514,7 +535,7 @@ bool sortZOrder(Sprite* sprite1, Sprite* sprite2){
 }
 
 void Level::reorder(){
-	std::vector<Sprite*> elements;
+	std::vector<Node*> elements;
 	for(auto& tower : turrets){
 		if (tower != nullptr)
 			elements.push_back(tower);
@@ -523,7 +544,10 @@ void Level::reorder(){
 		if (dango != nullptr)
 			elements.push_back(dango);
 	}
-	std::sort (elements.begin(), elements.end(), sortZOrder);
+	if (wall != nullptr) {
+		elements.push_back(wall);
+	}
+	std::stable_sort (elements.begin(), elements.end(), sortZOrder);
 	int i = zGround;
 	for(auto& element : elements){
 		element->setLocalZOrder(i);
@@ -562,6 +586,15 @@ void Level::reset(){
 			cell->setObject(nullptr);
 		}
 	}
+	if (wall != nullptr) {
+		removeChild(wall);
+	}
+	wall = Wall::create();
+	path[path.size() - 2]->setObject(wall);
+	wall->setPosition(path[path.size() - 2]->getPosition());
+	wall->setPosition(wall->getPositionX(), wall->getPositionY() + Cell::getCellHeight() / 4);
+	wall->setScale(Cell::getCellWidth() / wall->getChildren().at(0)->getContentSize().width);
+	addChild(wall);
 }
 
 bool Level::hasWon(){

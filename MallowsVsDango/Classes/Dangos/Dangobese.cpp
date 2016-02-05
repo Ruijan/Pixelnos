@@ -6,7 +6,9 @@ USING_NS_CC;
 
 Dangobese::Dangobese(std::vector<Cell*> npath, int nlevel) :
 Dango(npath, Dangobese::getConfig()["level"][nlevel]["speed"].asDouble(),
-		Dangobese::getConfig()["level"][nlevel]["hitpoints"].asDouble(),nlevel){
+	Dangobese::getConfig()["level"][nlevel]["hitpoints"].asDouble(),nlevel,
+	Dangobese::getConfig()["level"][nlevel]["attack"].asDouble(),
+	Dangobese::getConfig()["level"][nlevel]["reload"].asDouble()){
 }
 
 Dangobese::~Dangobese() {

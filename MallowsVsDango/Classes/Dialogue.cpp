@@ -5,50 +5,82 @@ USING_NS_CC;
 using namespace std::chrono;
 using namespace std;
 
-Dialogue::Dialogue(std::vector<string> text, std::vector<std::string>speakers, std::vector<Direction> direction) : running(false), finished(false),
-posCurrentCaract(0), currentSpeech(0), type(PROGRESSIVE), speech(nullptr), state(HEAD_APPEAR){
+Dialogue::Dialogue(std::vector<string> text, std::vector<std::string>speakers, 
+	std::vector<Direction> direction, std::vector<Emotion> emotion) :
+running(false), finished(false), posCurrentCaract(0), currentSpeech(0), type(PROGRESSIVE), 
+speech(nullptr), state(HEAD_APPEAR), directions(direction), emotions(emotion){
 
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	directions = direction;
+	// associate a text to a speaker
 	if (text.size() == speakers.size()){
 		for (unsigned int i(0); i < text.size(); ++i){
 			textes.push_back(Speech(text[i], speakers[i]));
 		}
 	}
 	else{
-		log("Sizes of the vectors don't match.");
+		log("Sizes of the vectors don't match for the dialogues.");
 	}
 }
 Dialogue::~Dialogue(){
 	log("delete dialogue");
 	removeAllChildren();
-	cocos2d::Director::getInstance()->getEventDispatcher()->removeEventListener (listener);
+	if (listener != nullptr) {
+		cocos2d::Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
+	}
 }
 
 Dialogue* Dialogue::createFromConfig(Json::Value config){
 	std::vector<std::string> text;
 	std::vector<std::string> heads;
 	std::vector<Direction> direction;
+	std::vector<Emotion> emotions;
 
 
 	for(unsigned int i(0); i < config.size(); ++i){
 		for(unsigned int j(0); j < config[i]["text"].size(); ++j){
 			heads.push_back(config[i]["speaker"].asString());
 			text.push_back(config[i]["text"][j].asString());
+			Emotion emotion;
+			if(config[i]["emotion"][j].asString() == "NORMAL"){
+				emotion = Emotion::NORMAL;
+			}
+			else if (config[i]["emotion"][j].asString() == "ANGRY") {
+				emotion = Emotion::ANGRY;
+			}
+			emotions.push_back(emotion);
 			Direction dir = config[i]["side"].asString() == "LEFT" ? Dialogue::Direction::LEFT : Dialogue::Direction::RIGHT;
 			direction.push_back(dir);
 		}
 	}
-	return new Dialogue(text, heads, direction);
+	return new Dialogue(text, heads, direction, emotions);
+}
 
+void Dialogue::updateEmotionBubble() {
+	switch (emotions[currentSpeech]) {
+	case NORMAL:
+		speechBubble->getChildByName("NORMAL")->setVisible(true);
+		speechBubble->getChildByName("ANGRY")->setVisible(false);
+		break;
+	case ANGRY:
+		speechBubble->getChildByName("NORMAL")->setVisible(false);
+		speechBubble->getChildByName("ANGRY")->setVisible(true);
+		break;
+	}
 }
 
 void Dialogue::launch(){
 	start = std::chrono::system_clock::now();
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	speechBubble = Sprite::create("res/buttons/speech.png");
 
+	// The speech bubble is just a node. We add two sprites to this node. It becomes easier to switch
+	// from one image to another.
+	speechBubble = Node::create();
+	speechBubble->addChild(Sprite::create("res/buttons/speech.png"), 1, "NORMAL");
+	speechBubble->addChild(Sprite::create("res/buttons/speech_fury.png"), 1, "ANGRY");
+	updateEmotionBubble();
+
+	// PUT ALL THIS FUCKING POSITIONING, TEXT AND COLOR IN A JSON FILE !!!
+	// FUUUUUUUUUUUUUUUUUUUUUUUUUUUUCK !
 	currentHead = Sprite::create(textes[currentSpeech].second);
 	currentHead->setPosition(Vec2(-currentHead->getContentSize().width,
 		visibleSize.height / 3));
@@ -57,16 +89,22 @@ void Dialogue::launch(){
 		visibleSize.height / 3));
 	cAction = currentHead->runAction(moveto);
 	cAction->retain();
-	speechBubble->setAnchorPoint(Vec2(0, 0.5));
+	for (int i(0); i < speechBubble->getChildrenCount(); ++i) {
+		speechBubble->getChildren().at(i)->setAnchorPoint(Vec2(0, 0.5));
+	}
+	
 	speechBubble->setPosition(Point(round(currentHead->getTextureRect().size.width*currentHead->getScale()),
 		visibleSize.height / 2 + currentHead->getTextureRect().size.height*currentHead->getScale() / 2));
 	speech = Label::createWithTTF("", "fonts/Love Is Complicated Again.ttf", 30.f);
 	speech->setColor(Color3B::BLACK);
-	speech->setWidth(speechBubble->getContentSize().width*speechBubble->getScale() * 3 / 4);
-	speech->setPosition(Point(round(speechBubble->getPosition().x + speechBubble->getContentSize().width*speechBubble->getScale() / 2), speechBubble->getPosition().y + 25));
+	speech->setWidth(speechBubble->getChildByName("NORMAL")->getContentSize().width*
+		speechBubble->getScale() * 3 / 4);
+	speech->setPosition(Point(round(speechBubble->getPosition().x + 
+		speechBubble->getChildByName("NORMAL")->getContentSize().width*speechBubble->getScale() / 2), speechBubble->getPosition().y + 25));
 	speech->setAlignment(TextHAlignment::CENTER);
 	tapToContinue = Label::createWithSystemFont("Tap to continue", "Arial", 25.f);
-	tapToContinue->setPosition(Point(speech->getPosition().x, speechBubble->getPosition().y - speechBubble->getContentSize().height*speechBubble->getScale() / 4));
+	tapToContinue->setPosition(Point(speech->getPosition().x, speechBubble->getPosition().y - 
+		speechBubble->getChildByName("NORMAL")->getContentSize().height*speechBubble->getScale() / 4));
 
 	tapToContinue->setColor(Color3B::BLACK);
 	tapToContinue->setVisible(false);
@@ -92,10 +130,12 @@ void Dialogue::addEvents(){
 	};
 	listener->onTouchMoved = [&](cocos2d::Touch* touch, cocos2d::Event* event) -> void{
 	};
-	listener->onTouchEnded = [=](cocos2d::Touch* touch, cocos2d::Event* event) -> void{
-		if (cAction == nullptr || cAction->isDone()){
-			if ((unsigned int)posCurrentCaract < textes[currentSpeech].first.length() - 1){
 
+	listener->onTouchEnded = [=](cocos2d::Touch* touch, cocos2d::Event* event) -> void{
+		// In case the text is currently displaying, we show everything.
+		// If it waits to tap, we start to close the bubble.
+		if (state == DISPLAYING){
+			if ((unsigned int)posCurrentCaract < textes[currentSpeech].first.length() - 1){
 				posCurrentCaract = textes[currentSpeech].first.length();
 				std::string text = textes[currentSpeech].first;
 				speech->setString(text);
@@ -115,18 +155,14 @@ void Dialogue::addEvents(){
 		}
 
 	};
+	// we set an arbitrary priority
 	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 29);
 }
 
-bool Dialogue::isRunning(){
-	return running;
-}
 bool Dialogue::hasFinished(){
 	return finished;
 }
-void Dialogue::setDialogueType(TypeReading nType){
-	type = nType;
-}
+
 void Dialogue::update(){
 	if (!finished && running){
 		Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -161,11 +197,19 @@ void Dialogue::update(){
 			if (cAction->isDone()){
 				state = BUBBLE_APPEAR;
 				cAction->release();
+				updateEmotionBubble();
 				if ((directions[currentSpeech] == RIGHT && currentSpeech == 0)){
-					speechBubble->setFlippedX(!speechBubble->isFlippedX());
+					for (int i(0); i < speechBubble->getChildrenCount(); ++i) {
+						((Sprite*)speechBubble->getChildren().at(i))->setFlippedX(
+							!((Sprite*)speechBubble->getChildren().at(i))->isFlippedX());
+					}
+					
 				}
 				else if (currentSpeech > 0 && directions[currentSpeech - 1] != directions[currentSpeech]){
-					speechBubble->setFlippedX(!speechBubble->isFlippedX());
+					for (int i(0); i < speechBubble->getChildrenCount(); ++i) {
+						((Sprite*)speechBubble->getChildren().at(i))->setFlippedX(
+							!((Sprite*)speechBubble->getChildren().at(i))->isFlippedX());
+					}
 				}
 				if (directions[currentSpeech] == LEFT){
 					speechBubble->setPosition(Point(round(currentHead->getTextureRect().size.width*currentHead->getScale()),
@@ -173,7 +217,8 @@ void Dialogue::update(){
 				}
 				else{
 					speechBubble->setPosition(Point(round(visibleSize.width * 3 / 4 -
-						currentHead->getTextureRect().size.width*currentHead->getScale()) - speechBubble->getContentSize().width,
+						currentHead->getTextureRect().size.width*currentHead->getScale()) - 
+						speechBubble->getChildByName("NORMAL")->getContentSize().width,
 						visibleSize.height / 2 + currentHead->getTextureRect().size.height*currentHead->getScale() / 2));
 				}
 				scaleSpeechBubble();
@@ -181,8 +226,10 @@ void Dialogue::update(){
 			break;
 		case BUBBLE_APPEAR:
 			if (cAction->isDone()){
-				speech->setPosition(Point(round(speechBubble->getPosition().x + speechBubble->getContentSize().width*speechBubble->getScale() / 2), speechBubble->getPosition().y + 25));
-				tapToContinue->setPosition(Point(speech->getPosition().x, speechBubble->getPosition().y - speechBubble->getContentSize().height*speechBubble->getScale() / 4));
+				speech->setPosition(Point(round(speechBubble->getPosition().x + 
+					speechBubble->getChildByName("NORMAL")->getContentSize().width*speechBubble->getScale() / 2), speechBubble->getPosition().y + 25));
+				tapToContinue->setPosition(Point(speech->getPosition().x, speechBubble->getPosition().y - 
+					speechBubble->getChildByName("NORMAL")->getContentSize().height*speechBubble->getScale() / 4));
 				state = DISPLAYING;
 			}
 			break;
@@ -217,6 +264,7 @@ void Dialogue::update(){
 				}
 				else{
 					state = BUBBLE_APPEAR;
+					updateEmotionBubble();
 					scaleSpeechBubble();
 				}
 			}
@@ -247,6 +295,7 @@ void Dialogue::update(){
 				}
 				else{
 					state = BUBBLE_APPEAR;
+					updateEmotionBubble();
 					scaleSpeechBubble();
 				}
 			}
@@ -263,7 +312,13 @@ void Dialogue::endDialogue(){
 }
 
 void Dialogue::scaleSpeechBubble(){
-	auto scaleBy = ScaleBy::create(0.200f, 100.0f);
+	Action* scaleBy = nullptr;
+	if (emotions[currentSpeech] == NORMAL) {
+		scaleBy = ScaleBy::create(0.200f, 100.0f);
+	}
+	else if (emotions[currentSpeech] == ANGRY) {
+		scaleBy = EaseBounceOut::create(ScaleBy::create(0.5f, 100.0f));
+	}
 	cAction = speechBubble->runAction(scaleBy);
 	cAction->retain();
 }

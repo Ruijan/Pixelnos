@@ -1,63 +1,113 @@
-FEATURES TO CODE/DESIGN
-reward for story at the end of the levels (pause after the end of the level)
-experience system and skill tree to code and design
-sound :
+============================================================================
+FEATURES TO CODE (137h)
+============================================================================
+experience system and skill tree to code and design (20h): (Thomas)
+	- dynamical positioning of skill from a file (read a file to find all the skills and create automatically the tree)
+	- save and load skills in save json file
+	- "buy" a skill
+Credits screen (4h) (Thomas)
+Company logo screen (30min) (Xianle)
+remake main menu with cocos2d actions (1h) (Xianle)
+Story menu interface for parameters (sound, credit, skill tree button) and experience (4-5h) (Xianle)
+Player powers (13h) (Xianle):
+	-limit for towers -> after killing a certain amount of dango power plus for a specific time (3h)
+	-throw randomly a certain amount of water bombs on dangos (2-3h)
+	-slice dangos (3-4h)
+	-freeze all dangos for a certain amount of time (3h)
+sound (2h) (Xianle):
 	-losing
 	-winning
 	-sound for dialogue ???
-make tutorial (1st level)
-dialogues:
-	- animate character during speech (new folder with dialogues->mustache is moving)
-	- change bubblespeech sprite depending on the emotional state of the character.
-wall to block dangos
-code behavior dangosimple
-code behavior dangobese (aspiring bullets)
-display information about dango on click/tap
-improve gameplay and level design:
-	-level 1 map
-	-level 2 map & generator
-	-level 3 map & generator
-	-level 4 map & generator
-	-level 5 map & generator
-	-level 6 map & generator
-	-level 7 map & generator
-	-level 8 map & generator
-	-level 9 map & generator
-	-level 10 map & generator
+make tutorial (1st level) (10h)
+code behavior dangobese (aspiring bullets) (5h)
+display information about dango on click/tap (1h30)
+improve gameplay and level design (30h without level editor, 5-10h with level editor):
+	-level 1 map & generator & dialogue & reward
+	-level 2 map & generator & dialogue & reward
+	-level 3 map & generator & dialogue & reward
+	-level 4 map & generator & dialogue & reward
+	-level 5 map & generator & dialogue & reward
+	-level 6 map & generator & dialogue & reward
+	-level 7 map & generator & dialogue & reward
+	-level 8 map & generator & dialogue & reward
+	-level 9 map & generator & dialogue & reward
+	-level 10 map & generator & dialogue & reward
+Level editor (40h):
+	-list of all objects (images)
+	-add background image
+	-remove background image
+	-add multiple background images
+	-add object
+	-remove object
+	-adding path for dango
+	-define a direction for the path
+	-multiple paths
+	-enemy generator: number of enemies, time between enemies, path they use, level of difficulty
+	-wave generator
+	-save level into json file
+	-read level from json file
+	-copy/paste
+	-undo/redo
+	-dialogues:
+		-text
+		-apparition (left/right)
+		-character (image)
+		-emotion
+		-show the time for the dialogue to be displayed
+create dangosoy class and behavior (10h)
+create mama dango class and behavior (10h)
+create freezing tower class and behavior (10h)
 
--->First Release
-create dangosoy
-create mama dango
-improve the design for story menu (levels) -> rethink the mine design. Does not fit.
-animations in the background of story menu
-animations in the background background on level
-animations in the background main menu
-animation of death of dango
-animation direction for towers (left,right,up and down)
-loading screen for scaling sprites to speed up the process
-improve design dangos (border black or one color, I have to chose)
-improve design towers (chosing one design)
 
 ============================================================================
-FEATURES CODED (since 1st november 2015)
-animation touch of bullet
-levels of dango
-create design/animations for dangobese1
-implement desing/animation of dangobese1
-add dialogs to tell a story
-dialogues:
+FEATURES TO DESIGN (141h)
+============================================================================
+improve design dangos : border black or one color, I have to chose (10h)
+improve design towers : chosing one design (20h)
+improve the design for story menu (levels) -> rethink the mine design. Does not fit. (3-4h)
+animations in the background of story menu (10h)
+animations in the background background on level (10h)
+animations in the background main menu (10h)
+animation of death of dango (3h)
+animation direction for towers: left, right, up and down (15h)
+animation attack (5h):
+	- dango simple up, down
+	- dangobese right, left, up down
+dialogues (6h):
+	- animate character during speech (new folder with dialogues->mustache is moving)
+change display of range of attack (3h)
+create dangosoy animations (15h)
+create mama dango animations (15h)
+create freezing tower animations (15h)
+
+
+============================================================================
+FEATURES CODED OR DESIGNED(since 1st november 2015)
+============================================================================
+(OK) animation touch of bullet
+(OK) levels of dango
+(OK) create design/animations for dangobese1
+(OK) implement desing/animation of dangobese1
+(OK) add dialogs to tell a story
+(OK) dialogues:
 	- close and open speechbubble between each speech 
 	- new speaker means opening to the left or right with move to animation
 	- tap to skip
-design of main menu (first screen)
-story menu (access to previous levels and next ones)
-Sound:
+	- change bubblespeech sprite depending on the emotional state of the character.
+(OK) design of main menu (first screen)
+(OK) story menu (access to previous levels and next ones)
+(OK) Sound:
 	-add background sound
 	-smooth transition between background musics
 	-add sound effetcs for cutting
 	-add sound effects for splash
-parameters screen with volume for sound and effects
-loading screen for sprites and background music.
+	-save and load parameters from save file
+(OK) parameters screen with volume for sound and effects
+(OK) loading screen for sprites and background music.
+(OK) reward for story at the end of the levels (pause after the end of the level)
+(OK) wall to block dangos
+(OK) code behavior dangosimple
+
 
 
 
