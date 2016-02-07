@@ -13,7 +13,6 @@ public:
 	static Cell* create(std::string image);
 	void initOptions();
 
-	void addEvents();
 	void touchEvent(cocos2d::Touch* touch, cocos2d::Vec2 _p);
 
 	const Node* getObject() { return object; }
@@ -24,7 +23,7 @@ public:
 protected:
 
 private:
-	//La case sais qu'elle poss�de un object (Dango ou tourelle)
+	//La case sais qu'elle possede un object (Dango ou tourelle)
 	cocos2d::Node* object;
 	bool path;
 	

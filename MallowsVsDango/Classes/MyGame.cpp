@@ -5,15 +5,9 @@
 
 USING_NS_CC;
 
-MyGame::MyGame() : Loader(), touch(true), paused(false), reloading(false), acceleration(1.0),id_level(0){}
-
-Scene* MyGame::scene()
-{
-	// 'layer' is an autorelease object
-	MyGame *layer = MyGame::create();
-	// return the scene
-	return layer;
-}
+MyGame::MyGame() : Loader(), paused(false), reloading(false), 
+acceleration(1.0), id_level(0), cLevel(nullptr), menu(nullptr)
+{}
 
 MyGame::~MyGame()
 {
@@ -23,17 +17,15 @@ MyGame::~MyGame()
 bool MyGame::init()
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	//////////////////////////////
-	// 1. super init first
+	
+	// 1. super init first of the Mother Fucking Class
 	if (!CCScene::init())
 	{
 		return false;
 	}
-	
-	cLevel = nullptr;
-	menu = nullptr;
-	load();
 
+	// we have to do it here and not in the constructor because the scene has to be
+	// initialize before
 	loadingScreen = LoadingScreen::create();
 	addChild(loadingScreen,3);
 
@@ -41,7 +33,9 @@ bool MyGame::init()
 }
 
 bool MyGame::initLevel(int level_id){
+	// reset the game just in case.
 	reset();
+	// remove the level and the interface if it is initialized.
 	if(cLevel != nullptr){
 		removeChild(cLevel,1);
 	}
@@ -64,7 +58,6 @@ bool MyGame::initLevel(int level_id){
 		addTileset(config["tileset"].asString());
 	}
 	unload();
-	//schedule(CC_SCHEDULE_SELECTOR(MyGame::update));
 	schedule(CC_SCHEDULE_SELECTOR(MyGame::updateLoading));
 
 	loadingScreen->setVisible(true);
@@ -82,19 +75,9 @@ void MyGame::onExitTransitionDidStart(){
 	cache->removeUnusedSpriteFrames();
 }
 
-void MyGame::menuCloseCallback(Ref* pSender)
-{
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) || (CC_TARGET_PLATFORM == CC_PLATFORM_WP8)
-	CCMessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
-#else
-	Director::getInstance()->end();
-	#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-		exit(0);
-	#endif
-#endif
-}
-
 void MyGame::update(float delta){
+
+	//update the scene, the interface and the level.
 	Scene::update(delta);
 	menu->update(delta);
 	cLevel->update(delta * acceleration);
@@ -105,13 +88,14 @@ void MyGame::update(float delta){
 	else if (cLevel->hasWon() && !cLevel->isPaused()){
 		menu->showWin();
 		cLevel->pause();
-		experience += cLevel->getTotalExperience();
 		save();
 	}
 	if (reloading){
 		reload();
 		reloading = false;
 	}
+	// If it has been asked to go to the next level then we delete the current level,
+	// we reset the interface and the parameters and let's go !
 	if(menu->getState() == InterfaceGame::State::NEXT_LEVEL){
 		Json::Value levels = ((AppDelegate*)Application::getInstance())->getConfig()["levels"];
 		if(levels.size() > cLevel->getLevelId() + 1){
@@ -178,15 +162,10 @@ bool MyGame::save(){
 	if(root["level"].asInt() < (int)cLevel->getLevelId()+1){
 		root["level"] = cLevel->getLevelId()+1;
 	}
-	root["exp"] = experience;
+	unsigned int experience = ((AppDelegate*)Application::getInstance())->getSave()["exp"].asInt();
+	root["exp"] = experience + cLevel->getTotalExperience();
 	((AppDelegate*)Application::getInstance())->getConfigClass().setSave(root);
 	((AppDelegate*)Application::getInstance())->getConfigClass().save();
-	return true;
-}
-
-bool MyGame::load(){
-	// load experience saved from .sav file
-	experience = ((AppDelegate*)Application::getInstance())->getSave()["exp"].asInt();
 	return true;
 }
 
@@ -210,13 +189,15 @@ void MyGame::initAttributes(){
 	acceleration = 1.0;
 	paused = false;
 
-	// call the function of the mother class
+	// call the function of the mother class to initialize attributes
 	Loader::initAttributes();
 
+	// unschedule the update of the loading because it is done
 	unschedule(CC_SCHEDULE_SELECTOR(MyGame::updateLoading));
+	// Let's the game begin: we schedule the update of MyGame
 	scheduleUpdate();
 
-	// set interface visible and listening to input (touch)
+	// Before, set interface visible and listening to input (touch)
 	loadingScreen->setLoadingPercent(100);
 	FadeOut* fade = FadeOut::create(0.5f);
 	Hide* hide = Hide::create();
@@ -229,9 +210,11 @@ void MyGame::initAttributes(){
 void MyGame::updateLoading(float dt){
 	/* PUTAIN DE COCOS2D DE MERDE. Si tu veux comprendre ici, contacte moi...
 	 * c'est trop compliqué par écrit.
+	 * Ok... On se calme: d'abord, cocos2d ne veut pas comprendre la virtualite
+	 * lorsqu'il s'agit de scheduling. J'ai du donc creer une autre fonction qui
+	 * fait appel a la fonction de la classe mere...stupide...
 	 */
 	Loader::loading(dt);
 	loadingScreen->setLoadingPercent(getProgress()*100);
 	// update loading bar to the exact percentage
-
 }

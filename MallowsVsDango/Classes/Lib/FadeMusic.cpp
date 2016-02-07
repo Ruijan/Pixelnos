@@ -150,7 +150,7 @@ void FadeMusic::startWithTarget(cocos2d::Node* target)
 
     if (target)
     {
-        _fromVolume = CocosDenshion::SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
+        _fromVolume = ((AppDelegate*)Application::getInstance())->getAudioController()->getVolumeMusic();
     }
     /*_fromOpacity = target->getOpacity();*/
 }
@@ -181,7 +181,7 @@ ChangeMusic* ChangeMusic::create(std::string to_music)
 
 void ChangeMusic::update(float time) {
     CC_UNUSED_PARAM(time);
-    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(_toMusic.c_str(), true);
+	((AppDelegate*)Application::getInstance())->getAudioController()->playMusic(_toMusic);
 }
 
 cocos2d::ActionInstant* ChangeMusic::reverse() const

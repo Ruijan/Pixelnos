@@ -2,9 +2,8 @@
 #define STORYMENU_HPP
 
 #include "cocos2d.h"
-#include "Lib/Loader.h"
 
-class StoryMenu : public cocos2d::Scene, public Loader
+class StoryMenu : public cocos2d::Scene
 {
 	public:
 	virtual bool init();
@@ -16,7 +15,6 @@ class StoryMenu : public cocos2d::Scene, public Loader
 	
 	private:
 	cocos2d::Menu* menu;
-	//State state;
 };
 
 #endif
