@@ -64,7 +64,7 @@ bool StoryMenu::init(){
 	Sprite* credit_sprite = Sprite::create(credit_icon);
 	credit_sprite->setAnchorPoint(Point(0.5f, 0.5f));
 
-	MenuItemSprite* credit_item = MenuItemSprite::create(credit_sprite, credit_sprite, CC_CALLBACK_1(StoryMenu::selectLevelCallBack, this, 1));
+	MenuItemSprite* credit_item = MenuItemSprite::create(credit_sprite, credit_sprite, CC_CALLBACK_1(StoryMenu::showCredit, this));
 	credit_item->setPosition(Vec2(visibleSize.width - 30, visibleSize.height - 30));
 	credit_item->setEnabled(true);
 	credit_item->setScale(ratioX);
@@ -87,4 +87,8 @@ void StoryMenu::onEnterTransitionDidFinish(){
 	Scene::onEnterTransitionDidFinish();
 	removeAllChildren();
 	init();
+}
+
+void StoryMenu::showCredit(Ref* sender){
+	SceneManager::getInstance()->setScene(SceneManager::CREDIT);
 }

@@ -12,6 +12,7 @@ class StoryMenu : public cocos2d::Scene, public Loader
 	virtual void onEnterTransitionDidFinish();
 	
 	void selectLevelCallBack(Ref* sender, int level_id);
+	void showCredit(Ref* sender);
 	
 	private:
 	cocos2d::Menu* menu;
