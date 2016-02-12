@@ -7,8 +7,29 @@ USING_NS_CC;
 
 bool MainMenu::init()
 {
-	if (!Scene::init()){ return false; }
+ (!Scene::init()){ return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+	/*
+	Sprite* loadingBackground = Sprite::create("res/background/crissXcross.png");
+	loadingBackground->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	loadingBackground->setScale(visibleSize.width / loadingBackground->getContentSize().width);
+	addChild(loadingBackground);
+
+	Sprite* bglogo = Sprite::create("res/background/logo.png");
+	addChild(bglogo);
+	bglogo->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	bglogo->setScale((visibleSize.width / 2) / bg1->getContentSize().width);
+
+	bglogo->setOpacity(0.0);
+	FadeIn* fadein = FadeIn::create(1.0);
+	DelayTime* delay = DelayTime::create(1.0);
+	FadeOut* fadeout = FadeOut::create(1.0);
+	auto sequence = Sequence::create(fadein, delay, fadeout, nullptr);
+	c_action = bglogo->runAction(sequence);
+	c_action->retain();
+	*/
+
+	
 	Label* start_label = Label::createWithTTF("START", "fonts/LICABOLD.ttf", 75.f * visibleSize.width / 960);
 	MenuItemLabel* start = MenuItemLabel::create(start_label, CC_CALLBACK_1(MainMenu::menuContinueCallback, this));
 	start_label->setColor(Color3B::YELLOW);
@@ -66,6 +87,12 @@ bool MainMenu::init()
 }
 
 void MainMenu::update(float dt){
+	if (c_action != nullptr && c_action->isDone()) {
+		c_action->release();
+		c_action = nullptr;
+		SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+	}
+
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	double scale = 0.6;
 	if (marshmallow->getScale() < visibleSize.width / marshmallow->getTextureRect().size.width * scale * 1.1 && state == State::marshmallowStart){
@@ -160,6 +187,7 @@ void MainMenu::update(float dt){
 		FadeIn* showAction = FadeIn::create(0.5f);
 		menu->runAction(showAction);
 		state = finished;
+		
 	}
 }
 
@@ -170,9 +198,9 @@ void MainMenu::menuContinueCallback(Ref* sender){
 
 void MainMenu::onEnter(){
 	Scene::onEnter();
-	/*if (SceneManager::getInstance()->getGame()->isLaunched()){
+	if (SceneManager::getInstance()->getGame()->isLaunched()){
 		menu->getChildren().at(0)->setVisible(true);
-	}*/
+	}
 }
 
 void MainMenu::onEnterTransitionDidFinish(){

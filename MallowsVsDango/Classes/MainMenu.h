@@ -41,6 +41,7 @@ private:
 	cocos2d::Sprite* bg2;
 	cocos2d::Sprite* flash;
 	State state;
+	cocos2d::Action* c_action;
 };
 
 #endif

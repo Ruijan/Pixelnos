@@ -18,6 +18,7 @@ public:
 		GAME = 1,
 		LEVELS = 2,
 		LOADING = 3
+		
 	};
 
 	//Constructor & destructor
