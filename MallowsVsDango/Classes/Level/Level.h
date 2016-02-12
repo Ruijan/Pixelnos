@@ -8,6 +8,7 @@
 #include "../Towers/Bullet.h"
 #include "DangoGenerator.h"
 #include "../Dialogue.h"
+#include "Wall.h"
 #include <iostream>
 
 
@@ -18,7 +19,7 @@ Like a specific screen with all the caracteristics. It's an abstract class.
 */
 std::vector<std::vector<std::string>> readMapFromCSV(std::string filename);
 std::vector<std::string> readPathFromCSV(std::string filename);
-bool sortZOrder(cocos2d::Sprite* sprite1, cocos2d::Sprite* sprite2);
+bool sortZOrder(cocos2d::Node* sprite1, cocos2d::Node* sprite2);
 typedef unsigned int Quantity;
 
 class Level : public cocos2d::Layer
@@ -33,9 +34,9 @@ public:
 		ENDING,
 		DONE
 	};
-	Level(int nLevel);
+	Level(unsigned int nLevel);
 	virtual ~Level();
-	static Level* create(int nLevel);
+	static Level* create(unsigned int nLevel);
 	virtual bool init();
 
 	virtual void update(float dt);
@@ -48,7 +49,7 @@ public:
 	Quantity getLife();
 	State getState();
 	int getTotalExperience();
-	int getLevelId();
+	unsigned int getLevelId();
 	void increaseQuantity(Quantity add);
 	bool decreaseQuantity(Quantity removed);
 	virtual void pause();
@@ -69,28 +70,31 @@ public:
 	//CREATE_FUNC(Level);
 
 protected:
-	int id;
+	unsigned int id;
+	cocos2d::Size size;
+
 	std::vector<Dango*> dangos;
 	std::vector<Tower*> turrets;
 	std::vector<Bullet*> bullets;
+	Wall* wall;
+
 	Dialogue* introDialogue;
+	DangoGenerator* generator;
+
 	std::vector<std::vector<Cell*>> cells;
-	cocos2d::Size size;
 	std::vector<Cell*> path;
+
 	bool paused;
-	cocos2d::Point start;
-	cocos2d::Point end;
 	int zGround;
 	Quantity sugar;
 	Quantity life;
-	DangoGenerator* generator;	
 	State state;
 	double timer;
 	int experience;
+
 	cocos2d::Action* c_action; 
 	
-
-	void createPath(std::vector<std::vector<std::string>> );
+	void createPath(std::vector<std::vector<std::string>>, cocos2d::Point, cocos2d::Point);
 	void reorder();
 };
 

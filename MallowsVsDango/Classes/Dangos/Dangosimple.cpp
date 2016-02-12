@@ -6,7 +6,9 @@ USING_NS_CC;
 
 Dangosimple::Dangosimple(std::vector<Cell*> npath, int nlevel) :
 Dango(npath, Dangosimple::getConfig()["level"][nlevel]["speed"].asDouble(),
-		Dangosimple::getConfig()["level"][nlevel]["hitpoints"].asDouble(),nlevel){
+	Dangosimple::getConfig()["level"][nlevel]["hitpoints"].asDouble(),nlevel,
+	Dangosimple::getConfig()["level"][nlevel]["attack"].asDouble(),
+	Dangosimple::getConfig()["level"][nlevel]["reload"].asDouble()){
 }
 
 Dangosimple::~Dangosimple() {

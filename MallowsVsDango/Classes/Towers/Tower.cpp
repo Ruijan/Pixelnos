@@ -166,7 +166,7 @@ cocos2d::Vector<SpriteFrame*> Tower::getAnimation(Tower::State animState){
 	cocos2d::Vector<SpriteFrame*> animFrames;
 
 	char str[100] = { 0 };
-	for (int i = 0; i <= animation_size; ++i){
+	for (unsigned int i = 0; i <= animation_size; ++i){
 		std::string frameName =  getSpecConfig()["name"].asString()+"_"+action+"_movement_%03d.png";
 		sprintf(str, frameName.c_str(), i);
 		SpriteFrame* frame = cache->getSpriteFrameByName(str);
@@ -196,7 +196,7 @@ cocos2d::Vector<SpriteFrame*> Tower::getAnimationFromName(std::string name, Towe
 	cocos2d::Vector<SpriteFrame*> animFrames;
 
 	char str[100] = { 0 };
-	for (int i = 0; i <= animation_size; ++i)
+	for (unsigned int i = 0; i <= animation_size; ++i)
 	{
 		std::string frameName =  name+"_"+action+"_movement_%03d.png";
 		sprintf(str, frameName.c_str(), i);

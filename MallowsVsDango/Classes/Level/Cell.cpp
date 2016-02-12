@@ -26,18 +26,15 @@ Cell* Cell::create(std::string image)
 	return NULL;
 }
 
-void Cell::initOptions()
-{
+void Cell::initOptions(){
 	// do things here like setTag(), setPosition(), any custom logic.
 }
 
-void Cell::touchEvent(cocos2d::Touch* touch, cocos2d::Vec2 _point)
-{
+void Cell::touchEvent(cocos2d::Touch* touch, cocos2d::Vec2 _point){
 	//CCLOG("touched Cell");
 }
 
-void Cell::setObject(Node* nObject)
-{
+void Cell::setObject(Node* nObject){
 	object = nObject;
 }
 

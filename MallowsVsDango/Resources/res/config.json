@@ -1,222 +1,251 @@
 {
-	"sound_transition" : [
-		["music/On-Tiptoe.mp3.mp3","music/bensound-jazzyfrenchy.mp3.mp3","none","none"],
-		["music/On-Tiptoe.mp3.mp3","music/bensound-jazzyfrenchy.mp3.mp3","music/On-Tiptoe.mp3.mp3","music/On-Tiptoe.mp3.mp3"],
-		["none","music/bensound-jazzyfrenchy.mp3.mp3","music/On-Tiptoe.mp3.mp3","none"],
-		["none","music/bensound-jazzyfrenchy.mp3.mp3","none","music/On-Tiptoe.mp3.mp3"]
-	],
-	"play_sound" : true,
-	"play_dialogue" : true,
-    "towers" : {
-	"archer" : {
-		"name" : "archer",
-		"description" : "Archer: This mallow is a long distance attacker.",
-           	"attack_speed" : 1.5,
-            	"damages" : 1,
-            	"range" : 120,
-            	"cost" : 30,
-		"d_speed" : 0.25,
-		"d_damage" : 0.5,
-		"d_range" : 0.125,
-            	"image" : "res/turret/archer.png",
-		"animation" : "res/turret/animations/archer.png",
-		"animation_bullet" : "res/turret/animations/splash.png",
-		"sound_bullet" : "music/splash.mp3",
-		"animation_attack_size" : 9,
-		"animation_steady_size" : 49,
-		"animation_bullet_size" : 14
-    },
-    "cutter" : {
-		"name" : "cutter",
-		"description" : "Sword Master: Attack all the dangos around him",
-		"attack_speed" : 2.5,
-		"damages" : 1,
-		"range" : 80,
-		"cost" : 50,
-		"d_speed" : 0.25,
-		"d_damage" : 0.25,
-		"d_range" : 0.05,
-		"image" : "res/turret/cutter.png",
-		"animation" : "res/turret/animations/cutter.png",
-		"animation_bullet" : "res/turret/animations/cut.png",
-		"sound_bullet" : "music/slash.mp3",
-		"animation_attack_size" : 9,
-		"animation_steady_size" : 49,
-		"animation_bullet_size" : 14
-        }
-    },
-    "dangos" : {
-        "dangosimple" : {
-		"level" : [
-            		{
-				"speed" : 100,
-				"hitpoints" : 2,
-				"gain" : 2,
-				"image" : "res/dango/dango1.png",
-				"name" : "dango1",
-				"animation" : "res/dango/animations/dango1.png"
-			},
-			{
-				"speed" : 100,
-				"hitpoints" : 4,
-				"gain" : 5,
-				"image" : "res/dango/dango2.png",
-				"name" : "dango2",
-				"animation" : "res/dango/animations/dango2.png"
-			}
-		],
-		"cellperanim" : 1.1,
-		"description" : "Simple dango you can find everywhere."
+  "dangos": {
+    "dangosimple": {
+      "cellperanim": 1.1,
+      "description": "Simple dango you can find everywhere.",
+      "level": [
+        {
+          "animation": "res/dango/animations/dango1.png",
+          "attack": 1,
+          "gain": 2,
+          "hitpoints": 2,
+          "image": "res/dango/dango1.png",
+          "name": "dango1",
+          "reload": 1.5,
+          "speed": 100
         },
-		"dangobese" : {
-
-			
-			"level" : [
-	            		{
-					"speed" : 50,
-					"hitpoints" :6,
-					"gain" : 5,
-					"image" : "res/dango/dangobese1.png",
-					"name" : "dangobese1",
-					"animation" : "res/dango/animations/dangobese1.png"
-				},
-				{
-					"speed" : 60,
-					"hitpoints" : 8,
-					"gain" : 7,
-					"image" : "res/dango/dangobese2.png",
-					"name" : "dangobese2",
-					"animation" : "res/dango/animations/dangobese2.png"
-				}
-			],
-			"cellperanim" : 0.55,
-			"description" : "So big ! So fat ! Wait... is that my sock ?"
-	    }
+        {
+          "animation": "res/dango/animations/dango2.png",
+          "attack": 1.5,
+          "gain": 5,
+          "hitpoints": 4,
+          "image": "res/dango/dango2.png",
+          "name": "dango2",
+          "reload": 1.5,
+          "speed": 100
+        }
+      ]
     },
-	"levels" : [
-		{
-			"width" : 14,
-			"height" : 12,
-			"map" : "res/map/level1_map.csv",
-			"path" : "res/map/level1_path.csv",
-			"tileset" : "res/tiles/ground.plist",
-			"tilesetpng" : "res/tiles/ground.png",
-			"tilemaptable" : "res/tiles/ground.json",
-			"background" : "res/map/background2.png",
-			"generator" : "res/level1_generator.json",
-			"sugar" : 80,
-			"exp" : 150,
-			"x" : 70,
-			"y" : 325,
-			"introDialogue" : [
-				{
-					"speaker" : "res/turret/general.png",
-					"side" : "LEFT",
-					"text" : [
-						"WE ARE AT WAR !",
-						"Our spies told me a small group of dangos have been seen near the border.",
-						"General Mallow strawberry perfume commands you to protect our nation!",
-						"The Mallow Nation won't fall !"
-					]
-				},
-				{
-					"speaker" : "res/turret/general.png",
-					"side" : "RIGHT",
-					"text" : [
-						"CAPTAIN !",
-						"I am here to assist you during this invasion.",
-						"I am also new at this job don't be too harsh on me.",
-						"The General told us to defend the road, why not using a water tower near it?"
-					]
-				}
-			],
-			"animations" : ["res/turret/animations/archer.plist","res/turret/animations/cutter.plist","res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist","res/dango/animations/dango2.plist"],
-			"musics" : ["music/On-Tiptoe.mp3.mp3"],
-			"effects" : ["music/splash.mp3","music/slash.mp3"],
-			"reward" : "res/levels/plan1.png"
-		},
-		{
-			"width" : 14,
-			"height" : 12,
-			"map" : "res/map/level1_map.csv",
-			"path" : "res/map/level1_path.csv",
-			"tileset" : "res/tiles/ground.plist",
-			"tilesetpng" : "res/tiles/ground.png",
-			"tilemaptable" : "res/tiles/ground.json",
-			"background" : "res/map/background2.png",
-			"generator" : "res/level2_generator.json",
-			"sugar" : 80,
-			"exp" : 150,
-			"x" : 240,
-			"y" : 350,
-			"introDialogue" : [
-				{
-					"speaker" : "res/turret/general.png",
-					"side" : "LEFT",
-					"text" : [
-						"We don't know what this small group wanted to do here.",
-						"Maybe they were lost.",
-						"Wait, an another group have been seen near your area.",
-						"Stop them all ! General Mallow strawberry perfume is counting on you!"
-					]
-				}
-			],
-			"animations" : ["res/turret/animations/archer.plist","res/turret/animations/cutter.plist","res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist","res/dango/animations/dango2.plist"],
-			"musics" : ["music/On-Tiptoe.mp3.mp3"],
-			"effects" : ["music/splash.mp3","music/slash.mp3"],
-			"reward" : "res/levels/plan1.png"
-
-		},
-		{
-			"width" : 14,
-			"height" : 12,
-			"map" : "res/map/level1_map.csv",
-			"path" : "res/map/level1_path.csv",
-			"tileset" : "res/tiles/ground.plist",
-			"tilesetpng" : "res/tiles/ground.png",
-			"tilemaptable" : "res/tiles/ground.json",
-			"background" : "res/map/background2.png",
-			"generator" : "res/level3_generator.json",
-			"sugar" : 80,
-			"exp" : 150,
-			"x" : 400,
-			"y" : 265,
-			"introDialogue" : [
-				{
-					"speaker" : "res/turret/general.png",
-					"side" : "LEFT",
-					"text" : [
-						"Apparently they are looking for one of our great treasure but which one.",
-						"Our nation is wide and ancient, our vaults are full of precious items.",
-						"We will think about it late. Another group is willing to invade our territory.",
-						"Make a syrupshed ! General Mallow strawberry perfume is counting on you!"
-					]
-				}
-			],
-			"animations" : ["res/turret/animations/archer.plist","res/turret/animations/cutter.plist","res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist","res/dango/animations/dango2.plist"],
-			"musics" : ["music/On-Tiptoe.mp3.mp3"],
-			"effects" : ["music/splash.mp3","music/slash.mp3"],
-			"reward" : "res/levels/plan1.png"
-
-		},
-		{
-			"width" : 14,
-			"height" : 12,
-			"map" : "res/map/level1_map.csv",
-			"path" : "res/map/level1_path.csv",
-			"tileset" : "res/tiles/ground.plist",
-			"tilesetpng" : "res/tiles/ground.png",
-			"tilemaptable" : "res/tiles/ground.json",
-			"background" : "res/map/background2.png",
-			"generator" : "res/level4_generator.json",
-			"sugar" : 80,
-			"exp" : 150,
-			"x" : 560,
-			"y" : 240,
-			"animations" : ["res/turret/animations/archer.plist","res/turret/animations/cutter.plist","res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist","res/dango/animations/dango2.plist","res/dango/animations/dangobese1.plist"],
-			"musics" : ["music/On-Tiptoe.mp3.mp3"],
-			"effects" : ["music/splash.mp3","music/slash.mp3"],
-			"reward" : "res/levels/plan1.png"
-		}
-	]
+    "dangobese": {
+      "cellperanim": 0.55,
+      "description": "So big ! So fat ! Wait... is that my sock ?",
+      "level": [
+        {
+          "animation": "res/dango/animations/dangobese1.png",
+          "attack": 2,
+          "gain": 5,
+          "hitpoints": 6,
+          "image": "res/dango/dangobese1.png",
+          "name": "dangobese1",
+          "reload": 3,
+          "speed": 50
+        },
+        {
+          "animation": "res/dango/animations/dangobese2.png",
+          "attack": 2.5,
+          "gain": 7,
+          "hitpoints": 8,
+          "image": "res/dango/dangobese2.png",
+          "name": "dangobese2",
+          "reload": 3,
+          "speed": 60
+        }
+      ]
+    }
+  },
+  "levels": [
+    {
+      "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist" ],
+      "background": "res/map/background2.png",
+      "effects": [ "music/splash.mp3", "music/slash.mp3" ],
+      "exp": 150,
+      "generator": "res/level1_generator.json",
+      "height": 12,
+      "introDialogue": [
+        {
+          "emotion": [
+            "ANGRY",
+            "NORMAL",
+            "NORMAL",
+            "ANGRY"
+          ],
+          "side": "LEFT",
+          "speaker": "res/turret/general.png",
+          "text": [
+            "WE ARE AT WAR !",
+            "Our spies told me a small group of dangos have been seen near the border.",
+            "General Mallow strawberry perfume commands you to protect our nation!",
+            "The Mallow Nation won't fall !"
+          ]
+        },
+        {
+          "emotion": [
+            "ANGRY",
+            "NORMAL",
+            "NORMAL",
+            "NORMAL"
+          ],
+          "side": "RIGHT",
+          "speaker": "res/turret/general.png",
+          "text": [
+            "CAPTAIN !",
+            "I am here to assist you during this invasion.",
+            "I am also new at this job don't be too harsh on me.",
+            "The General told us to defend the road, why not using a water tower near it?"
+          ]
+        }
+      ],
+      "map": "res/map/level1_map.csv",
+      "musics": [ "music/On-Tiptoe.mp3.mp3" ],
+      "path": "res/map/level1_path.csv",
+      "reward": "res/levels/plan1.png",
+      "sugar": 80,
+      "tilemaptable": "res/tiles/ground.json",
+      "tileset": "res/tiles/ground.plist",
+      "tilesetpng": "res/tiles/ground.png",
+      "width": 14,
+      "x": 70,
+      "y": 325
+    },
+    {
+      "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist" ],
+      "background": "res/map/background2.png",
+      "effects": [ "music/splash.mp3", "music/slash.mp3" ],
+      "exp": 150,
+      "generator": "res/level2_generator.json",
+      "height": 12,
+      "introDialogue": [
+        {
+          "emotion": [
+            "NORMAL",
+            "NORMAL",
+            "NORMAL",
+            "ANGRY"
+          ],
+          "side": "LEFT",
+          "speaker": "res/turret/general.png",
+          "text": [
+            "We don't know what this small group wanted to do here.",
+            "Maybe they were lost.",
+            "Wait, an another group have been seen near your area.",
+            "Stop them all ! General Mallow strawberry perfume is counting on you!"
+          ]
+        }
+      ],
+      "map": "res/map/level1_map.csv",
+      "musics": [ "music/On-Tiptoe.mp3.mp3" ],
+      "path": "res/map/level1_path.csv",
+      "reward": "res/levels/plan1.png",
+      "sugar": 80,
+      "tilemaptable": "res/tiles/ground.json",
+      "tileset": "res/tiles/ground.plist",
+      "tilesetpng": "res/tiles/ground.png",
+      "width": 14,
+      "x": 240,
+      "y": 350
+    },
+    {
+      "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist" ],
+      "background": "res/map/background2.png",
+      "effects": [ "music/splash.mp3", "music/slash.mp3" ],
+      "exp": 150,
+      "generator": "res/level3_generator.json",
+      "height": 12,
+      "introDialogue": [
+        {
+          "speaker": "res/turret/general.png",
+          "side": "LEFT",
+          "text": [
+            "Apparently they are looking for one of our great treasure but which one.",
+            "Our nation is wide and ancient, our vaults are full of precious items.",
+            "We will think about it late. Another group is willing to invade our territory.",
+            "Make a syrupshed ! General Mallow strawberry perfume is counting on you!"
+          ]
+        }
+      ],
+      "map": "res/map/level1_map.csv",
+      "musics": [ "music/On-Tiptoe.mp3.mp3" ],
+      "path": "res/map/level1_path.csv",
+      "reward": "res/levels/plan1.png",
+      "sugar": 80,
+      "tilemaptable": "res/tiles/ground.json",
+      "tileset": "res/tiles/ground.plist",
+      "tilesetpng": "res/tiles/ground.png",
+      "width": 14,
+      "x": 400,
+      "y": 265
+    },
+    {
+      "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist", "res/dango/animations/dangobese1.plist" ],
+      "background": "res/map/background2.png",
+      "effects": [ "music/splash.mp3", "music/slash.mp3" ],
+      "exp": 150,
+      "generator": "res/level4_generator.json",
+      "height": 12,
+      "map": "res/map/level1_map.csv",
+      "musics": [ "music/On-Tiptoe.mp3.mp3" ],
+      "path": "res/map/level1_path.csv",
+      "reward": "res/levels/plan1.png",
+      "sugar": 80,
+      "tilemaptable": "res/tiles/ground.json",
+      "tileset": "res/tiles/ground.plist",
+      "tilesetpng": "res/tiles/ground.png",
+      "width": 14,
+      "x": 560,
+      "y": 240
+    }
+  ],
+  "play_dialogue": true,
+  "play_sound": true,
+  "sound_transition": [
+    [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none" ],
+    [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "none" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "music/On-Tiptoe.mp3.mp3" ]
+  ],
+  "towers": {
+    "archer": {
+      "animation": "res/turret/animations/archer.png",
+      "animation_attack_size": 9,
+      "animation_bullet": "res/turret/animations/splash.png",
+      "animation_bullet_size": 14,
+      "animation_steady_size": 49,
+      "attack_speed": 1.5,
+      "cost": 30,
+      "d_damage": 0.5,
+      "d_range": 0.125,
+      "d_speed": 0.25,
+      "damages": 1,
+      "description": "Archer: This mallow is a long distance attacker.",
+      "image": "res/turret/archer.png",
+      "name": "archer",
+      "range": 120,
+      "sound_bullet": "music/splash.mp3"
+    },
+    "cutter": {
+      "animation": "res/turret/animations/cutter.png",
+      "animation_attack_size": 9,
+      "animation_bullet": "res/turret/animations/cut.png",
+      "animation_bullet_size": 14,
+      "animation_steady_size": 49,
+      "attack_speed": 2.5,
+      "cost": 50,
+      "d_damage": 0.25,
+      "d_range": 0.05,
+      "d_speed": 0.25,
+      "damages": 1,
+      "description": "Sword Master: Attack all the dangos around him",
+      "image": "res/turret/cutter.png",
+      "name": "cutter",
+      "range": 80,
+      "sound_bullet": "music/slash.mp3"
+    }
+  },
+  "wall": {
+    "max_hp": 5,
+    "sprites": [
+      "res/levels/wall_wood_0.png",
+      "res/levels/wall_wood_1.png"
+    ]
+  }
 }

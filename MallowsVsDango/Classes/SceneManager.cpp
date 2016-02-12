@@ -6,6 +6,7 @@
 #include "Config/Config.h"
 #include "Config/json.h"
 #include "Lib/FadeMusic.h"
+#include "CreditScreen.h"
 USING_NS_CC;
 
 SceneManager *SceneManager::manager;
@@ -14,12 +15,15 @@ SceneManager::SceneManager(){
 	MainMenu* menu = MainMenu::create();
 	MyGame* game = MyGame::create();
 	StoryMenu* story_menu = StoryMenu::create();
+	CreditScreen* credit_screen = CreditScreen::create();
 	cacheScene[MENU] = menu;
 	cacheScene[MENU]->retain();
 	cacheScene[GAME] = game;
 	cacheScene[GAME]->retain();
 	cacheScene[LEVELS] = story_menu;
 	cacheScene[LEVELS]->retain();
+	cacheScene[CREDIT] = credit_screen;
+	cacheScene[CREDIT]->retain();
 
 	currentscene = cacheScene[MENU];
 	c_index = 0;

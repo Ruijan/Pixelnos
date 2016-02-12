@@ -4,7 +4,6 @@
 #include "SceneManager.h"
 #include "Lib/Functions.h"
 #include "Lib/FadeMusic.h"
-#include "audio/include/SimpleAudioEngine.h"
 
 USING_NS_CC;
 
@@ -22,7 +21,7 @@ bool StoryMenu::init(){
 	menu = Menu::create();
 	Json::Value levels = ((AppDelegate*)Application::getInstance())->getConfig()["levels"];
 	int cLevel = ((AppDelegate*)Application::getInstance())->getSave()["level"].asInt();
-	for(int i(0); i < levels.size(); ++i){
+	for(unsigned int i(0); i < levels.size(); ++i){
 		std::string filename;
 		Color3B color;
 		bool enable(true);
@@ -56,6 +55,23 @@ bool StoryMenu::init(){
 		menu->addChild(level);
 	}
 	menu->setPosition(0, 0);
+
+	//Definition du crédit. A mettre dans une fonction plus tard
+	std::string credit_icon = "res/buttons/level_button.png";
+	Color3B credit_icon_color = Color3B::WHITE;
+
+	Sprite* credit_sprite = Sprite::create(credit_icon);
+	credit_sprite->setAnchorPoint(Point(0.5f, 0.5f));
+
+	MenuItemSprite* credit_item = MenuItemSprite::create(credit_sprite, credit_sprite, CC_CALLBACK_1(StoryMenu::showCredit, this));
+	credit_item->setPosition(Vec2(visibleSize.width - 30, visibleSize.height - 30));
+	credit_item->setEnabled(true);
+	credit_item->setScale(ratioX);
+
+	menu->addChild(credit_item);
+	menu->setPosition(0, 0);
+	//Fin fonction appelle crédit
+
 	addChild(menu,2);
 	
 	return true;
@@ -70,4 +86,8 @@ void StoryMenu::onEnterTransitionDidFinish(){
 	Scene::onEnterTransitionDidFinish();
 	removeAllChildren();
 	init();
+}
+
+void StoryMenu::showCredit(Ref* sender){
+	SceneManager::getInstance()->setScene(SceneManager::CREDIT);
 }

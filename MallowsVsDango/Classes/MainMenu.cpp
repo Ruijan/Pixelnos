@@ -7,7 +7,7 @@ USING_NS_CC;
 
 bool MainMenu::init()
 {
- (!Scene::init()){ return false; }
+	if(!Scene::init()){ return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	/*
 	Sprite* loadingBackground = Sprite::create("res/background/crissXcross.png");
@@ -87,12 +87,12 @@ bool MainMenu::init()
 }
 
 void MainMenu::update(float dt){
-	if (c_action != nullptr && c_action->isDone()) {
+	/*if (c_action != nullptr && c_action->isDone()) {
 		c_action->release();
 		c_action = nullptr;
 		SceneManager::getInstance()->setScene(SceneManager::LEVELS);
 	}
-
+	*/
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	double scale = 0.6;
 	if (marshmallow->getScale() < visibleSize.width / marshmallow->getTextureRect().size.width * scale * 1.1 && state == State::marshmallowStart){
@@ -198,9 +198,6 @@ void MainMenu::menuContinueCallback(Ref* sender){
 
 void MainMenu::onEnter(){
 	Scene::onEnter();
-	if (SceneManager::getInstance()->getGame()->isLaunched()){
-		menu->getChildren().at(0)->setVisible(true);
-	}
 }
 
 void MainMenu::onEnterTransitionDidFinish(){

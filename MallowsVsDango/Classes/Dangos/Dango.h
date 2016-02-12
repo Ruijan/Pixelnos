@@ -14,45 +14,54 @@ class Dango : public cocos2d::Sprite{
 		LEFT
 	};
 	enum STATE{
-		HIT,
-		IDLE
+		IDLE,
+		ATTACK,
+		RELOAD,
+		MOVE
 	};
 
 
 public:
-	Dango(std::vector<Cell*> npath, double nspeed, double hp, int level);
+	Dango(std::vector<Cell*> npath, double nspeed, double hp, int level,
+		double damages, double a_speed);
 	virtual ~Dango();
 	//static Dango* create(std::string image, std::vector<Cell*> npath, int level);
 
 	static Json::Value getConfig();
 	virtual Json::Value getSpecConfig() = 0;
 
-	bool isMoving();
 	bool isAlive();
+	bool isDone();
 	bool willBeAlive();
-	void update(float dt);
 	double getHitPoints();
 	double getGain();
-	void takeDamages(double damages);
-	void takePDamages(double damages);
-	bool isDone();
-	void move(float dt);
-	void updateAnimation();
 	int getTargetedCell();
 	double getSpeed();
+
+	void update(float dt);
+	void updateAnimation();
+	void updateDirection(cocos2d::Vec2 direction);
+
+	void takeDamages(double damages);
+	void takePDamages(double damages);
 	
-
-
+	void move(float dt);
+	void attack(float dt);
+	
 private:
-	int targetedCell;
+	STATE state;
+	DIRECTION cDirection;
+
+	unsigned int targetedCell;
 	std::vector<Cell*> path;
+	cocos2d::Action* cAction;
+
 	double speed;
 	double hitPoints;
-	DIRECTION cDirection;
-	cocos2d::Action* cAction;
 	double pDamages;				// prosepctive damages
-	STATE state;
-	double timer;
+	double reload_timer;
+	double attack_damages;
+	double attack_reloading;
 	int level;
 	
 };

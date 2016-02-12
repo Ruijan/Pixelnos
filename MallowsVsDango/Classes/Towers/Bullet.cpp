@@ -2,7 +2,7 @@
 #include "../Dangos/Dango.h"
 #include "../Towers/Tower.h"
 #include "../Lib/Functions.h"
-#include "audio/include/SimpleAudioEngine.h"
+#include "../AppDelegate.h"
 
 USING_NS_CC;
 
@@ -83,7 +83,7 @@ void Bullet::startAnimation(){
 	std::vector<std::string> elements;
 	std::string animation = split(Tower::getConfig()[owner]["animation_bullet"].asString(),'/',elements).back();
 	animation = animation.substr(0,animation.size()-4);
-	for (int i = 0; i <= animation_size; ++i)
+	for (unsigned int i = 0; i <= animation_size; ++i)
 	{
 		std::string frameName =  animation+"_%03d.png";
 		sprintf(str, frameName.c_str(), i);
@@ -91,12 +91,12 @@ void Bullet::startAnimation(){
 		animFrames.pushBack(frame);
 	}
 	setVisible(true);
-	setScale(1 / 6.0);
+	setScale(1 / 6.0f);
 	Animation* currentAnimation = Animation::createWithSpriteFrames(animFrames, 0.016f);
 	action = runAction(Animate::create(currentAnimation));
 	action->retain();
 	std::string sound = Tower::getConfig()[owner]["sound_bullet"].asString();
-	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(sound.c_str(),false);
+	((AppDelegate*)Application::getInstance())->getAudioController()->playEffect(sound.c_str());
 }
 
 void Bullet::setOwner(std::string nowner){

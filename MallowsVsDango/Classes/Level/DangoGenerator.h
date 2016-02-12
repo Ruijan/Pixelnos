@@ -21,7 +21,7 @@ public:
 	~DangoGenerator();
 	static DangoGenerator* createWithFilename(std::string filename);
 	void update(double dt, Level* level);
-	bool addStep(std::string dango, double time, int wave);
+	bool addStep(std::string dango, double time, unsigned int wave);
 	void addWave();
 	int getNbWaves();
 	void nextWave();
