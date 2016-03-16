@@ -5,10 +5,9 @@ experience system and skill tree to code and design (20h): (Thomas)
 	- dynamical positioning of skill from a file (read a file to find all the skills and create automatically the tree)
 	- save and load skills in save json file
 	- "buy" a skill
-Credits screen (4h) (Thomas)
 Company logo screen (30min) (Xianle)
 remake main menu with cocos2d actions (1h) (Xianle)
-Story menu interface for parameters (sound, credit, skill tree button) and experience (4-5h) (Xianle)
+Story menu interface for parameters (sound, credit, skill tree button) and gold (4-5h) (Xianle)
 Player powers (13h) (Xianle):
 	-limit for towers -> after killing a certain amount of dango power plus for a specific time (3h)
 	-throw randomly a certain amount of water bombs on dangos (2-3h)
@@ -32,20 +31,13 @@ improve gameplay and level design (30h without level editor, 5-10h with level ed
 	-level 8 map & generator & dialogue & reward
 	-level 9 map & generator & dialogue & reward
 	-level 10 map & generator & dialogue & reward
-Level editor (40h):
-	-list of all objects (images)
-	-add background image
-	-remove background image
-	-add multiple background images
-	-add object
-	-remove object
-	-adding path for dango
-	-define a direction for the path
-	-multiple paths
-	-enemy generator: number of enemies, time between enemies, path they use, level of difficulty
+Level editor (40h/ 40h): (21 / 31 features)
+	-enemy generator: 
+		-number of enemies, 
+		-time between enemies, 
+		-path they use, 
+		-level of difficulty
 	-wave generator
-	-save level into json file
-	-read level from json file
 	-copy/paste
 	-undo/redo
 	-dialogues:
@@ -79,7 +71,7 @@ change display of range of attack (3h)
 create dangosoy animations (15h)
 create mama dango animations (15h)
 create freezing tower animations (15h)
-
+interface buttons to display informations (10h)
 
 ============================================================================
 FEATURES CODED OR DESIGNED(since 1st november 2015)
@@ -107,6 +99,32 @@ FEATURES CODED OR DESIGNED(since 1st november 2015)
 (OK) reward for story at the end of the levels (pause after the end of the level)
 (OK) wall to block dangos
 (OK) code behavior dangosimple
+(OK) Credits screen
+Level editor:
+	-(OK) add background image
+	-(OK) remove background image
+	-(OK) add multiple background images
+	-(OK) list of all objects (images)
+	-(OK) add object
+	-(OK) remove object
+	-(OK) rotate/flip object
+	-(OK) scale object ? -> lets try it
+	-(OK) lines of resolutions
+	-(OK) show/hide different layers
+	-(OK) show/hide buttons
+	-(OK) shortcuts
+	-(OK) save level into json file
+	-(OK) read level from json file
+	-(OK) reset level
+	-(OK) delete a level
+	-(OK) adding path for dango
+	-(OK) remove path
+	-(OK) remove last tile of path
+	-(OK) define a direction for the path
+	-(OK) multiple paths
+
+
+
 
 
 

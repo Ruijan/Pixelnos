@@ -107,3 +107,50 @@ bool DangoGenerator::isDone(){
 int DangoGenerator::getNbWaves(){
 	return sequenceTimer.size();
 }
+int DangoGenerator::getNbSteps(unsigned int wave) {
+	if ((int)wave < getNbWaves()) {
+		return sequenceTimer[wave].size();
+	}
+	else {
+		log("DangoGenerator: Wave does not exits (out of bound).");
+		return 0;
+	}
+}
+
+void DangoGenerator::removeStep(unsigned int step, unsigned int wave) {
+	if ((int)wave < getNbWaves()) {
+		if ((int)step < sequenceTimer[wave].size()) {
+			sequenceTimer[wave].erase(sequenceTimer[wave].begin() + step);
+			sequenceDango[wave].erase(sequenceDango[wave].begin() + step);
+		}
+		else {
+			log("DangoGenerator: Step out of wave size.");
+		}
+	}
+	else {
+		log("DangoGenerator: Wave does not exits (out of bound).");
+	}
+}
+
+void DangoGenerator::removeWave(unsigned int wave) {
+	if ((int)wave < getNbWaves()) {
+		sequenceTimer.erase(sequenceTimer.begin() + wave);
+		sequenceDango.erase(sequenceDango.begin() + wave);
+	}
+	else {
+		log("DangoGenerator: Wave does not exits (out of bound).");
+	}
+}
+
+double DangoGenerator::getTime(unsigned int step, unsigned int wave) {
+	return  sequenceTimer[wave][step];
+}
+std::string DangoGenerator::getDango(unsigned int step, unsigned int wave) {
+	return  sequenceDango[wave][step];
+}
+void DangoGenerator::setTime(double time, unsigned int step, unsigned int wave) {
+	sequenceTimer[wave][step] = time;
+}
+void DangoGenerator::setDango(std::string name, int step, unsigned int wave) {
+	sequenceDango[wave][step] = name;
+}

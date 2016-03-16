@@ -1,0 +1,36 @@
+width / height / ratio / number of different phones
+giant resolution
+2732 / 2048 (4 : 3) (1) -> Apple tablet
+2560 / 1440 (16 : 9) (4)
+2560 / 1600 (16 : 10) (1)
+
+big resolution
+2160 / 1440 (3 : 2) (1)
+2048 / 1536 (4 : 3) (3)
+1920 / 1080 (16 : 9) (17) -> smartphone, tablet
+1920 / 1200 (16 : 10) (2)
+
+intermediate big resolution
+1366 / 768 (16 : 9) (1) -> Microsoft surface...
+1334 / 750 (16 : 9) (1) -> Apple...
+
+medium resolution
+1280 / 800 (16 : 10) (6) -> tablet
+1280 / 768 (5 : 3) (6) -> smartphone
+1280 / 720 (16 : 9) (7) -> smartphone
+1200 / 720 (5 : 3) (1)
+
+???
+1136 / 640 (16 : 9) (2) -> Apple (iphone 5)
+1024 / 600  (pas de putain de coefficient SERIEUX LES MECS !!!) (3)
+1024 / 768 (4 : 3) (2) -> Apple
+
+small resolution
+960 / 640 (3 : 2) (1) -> Apple
+960 / 540 (16 : 9) (3)
+800 / 480 (5 : 3) (5)
+720 / 480 (3 : 2) (1)
+
+very small resolution
+480 / 320 (3 : 2) (1) -> Apple
+480 / 360 (4 : 3) (1)

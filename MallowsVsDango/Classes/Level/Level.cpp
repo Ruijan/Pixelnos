@@ -523,13 +523,21 @@ bool Level::hasLost(){
 }
 
 bool sortZOrder(Node* sprite1, Node* sprite2){
-	if(sprite1->getPosition().y > sprite2->getPosition().y){
+	double position1_height = sprite1->getPosition().y - sprite1->getContentSize().height*
+		(1 - sprite1->getAnchorPoint().y) * sprite1->getScaleY();
+	double position2_height = sprite2->getPosition().y - sprite2->getContentSize().height*
+		(1 - sprite2->getAnchorPoint().y) * sprite2->getScaleY();
+	if (position1_height > position2_height) {
 		return true;
 	}
-	else if(sprite1->getPosition().y == sprite2->getPosition().y){
-		return !(sprite1->getPosition().x <= sprite2->getPosition().x);
+	else if (position1_height == position2_height) {
+		double position1_width = sprite1->getPosition().x + sprite1->getContentSize().width*
+			(1 - sprite1->getAnchorPoint().x) * sprite1->getScaleX();
+		double position2_width = sprite2->getPosition().x + sprite2->getContentSize().width*
+			(1 - sprite2->getAnchorPoint().x) * sprite2->getScaleX();
+		return !(position1_width <= position2_width);
 	}
-	else{
+	else {
 		return false;
 	}
 }

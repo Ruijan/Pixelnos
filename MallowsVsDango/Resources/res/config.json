@@ -56,7 +56,7 @@
   "levels": [
     {
       "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist" ],
-      "background": "res/map/background2.png",
+      "background": "res/levels/background2.png",
       "effects": [ "music/splash.mp3", "music/slash.mp3" ],
       "exp": 150,
       "generator": "res/level1_generator.json",
@@ -95,9 +95,9 @@
           ]
         }
       ],
-      "map": "res/map/level1_map.csv",
+      "map": "res/levels/level1_map.csv",
       "musics": [ "music/On-Tiptoe.mp3.mp3" ],
-      "path": "res/map/level1_path.csv",
+      "path": "res/levels/level1_path.csv",
       "reward": "res/levels/plan1.png",
       "sugar": 80,
       "tilemaptable": "res/tiles/ground.json",
@@ -109,7 +109,7 @@
     },
     {
       "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist" ],
-      "background": "res/map/background2.png",
+      "background": "res/levels/background2.png",
       "effects": [ "music/splash.mp3", "music/slash.mp3" ],
       "exp": 150,
       "generator": "res/level2_generator.json",
@@ -132,9 +132,9 @@
           ]
         }
       ],
-      "map": "res/map/level1_map.csv",
+      "map": "res/levels/level1_map.csv",
       "musics": [ "music/On-Tiptoe.mp3.mp3" ],
-      "path": "res/map/level1_path.csv",
+      "path": "res/levels/level1_path.csv",
       "reward": "res/levels/plan1.png",
       "sugar": 80,
       "tilemaptable": "res/tiles/ground.json",
@@ -146,13 +146,19 @@
     },
     {
       "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist" ],
-      "background": "res/map/background2.png",
+      "background": "res/levels/background2.png",
       "effects": [ "music/splash.mp3", "music/slash.mp3" ],
       "exp": 150,
       "generator": "res/level3_generator.json",
       "height": 12,
       "introDialogue": [
         {
+          "emotion": [
+            "NORMAL",
+            "NORMAL",
+            "NORMAL",
+            "ANGRY"
+          ],
           "speaker": "res/turret/general.png",
           "side": "LEFT",
           "text": [
@@ -163,9 +169,9 @@
           ]
         }
       ],
-      "map": "res/map/level1_map.csv",
+      "map": "res/levels/level1_map.csv",
       "musics": [ "music/On-Tiptoe.mp3.mp3" ],
-      "path": "res/map/level1_path.csv",
+      "path": "res/levels/level1_path.csv",
       "reward": "res/levels/plan1.png",
       "sugar": 80,
       "tilemaptable": "res/tiles/ground.json",
@@ -177,14 +183,14 @@
     },
     {
       "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist", "res/dango/animations/dangobese1.plist" ],
-      "background": "res/map/background2.png",
+      "background": "res/levels/background2.png",
       "effects": [ "music/splash.mp3", "music/slash.mp3" ],
       "exp": 150,
       "generator": "res/level4_generator.json",
       "height": 12,
-      "map": "res/map/level1_map.csv",
+      "map": "res/levels/level1_map.csv",
       "musics": [ "music/On-Tiptoe.mp3.mp3" ],
-      "path": "res/map/level1_path.csv",
+      "path": "res/levels/level1_path.csv",
       "reward": "res/levels/plan1.png",
       "sugar": 80,
       "tilemaptable": "res/tiles/ground.json",

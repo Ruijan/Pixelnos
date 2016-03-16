@@ -57,14 +57,15 @@ bool StoryMenu::init(){
 	menu->setPosition(0, 0);
 
 	//Definition du crédit. A mettre dans une fonction plus tard
-	std::string credit_icon = "res/buttons/level_button.png";
+	std::string credit_icon = "res/buttons/settings.png";
 	Color3B credit_icon_color = Color3B::WHITE;
 
 	Sprite* credit_sprite = Sprite::create(credit_icon);
 	credit_sprite->setAnchorPoint(Point(0.5f, 0.5f));
 
 	MenuItemSprite* credit_item = MenuItemSprite::create(credit_sprite, credit_sprite, CC_CALLBACK_1(StoryMenu::showCredit, this));
-	credit_item->setPosition(Vec2(visibleSize.width - 30, visibleSize.height - 30));
+	credit_item->setPosition(Vec2(visibleSize.width - credit_item->getContentSize().width / 2, 
+		visibleSize.height - credit_item->getContentSize().height / 2));
 	credit_item->setEnabled(true);
 	credit_item->setScale(ratioX);
 
