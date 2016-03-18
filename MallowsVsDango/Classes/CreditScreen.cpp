@@ -17,10 +17,9 @@ std::vector <std::string> credit_subtitle = {	"Game developers",
 												"Softwares & libraries" };
 std::vector <std::string> credit_content_subtitle = {	"Julien Rechenmann\nXianle Wang\nThomas Czereba", 
 														"Julien Rechenmann\n Xianle Wang\nThomas Czereba", 
-														"Julien Rechenmann\nXianle Wang\nThomas Czereba", 
 														"Bensound.com\nSoundeffect-lab.info\npurple-planet.com", 
 														"Subtlepatterns.com", 
-														"Omid Ahoura\nAnn Pongsakul\nGenia Shevchenko\nAvril Li"
+														"Omid Ahoura\nAnn Pongsakul\nGenia Shevchenko\nAvril Li",
 														"Cocos2d-x\nTexturePacker\nTiledMap\nInkscape\nGIMP\nSpriter" };
 
 bool CreditScreen::init(){
@@ -38,48 +37,44 @@ bool CreditScreen::init(){
 	menu = Menu::create();
 
 	// Instanciation du bouton de retour à la selection des niveaux
-	std::string return_to_game_button_icon = "res/buttons/level_button.png";
+	std::string return_to_game_button_icon = "res/buttons/back.png";
 	Color3B return_to_game_button_icon_color = Color3B::WHITE;
 	Sprite* return_to_game_sprite = Sprite::create(return_to_game_button_icon);
-	return_to_game_sprite->setAnchorPoint(Point(0.5f, 0.5f));
 	MenuItemSprite* return_to_game_item = MenuItemSprite::create(return_to_game_sprite, return_to_game_sprite, CC_CALLBACK_1(CreditScreen::returnToGame, this));
-	return_to_game_item->setPosition(Vec2(visibleSize.width - 30, visibleSize.height - 30));
+	return_to_game_item->setPosition(Vec2(visibleSize.width - return_to_game_item->getContentSize().width / 2,
+		visibleSize.height - return_to_game_item->getContentSize().height / 2));
 	return_to_game_item->setEnabled(true);
 	return_to_game_item->setScale(ratioX);
 	
 	// Instanciation du texte des crédits. On itère les deux listes en faisant correspondre les éléments entre eux.
-	credit_label = Label::createWithTTF(credit_title, "fonts/Love Is Complicated Again.ttf", 28);
+	credit_label = Label::createWithTTF(credit_title, "fonts/Love Is Complicated Again.ttf", 36);
 	int between_sub_content = 15;
-	for (int i = 0; i < credit_content_subtitle.size(); i++) {
-		Label* credit_subtitle_bold = Label::createWithTTF(credit_subtitle[i], "fonts/Love Is Complicated Again.ttf", 22);
-		credit_subtitle_bold->setAlignment(kCCTextAlignmentCenter);
-		credit_subtitle_bold->setPosition(Vec2(41, -between_sub_content));
+	double shift_left = credit_label->getContentSize().width / 2;
+	for (unsigned int i = 0; i < credit_content_subtitle.size(); i++) {
+		Label* credit_subtitle_bold = Label::createWithTTF(credit_subtitle[i], "fonts/Love Is Complicated Again.ttf", 28);
+		credit_subtitle_bold->setAlignment(TextHAlignment::CENTER);
+		credit_subtitle_bold->setPosition(Vec2(shift_left, -between_sub_content));
 		credit_subtitle_bold->setAnchorPoint(Vec2(0.5, 1));
 		credit_subtitle_bold->enableOutline(Color4B::ORANGE, 3);
 		credit_label->addChild(credit_subtitle_bold);
 		between_sub_content += 28;
-		Label* credit_subtitle_content = Label::createWithTTF(credit_content_subtitle[i], "fonts/Love Is Complicated Again.ttf", 18);
-		credit_subtitle_content->setAlignment(kCCTextAlignmentCenter);
-		credit_subtitle_content->setPosition(Vec2(41, -between_sub_content));
+		Label* credit_subtitle_content = Label::createWithTTF(credit_content_subtitle[i], "fonts/Love Is Complicated Again.ttf", 22);
+		credit_subtitle_content->setAlignment(TextHAlignment::CENTER);
+		credit_subtitle_content->setColor(Color3B::WHITE);
+		credit_subtitle_content->setPosition(Vec2(shift_left, -between_sub_content));
 		credit_subtitle_content->setAnchorPoint(Vec2(0.5, 1));
-		credit_subtitle_content->enableOutline(Color4B::ORANGE, 3);
+		credit_subtitle_content->enableOutline(Color4B::WHITE, 1);
 		credit_label->addChild(credit_subtitle_content);
 		between_sub_content += 20 + ((countLine(credit_content_subtitle[i])) * 25);
 	}
-	credit_label->setAlignment(kCCTextAlignmentCenter);
 	credit_label->enableOutline(Color4B::ORANGE, 3);
-	credit_label->setPosition(Vec2(-visibleSize.width / 16 - 10 * visibleSize.width / 960 - 360, 0));
-	credit_label->setAnchorPoint(Vec2(0.5, 0.5));
+	//credit_label->setPosition(Vec2(-visibleSize.width / 16 - 10 * visibleSize.width / 960 - 360, 0));
+	credit_label->setPosition(Vec2(visibleSize.width / 2, 0));
+	credit_label->setAnchorPoint(Vec2(0.5, 1));
 
-	return_to_game_item->addChild(credit_label);
-	
-	// On créé le mouvement de scroll + le callback permettant de revenir à la "Selection des niveaux" lorsque les crédits sont finis.
-	auto moveBy = MoveBy::create(2, Vec2(0, 450));
-	auto callBackToGame = CallFunc::create([](){
-		SceneManager::getInstance()->setScene(SceneManager::LEVELS);
-	});
-	Sequence* seq = Sequence::create(moveBy, callBackToGame, NULL);
-	credit_label->runAction(seq);
+	//return_to_game_item->addChild(credit_label);
+	addChild(credit_label,2);
+
 
 	menu->addChild(return_to_game_item);
 	menu->setPosition(0, 0);
@@ -91,11 +86,21 @@ bool CreditScreen::init(){
 
 void CreditScreen::onEnterTransitionDidFinish(){
 	Scene::onEnterTransitionDidFinish();
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	credit_label->setPosition(Vec2(-visibleSize.width / 16 - 10 * visibleSize.width / 960 - 360, 0));
-	removeAllChildren();
-	init();
+	// On créé le mouvement de scroll + le callback permettant de revenir à la "Selection des niveaux" lorsque les crédits sont finis.
+	auto moveBy = MoveBy::create(15, Vec2(0, 1500));
+	auto callBackToGame = CallFunc::create([]() {
+		SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+	});
+	Sequence* seq = Sequence::create(moveBy, callBackToGame, NULL);
+	credit_label->runAction(seq);
 }
+
+void CreditScreen::onExitTransitionDidStart() {
+	Scene::onExitTransitionDidStart();
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	credit_label->setPosition(Vec2(visibleSize.width / 2, 0));
+}
+
 
 /**	Fonction permettant de retourner dans le la scène "Selection des niveaux"
 *	@param Ref sender : Scène qui va être changée.
@@ -110,7 +115,7 @@ void CreditScreen::returnToGame(Ref* sender){
 */
 int CreditScreen::countLine(std::string text) {
 	int count = 0;
-	for (int i = 0; i < text.size(); i++)
+	for (unsigned int i = 0; i < text.size(); i++)
 		if (text[i] == '\n') count++;
 	return (count + 1);
 }

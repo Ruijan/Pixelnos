@@ -7,6 +7,7 @@
 #include "Config/json.h"
 #include "Lib/FadeMusic.h"
 #include "CreditScreen.h"
+#include "LevelEditor.h"
 USING_NS_CC;
 
 SceneManager *SceneManager::manager;
@@ -16,6 +17,7 @@ SceneManager::SceneManager(){
 	MyGame* game = MyGame::create();
 	StoryMenu* story_menu = StoryMenu::create();
 	CreditScreen* credit_screen = CreditScreen::create();
+	LevelEditor* editor = LevelEditor::create();
 	cacheScene[MENU] = menu;
 	cacheScene[MENU]->retain();
 	cacheScene[GAME] = game;
@@ -24,8 +26,10 @@ SceneManager::SceneManager(){
 	cacheScene[LEVELS]->retain();
 	cacheScene[CREDIT] = credit_screen;
 	cacheScene[CREDIT]->retain();
+	cacheScene[EDITOR] = editor;
+	cacheScene[EDITOR]->retain();
 
-	currentscene = cacheScene[MENU];
+	currentscene = cacheScene[EDITOR];
 	c_index = 0;
 	Director::getInstance()->runWithScene(currentscene);
 	if(((AppDelegate*)Application::getInstance())->getConfig()["play_sound"].asBool()){
