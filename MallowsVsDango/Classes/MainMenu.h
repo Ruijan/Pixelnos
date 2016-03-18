@@ -3,6 +3,8 @@
 
 #include "cocos2d.h"
 #include "Lib/Loader.h"
+#include "ui/CocosGUI.h"
+
 
 
 class MainMenu :public cocos2d::Scene, public Loader
@@ -10,7 +12,7 @@ class MainMenu :public cocos2d::Scene, public Loader
 public:
 	virtual bool init();
 	CREATE_FUNC(MainMenu);
-	void menuContinueCallback(cocos2d::Ref* sender);
+	void menuContinueCallback(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 	void update(float dt);
 	enum State{
 		marshmallowStart,
@@ -34,13 +36,14 @@ protected:
 
 private:
 	cocos2d::Menu* menu;
-	cocos2d::Sprite* dango;
-	cocos2d::Sprite* marshmallow;
-	cocos2d::Sprite* vs;
+	State state;
 	cocos2d::Sprite* bg1;
 	cocos2d::Sprite* bg2;
+	cocos2d::Sprite* vs;
+	cocos2d::Sprite* marshmallow;
+	cocos2d::Sprite* dango;
 	cocos2d::Sprite* flash;
-	State state;
+
 	cocos2d::Action* c_action;
 };
 
