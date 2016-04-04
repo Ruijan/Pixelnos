@@ -31,13 +31,10 @@ improve gameplay and level design (30h without level editor, 5-10h with level ed
 	-level 8 map & generator & dialogue & reward
 	-level 9 map & generator & dialogue & reward
 	-level 10 map & generator & dialogue & reward
-Level editor (40h/ 40h): (21 / 31 features)
+Level editor (70h/ 40h): (29 / 38 features)
 	-enemy generator: 
-		-number of enemies, 
-		-time between enemies, 
-		-path they use, 
+		-number of enemies
 		-level of difficulty
-	-wave generator
 	-copy/paste
 	-undo/redo
 	-dialogues:
@@ -122,6 +119,16 @@ Level editor:
 	-(OK) remove last tile of path
 	-(OK) define a direction for the path
 	-(OK) multiple paths
+	- enemy generator:
+		-(OK) create wave
+		-(OK) remove wave
+		-(OK) create enemy
+		-(OK) time between enemy
+		-(OK) level of enemy
+		-(OK) path they use
+		-(OK) duplicate enemy
+		-(OK) remove enemy
+		
 
 
 

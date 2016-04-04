@@ -345,7 +345,7 @@ void InterfaceGame::moveSelectedTurret(Vec2 pos){
 		Cell* nearestCell = game->getLevel()->getNearestCell(selectedTurret->getPosition());
 		Cell* nearestCell2 = game->getLevel()->getNearestCell(pos/game->getLevel()->getScale());
 		if(nearestCell2 != nullptr && nearestCell != nullptr){
-			if(nearestCell2->isFree() && !nearestCell2->isPath()){
+			if(nearestCell2->isFree() && !nearestCell2->isPath() && !nearestCell2->isOffLimit()){
 				nearestCell->setObject(nullptr);
 				nearestCell2->setObject(selectedTurret);
 				selectedTurret->setPosition(nearestCell2->getPosition());
@@ -356,7 +356,7 @@ void InterfaceGame::moveSelectedTurret(Vec2 pos){
 bool InterfaceGame::isOnTower(Vec2 pos){
 	Cell* nearestCell = game->getLevel()->getNearestCell(pos/game->getLevel()->getScale());
 	if(nearestCell != nullptr){
-		if((nearestCell->isFree()|| nearestCell->getObject() == selectedTurret) && !nearestCell->isPath()){
+		if((nearestCell->isFree()|| nearestCell->getObject() == selectedTurret) && !nearestCell->isPath() && !nearestCell->isOffLimit()){
 			return false;
 		}
 	}

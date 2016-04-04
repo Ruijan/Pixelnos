@@ -21,6 +21,7 @@ bool LevelEditor::init(){
 	enemies_id = 0;
 	wave_id = 0;
 	c_enemy_id = -1;
+	enemy_path = -1;
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	menuHidden = false;
@@ -430,6 +431,12 @@ bool LevelEditor::init(){
 	add_wave->addTouchEventListener(CC_CALLBACK_2(LevelEditor::createWave, this));
 	subContents[3].first->getChildByName("layout")->addChild(add_wave, 0, "add_wave");
 
+	// Create menu for dialogues
+	ui::Button* add_dialogue = ui::Button::create("res/buttons/wood_new.png", "res/buttons/wood_new.png");
+	add_dialogue->setPosition(Vec2(innerWidth / 4, 0));
+	add_dialogue->addTouchEventListener(CC_CALLBACK_2(LevelEditor::showDialogueBox, this));
+	subContents[4].first->getChildByName("layout")->addChild(add_dialogue, 0, "add_dialogue");
+
 	// Create enemy selection menu
 	ui::Layout* select_enemy = ui::Layout::create();
 	addChild(select_enemy, 2, "select_enemy");
@@ -468,11 +475,13 @@ bool LevelEditor::init(){
 	enemy_time->setMaxLength(4);
 	enemy_time->setAnchorPoint(Vec2(0.5, 0.5));
 	auto event_enemy_listener = EventListenerKeyboard::create();
-	event_enemy_listener->onKeyReleased = [enemy_time](EventKeyboard::KeyCode keyCode, Event* event) {
+	event_enemy_listener->onKeyReleased = [enemy_time,this](EventKeyboard::KeyCode keyCode, Event* event) {
 		enemy_time->setString(purgeCharactersFromString(enemy_time->getString()));
 		if (Value(enemy_time->getString()).asDouble() > 30) {
 			enemy_time->setString("30");
 		}
+		enemy_timer = Value(enemy_time->getString()).asDouble();
+
 	};
 	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(event_enemy_listener, enemy_time);
 	select_enemy->addChild(Sprite::create("res/buttons/wood_textfield.png"), 1, "background");
@@ -488,8 +497,6 @@ bool LevelEditor::init(){
 	enemy_time->setPosition(select_enemy->getChildByName("background")->getPosition());
 	delay_label->setPosition(select_enemy->getChildByName("background")->getPosition() - 
 		Vec2(select_enemy->getChildByName("background")->getContentSize().width / 2,0));
-
-
 
 	path = "./res/levels/dangos/";
 	files = read_directory(path);
@@ -528,10 +535,23 @@ bool LevelEditor::init(){
 	}
 	enemy_layout->setInnerContainerSize(Size(counter * (width_image + width_image / 4), width_image * 3 / 2));
 	enemy_layout->setDirection(ui::ScrollView::Direction::HORIZONTAL);
+	ui::ScrollView* path_layout = ui::ScrollView::create();
+	path_layout->setDirection(ui::ScrollView::Direction::HORIZONTAL);
+	path_layout->setContentSize(Size(width_image * 2, width_image));
+	path_layout->setPosition(Vec2(middle_panel_enemy->getContentSize().width * middle_panel_enemy->getScaleX() / 4
+		- path_layout->getContentSize().width / 2,
+		delay_label->getPosition().y - path_layout->getContentSize().height / 4));
+	Label* path_label = Label::createWithTTF("Path", "fonts/LICABOLD.ttf", 20 * (visibleSize.width / 960));
+	path_label->setAlignment(TextHAlignment::RIGHT);
+	path_label->setColor(Color3B::BLACK);
+	path_label->setPosition(Vec2(path_layout->getPosition().x -
+		path_label->getContentSize().width / 2,
+		delay_label->getPosition().y));
 	select_enemy->addChild(middle_panel_enemy, 0, "middle_panel");
 	select_enemy->addChild(create_enemy, 1, "create_enemy");
 	select_enemy->addChild(edit_enemy, 1, "edit_enemy");
-
+	select_enemy->addChild(path_layout, 1, "path_layout");
+	select_enemy->addChild(path_label, 1, "path_label");
 	select_enemy->addChild(button_cancel_creation, 1, "button_cancel");
 	select_enemy->addChild(enemy_layout, 1, "enemy_layout");
 	select_enemy->addChild(title_enemy, 1, "title_enemy");
@@ -543,7 +563,35 @@ bool LevelEditor::init(){
 		-middle_panel_enemy->getContentSize().height * middle_panel_enemy->getScaleY() / 2));
 	edit_enemy->setPosition(Vec2(-middle_panel_enemy->getContentSize().width * middle_panel_enemy->getScaleX() / 4,
 		-middle_panel_enemy->getContentSize().height * middle_panel_enemy->getScaleY() / 2));
-		
+
+	// Panel for dialogues
+	ui::Layout* select_dialogue = ui::Layout::create();
+	addChild(select_dialogue, 2, "select_dialogue");
+	select_dialogue->setVisible(false);
+	auto create_dialogue = ui::Button::create("res/buttons/buttonAddDialogue.png", "res/buttons/buttonAddDialogue.png", "res/buttons/buttonAddDialogue_disable.png");
+	create_dialogue->setEnabled(false);
+	create_dialogue->addTouchEventListener(CC_CALLBACK_2(LevelEditor::createDialogue, this));
+	auto edit_dialogue = ui::Button::create("res/buttons/buttonEditDialogue.png", "res/buttons/buttonEditDialogue.png", "res/buttons/buttonEditDialogue_disable.png");
+	edit_dialogue->setVisible(false);
+	edit_dialogue->addTouchEventListener(CC_CALLBACK_2(LevelEditor::editEnemyValues, this));
+	auto button_cancel_dialogue = ui::Button::create("res/buttons/buttonCancel.png", "res/buttons/buttonCancel.png");
+	button_cancel_dialogue->addTouchEventListener(CC_CALLBACK_2(LevelEditor::hideDialogueBox, this));
+	auto middle_panel_dialogue = Sprite::create("res/buttons/centralMenuPanel.png");
+	middle_panel_dialogue->setScaleY(visibleSize.height / 2 / middle_panel_dialogue->getContentSize().height);
+	middle_panel_dialogue->setScaleX((1.5 * create_dialogue->getContentSize().width * create_dialogue->getScale() +
+		create_dialogue->getContentSize().width * 2 / 5 * create_dialogue->getScale()) /
+		create_dialogue->getContentSize().width);
+
+	select_dialogue->addChild(middle_panel_dialogue, 0, "middle_panel");
+	select_dialogue->addChild(create_dialogue, 1, "create_dialogue");
+	select_dialogue->addChild(edit_dialogue, 1, "edit_dialogue");
+	select_dialogue->addChild(button_cancel_dialogue, 1, "button_cancel");
+	button_cancel_dialogue->setPosition(Vec2(middle_panel_dialogue->getContentSize().width * middle_panel_dialogue->getScaleX() / 4,
+		-middle_panel_dialogue->getContentSize().height * middle_panel_dialogue->getScaleY() / 2));
+	create_dialogue->setPosition(Vec2(-middle_panel_dialogue->getContentSize().width * middle_panel_dialogue->getScaleX() / 4,
+		-middle_panel_dialogue->getContentSize().height * middle_panel_dialogue->getScaleY() / 2));
+	edit_dialogue->setPosition(Vec2(-middle_panel_dialogue->getContentSize().width * middle_panel_dialogue->getScaleX() / 4,
+		-middle_panel_dialogue->getContentSize().height * middle_panel_dialogue->getScaleY() / 2));
 
 	// Add the interface composed by the zoom icons, the panel on the left, the scroll view (sub menus)and the 
 	// main menu which is made of save button, create new level, delete level...
@@ -573,6 +621,7 @@ bool LevelEditor::init(){
 
 	getChildByName("select_level")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	getChildByName("select_enemy")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	getChildByName("select_dialogue")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	getChildByName("confirm_deletion")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 
 	addEvents();
@@ -1101,12 +1150,51 @@ void LevelEditor::createWave(Ref* sender, cocos2d::ui::Widget::TouchEventType ty
 	}
 }
 
+void LevelEditor::updateDisplayPathButtons() {
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	getChildByName("select_enemy")->getChildByName("path_layout")->removeAllChildren();
+	Size size(0,0);
+	for (unsigned int i(0); i < id_paths.size(); ++i){
+		ui::CheckBox* path_button = ui::CheckBox::create("res/buttons/wood.png", "res/buttons/wood.png",
+			"res/buttons/wood_selected.png", "res/buttons/wood.png", "res/buttons/wood.png");
+		path_button->addTouchEventListener([&, path_button, i](Ref* sender, ui::Widget::TouchEventType type) {
+			if (type == ui::Widget::TouchEventType::ENDED) {
+				for (auto checkbox : getChildByName("select_enemy")->getChildByName("path_layout")->getChildren()) {
+					((ui::CheckBox*)checkbox)->setSelected(false);
+				}
+				path_button->setSelected(true);
+				enemy_path = i;
+				if (enemy_name != "") {
+					((ui::Button*)getChildByName("select_enemy")->getChildByName("create_enemy"))->setEnabled(true);
+					((ui::Button*)getChildByName("select_enemy")->getChildByName("edit_enemy"))->setEnabled(true);
+				}
+			}
+		});
+		Label* path_number = Label::createWithTTF(Value((int)id_paths[i]).asString(), "fonts/LICABOLD.ttf",
+			20 * (visibleSize.width / 960));
+		path_number->setColor(Color3B::BLACK);
+		path_number->setPosition(path_button->getContentSize().width / 2, path_button->getContentSize().height / 2);
+		path_button->addChild(path_number);
+		path_button->setPosition(Vec2(path_button->getContentSize().width * (i + 1), path_button->getContentSize().height / 2));
+		getChildByName("select_enemy")->getChildByName("path_layout")->addChild(
+			path_button,1,"path_button" + Value((int)id_paths[i]).asString());
+		size = path_button->getContentSize();
+	}
+	if (id_paths.size() > 0) {
+		((ui::ScrollView*)getChildByName("select_enemy")->getChildByName("path_layout"))->setInnerContainerSize(Size(size.width *
+			(id_paths.size() + 1), size.height));
+	}
+}
+
 void LevelEditor::showEnemyBox(Ref* sender, cocos2d::ui::Widget::TouchEventType type, unsigned int wave) {
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 		current_wave = waves_id[wave];
 		getChildByName("select_enemy")->getChildByName("edit_enemy")->setVisible(false);
 		getChildByName("select_enemy")->getChildByName("create_enemy")->setVisible(true);
 		getChildByName("select_enemy")->setVisible(true);
+		enemy_timer = Value(((ui::TextField*)getChildByName("select_enemy")->getChildByName("enemy_time"))->getString()).asDouble();
+		updateDisplayPathButtons();
 	}
 }
 void LevelEditor::hideEnemyBox(Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
@@ -1116,78 +1204,156 @@ void LevelEditor::hideEnemyBox(Ref* sender, cocos2d::ui::Widget::TouchEventType 
 		}
 		enemy_name = "";
 		enemy_level = -1;
+		enemy_path = -1;
 		c_enemy_id = -1;
 		enemy_checkbox = nullptr;
+		((ui::Button*)getChildByName("select_enemy")->getChildByName("create_enemy"))->setEnabled(false);
 		getChildByName("select_enemy")->setVisible(false);
+	}
+}
+
+void LevelEditor::showDialogueBox(Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+		getChildByName("select_dialogue")->setVisible(true);
+	}
+}
+void LevelEditor::hideDialogueBox(Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+		getChildByName("select_dialogue")->setVisible(false);
 	}
 }
 
 void LevelEditor::createEnemy(Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-		Node* delay_label = waves[current_wave].first->getChildByName("layout")->getChildByName("delay_label");
-		Node* enemy_label = waves[current_wave].first->getChildByName("layout")->getChildByName("enemy_label");
-		Node* lvl_label = waves[current_wave].first->getChildByName("layout")->getChildByName("lvl_label");
-		Node* path_label = waves[current_wave].first->getChildByName("layout")->getChildByName("path_label");
 
-		double enemy_delay = Value(((ui::TextField*)getChildByName("select_enemy")->getChildByName("enemy_time"))->getString()).asDouble();
+		double enemy_delay = enemy_timer;
 		int next_id = enemies_id + 1;
+		
 		enemies[next_id] = std::make_pair(generator->getNbSteps(current_wave), current_wave);
-		generator->addStep(enemy_name + Value(enemy_level).asString(), enemy_delay, current_wave);
-		enemy_checkbox->setSelected(false);
-		if (enemy_name == "dangosimple") {
-			enemy_name = "Simple";
-		}
-		else if(enemy_name == "dangobese") {
-			enemy_name = "Obese";
-		}
-		ui::Layout* enemy = ui::Layout::create();
-		char str[5]; //Change the size to meet your requirement
-		sprintf(str, "%.2lf", enemy_delay);
-		Label* delay = Label::createWithTTF(Value(str).asString(), "fonts/Love Is Complicated Again.ttf", 16);
-		Label* name = Label::createWithTTF(enemy_name, "fonts/Love Is Complicated Again.ttf", 16);
-		Label* lvl = Label::createWithTTF(Value(enemy_level + 1).asString(), "fonts/Love Is Complicated Again.ttf", 16);
-		Label* path = Label::createWithTTF(Value(0).asString(), "fonts/Love Is Complicated Again.ttf", 16);
-		delay->setColor(Color3B::BLACK);
-		name->setColor(Color3B::BLACK);
-		lvl->setColor(Color3B::BLACK);
-		path->setColor(Color3B::BLACK);
-		delay->setPosition(delay_label->getPosition().x, 0);
-		name->setPosition(enemy_label->getPosition().x, 0);
-		lvl->setPosition(lvl_label->getPosition().x, 0);
-		path->setPosition(path_label->getPosition().x, 0);
-
-		ui::Button* edit = ui::Button::create("res/buttons/edit.png");
-		edit->addTouchEventListener(CC_CALLBACK_2(LevelEditor::editEnemy, this, next_id));
-		ui::Button* delete_enemy = ui::Button::create("res/buttons/delete.png");
-		delete_enemy->addTouchEventListener(CC_CALLBACK_2(LevelEditor::removeEnemy, this, next_id));
-		delete_enemy->setPosition(Vec2(path_label->getPosition().x + path_label->getContentSize().width / 2 +
-			delete_enemy->getContentSize().width * delete_enemy->getScaleX() / 2, 0));
-		edit->setPosition(Vec2(delay_label->getPosition().x - delay_label->getContentSize().width / 2 - 
-			edit->getContentSize().width * edit->getScaleX() / 2, 0));
-
-		enemy->addChild(name, 1, "name");
-		enemy->addChild(delay, 1, "delay");
-		enemy->addChild(lvl, 1, "lvl");
-		enemy->addChild(path, 1, "path");
-		enemy->addChild(delete_enemy, 1, "delete");
-		enemy->addChild(edit, 1, "edit");
-		waves[current_wave].first->getChildByName("layout")->addChild(enemy,1,Value(next_id).asString());
-
-		enemy_name = "";
-		enemy_level = -1;
-		enemy_checkbox = nullptr;
-		getChildByName("select_enemy")->setVisible(false);	
+		generator->addStep(enemy_name + Value(enemy_level).asString(), enemy_delay, enemy_path, current_wave);
+		createEnemyDisplay(next_id);
 		++enemies_id;
-		updateDisplayWaveMenu(current_wave);
+		hideEnemyBox(sender, cocos2d::ui::Widget::TouchEventType::ENDED);
 	}
 }
+
+void LevelEditor::createEnemyDisplay(int id) {
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	Node* delay_label = waves[current_wave].first->getChildByName("layout")->getChildByName("delay_label");
+	Node* enemy_label = waves[current_wave].first->getChildByName("layout")->getChildByName("enemy_label");
+	Node* lvl_label = waves[current_wave].first->getChildByName("layout")->getChildByName("lvl_label");
+	Node* path_label = waves[current_wave].first->getChildByName("layout")->getChildByName("path_label");
+
+	double enemy_delay = enemy_timer;
+	if (enemy_name == "dangosimple") {
+		enemy_name = "Simple";
+	}
+	else if (enemy_name == "dangobese") {
+		enemy_name = "Obese";
+	}
+	ui::Layout* enemy = ui::Layout::create();
+	char str[10]; //Change the size to meet your requirement
+	sprintf(str, "%.2lf", enemy_delay);
+	Label* delay = Label::createWithTTF(Value(str).asString(), "fonts/Love Is Complicated Again.ttf", 16);
+	Label* name = Label::createWithTTF(enemy_name, "fonts/Love Is Complicated Again.ttf", 16);
+	Label* lvl = Label::createWithTTF(Value(enemy_level + 1).asString(), "fonts/Love Is Complicated Again.ttf", 16);
+	Label* path = Label::createWithTTF(Value((int)id_paths[enemy_path]).asString(), "fonts/Love Is Complicated Again.ttf", 16);
+	delay->setColor(Color3B::BLACK);
+	name->setColor(Color3B::BLACK);
+	lvl->setColor(Color3B::BLACK);
+	path->setColor(Color3B::BLACK);
+	delay->setPosition(delay_label->getPosition().x, 0);
+	name->setPosition(enemy_label->getPosition().x, 0);
+	lvl->setPosition(lvl_label->getPosition().x, 0);
+	path->setPosition(path_label->getPosition().x, 0);
+
+	ui::Button* edit = ui::Button::create("res/buttons/edit.png");
+	edit->addTouchEventListener(CC_CALLBACK_2(LevelEditor::editEnemy, this, id));
+	ui::Button* duplicate = ui::Button::create("res/buttons/duplicate.png");
+	duplicate->addTouchEventListener(CC_CALLBACK_2(LevelEditor::duplicateEnemy, this, id));
+	ui::Button* delete_enemy = ui::Button::create("res/buttons/delete.png");
+	delete_enemy->addTouchEventListener(CC_CALLBACK_2(LevelEditor::removeEnemy, this, id));
+	delete_enemy->setScale(2.0 / 3.0 * visibleSize.width / 1280);
+	delete_enemy->setPosition(Vec2(path_label->getPosition().x + path_label->getContentSize().width / 2 +
+		delete_enemy->getContentSize().width * delete_enemy->getScaleX() / 2, 0));
+	edit->setScale(2.0 / 3.0 * visibleSize.width / 1280);
+	edit->setPosition(Vec2(delay->getPosition().x - delay->getContentSize().width / 2 -
+		edit->getContentSize().width * edit->getScaleX() / 2, 0));
+	duplicate->setScale(2.0 / 3.0 * visibleSize.width / 1280);
+	duplicate->setPosition(Vec2(edit->getPosition().x - edit->getContentSize().width * 
+		edit->getScaleX() / 2 -
+		duplicate->getContentSize().width * duplicate->getScaleX() / 2, 0));
+
+	enemy->addChild(name, 1, "name");
+	enemy->addChild(delay, 1, "delay");
+	enemy->addChild(lvl, 1, "lvl");
+	enemy->addChild(path, 1, "path");
+	enemy->addChild(delete_enemy, 1, "delete");
+	enemy->addChild(duplicate, 1, "duplicate");
+	enemy->addChild(edit, 1, "edit");
+	waves[current_wave].first->getChildByName("layout")->addChild(enemy, 1, Value(id).asString());		
+	updateDisplayWaveMenu(current_wave);
+}
+
+void LevelEditor::duplicateEnemy(Ref* sender, cocos2d::ui::Widget::TouchEventType type, unsigned int enemy_id) {
+	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+		double time = generator->getTime(enemies[enemy_id].first, enemies[enemy_id].second);
+		std::string name = generator->getDango(enemies[enemy_id].first, enemies[enemy_id].second);
+		enemy_path = generator->getPath(enemies[enemy_id].first, enemies[enemy_id].second);
+		enemy_level = Value(name.substr(name.size() - 1, 1)).asInt();
+		enemy_name = name.substr(0, name.size() - 1);
+		
+		int enemy_wave = enemies[enemy_id].second;
+		int enemy_step = enemies[enemy_id].first;
+		for (auto& enemy : enemies) {
+			if (enemy.second.second == enemy_wave && enemy_step < enemy.second.first) {
+				++enemy.second.first;
+			}
+		}
+		generator->duplicateStep(enemy_step, enemy_wave);
+		int next_id = enemies_id + 1;
+		enemies[next_id] = std::make_pair(enemy_step + 1, enemy_wave);
+		std::vector<std::pair<Node*,std::string>> wave_children;
+		cocos2d::Vector<Node*> wave_all_children = waves[current_wave].first->getChildByName("layout")->getChildren();
+
+		for (auto& enemy : wave_all_children) {
+			if (enemy->getName() != "add_enemy" && enemy->getName() != "delay_label"
+				&& enemy->getName() != "enemy_label" && enemy->getName() != "lvl_label" && enemy->getName() != "path_label") {
+				int id = Value(enemy->getName()).asInt();
+				if (enemies[id].first > enemy_step) {
+					wave_children.push_back(std::make_pair(enemy, enemy->getName()));
+					enemy->retain();
+					waves[current_wave].first->getChildByName("layout")->removeChild(enemy);
+				}
+			}
+		}
+		createEnemyDisplay(next_id);
+		for (auto& enemy : wave_children) {
+			waves[current_wave].first->getChildByName("layout")->addChild(enemy.first, 1, enemy.second);
+		}
+		updateDisplayWaveMenu(current_wave);
+		++enemies_id;
+		enemy_name = "";
+		enemy_level = -1;
+		enemy_path = -1;
+		c_enemy_id = -1;
+		enemy_checkbox = nullptr;
+	}
+}
+void LevelEditor::createDialogue(Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+
+}
+
 void LevelEditor::editEnemyValues(Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-		double enemy_delay = Value(((ui::TextField*)getChildByName("select_enemy")->getChildByName("enemy_time"))->getString()).asDouble();
+		double enemy_delay = enemy_timer;
 		ui::Layout* enemy = (ui::Layout*)waves[current_wave].first->getChildByName("layout")->getChildByName(Value(c_enemy_id).asString());
 
 		generator->setTime(enemy_delay, enemies[c_enemy_id].first, enemies[c_enemy_id].second);
-		generator->setDango(enemy_name + Value(enemy_level).asString(), enemies[c_enemy_id].first, enemies[c_enemy_id].second);
+		generator->setDango(enemy_name + Value(enemy_level).asString(), enemies[c_enemy_id].first,
+			enemies[c_enemy_id].second);
+		generator->setPath(enemy_path, enemies[c_enemy_id].first, enemies[c_enemy_id].second);
 		
 		char str[5]; //Change the size to meet your requirement
 		sprintf(str, "%.2lf", enemy_delay);
@@ -1201,25 +1367,39 @@ void LevelEditor::editEnemyValues(Ref* sender, cocos2d::ui::Widget::TouchEventTy
 		((Label*)enemy->getChildByName("delay"))->setString(Value(str).asString());
 		((Label*)enemy->getChildByName("lvl"))->setString(Value(enemy_level + 1).asString());
 		((Label*)enemy->getChildByName("name"))->setString(enemy_name);
+		((Label*)enemy->getChildByName("path"))->setString(Value((int)id_paths[enemy_path]).asString());
+		((Label*)enemy->getChildByName("path"))->setColor(Color3B::BLACK);
 		hideEnemyBox(sender, type);
 	}
 }
+
 void LevelEditor::editEnemy(Ref* sender, cocos2d::ui::Widget::TouchEventType type, unsigned int enemy_id) {
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+		updateDisplayPathButtons();
 		c_enemy_id = enemy_id;
 		double time = generator->getTime(enemies[enemy_id].first, enemies[enemy_id].second);
 		std::string name = generator->getDango(enemies[enemy_id].first, enemies[enemy_id].second);
+		enemy_path = generator->getPath(enemies[enemy_id].first, enemies[enemy_id].second);
 		ui::TextField* enemy_time = ((ui::TextField*)getChildByName("select_enemy")->getChildByName("enemy_time"));
-		enemy_time->setString(purgeCharactersFromString(enemy_time->getString()));
+		enemy_time->setString(purgeCharactersFromString(Value(time).asString()));
 		if (Value(enemy_time->getString()).asDouble() > 30) {
 			enemy_time->setString("30");
 		}
 		getChildByName("select_enemy")->getChildByName("edit_enemy")->setVisible(true);
 		getChildByName("select_enemy")->getChildByName("create_enemy")->setVisible(false);
+		if (id_paths.size() > 0) {
+			((ui::CheckBox*)getChildByName("select_enemy")->getChildByName("path_layout")->
+				getChildByName("path_button" + Value((int)id_paths[enemy_path]).asString()))->setSelected(true);
+		}
+		else {
+			((ui::Button*)getChildByName("select_enemy")->getChildByName("edit_enemy"))->setEnabled(false);
+			enemy_path = -1;
+		}
 
 		enemy_checkbox = ((ui::CheckBox*)getChildByName("select_enemy")->getChildByName("enemy_layout")->getChildByName("checkbox_" + name));
 		int level = Value(name.substr(name.size() - 1, 1)).asInt();
 		name = name.substr(0, name.size() - 1);
+
 		setCurrentEnemy(sender, type, name, level, enemy_checkbox);
 		getChildByName("select_enemy")->setVisible(true);
 	}
@@ -1311,6 +1491,7 @@ void LevelEditor::saveLevel(Ref* sender) {
 		}
 		root["paths"][i]["path_name"] = paths[i].second;
 	}
+	generator->saveInRoot(root);
 
 	std::string outputSave = writer.write(root);
 	std::string save_filename = ((ui::TextField*)getChildByName("menu_left")->
@@ -1383,11 +1564,23 @@ void LevelEditor::loadLevelFromFileName(Ref* sender, cocos2d::ui::Widget::TouchE
 				for (unsigned int i(0); i < root["paths"].size(); ++i) {
 					createPath(this, ui::Widget::TouchEventType::ENDED);
 					std::string path_name = root["paths"][i]["path_name"].asString();
-					/*((ui::TextField*)subContents[2].first->getChildByName("layout")->
-						getChildByName("path_" + Value((int)i).asString())->getChildByName("path_title"))->setString(path_name);*/
 					paths[i].second = path_name;
 					for (unsigned int j(0); j <  root["paths"][i]["path"].size(); ++j) {
 						addPath(Vec2(root["paths"][i]["path"][j][0].asFloat(), root["paths"][i]["path"][j][1].asFloat()));
+					}
+				}
+				for (int i(0); i < root["nbwaves"].asInt(); ++i) {
+					createWave(this, cocos2d::ui::Widget::TouchEventType::ENDED);
+					for (unsigned int j(0); j < root["dangosChain"][i].size(); ++j) {
+						enemy_level = Value(root["dangosChain"][i][j].asString().substr(
+							root["dangosChain"][i][j].asString().size() - 1,
+							root["dangosChain"][i][j].asString().size())).asInt();
+						enemy_name = root["dangosChain"][i][j].asString().substr(0, root["dangosChain"][i][j].asString().size() - 1);
+						enemy_timer = root["dangosTime"][i][j].asDouble();
+						current_wave = i;
+						createEnemy(this, cocos2d::ui::Widget::TouchEventType::ENDED);
+						generator->addStep(root["dangosChain"][i][j].asString(), root["dangosTime"][i][j].asDouble(), 
+							root["dangosPath"][i][j].asDouble(), i);
 					}
 				}
 				path_selected = -1;
@@ -1396,7 +1589,6 @@ void LevelEditor::loadLevelFromFileName(Ref* sender, cocos2d::ui::Widget::TouchE
 				((ui::Button*)getChildByName("select_level")->getChildByName("load_level"))->setEnabled(false);
 				getChildByName("menu_left")->getChildByName("interface_manager")->getChildByName("selected_path_interface")->setVisible(false);
 				getChildByName("menu_left")->getChildByName("interface_manager")->getChildByName("selected_sprite_interface")->setVisible(false);
-
 			}
 		}
 	}
@@ -1432,6 +1624,7 @@ void LevelEditor::setCurrentEnemy(Ref* sender, cocos2d::ui::Widget::TouchEventTy
 			enemy_level = -1;
 			checkbox->setSelected(false);
 			((ui::Button*)getChildByName("select_enemy")->getChildByName("create_enemy"))->setEnabled(false);
+			((ui::Button*)getChildByName("select_enemy")->getChildByName("edit_enemy"))->setEnabled(false);
 		}
 		else {
 			if (enemy_checkbox != nullptr) {
@@ -1441,7 +1634,10 @@ void LevelEditor::setCurrentEnemy(Ref* sender, cocos2d::ui::Widget::TouchEventTy
 			enemy_checkbox = checkbox;
 			enemy_name = name;
 			enemy_level = level;
-			((ui::Button*)getChildByName("select_enemy")->getChildByName("create_enemy"))->setEnabled(true);
+			if (enemy_path != -1) {
+				((ui::Button*)getChildByName("select_enemy")->getChildByName("create_enemy"))->setEnabled(true);
+				((ui::Button*)getChildByName("select_enemy")->getChildByName("edit_enemy"))->setEnabled(true);
+			}
 		}
 	}
 }
@@ -1797,13 +1993,31 @@ void LevelEditor::resetLevel() {
 	getChildByName("level")->removeChildByName("center");
 	getChildByName("level")->removeChildByName("resolutions");
 	auto add_path = ((ui::Button*)subContents[2].first->getChildByName("layout")->getChildByName("add_path"))->clone();
+	auto add_wave = ((ui::Button*)subContents[3].first->getChildByName("layout")->getChildByName("add_wave"))->clone();
 	subContents[2].first->getChildByName("layout")->removeAllChildren();
 	subContents[2].first->getChildByName("layout")->addChild(add_path);
+	subContents[3].first->getChildByName("layout")->removeAllChildren();
+	subContents[3].first->getChildByName("layout")->addChild(add_wave);
 	updateDisplayPathMenu();
 
 	backgrounds.clear();
 	objects.clear();
 	paths.clear();
+	waves.clear();
+	subWavesContent.clear();
+	enemies.clear();
+	waves_id.clear();
+	id_paths.clear();
+	generator->empty();
+
+	enemy_level = -1;
+	enemy_name = "";
+	enemy_timer = -1;
+	enemy_checkbox = nullptr;
+	current_wave = -1;
+	enemies_id = 0;
+	wave_id = 0;
+	c_enemy_id = -1;
 }
 
 void LevelEditor::addPath(Vec2 p) {
@@ -1952,6 +2166,16 @@ void LevelEditor::removePath(Ref* sender, cocos2d::ui::Widget::TouchEventType ty
 		for (unsigned int i(0); i < paths[path_selected].first.size(); ++i) {
 			getChildByName("level")->getChildByName("paths")->removeChild(paths[path_selected].first[i]);
 		}
+		for (auto enemy: enemies) {
+			if (id_paths[generator->getPath(enemy.second.first, enemy.second.second)] == id) {
+				((Label*)waves[waves_id[enemy.second.second]].first->getChildByName("layout")->
+					getChildByName(Value(enemy.first).asString())->getChildByName("path"))->setColor(Color3B::RED);
+			}
+			else if (id_paths[generator->getPath(enemy.second.first, enemy.second.second)] > id) {
+				generator->setPath(generator->getPath(enemy.second.first, enemy.second.second) - 1, enemy.second.first, enemy.second.second);
+			}
+		}
+
 		subContents[2].first->getChildByName("layout")->removeChildByName(paths[path_selected].second);
 		updateDisplayPathMenu();
 		updateDisplayScrollingMenu();

@@ -79,8 +79,6 @@ void Dialogue::launch(){
 	speechBubble->addChild(Sprite::create("res/buttons/speech_fury.png"), 1, "ANGRY");
 	updateEmotionBubble();
 
-	// PUT ALL THIS FUCKING POSITIONING, TEXT AND COLOR IN A JSON FILE !!!
-	// FUUUUUUUUUUUUUUUUUUUUUUUUUUUUCK !
 	currentHead = Sprite::create(textes[currentSpeech].second);
 	currentHead->setPosition(Vec2(-currentHead->getContentSize().width,
 		visibleSize.height / 3));

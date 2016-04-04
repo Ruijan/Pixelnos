@@ -17,8 +17,7 @@
 
 Like a specific screen with all the caracteristics. It's an abstract class.
 */
-std::vector<std::vector<std::string>> readMapFromCSV(std::string filename);
-std::vector<std::string> readPathFromCSV(std::string filename);
+
 bool sortZOrder(cocos2d::Node* sprite1, cocos2d::Node* sprite2);
 typedef unsigned int Quantity;
 
@@ -38,6 +37,7 @@ public:
 	virtual ~Level();
 	static Level* create(unsigned int nLevel);
 	virtual bool init();
+	void initWalls();
 
 	virtual void update(float dt);
 
@@ -57,7 +57,7 @@ public:
 	void addTurret(Tower* turret);
 	Cell* getNearestCell(cocos2d::Vec2 position);
 	Tower* touchingTower(cocos2d::Vec2 position);
-	std::vector<Cell*> getPath();
+	std::vector<Cell*> getPath(int path);
 	void addDango(Dango* dango);
 	void addBullet(Bullet* bullet);
 	bool hasLost();
@@ -76,13 +76,13 @@ protected:
 	std::vector<Dango*> dangos;
 	std::vector<Tower*> turrets;
 	std::vector<Bullet*> bullets;
-	Wall* wall;
+	std::vector<Wall*> walls;
 
 	Dialogue* introDialogue;
 	DangoGenerator* generator;
 
 	std::vector<std::vector<Cell*>> cells;
-	std::vector<Cell*> path;
+	std::vector<std::vector<Cell*>> paths;
 
 	bool paused;
 	int zGround;
@@ -94,7 +94,6 @@ protected:
 
 	cocos2d::Action* c_action; 
 	
-	void createPath(std::vector<std::vector<std::string>>, cocos2d::Point, cocos2d::Point);
 	void reorder();
 };
 
