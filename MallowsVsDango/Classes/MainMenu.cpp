@@ -7,172 +7,114 @@ USING_NS_CC;
 
 bool MainMenu::init()
 {
-	if (!Scene::init()){ return false; }
+	if(!Scene::init()){ return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Label* start_label = Label::createWithTTF("START", "fonts/LICABOLD.ttf", 75.f * visibleSize.width / 960);
-	MenuItemLabel* start = MenuItemLabel::create(start_label, CC_CALLBACK_1(MainMenu::menuContinueCallback, this));
-	start_label->setColor(Color3B::YELLOW);
-	start_label->enableOutline(Color4B::ORANGE,3);
 	
-	Point origin = Director::getInstance()->getVisibleOrigin();
+	/*loading sprites, setting position, scaling*/
 
-	menu = Menu::createWithItem(start);
-	menu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 4 ));
+	Sprite* loadingBackground = Sprite::create("res/background/crissXcross.png");
+	loadingBackground->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	loadingBackground->setScale(visibleSize.width / loadingBackground->getContentSize().width);
+	addChild(loadingBackground);
 
-	menu->setVisible(false);
-	FadeOut* hideAction = FadeOut::create(0.01f);
-	menu->runAction(hideAction);
+	Sprite* bglogo = Sprite::create("res/background/logo.png");
+	addChild(bglogo);
+	bglogo->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	bglogo->setScale((visibleSize.width / 2) / bglogo->getContentSize().width);
+	bglogo->setOpacity(0.0);
 
-	bg1 = Sprite::create("res/background/menu_background1.png");
-	bg1->setScaleX(visibleSize.width / bg1->getTextureRect().size.width);
-	bg1->setScaleY(visibleSize.height / bg1->getTextureRect().size.height);
-	bg1->setAnchorPoint(Point(0, 0));
+	Sprite* bg1 = Sprite::create("res/background/menu_background1.png");
+	addChild(bg1);
+	bg1->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	bg1->setScale((visibleSize.width) / bg1->getContentSize().width);
+	bg1->setOpacity(0.0);
+	
+	Sprite* mallowstxt = Sprite::create("res/background/mallowstextgreen.png");
+	addChild(mallowstxt,2);
+	mallowstxt->setPosition(visibleSize.width / 2, visibleSize.height / 1.15);
+	mallowstxt->setOpacity(0.0);
+	float coeff1 = visibleSize.width*0.5 / mallowstxt->getContentSize().width;
+
+	Sprite* dangotxt = Sprite::create("res/background/dangotext2.png");
+	addChild(dangotxt,2);
+	dangotxt->setPosition(visibleSize.width / 2, visibleSize.height / 1.55);
+	dangotxt->setOpacity(0.0);
+	float coeff2 = visibleSize.width*0.35 / dangotxt->getContentSize().width;
+
+	Sprite* vs = Sprite::create("res/background/vs_bubble.png");
+	addChild(vs,1);
+	vs->setPosition(-visibleSize.width / 4, visibleSize.height * (9.0 / 12.0));
+	vs->setScale((visibleSize.width)/7 / vs->getContentSize().width);
+	vs->setOpacity(0.0);
+
+	Sprite* flash = Sprite::create("res/background/flash.png");
+	addChild(flash,3);
+	flash->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	flash->setOpacity(0.0);
+
 	bg2 = Sprite::create("res/background/menu_background_battle.png");
-	bg2->setScaleX(visibleSize.width / bg2->getTextureRect().size.width);
-	bg2->setScaleY(visibleSize.height / bg2->getTextureRect().size.height);
-	bg2->setAnchorPoint(Point(0, 0));
-	bg2->setVisible(false);
-	flash = Sprite::create("res/background/flash.png");
-	flash->setScaleX(visibleSize.width / flash->getTextureRect().size.width);
-	flash->setScaleY(visibleSize.height / flash->getTextureRect().size.height);
-	flash->setAnchorPoint(Point(0, 0));
-	flash->setVisible(true);
-	flash->setOpacity(0);
+	addChild(bg2);
+	bg2->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	bg2->setScale((visibleSize.width) / bg2->getContentSize().width);
+	bg2->setOpacity(0.0);
+
+	cocos2d::ui::Button* button = ui::Button::create();
+	button->setTitleText("Start");
+	button->setTitleColor(Color3B::YELLOW);
+	button->setTitleFontName("fonts/LICABOLD.ttf");
+	button->setTitleFontSize(75.f* visibleSize.width / 960);
+	button->setPosition(Vec2(visibleSize.width/2, visibleSize.height/4));
+	button->setOpacity(0.0);
+	button->addTouchEventListener(CC_CALLBACK_2(MainMenu::menuContinueCallback, this));
+
+	cocos2d::ui::Layout* layout = ui::Layout::create();
+	addChild(layout);
+	layout->addChild(button);
+
+	/*actions of sprites, fadein/out, flash*/
+
+	TargetedAction* fadein = TargetedAction::create(bglogo, FadeIn::create(1.0f));
+	TargetedAction* delay = TargetedAction::create(bglogo, DelayTime::create(1.0f));
+	TargetedAction* fadeout = TargetedAction::create(bglogo, FadeOut::create(1.0f));
+
+	TargetedAction* fadeinbg1 = TargetedAction::create(bg1, FadeIn::create(1.0f));
+	TargetedAction* fadeintxt1 = TargetedAction::create(mallowstxt, Spawn::createWithTwoActions(FadeIn::create(1.0f), EaseElasticOut::create(ScaleTo::create(1.0f,coeff1))));
+	TargetedAction* fadeintxt2 = TargetedAction::create(dangotxt, Spawn::createWithTwoActions(FadeIn::create(1.0f), EaseElasticOut::create(ScaleTo::create(1.0f, coeff2))));
 
 
-	// TITLE OF THE GAME
-	marshmallow = Sprite::create("res/background/mallowstextgreen.png");
-	marshmallow->setPosition(visibleSize.width / 2, visibleSize.height * (2.0 / 3.0 + 1.0 / 5.0));
-	marshmallow->setScale(0.0f);
-	//marshmallow->setScale(visibleSize.width / marshmallow->getTextureRect().size.width * 0.8);
-	dango = Sprite::create("res/background/dangotext2.png");
-	dango->setPosition(visibleSize.width / 2, visibleSize.height * (1.0 / 2.0 + 1.0 / 7.0));
-	dango->setScale(marshmallow->getTextureRect().size.height * marshmallow->getScale() / dango->getTextureRect().size.height);
-	dango->setScale(0.0f);
-	vs = Sprite::create("res/background/vs_bubble.png");
-	//vs->setPosition(visibleSize.width / 2, visibleSize.height * (9.0 / 12.0));
-	vs->setPosition(-50, visibleSize.height * (9.0 / 12.0));
-	vs->setScale(0.0f);
+	TargetedAction* fadeinvs = TargetedAction::create(vs, FadeIn::create(0.3f));
+	TargetedAction* actionvs = TargetedAction::create(vs, Spawn::createWithTwoActions(MoveTo::create(1.0f, Vec2(visibleSize.width * (8.0/12.0), visibleSize.height * (9.0 / 12.0))), RotateTo::create(1.0f, 720)));
 
-	addChild(menu,1);
-	addChild(bg1, 0);
-	addChild(bg2, 0);
-	addChild(dango, 2);
-	addChild(marshmallow, 2);
-	addChild(vs, 1);
-	addChild(flash, 3);
-	state = State::marshmallowStart;
+	TargetedAction* fadeinf = TargetedAction::create(flash, FadeIn::create(0.f));
+	TargetedAction* fadeoutf1 = TargetedAction::create(flash, FadeOut::create(0.3f));
+	TargetedAction* fadeinf1 = TargetedAction::create(flash, FadeIn::create(0.3f));
+
+	TargetedAction* fadeinbg2 = TargetedAction::create(bg2, FadeIn::create(0.0f));
+	Spawn* actionbg2 = Spawn::createWithTwoActions(fadeoutf1, fadeinbg2);
+
+	TargetedAction* fadeinbutton = TargetedAction::create(button, FadeIn::create(1.0f));
+
+	
+	/*action sequence*/
+	auto sequence = Sequence::create(fadein, delay, fadeout, fadeinbg1, fadeintxt1, fadeintxt2, fadeinvs, actionvs, fadeinf, fadeoutf1, fadeinf, fadeoutf1, fadeinf, actionbg2, fadeinbutton, nullptr);
+	c_action = bglogo->runAction(sequence);
+	c_action->retain();
+
 	return true;
+	
 }
 
 void MainMenu::update(float dt){
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	double scale = 0.6;
-	if (marshmallow->getScale() < visibleSize.width / marshmallow->getTextureRect().size.width * scale * 1.1 && state == State::marshmallowStart){
-		marshmallow->setScale(marshmallow->getScale() + 2 * dt);
-	}
-	else if (marshmallow->getScale() > visibleSize.width / marshmallow->getTextureRect().size.width * scale * 1.1  && state == State::marshmallowStart){
-		state = marshmallowBouncing1;
-	}
-	if (marshmallow->getScale() > visibleSize.width / marshmallow->getTextureRect().size.width * scale * 0.95  && state == State::marshmallowBouncing1){
-		marshmallow->setScale(marshmallow->getScale() - 2 * dt);
-	}
-	else if (marshmallow->getScale() < visibleSize.width / marshmallow->getTextureRect().size.width * scale * 0.95 && state == State::marshmallowBouncing1){
-		state = marshmallowBouncing2;
-	}
-	if (marshmallow->getScale() < visibleSize.width / marshmallow->getTextureRect().size.width * scale * 1.05 && state == State::marshmallowBouncing2){
-		marshmallow->setScale(marshmallow->getScale() + 2.5 * dt);
-	}
-	else if (marshmallow->getScale() > visibleSize.width / marshmallow->getTextureRect().size.width * scale * 1.05 && state == State::marshmallowBouncing2){
-		state = marshmallowBouncing3;
-	}
-	if (marshmallow->getScale() > visibleSize.width / marshmallow->getTextureRect().size.width * scale && state == State::marshmallowBouncing3){
-		marshmallow->setScale(marshmallow->getScale() - 3.5 * dt);
-	}
-	else if (marshmallow->getScale() < visibleSize.width / marshmallow->getTextureRect().size.width * scale && state == State::marshmallowBouncing3){
-		state = dangoStart;
-	}
-	if (dango->getScale() <marshmallow->getTextureRect().size.height * marshmallow->getScale() / dango->getTextureRect().size.height * 1.1 && state == State::dangoStart){
-		dango->setScale(dango->getScale() + 2 * dt);
-	}
-	else if (dango->getScale() >marshmallow->getTextureRect().size.height * marshmallow->getScale() / dango->getTextureRect().size.height * 1.1 && state == State::dangoStart){
-		state = dangoBouncing1;
-	}
-	if (dango->getScale() >marshmallow->getTextureRect().size.height * marshmallow->getScale() / dango->getTextureRect().size.height * 0.95 && state == State::dangoBouncing1){
-		dango->setScale(dango->getScale() - 2 * dt);
-	}
-	else if (dango->getScale() <marshmallow->getTextureRect().size.height * marshmallow->getScale() / dango->getTextureRect().size.height * 0.95 && state == State::dangoBouncing1){
-		state = dangoBouncing2;
-	}
-	if (dango->getScale() <marshmallow->getTextureRect().size.height * marshmallow->getScale() / dango->getTextureRect().size.height * 1.05 && state == State::dangoBouncing2){
-		dango->setScale(dango->getScale() + 2.5 * dt);
-	}
-	else if (dango->getScale() >marshmallow->getTextureRect().size.height * marshmallow->getScale() / dango->getTextureRect().size.height * 1.05 && state == State::dangoBouncing2){
-		state = dangoBouncing3;
-	}
-	if (dango->getScale() >marshmallow->getTextureRect().size.height * marshmallow->getScale() / dango->getTextureRect().size.height && state == State::dangoBouncing3){
-		dango->setScale(dango->getScale() - 3.5 * dt);
-	}
-	else if (dango->getScale() < marshmallow->getTextureRect().size.height * marshmallow->getScale() / dango->getTextureRect().size.height && state == State::dangoBouncing3){
-		state = vsStart;
-		vs->setScale(marshmallow->getTextureRect().size.height * marshmallow->getScale() / vs->getTextureRect().size.height * 1.5);
-	}
 
-	double dist = vs->getPosition().distanceSquared(Vec2(visibleSize.width * 2 / 3, visibleSize.height * (9.0 / 12.0)));
-	
-	if (dist > 20 && state == State::vsStart){
-		double speed = visibleSize.width * 2 / 3 + 50;
-		double angularSpeed = 4 * 180;
-		Vec2 direction = Vec2(visibleSize.width * 2 / 3, visibleSize.height * (9.0 / 12.0)) - vs->getPosition();
-		direction.normalize();
-		vs->setPosition(vs->getPosition() + direction * dt * speed);
-		vs->setRotation(vs->getRotation() + dt*angularSpeed);
-	}
-	else if (dist < 20 && state == State::vsStart){
-		state = flashStart;
-		
-	}
-	if (state == State::flashStart && flash->getOpacity() < 245){
-		double speed = 600;
-		int opacity = floor(flash->getOpacity() - dt * speed);
-		if (opacity > 246){
-			opacity = 246;
-		}
-		flash->setOpacity(opacity);
-	}
-	else if (state == State::flashStart && flash->getOpacity() >= 245){
-		state = flashEnd;
-		bg2->setVisible(true);
-	}
-	if (state == State::flashEnd && flash->getOpacity() > 2){
-		double speed = 400;
-		int opacity = floor(flash->getOpacity() - dt * speed);
-		if (opacity < 0){ 
-			opacity = 0;
-		}
-		flash->setOpacity(opacity);
-	}
-	else if (state == State::flashEnd && flash->getOpacity() <= 2){
-		state = menuShow;
-	}
-	if (state == State::menuShow){
-		menu->setVisible(true);
-		FadeIn* showAction = FadeIn::create(0.5f);
-		menu->runAction(showAction);
-		state = finished;
-	}
 }
 
-void MainMenu::menuContinueCallback(Ref* sender){
+void MainMenu::menuContinueCallback(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 	SceneManager::getInstance()->setScene(SceneManager::LEVELS);
 }
 
 
 void MainMenu::onEnter(){
 	Scene::onEnter();
-	/*if (SceneManager::getInstance()->getGame()->isLaunched()){
-		menu->getChildren().at(0)->setVisible(true);
-	}*/
 }
 
 void MainMenu::onEnterTransitionDidFinish(){
