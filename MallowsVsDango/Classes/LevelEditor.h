@@ -42,6 +42,9 @@ public:
 	void createPath(Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 	void createWave(Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 	void createEnemy(Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+	void createEnemyDisplay(int id);
+	void duplicateEnemy(Ref* sender, cocos2d::ui::Widget::TouchEventType type, unsigned int enemy_id);
+	void createDialogue(Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
 	void editEnemy(Ref* sender, cocos2d::ui::Widget::TouchEventType type, unsigned int enemy_id);
 	void editEnemyValues(Ref* sender, cocos2d::ui::Widget::TouchEventType type);
@@ -53,6 +56,8 @@ public:
 	void hideExistingLevels(Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 	void showEnemyBox(Ref* sender, cocos2d::ui::Widget::TouchEventType type, unsigned int wave);
 	void hideEnemyBox(Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+	void showDialogueBox(Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+	void hideDialogueBox(Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 	void hideDeleteConfirm(Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 	void showDeleteConfirm(Ref* sender);
 	void deleteCurrentLevel(Ref* sender, cocos2d::ui::Widget::TouchEventType type);
@@ -63,6 +68,7 @@ public:
 	void updateDisplayPathMenu();
 	void updateDisplayWaveMenu();
 	void updateDisplayWaveMenu(unsigned int wave_index);
+	void updateDisplayPathButtons();
 
 	void handleBackground(Ref* sender, cocos2d::ui::Widget::TouchEventType type, 
 		std::string image_name, cocos2d::ui::CheckBox* checkbox);
@@ -122,7 +128,9 @@ private:
 	cocos2d::ui::TextField* textfield_selected;
 
 	int enemy_level;
+	int enemy_path;
 	std::string enemy_name;
+	double enemy_timer;
 	cocos2d::ui::CheckBox* enemy_checkbox;
 	int current_wave;
 	unsigned int enemies_id;

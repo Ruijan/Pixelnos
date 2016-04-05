@@ -59,7 +59,8 @@
       "background": "res/levels/background2.png",
       "effects": [ "music/splash.mp3", "music/slash.mp3" ],
       "exp": 150,
-      "generator": "res/level1_generator.json",
+      "path_level": "res/level_1.json",
+      "generator": "res/level_1.json",
       "height": 12,
       "introDialogue": [
         {

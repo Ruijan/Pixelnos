@@ -26,117 +26,133 @@ bool Level::init()
 {
 	if (!Layer::init())
 		return false;
-	
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id];
-	
+
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::vector<std::vector<std::string>> table_map = readMapFromCSV(config["map"].asString());
-	std::vector<std::vector<std::string>> table_path = readMapFromCSV(config["path"].asString());
-	
-	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-	cache->addSpriteFramesWithFile(config["tileset"].asString(), config["tilesetpng"].asString());
-	
-	size.width = table_map[0].size();
-	size.height = table_map.size();
-	
-	auto fileUtils = FileUtils::getInstance();
-	std::string tilemaptable = fileUtils->getStringFromFile(config["tilemaptable"].asString());
 
-	Json::Value root;   // will contains the root value after parsing.
-	Json::Reader reader;
-	bool parsingSuccessful(false);
-	parsingSuccessful = reader.parse(tilemaptable, root, false);
-
-	if (!parsingSuccessful)
-	{
-		// report to the user the failure and their locations in the document.
-		std::string error = reader.getFormattedErrorMessages();
-	}
-	double factor = visibleSize.height / (size.height * Cell::getCellHeight());
-	double ratioX = visibleSize.width / 960;
-
-	cocos2d::Point start;
-	cocos2d::Point end;
-
-	for (int i(0); i < size.width ; ++i){
-		std::vector<Cell*> row;
-		for (int j(0); j < size.height; ++j){
-			int i_dec = Value(table_map[j][i]).asInt();
-			std::string filename = root["frames"][i_dec]["filename"].asString();
-			Cell* cell = Cell::create(filename);
-			if (table_path[j][i] == "s"){
-				start = Point(j,i);
-			}
-			else if (table_path[j][i] == "e"){
-				end = Point(j,i);
-			}
-			row.push_back(cell);
-			cell->setPosition(Vec2((i + 0.5) * Cell::getCellWidth(), (size.height - j - 1 + 0.5) * Cell::getCellHeight()));
-			//cell->setScale(Cell::getCellWidth()/cell->getContentSize().width);
-			cell->setVisible(false);
-			
-			addChild(cell);
-		}
-		cells.push_back(row);
-	}
-	createPath(table_path,start,end);
-
-	setAnchorPoint(Vec2(0, 0));
-	setPosition(Vec2(0, 0));
-	
-	Label* title = Label::createWithTTF("Level " + Value((int)(id+1)).asString(), "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 12.0));
+	Label* title = Label::createWithTTF("Level " + Value((int)(id + 1)).asString(), "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 12.0));
 	title->setColor(Color3B::YELLOW);
-	title->enableOutline(Color4B::BLACK,3);
+	title->enableOutline(Color4B::BLACK, 3);
 	title->setPosition(round(visibleSize.width * 3 / 8.0), round(visibleSize.height / 2.0));
-	
+
 	Label* start_counter = Label::createWithTTF("3...", "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 12.0));
 	start_counter->setColor(Color3B::YELLOW);
-	start_counter->enableOutline(Color4B::BLACK,3);
+	start_counter->enableOutline(Color4B::BLACK, 3);
 	start_counter->setPosition(round(visibleSize.width * 3 / 8.0), round(visibleSize.height / 2.0));
 	start_counter->setVisible(false);
+
+	addChild(title, 100, "title");
+	addChild(start_counter, 100, "start_counter");
+
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id];
 	
-	
-	addChild(title,100,"title");
-	addChild(start_counter,100,"start_counter");
-	
-	std::string mapFile = fileUtils->fullPathForFilename("res/map/level1v2.tmx");
-	TMXTiledMap* tileMap = TMXTiledMap::create(mapFile);
-    tileMap->setScale(ratioX * 0.5);
-    Sprite* background = Sprite::create(config["background"].asString());
-    background->setScale(ratioX);
-    background->setAnchorPoint(Vec2(0,0));
-    addChild(background);
-    addChild(tileMap);
-    
-    ValueVector objects = tileMap->getObjectGroup ("Object")->getObjects();
-    std::vector<Node*> elements;
-    for(auto object : objects){
-		Sprite* obj = Sprite::createWithSpriteFrameName(object.asValueMap()["type"].asString());
-		obj->setPosition(Vec2(object.asValueMap()["x"].asInt() * ratioX * 0.5,
-		object.asValueMap()["y"].asInt() * ratioX * 0.5 + Cell::getCellHeight()));
-		obj->setAnchorPoint(Vec2(0,0));
-		obj->setScale(ratioX* 0.5);
-		addChild(obj);
-		elements.push_back(obj);
+	std::vector<Node*> elements;
+	sugar = config["sugar"].asDouble();
+	experience = config["exp"].asInt();
+	generator = new DangoGenerator();
+	auto fileUtils = FileUtils::getInstance();
+
+	std::string level_config = fileUtils->getStringFromFile(config["path_level"].asString());
+	Json::Reader reader;
+	Json::Value root;
+	bool parsingConfigSuccessful = reader.parse(level_config, root, false);
+	if (!parsingConfigSuccessful) {
+		// report to the user the failure and their locations in the document.
+		std::string error = reader.getFormattedErrorMessages();
+		log(error.c_str());
 	}
-	wall = Wall::create();
-	path[path.size() - 2]->setObject(wall);
-	wall->setPosition(path[path.size() - 2]->getPosition());
-	wall->setPosition(wall->getPositionX(), wall->getPositionY() + Cell::getCellHeight() / 4);
-	wall->setScale(Cell::getCellWidth() / wall->getChildren().at(0)->getContentSize().width);
-	addChild(wall);
-	elements.push_back(wall);
-	std::sort (elements.begin(), elements.end(), sortZOrder);
-	int i = 1;
-	for(auto& element : elements){
-		element->setLocalZOrder(i);
-		++i;
+	else {
+		addChild(Layer::create(), 0, "backgrounds");
+		addChild(Layer::create(), 0, "objects");
+		getChildByName("backgrounds")->setPosition(visibleSize.width * 3 / 8, visibleSize.height / 2);
+		getChildByName("objects")->setPosition(visibleSize.width  * 3 / 8, visibleSize.height / 2);
+
+		double ratio1 = sqrt((16.0 / 9.0) / (visibleSize.width / visibleSize.height));
+		double ratio2 = sqrt((16.0 / 9.0) / (root["resolution"]["width"].asDouble() / root["resolution"]["height"].asDouble()));
+		double ratio = (visibleSize.width * ratio1) / (root["resolution"]["width"].asDouble() * ratio2);
+		double min_width_ratio = 4.0 / 3.0;
+		double min_height_ratio = 16.0 / 9.0;
+
+		for (unsigned int i(0); i < root["backgrounds"].size(); ++i) {
+			Sprite* background = Sprite::create(root["backgrounds"][i]["image_name"].asString());
+			background->setRotation(root["backgrounds"][i]["rotation"].asDouble());
+			background->setPosition(root["backgrounds"][i]["position"][0].asDouble() * ratio,
+				root["backgrounds"][i]["position"][1].asDouble() * ratio);
+			background->setScaleX(root["backgrounds"][i]["scale"][0].asDouble() * ratio);
+			background->setScaleY(root["backgrounds"][i]["scale"][1].asDouble() * ratio);
+			background->setLocalZOrder(root["backgrounds"][i]["zorder"].asInt());
+			background->setFlippedX(root["backgrounds"][i]["flipped"][0].asBool());
+			background->setFlippedY(root["backgrounds"][i]["flipped"][1].asBool());
+			getChildByName("backgrounds")->addChild(background);
+		}
+		for (unsigned int i(0); i < root["objects"].size(); ++i) {
+			std::string name = root["objects"][i]["image_name"].asString();
+			Sprite* object = Sprite::createWithSpriteFrameName(root["objects"][i]["image_name"].asString());
+			object->setRotation(root["objects"][i]["rotation"].asDouble());
+			object->setPosition(root["objects"][i]["position"][0].asDouble() * ratio,
+				root["objects"][i]["position"][1].asDouble() * ratio);
+			object->setScaleX(root["objects"][i]["scale"][0].asDouble() * ratio);
+			object->setScaleY(root["objects"][i]["scale"][1].asDouble() * ratio);
+			object->setLocalZOrder(root["objects"][i]["zorder"].asInt());
+			object->setFlippedX(root["objects"][i]["flipped"][0].asBool());
+			object->setFlippedY(root["objects"][i]["flipped"][1].asBool());
+			getChildByName("objects")->addChild(object);
+			elements.push_back(object);
+		}
+		int nb_cells_width = 12;
+		double ratio3 = visibleSize.width / visibleSize.height;
+		double size_cell = (3.0 / 4.0) * visibleSize.width * sqrt(min_width_ratio / ratio3) / nb_cells_width;
+		int nb_cells_height = visibleSize.height * sqrt(ratio3 / min_height_ratio) / size_cell;
+		int nb_cells_maxwidth = 16;
+		int nb_cells_maxheight = 12;
+		size.width = 12;
+		size.height = nb_cells_height;
+		double offset_x = (12 % 2) * size_cell / 2.0;
+		double offset_y = (nb_cells_height % 2) * size_cell / 2.0;
+		
+		for (int i(0); i < nb_cells_maxwidth; ++i) {
+			std::vector<Cell*> row;
+			for (int j(0); j < nb_cells_maxheight; ++j) {
+				Cell* cell = Cell::create();
+				row.push_back(cell);
+				cell->setPosition(Vec2((i - nb_cells_maxwidth / 2.0 + 0.5) * Cell::getCellWidth() + visibleSize.width * 3 / 8,
+					(nb_cells_maxheight - j - 1 + 0.5 - nb_cells_maxheight / 2.0) * Cell::getCellHeight() + visibleSize.height / 2));
+				cell->setVisible(false);
+				if (abs(i + 0.5 - nb_cells_maxwidth / 2.0) >= nb_cells_width / 2.0 || abs(j + 0.5 - nb_cells_maxheight / 2.0) >= nb_cells_height / 2.0) {
+					cell->setOffLimit(true);
+				}
+				addChild(cell,4);
+			}
+			cells.push_back(row);
+		}
+		for (unsigned int i(0); i < root["paths"].size(); ++i) {
+			std::vector<Cell*> path;
+			for (unsigned int j(0); j < root["paths"][i]["path"].size(); ++j) {
+				Cell* cell = getNearestCell(Vec2(root["paths"][i]["path"][j][0].asFloat() + visibleSize.width * 3 / 8, 
+					root["paths"][i]["path"][j][1].asFloat() + visibleSize.height / 2));
+				cell->setPath(true);
+				path.push_back(cell);
+			}
+			paths.push_back(path);
+		}
+		for (int i(0); i < root["nbwaves"].asInt(); ++i) {
+			generator->addWave();
+			for (unsigned int j(0); j < root["dangosChain"][i].size(); ++j) {
+				int enemy_level = Value(root["dangosChain"][i][j].asString().substr(
+					root["dangosChain"][i][j].asString().size() - 1,
+					root["dangosChain"][i][j].asString().size())).asInt();
+				std::string enemy_name = root["dangosChain"][i][j].asString().substr(0, root["dangosChain"][i][j].asString().size() - 1);
+				double enemy_timer = root["dangosTime"][i][j].asDouble();
+				int current_wave = i;
+				//generator->addStep(enemy_name + Value(enemy_level).asString(), enemy_delay, enemy_path, current_wave);				
+				generator->addStep(root["dangosChain"][i][j].asString(), root["dangosTime"][i][j].asDouble(),
+					root["dangosPath"][i][j].asDouble(), i);
+			}
+		}
 	}
-	zGround = i;
 	bool play_dialogue = ((AppDelegate*)Application::getInstance())->getConfig()["play_dialogue"].asInt() > 0;
-	if(config["introDialogue"].size() != 0 && play_dialogue){
+	if (config["introDialogue"].size() != 0 && play_dialogue) {
 		introDialogue = Dialogue::createFromConfig(config["introDialogue"]);
-		addChild(introDialogue,zGround,"dialogue");
+		addChild(introDialogue, 1, "dialogue");
 		introDialogue->launch();
 		getChildByName("title")->setVisible(false);
 	}
@@ -144,12 +160,29 @@ bool Level::init()
 		state = TITLE;
 		introDialogue = nullptr;
 	}
+	initWalls();
 
-	generator = DangoGenerator::createWithFilename(config["generator"].asString());
-	sugar = config["sugar"].asDouble();
-	experience = config["exp"].asInt();
+	std::sort(elements.begin(), elements.end(), sortZOrder);
+	int i = 1;
+	for (auto& element : elements) {
+		element->setLocalZOrder(i);
+		++i;
+	}
+	zGround = i;
 
 	return true;
+}
+
+void Level::initWalls() {
+	for (auto& path : paths) {
+		Wall* wall = Wall::create();
+		path[path.size() - 2]->setObject(wall);
+		wall->setPosition(path[path.size() - 2]->getPosition());
+		wall->setPosition(wall->getPositionX(), wall->getPositionY() + Cell::getCellHeight() / 4);
+		wall->setScale(Cell::getCellWidth() / wall->getChildren().at(0)->getContentSize().width);
+		addChild(wall);
+		walls.push_back(wall);
+	}
 }
 
 Level::~Level()
@@ -361,15 +394,20 @@ void Level::update(float dt)
 				}
 
 				//update wall
-				if (wall != nullptr && wall->isDestroyed()) {
-					for (auto& cell : path) {
-						if (cell->getObject() == wall) {
-							cell->setObject(nullptr);
+				for (auto& wall : walls) {
+					if (wall != nullptr && wall->isDestroyed()) {
+						for (auto& path : paths) {
+							for (auto& cell : path) {
+								if (cell->getObject() == wall) {
+									cell->setObject(nullptr);
+								}
+							}
 						}
+						removeChild(wall);
+						wall = nullptr;
 					}
-					removeChild(wall);
-					wall = nullptr;
 				}
+				
 				bullets.erase(std::remove(bullets.begin(), bullets.end(), nullptr), bullets.end());
 				turrets.erase(std::remove(turrets.begin(), turrets.end(), nullptr), turrets.end());
 				dangos.erase(std::remove(dangos.begin(), dangos.end(), nullptr), dangos.end());
@@ -388,39 +426,12 @@ void Level::update(float dt)
 	};	
 }
 
-
-void Level::createPath(std::vector<std::vector<std::string>> table, 
-	cocos2d::Point start, cocos2d::Point end){
-
-	bool end_reached = false;
-	Point ccell = start;
-	path.push_back(cells[ccell.y][ccell.x]);
-	while (!end_reached){
-		for (int i(-1); i < 2; ++i){
-			for (int j(-1); j < 2; ++j){
-				if (!((i == -1 && j == -1) || (i == -1 && j == 1) || (i == 1 && j == 1) || (i == 1 && j == -1) || (i == 0 && j == 0))){ /**/
-					if (ccell.x + i >= 0 && ccell.x + i < size.height && ccell.y + j >= 0 && ccell.y + j < size.width){
-						if (strcmp(table[ccell.x + i][ccell.y + j].c_str(), "-1\r") != 0 && 
-							strcmp(table[ccell.x + i][ccell.y + j].c_str(), "-1") != 0 && !isCellInPath(cells[ccell.y + j][ccell.x + i])){
-							path.push_back(cells[ccell.y + j][ccell.x + i]);
-							cells[ccell.y + j][ccell.x + i]->setPath(true);
-							if (strcmp(table[ccell.x + i][ccell.y + j].c_str(), "e") == 0 || strcmp(table[ccell.x + i][ccell.y + j].c_str(), "e\r") == 0){
-								end_reached = true;
-							}
-							ccell = Point(ccell.x + i, ccell.y + j);
-						}
-						
-					}
-				}
-			}
-		}
-	}
-}
-
 bool Level::isCellInPath(Cell* cell){
-	for (unsigned int i(0); i < path.size(); ++i){
-		if (cell == path[i]){
-			return true;
+	for (auto& path : paths) {
+		for (unsigned int i(0); i < path.size(); ++i) {
+			if (cell == path[i]) {
+				return true;
+			}
 		}
 	}
 	return false;
@@ -464,7 +475,6 @@ bool Level::decreaseQuantity(Quantity removed){
 		sugar -= removed;
 		return true;
 	}
-	
 }
 
 void Level::pause(){
@@ -503,8 +513,14 @@ Cell* Level::getNearestCell(cocos2d::Vec2 position){
 	return nearestCell;
 }
 
-std::vector<Cell*> Level::getPath(){
-	return path;
+std::vector<Cell*> Level::getPath(int path){
+	if (path < paths.size()) {
+		return paths[path];
+	}
+	else {
+		log("Path index is larger than the number of path.");
+		return paths[0];
+	}
 }
 
 void Level::addDango(Dango* dango){
@@ -552,8 +568,10 @@ void Level::reorder(){
 		if (dango != nullptr)
 			elements.push_back(dango);
 	}
-	if (wall != nullptr) {
-		elements.push_back(wall);
+	for (auto& wall : walls) {
+		if (wall != nullptr) {
+			elements.push_back(wall);
+		}
 	}
 	std::stable_sort (elements.begin(), elements.end(), sortZOrder);
 	int i = zGround;
@@ -594,15 +612,12 @@ void Level::reset(){
 			cell->setObject(nullptr);
 		}
 	}
-	if (wall != nullptr) {
-		removeChild(wall);
+	for (auto& wall : walls) {
+		if (wall != nullptr) {
+			removeChild(wall);
+		}
 	}
-	wall = Wall::create();
-	path[path.size() - 2]->setObject(wall);
-	wall->setPosition(path[path.size() - 2]->getPosition());
-	wall->setPosition(wall->getPositionX(), wall->getPositionY() + Cell::getCellHeight() / 4);
-	wall->setScale(Cell::getCellWidth() / wall->getChildren().at(0)->getContentSize().width);
-	addChild(wall);
+	initWalls();
 }
 
 bool Level::hasWon(){
@@ -624,31 +639,6 @@ Tower* Level::touchingTower(cocos2d::Vec2 position){
 		}
 	}
 	return nullptr;
-}
-
-std::vector<std::string> readPathFromCSV(std::string filename){
-	auto fileUtils = FileUtils::getInstance();
-	std::string pathtable = fileUtils->getStringFromFile(filename);
-	std::vector<std::string> table_map;
-	split(pathtable,'\n',table_map);
-	return table_map;
-}
-
-
-std::vector<std::vector<std::string>> readMapFromCSV(std::string filename){
-
-	auto fileUtils = FileUtils::getInstance();
-	std::string tilemaptable = fileUtils->getStringFromFile(filename);
-	std::vector<std::vector<std::string>> table_map;
-	std::vector<std::string> lines;
-	split(tilemaptable,'\n',lines);
-	for(unsigned int i(0); i < lines.size(); ++i){
-		std::vector<std::string> elems;
-		split(lines[i], ',', elems);
-		table_map.push_back(elems);
-	}
-	return table_map;
-	
 }
 
 void Level::rewardCallback(Level* sender){

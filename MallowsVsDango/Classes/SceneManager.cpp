@@ -32,6 +32,7 @@ SceneManager::SceneManager(){
 	cacheScene[EDITOR]->retain();
 
 	currentscene = cacheScene[MENU];
+
 	c_index = 0;
 	Director::getInstance()->runWithScene(currentscene);
 	if(((AppDelegate*)Application::getInstance())->getConfig()["play_sound"].asBool()){
