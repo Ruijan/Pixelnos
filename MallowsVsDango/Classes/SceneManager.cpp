@@ -18,6 +18,8 @@ SceneManager::SceneManager(){
 	StoryMenu* story_menu = StoryMenu::create();
 	CreditScreen* credit_screen = CreditScreen::create();
 	LevelEditor* editor = LevelEditor::create();
+/*kills* skils = Skills::create();*/
+
 	cacheScene[MENU] = menu;
 	cacheScene[MENU]->retain();
 	cacheScene[GAME] = game;
@@ -29,7 +31,7 @@ SceneManager::SceneManager(){
 	cacheScene[EDITOR] = editor;
 	cacheScene[EDITOR]->retain();
 
-	currentscene = cacheScene[EDITOR];
+	currentscene = cacheScene[MENU];
 	c_index = 0;
 	Director::getInstance()->runWithScene(currentscene);
 	if(((AppDelegate*)Application::getInstance())->getConfig()["play_sound"].asBool()){

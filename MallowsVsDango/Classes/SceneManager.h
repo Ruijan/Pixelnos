@@ -19,7 +19,8 @@ public:
 		LEVELS = 2,
 		LOADING = 3,
 		CREDIT = 4,
-		EDITOR = 5
+		EDITOR = 5,
+		SKILLS = 6
 	};
 
 	//Constructor & destructor

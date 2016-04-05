@@ -5,8 +5,8 @@ experience system and skill tree to code and design (20h): (Thomas)
 	- dynamical positioning of skill from a file (read a file to find all the skills and create automatically the tree)
 	- save and load skills in save json file
 	- "buy" a skill
-Company logo screen (30min) (Xianle)
-remake main menu with cocos2d actions (1h) (Xianle)
+(OK)Company logo screen 
+(OK)remake main menu with cocos2d actions
 Story menu interface for parameters (sound, credit, skill tree button) and gold (4-5h) (Xianle)
 Player powers (13h) (Xianle):
 	-limit for towers -> after killing a certain amount of dango power plus for a specific time (3h)
@@ -124,7 +124,8 @@ Level editor:
 	-(OK) multiple paths
 
 
-
+To do list boutons :
+- credits
 
 
 

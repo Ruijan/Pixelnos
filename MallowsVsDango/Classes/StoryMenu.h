@@ -14,7 +14,7 @@ class StoryMenu : public cocos2d::Scene
 	void showCredit(Ref* sender);
 	
 	private:
-	cocos2d::Menu* menu;
+	/*cocos2d::Menu* menu;*/
 };
 
 #endif
