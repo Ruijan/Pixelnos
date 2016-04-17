@@ -9,8 +9,11 @@ public:
 	virtual bool init();
 	CREATE_FUNC(Skills);
 
-private:
 
+
+private:
+	void setSkill(int tier_id, int skill_id);
+	void setDependancy(int tier_id, int skill_id);
 
 
 };

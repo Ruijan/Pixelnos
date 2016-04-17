@@ -8,6 +8,7 @@
 #include "Lib/FadeMusic.h"
 #include "CreditScreen.h"
 #include "LevelEditor.h"
+#include "Skills.h"
 USING_NS_CC;
 
 SceneManager *SceneManager::manager;
@@ -18,7 +19,7 @@ SceneManager::SceneManager(){
 	StoryMenu* story_menu = StoryMenu::create();
 	CreditScreen* credit_screen = CreditScreen::create();
 	LevelEditor* editor = LevelEditor::create();
-/*kills* skils = Skills::create();*/
+	Skills* skills = Skills::create();
 
 	cacheScene[MENU] = menu;
 	cacheScene[MENU]->retain();
@@ -30,8 +31,10 @@ SceneManager::SceneManager(){
 	cacheScene[CREDIT]->retain();
 	cacheScene[EDITOR] = editor;
 	cacheScene[EDITOR]->retain();
+	cacheScene[SKILLS] = skills;
+	cacheScene[SKILLS]->retain();
 
-	currentscene = cacheScene[MENU];
+	currentscene = cacheScene[SKILLS];
 
 	c_index = 0;
 	Director::getInstance()->runWithScene(currentscene);
