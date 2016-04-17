@@ -3,10 +3,11 @@
 
 #include "cocos2d.h"
 #include "../Config/json.h"
-
+#include "ui/CocosGUI.h"
 
 class Cell;
 class Dango;
+class InterfaceGame;
 
 class Tower : public cocos2d::Sprite{
 
@@ -49,6 +50,7 @@ public:
 	void setState(Tower::State state);
 	void setTarget(Dango* dango);
 	void displayRange(bool disp);
+	cocos2d::ui::Layout* getInformationLayout(InterfaceGame* interface_game);
 	static TowerType getTowerTypeFromString(std::string type);
 	cocos2d::Vector<cocos2d::SpriteFrame*> getAnimation(Tower::State animState);
 	static cocos2d::Vector<cocos2d::SpriteFrame*> getAnimationFromName(std::string name, Tower::State animState);
@@ -56,6 +58,7 @@ public:
 	// Updates
 	virtual void update(float dt);
 	virtual void updateDisplay(float dt);
+	virtual void updateInformationLayout(cocos2d::ui::Layout* layout);
 	virtual void chooseTarget(std::vector<Dango*> targets);
 	virtual void givePDamages(double damage);
 	virtual void reload();
@@ -69,7 +72,6 @@ public:
 	// Config
 	static Json::Value getConfig();
 	virtual Json::Value getSpecConfig() = 0;
-	static const int MAXLEVEL = 5;
 
 protected:
 	

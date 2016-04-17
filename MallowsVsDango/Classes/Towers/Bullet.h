@@ -4,30 +4,78 @@
 #include "cocos2d.h"
 
 class Dango;
+class Dangobese;
 
-class Bullet : public cocos2d::Sprite{
-	public:
-	Bullet(Dango* ntarget, double ndamages, double nspeed, bool nrotate);
-	virtual ~Bullet();
-	static Bullet* create(std::string image, Dango* ntarget, double damages, double nspeed, bool nrotate);
+class Attack : public cocos2d::Sprite{
+public:
+	Attack(Dango* ntarget, double ndamages, std::string njsontype);
+	virtual ~Attack();
 	
-	void update(float dt);
+	virtual void update(float dt) = 0;
+	void startAnimation();
+
 	bool hasTouched();
 	bool isDone();
 	Dango* getTarget();
 	void setTarget(Dango* dango);
-	void setOwner(std::string nowner);
-	void startAnimation();
-	
-	private:
+	std::string getType();
+	void setEnabled(bool enable);
+	void setHasToBeDeleted(bool deleted);
+
+	virtual bool affectEnemy(Dangobese* enemy) = 0;
+
+protected:
 	Dango* target;
 	double damages;
+
+	// deletion attributes
 	bool touched;
 	bool hasToBeDeleted;
-	bool rotate;
-	double speed;
-	std::string owner;
+	bool enabled;
 	cocos2d::Action* action;
+
+	std::string jsontype;
+};
+
+// WATERBALL
+class WaterBall : public Attack {
+public:
+	WaterBall(Dango* ntarget, double ndamages, double nspeed);
+	virtual ~WaterBall();
+	static WaterBall* create(Dango* ntarget, double damages, double nspeed);
+
+	void update(float dt);
+	virtual bool affectEnemy(Dangobese* enemy);
+	bool isForceApplied();
+	void setForceApplied(bool applied);
+protected:
+	double speed;
+	bool force_applied;
+};
+
+// WATERBOMBBALL
+class WaterBombBall : public WaterBall {
+public:
+	WaterBombBall(Dango* ntarget, double ndamages, double nspeed, double nrange);
+	virtual ~WaterBombBall();
+	static WaterBombBall* create(Dango* ntarget, double damages, double nspeed, double range);
+
+	void update(float dt);
+	virtual bool affectEnemy(Dangobese* enemy);
+
+protected:
+	double range;
+};
+
+// SLASH
+class Slash : public Attack {
+public:
+	Slash(Dango* ntarget, double ndamages);
+	virtual ~Slash();
+	static Slash* create(Dango* ntarget, double damages);
+
+	void update(float dt);
+	virtual bool affectEnemy(Dangobese* enemy);
 };
 
 #endif

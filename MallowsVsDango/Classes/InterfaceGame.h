@@ -4,6 +4,8 @@
 #include "cocos2d.h"
 #include <unordered_map>
 #include "Towers/Tower.h"
+#include "ui/CocosGUI.h"
+#include "Dialogue.h"
 
 class MyGame;
 
@@ -15,82 +17,79 @@ public:
 		TOUCHED=1,
 		TURRET_CHOSEN=2,
 		TURRET_SELECTED=3,
-		SCROLL=4,
-		NEXT_LEVEL=5
+	};
+	enum GameState {
+		INTRO,
+		TITLE,
+		STARTING,
+		RUNNING,
+		ENDING,
+		DONE,
+		NEXT_LEVEL
 	};
 	
 	InterfaceGame();
+	~InterfaceGame();
 	virtual bool init();
 	void addEvents();
-	static InterfaceGame* create(MyGame* ngame);
+	static InterfaceGame* create(MyGame* ngame, int id_level);
+	void initDialoguesFromLevel();
 	
 	void setGame(MyGame* ngame);
-	void menuGameCallback(cocos2d::Ref* sender);
-	void menuMainCallback(cocos2d::Ref* sender);
-	void menuNextCallback(cocos2d::Ref* sender);
-	void menuSaveCallback(cocos2d::Ref* sender);
-	void setMenuVisibleCallback(cocos2d::Ref* sender, int origin);
-	//void menuTurretTouchCallback(Ref* sender, unsigned int turret);
+	void setLevel(int id_level);
 	void menuTurretTouchCallback(Tower::TowerType turret);
-	void reloadCallback(cocos2d::Ref* sender);
 	void accelerateOnOffCallback(Ref* sender);
 	void setListening(bool listening);
 	
-	void touchEvent(cocos2d::Touch* touch, cocos2d::Vec2 point);
-
-	void showLoose();
 	void showWin();
+	void showLose();
 	
-	/*virtual bool touchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
-	virtual void touchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
-	virtual void touchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
-	*/
 	void update(float dt);
 	void updateButtonDisplay();
 	void updateObjectDisplay(float dt);
+
 	void reset();
-	State getState() const;
+	GameState getGameState() const;
+	void setGameState(GameState g_state);
+	void startRewarding(cocos2d::Vec2 pos);
+	void removeTower();
+
+	void showTowerInfo();
+	void hideTowerInfo();
 
 private:
-
-	std::unordered_map<std::string, std::pair<cocos2d::Sprite*, cocos2d::Sprite*>> turretsMenu;
-	cocos2d::Menu* menuOpen;
-	cocos2d::Node* menuLoose;
-	cocos2d::Node* menuWin;
-	cocos2d::Node* menuPause;
-	std::unordered_map<std::string,cocos2d::Label*> infos;
-	cocos2d::Node* informationPanel;
-	cocos2d::Node* menuPanel;
-	cocos2d::DrawNode* blackMask;
+	std::unordered_map<std::string, cocos2d::Sprite*> towers_menu;
 	cocos2d::EventListenerTouchOneByOne* listener;
 
 	MyGame* game;
+	int id;
 	State state;
+	GameState game_state;
 	Tower* selectedTurret;
 
 	const double sizeButton;
 	const double sizeTower;
-	
+	Dialogue* dialogues;
 	
 protected:
 	void moveSelectedTurret(cocos2d::Vec2 pos);
 	bool isOnTower(cocos2d::Vec2 pos);
+	void mainMenuCallBack(std::string id_menu);
+	
 	void initParametersMenu();
-	void initLooseMenu();
+	void initLoseMenu();
 	void initWinMenu();
 	void initRightPanel();
 	void initLabels();
+	void initStartMenu();
+
 	void displayTowerInfos(std::string itemName);
 	void resetTowerMenu();
 
-	void removeTower();
 	void destroyCallback(Ref* sender);
 	void builtCallback(Ref* sender);
-	void upgradeCallback(Ref* sender);
-	std::pair<std::string, std::pair<cocos2d::Sprite*, cocos2d::Sprite*>> getTowerFromPoint(cocos2d::Vec2 location);
+	std::pair<std::string, cocos2d::Sprite*> getTowerFromPoint(cocos2d::Vec2 location);
 	void displayTowerMenu(cocos2d::Sprite*);
-	
-
 };
 
 #endif

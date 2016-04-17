@@ -29,7 +29,7 @@ SceneManager::SceneManager(){
 	cacheScene[EDITOR] = editor;
 	cacheScene[EDITOR]->retain();
 
-	currentscene = cacheScene[LEVELS];
+	currentscene = cacheScene[MENU];
 	c_index = 0;
 	Director::getInstance()->runWithScene(currentscene);
 	if(((AppDelegate*)Application::getInstance())->getConfig()["play_sound"].asBool()){
@@ -38,7 +38,6 @@ SceneManager::SceneManager(){
 		auto action2 = FadeInMusic::create(0.5f);
 		Director::getInstance()->getActionManager()->addAction(Sequence::create(action1,action2,nullptr),currentscene,false);
 	}
-
 }
 
 

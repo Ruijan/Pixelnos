@@ -6,8 +6,8 @@
 
 USING_NS_CC;
 
-Cutter::Cutter() : Tower(Cutter::getConfig()["attack_speed"].asDouble(), Cutter::getConfig()["damages"].asDouble(), 
-	Cutter::getConfig()["range"].asDouble(), Cutter::getConfig()["cost"].asDouble(),
+Cutter::Cutter() : Tower(Cutter::getConfig()["attack_speed"][0].asDouble(), Cutter::getConfig()["damages"][0].asDouble(),
+	Cutter::getConfig()["range"][0].asDouble(), Cutter::getConfig()["cost"][0].asDouble(),
 	Cutter::getConfig()["d_damage"].asDouble(),Cutter::getConfig()["d_range"].asDouble(),
 	Cutter::getConfig()["d_speed"].asDouble()){
 
@@ -70,12 +70,11 @@ void Cutter::attack(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	for (auto& cTarget : otherTargets){
 		if (cTarget != nullptr){
-			Bullet* bullet = Bullet::create("res/turret/bullet.png", cTarget, damage,500,false);
-			bullet->setOwner("cutter");
-			bullet->setPosition(cTarget->getPosition());
-			bullet->setScale(visibleSize.width/960);
-			bullet->setVisible(false);
-			SceneManager::getInstance()->getGame()->getLevel()->addBullet(bullet);
+			Slash* slash = Slash::create(cTarget, damage);
+			slash->setPosition(cTarget->getPosition());
+			slash->setScale(visibleSize.width/960);
+			slash->setVisible(false);
+			SceneManager::getInstance()->getGame()->getLevel()->addAttack(slash);
 			//cTarget->takePDamages(damage);
 		}
 	}

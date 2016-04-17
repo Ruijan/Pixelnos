@@ -4,7 +4,7 @@
     <dict>
         <key>frames</key>
         <dict>
-            <key>dangobese1_a_000.png</key>
+            <key>dangobese1_attack_000.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -19,7 +19,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_001.png</key>
+            <key>dangobese1_attack_001.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -34,7 +34,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_002.png</key>
+            <key>dangobese1_attack_002.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -49,7 +49,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_003.png</key>
+            <key>dangobese1_attack_003.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -64,7 +64,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_004.png</key>
+            <key>dangobese1_attack_004.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -79,7 +79,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_005.png</key>
+            <key>dangobese1_attack_005.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -94,7 +94,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_006.png</key>
+            <key>dangobese1_attack_006.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -109,7 +109,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_007.png</key>
+            <key>dangobese1_attack_007.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -124,7 +124,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_008.png</key>
+            <key>dangobese1_attack_008.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -139,7 +139,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_009.png</key>
+            <key>dangobese1_attack_009.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -154,7 +154,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_010.png</key>
+            <key>dangobese1_attack_010.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -169,7 +169,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_011.png</key>
+            <key>dangobese1_attack_011.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -184,7 +184,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_012.png</key>
+            <key>dangobese1_attack_012.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -199,7 +199,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_013.png</key>
+            <key>dangobese1_attack_013.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -214,7 +214,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_014.png</key>
+            <key>dangobese1_attack_014.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -229,7 +229,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_015.png</key>
+            <key>dangobese1_attack_015.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -244,7 +244,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_016.png</key>
+            <key>dangobese1_attack_016.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -259,7 +259,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_017.png</key>
+            <key>dangobese1_attack_017.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -274,7 +274,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_018.png</key>
+            <key>dangobese1_attack_018.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -289,7 +289,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_019.png</key>
+            <key>dangobese1_attack_019.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -304,7 +304,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_020.png</key>
+            <key>dangobese1_attack_020.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -319,7 +319,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_021.png</key>
+            <key>dangobese1_attack_021.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -334,7 +334,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_022.png</key>
+            <key>dangobese1_attack_022.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -349,7 +349,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>dangobese1_a_023.png</key>
+            <key>dangobese1_attack_023.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>

@@ -18,7 +18,7 @@ Dango::~Dango() {
 void Dango::update(float dt) {
 	switch (state) {
 		case IDLE:
-			if (!path[targetedCell]->isFree()) {
+			if (shouldAttack()) {
 				state = ATTACK;
 				updateAnimation();
 			}
@@ -28,7 +28,7 @@ void Dango::update(float dt) {
 			}
 			break;
 		case ATTACK:
-			if (!path[targetedCell]->isFree()) {
+			if (shouldAttack()) {
 				attack(dt);
 				state = RELOAD;
 			}
@@ -41,7 +41,7 @@ void Dango::update(float dt) {
 			reload_timer += dt;
 			if (reload_timer > attack_reloading) {
 				reload_timer = 0;
-				if (!path[targetedCell]->isFree()) {
+				if (shouldAttack()) {
 					state = ATTACK;
 					updateAnimation();
 				}
@@ -53,7 +53,7 @@ void Dango::update(float dt) {
 			break;
 		case MOVE:
 			move(dt);
-			if (!path[targetedCell]->isFree()) {
+			if (shouldAttack()) {
 				state = ATTACK;
 				updateAnimation();
 			}
@@ -125,7 +125,7 @@ void Dango::updateAnimation(){
 	if (state == ATTACK) {
 		switch (cDirection) {
 		case UP:
-			preString += "_ju_";
+			preString += "_attack_";
 			break;
 		case RIGHT:
 			this->setScaleX(((x > 0) - (x < 0))* x);
@@ -137,7 +137,7 @@ void Dango::updateAnimation(){
 			break;
 		case DOWN:
 			this->setScaleX(-((x > 0) - (x < 0))*x);
-			preString += "_jd_";
+			preString += "_attack_";
 			break;
 		}
 	}
@@ -169,12 +169,7 @@ void Dango::updateAnimation(){
 	}
 	Animation* animation = Animation::createWithSpriteFrames(animFrames, 
 		Cell::getCellWidth() / getSpeed() / 24 * getSpecConfig()["cellperanim"].asFloat());
-	if (state == MOVE) {
-		cAction = runAction(RepeatForever::create(Animate::create(animation)));
-	}
-	else if(state == ATTACK) {
-		cAction = runAction(Animate::create(animation));
-	}
+	runAnimation(animation);
 }
 
 double Dango::getHitPoints(){
@@ -199,6 +194,17 @@ void Dango::takeDamages(double damages){
 
 void Dango::takePDamages(double damages){
 	pDamages += damages;
+}
+void Dango::removePDamages(double damages) {
+	pDamages -= damages;
+	if (pDamages < 0) {
+		log("prospectives damages negative");
+		pDamages = 0;
+	}
+}
+
+bool Dango::shouldAttack() {
+	return (!path[targetedCell]->isFree());
 }
 
 
@@ -226,4 +232,13 @@ int Dango::getTargetedCell(){
 double Dango::getSpeed(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	return speed * visibleSize.width / 960.0;
+}
+
+void Dango::runAnimation(Animation* anim) {
+	if (state == MOVE) {
+		cAction = runAction(RepeatForever::create(Animate::create(anim)));
+	}
+	else if (state == ATTACK) {
+		cAction = runAction(Animate::create(anim));
+	}
 }
