@@ -7,14 +7,15 @@
 #include "Lib/AudioSlider.h"
 #include "Config/AudioController.h"
 
+
 USING_NS_CC;
 
 bool StoryMenu::init(){
 	if (!Scene::init()){ return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	//generating regions with missions/levels
-	addChild(Sprite::create("res/background/levels.png"),1,"background"); 
+	// Background
+	addChild(Sprite::create("res/background/levels.png"),1,"background");
 	getChildByName("background")->setAnchorPoint(Vec2(0.5,0.5));
 	getChildByName("background")->setPosition(visibleSize.width/2,visibleSize.height/2);
 	double ratioX = visibleSize.width / 960;
@@ -22,103 +23,85 @@ bool StoryMenu::init(){
 	getChildByName("background")->setScaleX(ratioX);
 	getChildByName("background")->setScaleY(ratioY);
 	
-	//keep track of the progression and colorcode the levels (done, current, next)
-	ui::Layout* menu = ui::Layout::create();
-	menu->setPosition(Vec2(0, 0));
-	addChild(menu, 2);
-	Json::Value levels = ((AppDelegate*)Application::getInstance())->getConfig()["levels"];
-	unsigned int cLevel = ((AppDelegate*)Application::getInstance())->getSave()["level"].asInt();
-	for(unsigned int i(0); i < levels.size(); ++i){
-		std::string filename;
-		Color3B color;
-		bool enable(true);
-		if(i > cLevel){
-			filename = "res/buttons/level_button_disable.png";
-			color = Color3B(50,50,50);
-			enable = false;
-		}
-		else if(i == cLevel){
-			filename = "res/buttons/level_button.png";
-			color = Color3B(220,168,17);
-		}
-		else if(i < cLevel){
-			filename = "res/buttons/level_button_done.png";
-			color = Color3B::WHITE;
-		}
-		//creating levels buttons
-		ui::Button* bouton = ui::Button::create(filename); 
-		bouton->setPosition(Vec2(levels[i]["x"].asInt() * ratioX, levels[i]["y"].asInt() * ratioY));
-		bouton->setEnabled(enable);
-		bouton->setScale(ratioX);
-		bouton->addTouchEventListener([i](Ref* sender, ui::Widget::TouchEventType type) {
-			if (type == ui::Widget::TouchEventType::ENDED) {
-				SceneManager::getInstance()->getGame()->initLevel(i);
-				SceneManager::getInstance()->setScene(SceneManager::GAME);
-			}
-		});
-		//naming levels with colorcode
-		Label* level_label = Label::createWithTTF(to_string(i+1), "fonts/LICABOLD.ttf",  ratioX * 35.f); 
-		level_label->setPosition(Vec2(bouton->getContentSize().width/2.0  * ratioX, bouton->getContentSize().height * ratioY));
-		level_label->setAnchorPoint(Vec2(0.5,0));
-		level_label->setColor(color);
-		level_label->enableOutline(Color4B::BLACK,1);
-		bouton->addChild(level_label);
-		menu->addChild(bouton);
-	}
-		
-	//create settings button on the world map
-	cocos2d::ui::Button* parametre = ui::Button::create("res/buttons/settings.png");
-	cocos2d::ui::Layout* layout = ui::Layout::create();
-	addChild(layout,1);
-	layout->addChild(parametre);
-	//put settings on the top right edge
-	parametre->setPosition(Vec2(visibleSize.width - parametre->getContentSize().width / 2, 
-		visibleSize.height - parametre->getContentSize().height / 2));
-	//add buttons for volume control, credits...
-	Sprite* option = Sprite::create("res/buttons/centralMenuPanel.png");
-	option->setAnchorPoint(Vec2(0.5, 0.5));
-	option->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-	option->setScale(1.5);
-	option->setVisible(false);
-	addChild(option, 3);
-
-	cocos2d::ui::Button* credits = ui::Button::create("res/buttons/plus.png");
-	credits->setAnchorPoint(Vec2(0.5, 0.5));
-	credits->setPosition(Vec2(option->getContentSize().width / 4, option->getContentSize().height / 2));
-	option->addChild(credits, 4);
-
-	cocos2d::ui::Button* json = ui::Button::create("res/buttons/music.png");
-	json->setAnchorPoint(Vec2(0.5, 0.5));
-	json->setPosition(Vec2(option->getContentSize().width / 2, option->getContentSize().height / 2));
-	option->addChild(json, 4);
-
-	cocos2d::ui::Button* autre = ui::Button::create("res/buttons/minus.png");
-	autre->setAnchorPoint(Vec2(0.5, 0.5));
-	autre->setPosition(Vec2(3*option->getContentSize().width / 4, option->getContentSize().height / 2));
-	option->addChild(autre, 4);
-
-	parametre->addTouchEventListener([option](Ref* sender, ui::Widget::TouchEventType type) {
+	// Interface with buttons and settings
+	addChild(ui::Layout::create(), 2, "interface");
+	ui::Button* level_editor = ui::Button::create("res/buttons/level_editor.png", "res/buttons/level_editor.png");
+	level_editor->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			option->setVisible(! option->isVisible());
+			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::EDITOR);
 		}
 	});
+	level_editor->setPosition(Vec2(visibleSize.width - level_editor->getContentSize().width, level_editor->getContentSize().height/3));
+	getChildByName("interface")->addChild(level_editor);
 
-/*	//checkbox son
+	auto settings = ui::Layout::create();
+	getChildByName("interface")->addChild(settings, 2, "settings");
+	ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel.png");
+
+	panel->setZoomScale(0);
+	settings->addChild(panel, 1, "panel");
+	panel->setScaleX(0.45*visibleSize.width / panel->getContentSize().width);
+	panel->setScaleY(0.45*visibleSize.width / panel->getContentSize().width);
+	settings->setPosition(Vec2(visibleSize.width / 2, visibleSize.height +
+		getChildByName("interface")->getChildByName("settings")->getChildByName("panel")->getContentSize().height *
+		getChildByName("interface")->getChildByName("settings")->getChildByName("panel")->getScaleY()));
+
+	Label* music = Label::createWithTTF("Music", "fonts/ChalkDust.ttf", 30.f);
+	Label* effects = Label::createWithTTF("Effects", "fonts/ChalkDust.ttf", 30.f);
+	Label* loop = Label::createWithTTF("Loop Music", "fonts/ChalkDust.ttf", 25.f);
+	music->setColor(Color3B::BLACK);
+	effects->setColor(Color3B::BLACK);
+	loop->setColor(Color3B::BLACK);
+	music->setPosition(-panel->getContentSize().width*panel->getScaleX() * 2 / 5 +
+		music->getContentSize().width / 2, 45);
+	effects->setPosition(-panel->getContentSize().width*panel->getScaleX() * 2 / 5 +
+		effects->getContentSize().width / 2, 0);
+	loop->setPosition(-panel->getContentSize().width*panel->getScaleX() * 2 / 5 + 
+		loop->getContentSize().width / 2, -50);
+	settings->addChild(music,2);
+	settings->addChild(effects,2);
+	settings->addChild(loop,2);
+
+	auto close = ui::Button::create("res/buttons/close.png");
+	close->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if(type == ui::Widget::TouchEventType::ENDED){
+			Size visibleSize = Director::getInstance()->getVisibleSize();
+			//getChildByName("interface")->getChildByName("settings")->setVisible(false);
+			auto* showAction = EaseBackIn::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height + 
+				getChildByName("interface")->getChildByName("settings")->getChildByName("panel")->getContentSize().width *
+				getChildByName("interface")->getChildByName("settings")->getChildByName("panel")->getScaleY() / 2)));
+			getChildByName("interface")->getChildByName("settings")->runAction(showAction);
+			((AudioSlider*)getChildByName("interface")->getChildByName("settings")->
+				getChildByName("EffectsVolume"))->enable(false);
+			((AudioSlider*)getChildByName("interface")->getChildByName("settings")->
+				getChildByName("MusicVolume"))->enable(false);
+			((ui::CheckBox*)getChildByName("interface")->getChildByName("settings")->
+				getChildByName("MusicEnable"))->setEnabled(false);
+			((ui::CheckBox*)getChildByName("interface")->getChildByName("settings")->
+				getChildByName("EffectsEnable"))->setEnabled(false);
+			((ui::CheckBox*)getChildByName("interface")->getChildByName("settings")->
+				getChildByName("LoopEnable"))->setEnabled(false);
+		}
+	});
+	close->setScale(panel->getContentSize().width*panel->getScaleX() / 11 / close->getContentSize().width);
+	close->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() / 2 - close->getContentSize().width*close->getScale() / 3,
+		panel->getContentSize().height*panel->getScaleX() / 2 - close->getContentSize().height*close->getScale() / 3));
+	settings->addChild(close, 5, "close");
+
 	auto checkbox_music = cocos2d::ui::CheckBox::create("res/buttons/music.png", "res/buttons/music.png",
 		"res/buttons/disable.png", "res/buttons/music.png", "res/buttons/music.png");
 	auto checkbox_effects = cocos2d::ui::CheckBox::create("res/buttons/music.png", "res/buttons/music.png",
 		"res/buttons/disable.png", "res/buttons/music.png", "res/buttons/music.png");
 	auto checkbox_loop = cocos2d::ui::CheckBox::create("res/buttons/checkbox.png", "res/buttons/checkbox.png",
 		"res/buttons/filled.png", "res/buttons/checkbox.png", "res/buttons/checkbox.png");
-
-	Sprite* mask = Sprite::create("res/buttons/centralMenuPanel.png");
-	mask->setScaleX((size_menu.width * 1.15) / mask->getContentSize().width);
-	mask->setScaleY((size_menu.height * 1.75) / mask->getContentSize().height);
+	checkbox_music->setEnabled(false);
+	checkbox_effects->setEnabled(false);
+	checkbox_loop->setEnabled(false);
 
 	AudioSlider* sliderMusicVolume = AudioSlider::create(AudioSlider::Horizontal);
 	sliderMusicVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()
 		->getMaxMusicVolume());
-	sliderMusicVolume->setPosition(Vec2(option->getContentSize().width*option->getScaleX() / 7, 45));
+	sliderMusicVolume->setPosition(panel->getContentSize().width*panel->getScaleX() / 7, 45);
 	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderMusicVolume,
 		AudioController::SOUNDTYPE::MUSIC);
 	sliderMusicVolume->enable(false);
@@ -126,14 +109,14 @@ bool StoryMenu::init(){
 	AudioSlider* sliderEffectsVolume = AudioSlider::create(AudioSlider::Horizontal);
 	sliderEffectsVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()
 		->getMaxEffectsVolume());
-	sliderEffectsVolume->setPosition(Vec2(option->getContentSize().width*option->getScaleX() / 7, 0));
+	sliderEffectsVolume->setPosition(panel->getContentSize().width*panel->getScaleX() / 7, 0);
 	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderEffectsVolume,
 		AudioController::SOUNDTYPE::EFFECT);
 	sliderEffectsVolume->enable(false);
 
-	checkbox_music->setPosition(Vec2(option->getContentSize().width*option->getScaleX() * 2 / 5, 45));
-	checkbox_effects->setPosition(Vec2(option->getContentSize().width*option->getScaleX() * 2 / 5, 0));
-	checkbox_loop->setPosition(Vec2(option->getContentSize().width*option->getScaleX() * 2 / 5, -50));
+	checkbox_music->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() * 2 / 5, 45));
+	checkbox_effects->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() * 2 / 5, 0));
+	checkbox_loop->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() * 2 / 5, -50));
 
 	((AppDelegate*)Application::getInstance())->getAudioController()->addButton(checkbox_music,
 		AudioController::SOUNDTYPE::MUSIC);
@@ -143,72 +126,130 @@ bool StoryMenu::init(){
 
 
 	checkbox_music->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		switch (type){
-		case ui::Widget::TouchEventType::ENDED:
+		if (type == ui::Widget::TouchEventType::ENDED){
 			((AppDelegate*)Application::getInstance())->getAudioController()->enableMusic(
 				!((cocos2d::ui::CheckBox*)sender)->isSelected());
-			break;
 		}
 	});
 	checkbox_effects->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		switch (type) {
-		case ui::Widget::TouchEventType::ENDED:
+		if (type == ui::Widget::TouchEventType::ENDED) {
 			((AppDelegate*)Application::getInstance())->getAudioController()->enableEffects(
 				!((cocos2d::ui::CheckBox*)sender)->isSelected());
-			break;
 		}
 	});
 	checkbox_loop->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		switch (type) {
-		case ui::Widget::TouchEventType::ENDED:
+		if (type == ui::Widget::TouchEventType::ENDED) {
 			((AppDelegate*)Application::getInstance())->getAudioController()->enableLoop(
 				((cocos2d::ui::CheckBox*)sender)->isSelected());
-			break;
 		}
 	});
 
-	menu->setPosition(Vec2(0, -option->getContentSize().height*option->getScaleY() / 2));
+	settings->addChild(sliderEffectsVolume, 5, "EffectsVolume");
+	settings->addChild(sliderMusicVolume, 5, "MusicVolume");
+	settings->addChild(checkbox_music, 6, "MusicEnable");
+	settings->addChild(checkbox_effects, 6, "EffectsEnable");
+	settings->addChild(checkbox_loop, 6, "LoopEnable");
+	
+	auto credits = ui::Button::create("res/buttons/buttonCredits.png");
+	credits->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::CREDIT);
+		}
+	});
+	credits->setPosition(Vec2(0,
+		-panel->getContentSize().height*panel->getScaleY() / 2 + 
+		credits->getContentSize().height*credits->getScaleY() / 4));
+	settings->addChild(credits, 5, "credits");
+	//settings->setVisible(false);
 
-	layout->addChild(option, 4);
-	option->addChild(sliderEffectsVolume, 5, "EffectsVolume");
-	option->addChild(sliderMusicVolume, 5, "MusicVolume");
-	option->addChild(checkbox_music, 6, "MusicEnable");
-	option->addChild(checkbox_effects, 6, "EffectsEnable");
-	option->addChild(checkbox_loop, 6, "LoopEnable");*/
-/*	std::string credit_icon = "res/buttons/settings.png";
-	Color3B credit_icon_color = Color3B::WHITE;
-		
-	credit_sprite->setAnchorPoint(Point(0.5f, 0.5f));
-
-	MenuItemSprite* credit_item = MenuItemSprite::create(credit_sprite, credit_sprite, CC_CALLBACK_1(StoryMenu::showCredit, this));
-	credit_item->setPosition(Vec2(visibleSize.width - credit_item->getContentSize().width / 2, 
-		visibleSize.height - credit_item->getContentSize().height / 2));
-	credit_item->setEnabled(true);
-	credit_item->setScale(ratioX);
-
-	menu->addChild(credit_item);
-	menu->setPosition(0, 0);*/
-	//Fin fonction appelle crédit
+	ui::Button* show_setting = ui::Button::create("res/buttons/settings.png");
+	show_setting->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			Size visibleSize = Director::getInstance()->getVisibleSize();
+			bool enable = !getChildByName("interface")->getChildByName("settings")->isVisible();
+			auto* showAction = EaseBackOut::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2)));
+			getChildByName("interface")->getChildByName("settings")->runAction(showAction);
 
 
+			((AudioSlider*)getChildByName("interface")->getChildByName("settings")->
+				getChildByName("EffectsVolume"))->enable(enable);
+			((AudioSlider*)getChildByName("interface")->getChildByName("settings")->
+				getChildByName("MusicVolume"))->enable(enable);
+			((ui::CheckBox*)getChildByName("interface")->getChildByName("settings")->
+				getChildByName("MusicEnable"))->setEnabled(enable);
+			((ui::CheckBox*)getChildByName("interface")->getChildByName("settings")->
+				getChildByName("EffectsEnable"))->setEnabled(enable);
+			((ui::CheckBox*)getChildByName("interface")->getChildByName("settings")->
+				getChildByName("LoopEnable"))->setEnabled(enable);
+		}
+	});
+	show_setting->setPosition(Vec2(visibleSize.width - show_setting->getContentSize().width / 2,
+		visibleSize.height - show_setting->getContentSize().height / 2));
+	getChildByName("interface")->addChild(show_setting);
 
-	/*Ajout boutons : music, credit*/
-
+	// selection of levels
+	addChild(ui::Layout::create(), 1, "levels");
+	
+	getChildByName("levels")->setPosition(0, 0);
+	initLevels();
 	
 	return true;
 }
 
-void StoryMenu::selectLevelCallBack(Ref* sender, int level_id){
-	SceneManager::getInstance()->getGame()->initLevel(level_id);
-	SceneManager::getInstance()->setScene(SceneManager::GAME);
+void StoryMenu::selectLevelCallBack(Ref* sender, ui::Widget::TouchEventType type, int level_id){
+	if (type == ui::Widget::TouchEventType::ENDED) {
+		SceneManager::getInstance()->getGame()->initLevel(level_id);
+		SceneManager::getInstance()->setScene(SceneManager::GAME);
+	}
 }
 
 void StoryMenu::onEnterTransitionDidFinish(){
 	Scene::onEnterTransitionDidFinish();
-	removeAllChildren();
-	init();
+	getChildByName("levels")->removeAllChildren();
+	initLevels();
 }
 
 void StoryMenu::showCredit(Ref* sender){
 	SceneManager::getInstance()->setScene(SceneManager::CREDIT);
+}
+
+void StoryMenu::initLevels() {
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	double ratioX = visibleSize.width / 960;
+	double ratioY = visibleSize.height / 640;
+	Json::Value levels = ((AppDelegate*)Application::getInstance())->getConfig()["levels"];
+	int cLevel = ((AppDelegate*)Application::getInstance())->getSave()["level"].asInt();
+	for (unsigned int i(0); i < levels.size(); ++i) {
+		std::string filename;
+		Color3B color;
+		bool enable(true);
+		if ((int)i > cLevel) {
+			filename = "res/buttons/level_button_disable.png";
+			color = Color3B(50, 50, 50);
+			enable = false;
+		}
+		else if ((int)i == cLevel) {
+			filename = "res/buttons/level_button.png";
+			color = Color3B(220, 168, 17);
+		}
+		else if ((int)i < cLevel) {
+			filename = "res/buttons/level_button_done.png";
+			color = Color3B::WHITE;
+		}
+
+		ui::Button* level = ui::Button::create(filename);
+		level->addTouchEventListener(CC_CALLBACK_2(StoryMenu::selectLevelCallBack, this, i));
+		level->setPosition(Vec2(levels[i]["x"].asInt() * ratioX, levels[i]["y"].asInt() * ratioY));
+		level->setEnabled(enable);
+		level->setScale(ratioX);
+
+		Label* level_label = Label::createWithTTF(to_string(i + 1), "fonts/LICABOLD.ttf", ratioX * 35.f);
+		level_label->setPosition(Vec2(level->getContentSize().width / 2.0  * ratioX, level->getContentSize().height * ratioY));
+		level_label->setAnchorPoint(Vec2(0.5, 0));
+		level_label->setColor(color);
+		level_label->enableOutline(Color4B::BLACK, 1);
+		level->addChild(level_label);
+		getChildByName("levels")->addChild(level);
+	}
 }

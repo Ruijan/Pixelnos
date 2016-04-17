@@ -4,8 +4,8 @@
 
 USING_NS_CC;
 
-Scorpion::Scorpion() : Tower(Scorpion::getConfig()["attack_speed"].asDouble(), Scorpion::getConfig()["damages"].asDouble(),
-	Scorpion::getConfig()["range"].asDouble(), Scorpion::getConfig()["cost"].asDouble(),
+Scorpion::Scorpion() : Tower(Scorpion::getConfig()["attack_speed"][0].asDouble(), Scorpion::getConfig()["damages"][0].asDouble(),
+	Scorpion::getConfig()["range"][0].asDouble(), Scorpion::getConfig()["cost"][0].asDouble(),
 	Scorpion::getConfig()["d_damage"].asDouble(),Scorpion::getConfig()["d_range"].asDouble(),
 	Scorpion::getConfig()["d_speed"].asDouble()){
 }
@@ -34,9 +34,14 @@ Json::Value Scorpion::getSpecConfig(){
 
 void Scorpion::attack(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Bullet* bullet = Bullet::create("res/turret/bullet.png", target, damage,300*visibleSize.width/960,true);
-	bullet->setOwner("archer");
-	bullet->setPosition(getPosition() - Vec2(0, getSpriteFrame()->getRect().size.width / 2 * getScale()));
-	bullet->setScale(visibleSize.width/960);
-	SceneManager::getInstance()->getGame()->getLevel()->addBullet(bullet);
+	WaterBall* ball = nullptr;
+	if (level >= getConfig()["cost"].size() - 1) {
+		ball = WaterBombBall::create(target, damage, 300 * visibleSize.width / 960, 100);
+	}
+	else {
+		ball = WaterBall::create(target, damage, 300 * visibleSize.width / 960);
+	}
+	ball->setPosition(getPosition() - Vec2(0, getSpriteFrame()->getRect().size.width / 2 * getScale()));
+	ball->setScale(visibleSize.width / 960);
+	SceneManager::getInstance()->getGame()->getLevel()->addAttack(ball);
 }

@@ -599,6 +599,9 @@ bool LevelEditor::init(){
 	getChildByName("menu_left")->addChild(scroll_view, 1, "scroll_menu");
 	getChildByName("menu_left")->addChild(main_menu, 1, "main_menu");
 	getChildByName("menu_left")->addChild(general_infos, 2, "general_infos");
+	scroll_view->setVisible(false);
+	interface_manager->setVisible(false);
+	general_infos->setVisible(false);
 	
 	// Place the inteface manager, the main menu and the scrolling menu
 	getChildByName("menu_left")->getChildByName("interface_manager")->setPosition(0, visibleSize.height / 2);
@@ -978,9 +981,12 @@ void LevelEditor::createLevel(Ref* sender) {
 	getChildByName("level")->addChild(center_ind, 1000, "center");
 	getChildByName("level")->addChild(resolutions, 1000, "resolutions");
 
-	getChildByName("menu_left")->getChildByName("interface_manager")->setVisible(true);
+	
 	((ui::TextField*)getChildByName("menu_left")->getChildByName("general_infos")->getChildByName("level_name"))->setString("Level name");
 
+	getChildByName("menu_left")->getChildByName("interface_manager")->setVisible(true);
+	getChildByName("menu_left")->getChildByName("scroll_menu")->setVisible(true);
+	getChildByName("menu_left")->getChildByName("general_infos")->setVisible(true);
 	((MenuItem*)getChildByName("menu_left")->getChildByName("main_menu")->getChildByName("save"))->setEnabled(true);
 	((MenuItem*)getChildByName("menu_left")->getChildByName("main_menu")->getChildByName("del"))->setEnabled(true);
 
@@ -1577,10 +1583,9 @@ void LevelEditor::loadLevelFromFileName(Ref* sender, cocos2d::ui::Widget::TouchE
 							root["dangosChain"][i][j].asString().size())).asInt();
 						enemy_name = root["dangosChain"][i][j].asString().substr(0, root["dangosChain"][i][j].asString().size() - 1);
 						enemy_timer = root["dangosTime"][i][j].asDouble();
+						enemy_path = root["dangosPath"][i][j].asDouble();
 						current_wave = i;
 						createEnemy(this, cocos2d::ui::Widget::TouchEventType::ENDED);
-						generator->addStep(root["dangosChain"][i][j].asString(), root["dangosTime"][i][j].asDouble(), 
-							root["dangosPath"][i][j].asDouble(), i);
 					}
 				}
 				path_selected = -1;
@@ -1697,6 +1702,11 @@ void LevelEditor::deleteCurrentLevel(Ref* sender, cocos2d::ui::Widget::TouchEven
 		path_level = "";
 		resetLevel();
 		loaded = false;
+		getChildByName("menu_left")->getChildByName("interface_manager")->setVisible(false);
+		getChildByName("menu_left")->getChildByName("scroll_menu")->setVisible(false);
+		getChildByName("menu_left")->getChildByName("general_infos")->setVisible(false);
+		((MenuItem*)getChildByName("menu_left")->getChildByName("main_menu")->getChildByName("save"))->setEnabled(false);
+		((MenuItem*)getChildByName("menu_left")->getChildByName("main_menu")->getChildByName("del"))->setEnabled(false);
 	}
 }
 void LevelEditor::showDeleteConfirm(Ref* sender) {
@@ -2332,8 +2342,7 @@ std::vector <std::string> read_directory(const std::string& path)
 }
 
 double getNodeHeight(Node* node) {
-	Vec2 height;/* = Vec2(node->getPosition().y - node->getContentSize().height*(1 - node->getAnchorPoint().y) * node->getScaleY(),
-		node->getPosition().y + node->getContentSize().height*(1 - node->getAnchorPoint().y) * node->getScaleY());*/
+	Vec2 height;
 	for (auto child : node->getChildren()) {
 		double child_height(child->getContentSize().height);
 		if (child->getChildrenCount() != 0) {

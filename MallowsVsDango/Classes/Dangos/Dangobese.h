@@ -5,7 +5,9 @@
 #include "../Config/json.h"
 #include "Dango.h"
 
+
 class Cell;
+class Attack;
 
 class Dangobese : public Dango{
 
@@ -16,6 +18,16 @@ public:
 
 	static Json::Value getConfig();
 	Json::Value getSpecConfig();
+	virtual void update(float dt);
+	virtual bool shouldAttack();
+	virtual void attack(float dt);
+	virtual void runAnimation(cocos2d::Animation* anim);
+
+	bool isAffectedByAttack(Attack* attack);
+
+private:
+	double attack_duration;
+	double attack_timer;
 };
 
 #endif

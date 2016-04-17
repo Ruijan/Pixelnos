@@ -7,7 +7,6 @@
 #include "../Towers/Tower.h"
 #include "../Towers/Bullet.h"
 #include "DangoGenerator.h"
-#include "../Dialogue.h"
 #include "Wall.h"
 #include <iostream>
 
@@ -25,14 +24,6 @@ class Level : public cocos2d::Layer
 {
 	
 public:
-	enum State{
-		INTRO,
-		TITLE,
-		STARTING,
-		RUNNING,
-		ENDING,
-		DONE
-	};
 	Level(unsigned int nLevel);
 	virtual ~Level();
 	static Level* create(unsigned int nLevel);
@@ -40,14 +31,13 @@ public:
 	void initWalls();
 
 	virtual void update(float dt);
+	void updateTowers(float dt);
+	void removeElements();
 
-	void setSize(cocos2d::Size nsize);
-	bool isFinishing();
 	bool isPaused();
-	bool isCellInPath(Cell* cell);
+	//bool isCellInPath(Cell* cell);
 	Quantity getQuantity();
 	Quantity getLife();
-	State getState();
 	int getTotalExperience();
 	unsigned int getLevelId();
 	void increaseQuantity(Quantity add);
@@ -57,17 +47,13 @@ public:
 	void addTurret(Tower* turret);
 	Cell* getNearestCell(cocos2d::Vec2 position);
 	Tower* touchingTower(cocos2d::Vec2 position);
+	std::vector<Dango*> getEnemiesInRange(cocos2d::Vec2 position, double range);
 	std::vector<Cell*> getPath(int path);
 	void addDango(Dango* dango);
-	void addBullet(Bullet* bullet);
+	void addAttack(Attack* bullet);
 	bool hasLost();
-	bool hasWon();
 	void reset();
-	
-	void rewardCallback(Level* sender);
-
-
-	//CREATE_FUNC(Level);
+	std::vector<Attack*> getAttacks();
 
 protected:
 	unsigned int id;
@@ -75,10 +61,9 @@ protected:
 
 	std::vector<Dango*> dangos;
 	std::vector<Tower*> turrets;
-	std::vector<Bullet*> bullets;
+	std::vector<Attack*> attacks;
 	std::vector<Wall*> walls;
 
-	Dialogue* introDialogue;
 	DangoGenerator* generator;
 
 	std::vector<std::vector<Cell*>> cells;
@@ -88,11 +73,7 @@ protected:
 	int zGround;
 	Quantity sugar;
 	Quantity life;
-	State state;
-	double timer;
 	int experience;
-
-	cocos2d::Action* c_action; 
 	
 	void reorder();
 };

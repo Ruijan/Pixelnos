@@ -7,21 +7,19 @@
 class Cell;
 
 class Dango : public cocos2d::Sprite{
-	enum DIRECTION{
+public:
+	enum DIRECTION {
 		RIGHT,
 		UP,
 		DOWN,
 		LEFT
 	};
-	enum STATE{
+	enum STATE {
 		IDLE,
 		ATTACK,
 		RELOAD,
 		MOVE
 	};
-
-
-public:
 	Dango(std::vector<Cell*> npath, double nspeed, double hp, int level,
 		double damages, double a_speed);
 	virtual ~Dango();
@@ -33,22 +31,25 @@ public:
 	bool isAlive();
 	bool isDone();
 	bool willBeAlive();
+	virtual bool shouldAttack();
 	double getHitPoints();
 	double getGain();
 	int getTargetedCell();
 	double getSpeed();
 
-	void update(float dt);
+	virtual void update(float dt);
 	void updateAnimation();
 	void updateDirection(cocos2d::Vec2 direction);
 
 	void takeDamages(double damages);
 	void takePDamages(double damages);
+	void removePDamages(double damages);
 	
 	void move(float dt);
-	void attack(float dt);
+	virtual void attack(float dt);
+	virtual void runAnimation(cocos2d::Animation* anim);
 	
-private:
+protected:
 	STATE state;
 	DIRECTION cDirection;
 

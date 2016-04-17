@@ -34,7 +34,6 @@ Dialogue* Dialogue::createFromConfig(Json::Value config){
 	std::vector<Direction> direction;
 	std::vector<Emotion> emotions;
 
-
 	for(unsigned int i(0); i < config.size(); ++i){
 		for(unsigned int j(0); j < config[i]["text"].size(); ++j){
 			heads.push_back(config[i]["speaker"].asString());
@@ -100,6 +99,17 @@ void Dialogue::launch(){
 	speech->setPosition(Point(round(speechBubble->getPosition().x + 
 		speechBubble->getChildByName("NORMAL")->getContentSize().width*speechBubble->getScale() / 2), speechBubble->getPosition().y + 25));
 	speech->setAlignment(TextHAlignment::CENTER);
+
+	auto skip = ui::Button::create("res/buttons/buttonSkip.png");
+	skip->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			endDialogue();
+		}
+	});
+	skip->setScale(visibleSize.width / 8 / skip->getContentSize().width);
+	skip->setPosition(Vec2(visibleSize.width * 3 / 4 - skip->getContentSize().width*skip->getScale(),
+		skip->getContentSize().height*skip->getScale()/4));
+
 	tapToContinue = Label::createWithSystemFont("Tap to continue", "Arial", 25.f);
 	tapToContinue->setPosition(Point(speech->getPosition().x, speechBubble->getPosition().y - 
 		speechBubble->getChildByName("NORMAL")->getContentSize().height*speechBubble->getScale() / 4));
@@ -115,6 +125,7 @@ void Dialogue::launch(){
 	addChild(speechBubble);
 	addChild(speech);
 	addChild(tapToContinue);
+	addChild(skip);
 	addEvents();
 	running = true;
 }

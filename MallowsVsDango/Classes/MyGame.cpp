@@ -38,6 +38,7 @@ bool MyGame::initLevel(int level_id){
 	// remove the level and the interface if it is initialized.
 	if(cLevel != nullptr){
 		removeChild(cLevel,1);
+		cLevel = nullptr;
 	}
 	if(menu != nullptr){
 		menu->setVisible(false);
@@ -76,33 +77,36 @@ void MyGame::onExitTransitionDidStart(){
 }
 
 void MyGame::update(float delta){
-
 	//update the scene, the interface and the level.
 	Scene::update(delta);
 	menu->update(delta);
-	cLevel->update(delta * acceleration);
-	if (cLevel->hasLost()){
-		menu->showLoose();
+	
+	// If the player lost, we show the losing screen
+	if (cLevel->hasLost() && !cLevel->isPaused()){
+		menu->showLose();
 		cLevel->pause();
 	}
-	else if (cLevel->hasWon() && !cLevel->isPaused()){
-		menu->showWin();
-		cLevel->pause();
-		save();
-	}
+	
+	// In case of reloading
 	if (reloading){
 		reload();
 		reloading = false;
 	}
 	// If it has been asked to go to the next level then we delete the current level,
 	// we reset the interface and the parameters and let's go !
-	if(menu->getState() == InterfaceGame::State::NEXT_LEVEL){
+	if (menu->getGameState() == InterfaceGame::GameState::TITLE) {
+		cLevel->updateTowers(delta);
+		cLevel->removeElements();
+	}
+	else if(menu->getGameState() == InterfaceGame::GameState::NEXT_LEVEL){
 		Json::Value levels = ((AppDelegate*)Application::getInstance())->getConfig()["levels"];
 		if(levels.size() > cLevel->getLevelId() + 1){
 			int new_level_id = cLevel->getLevelId() + 1;
 			removeChild(cLevel,1);
 			cLevel = Level::create(new_level_id);
+			menu->setLevel(new_level_id);
 			menu->reset();
+			menu->setListening(true);
 			acceleration = 1.0;
 			addChild(cLevel,0);
 		}
@@ -110,10 +114,22 @@ void MyGame::update(float delta){
 			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
 		}
 	}
+	else if (menu->getGameState() == InterfaceGame::GameState::RUNNING) {
+		cLevel->update(delta * acceleration);
+	}
+	else if (menu->getGameState() == InterfaceGame::GameState::DONE && !cLevel->isPaused()) {
+		menu->showWin();
+		cLevel->pause();
+		save();
+	}
 }
 
 Level* MyGame::getLevel(){
 	return cLevel;
+}
+
+InterfaceGame* MyGame::getMenu() {
+	return menu;
 }
 
 void MyGame::reload(){
@@ -162,8 +178,7 @@ bool MyGame::save(){
 	if(root["level"].asInt() < (int)cLevel->getLevelId()+1){
 		root["level"] = cLevel->getLevelId()+1;
 	}
-	unsigned int experience = ((AppDelegate*)Application::getInstance())->getSave()["exp"].asInt();
-	root["exp"] = experience + cLevel->getTotalExperience();
+	root["exp"] = root["exp"].asInt() + cLevel->getTotalExperience();
 	((AppDelegate*)Application::getInstance())->getConfigClass().setSave(root);
 	((AppDelegate*)Application::getInstance())->getConfigClass().save();
 	return true;
@@ -173,15 +188,12 @@ void MyGame::initAttributes(){
 	// create new level and add it to the game
 	cLevel = Level::create(id_level);
 	addChild(cLevel,0);
-
-	/* create new interface in case this one hasn't been created and add it to the game.
-	 * If already created, reset it to initial parameters.
-	 */
-	if(menu == nullptr){
-		menu = InterfaceGame::create(this);
-		addChild(menu,2);
+	if (menu == nullptr) {
+		menu = InterfaceGame::create(this, id_level);
+		addChild(menu, 2);
 	}
-	else{
+	else {
+		menu->setLevel(id_level);
 		menu->reset();
 	}
 

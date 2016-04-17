@@ -1,12 +1,10 @@
 ============================================================================
 FEATURES TO CODE (137h)
 ============================================================================
-experience system and skill tree to code and design (20h): (Thomas)
+money system and skill tree to code and design (20h): (Thomas)
 	- dynamical positioning of skill from a file (read a file to find all the skills and create automatically the tree)
 	- save and load skills in save json file
 	- "buy" a skill
-(OK)Company logo screen 
-(OK)remake main menu with cocos2d actions
 Story menu interface for parameters (sound, credit, skill tree button) and gold (4-5h) (Xianle)
 Player powers (13h) (Xianle):
 	-limit for towers -> after killing a certain amount of dango power plus for a specific time (3h)
@@ -18,7 +16,6 @@ sound (2h) (Xianle):
 	-winning
 	-sound for dialogue ???
 make tutorial (1st level) (10h)
-code behavior dangobese (aspiring bullets) (5h)
 display information about dango on click/tap (1h30)
 improve gameplay and level design (30h without level editor, 5-10h with level editor):
 	-level 1 map & generator & dialogue & reward
@@ -128,6 +125,10 @@ Level editor:
 		-(OK) path they use
 		-(OK) duplicate enemy
 		-(OK) remove enemy
+(OK) code behavior dangobese (aspiring bullets) (5h)
+(OK) Company logo screen (30min) (Xianle)
+(OK) remake main menu with cocos2d actions (1h) (Xianle)
+
 		
 
 

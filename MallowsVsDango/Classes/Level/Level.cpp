@@ -20,7 +20,7 @@ Level* Level::create(unsigned int nLevel){
 
 Level::Level(unsigned int nLevel) : id(nLevel), size(14,12), sugar(60), life(3),
 
-paused(false), state(INTRO), timer(0),zGround(0), experience(0){}
+paused(false), zGround(0), experience(0){}
 
 bool Level::init()
 {
@@ -28,20 +28,6 @@ bool Level::init()
 		return false;
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-
-	Label* title = Label::createWithTTF("Level " + Value((int)(id + 1)).asString(), "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 12.0));
-	title->setColor(Color3B::YELLOW);
-	title->enableOutline(Color4B::BLACK, 3);
-	title->setPosition(round(visibleSize.width * 3 / 8.0), round(visibleSize.height / 2.0));
-
-	Label* start_counter = Label::createWithTTF("3...", "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 12.0));
-	start_counter->setColor(Color3B::YELLOW);
-	start_counter->enableOutline(Color4B::BLACK, 3);
-	start_counter->setPosition(round(visibleSize.width * 3 / 8.0), round(visibleSize.height / 2.0));
-	start_counter->setVisible(false);
-
-	addChild(title, 100, "title");
-	addChild(start_counter, 100, "start_counter");
 
 	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id];
 	
@@ -143,22 +129,10 @@ bool Level::init()
 				std::string enemy_name = root["dangosChain"][i][j].asString().substr(0, root["dangosChain"][i][j].asString().size() - 1);
 				double enemy_timer = root["dangosTime"][i][j].asDouble();
 				int current_wave = i;
-				//generator->addStep(enemy_name + Value(enemy_level).asString(), enemy_delay, enemy_path, current_wave);				
 				generator->addStep(root["dangosChain"][i][j].asString(), root["dangosTime"][i][j].asDouble(),
 					root["dangosPath"][i][j].asDouble(), i);
 			}
 		}
-	}
-	bool play_dialogue = ((AppDelegate*)Application::getInstance())->getConfig()["play_dialogue"].asInt() > 0;
-	if (config["introDialogue"].size() != 0 && play_dialogue) {
-		introDialogue = Dialogue::createFromConfig(config["introDialogue"]);
-		addChild(introDialogue, 1, "dialogue");
-		introDialogue->launch();
-		getChildByName("title")->setVisible(false);
-	}
-	else {
-		state = TITLE;
-		introDialogue = nullptr;
 	}
 	initWalls();
 
@@ -190,259 +164,113 @@ Level::~Level()
 	log("deletion of level");
 	removeAllChildren();
 	log("All children deleted");
-	if(introDialogue != nullptr){
-		delete introDialogue;
-		log("deleted dialogue");
-	}
 	delete generator;
 	log("deleted generator");
 }
 void Level::update(float dt)
 {
-	switch(state){
-		case INTRO:
-			introDialogue->update();
-			if(introDialogue->hasFinished()){
-				getChildByName("title")->setVisible(true);
-				removeChild(introDialogue);
-				state = TITLE;
-			}
-			break;
-		case TITLE:
-			timer += dt;
-			if(timer > 3){
-				getChildByName("title")->setVisible(false);
-				state = STARTING;
-				timer = 0;
-			}
-			break;
-		case STARTING:
-			timer += dt;
-			if(timer >= 0 && timer < 1 && !getChildByName("start_counter")->isVisible()){
-				getChildByName("start_counter")->setVisible(true);
-			}
-			else if(timer >= 1 && timer < 2 && ((Label*)getChildByName("start_counter"))->getString() == "3..."){
-				((Label*)getChildByName("start_counter"))->setString("2...");
-			}
-			else if(timer >= 2 && timer < 3 && ((Label*)getChildByName("start_counter"))->getString() == "2..."){
-				((Label*)getChildByName("start_counter"))->setString("1");
-			}
-			else if(timer > 3 && ((Label*)getChildByName("start_counter"))->getString() == "1"){
-				getChildByName("start_counter")->setVisible(false);
-				state = RUNNING;
-			}
-			break;
-		case RUNNING:
-			if (!paused){
-				// Reorder dangos and towers in Z plan
-				reorder();
-				
-				// update generator
-				generator->update(dt, this);
-				if (!generator->isDone() && generator->isWaveDone() && dangos.empty()){
-					generator->nextWave();
-				}
+	if (!paused) {
+		// Reorder dangos and towers in Z plan
+		reorder();
 
-				// update dangos
-				int i(0);
-				for (auto& dango : dangos){
-					++i;
-					dango->update(dt);
-					bool del = false;
-					if (dango->isDone()){
-						del = true;
-						if (life > 0){
-							life -= 1;
-						}
-					}
-					if (!dango->isAlive()){
-						del = true;
-						sugar += dango->getGain();
-					}
-					if (del){
-						for(auto& tower : turrets){
-							if(tower->getTarget() == dango){
-								tower->setTarget(nullptr);
-							}
-						}
-						for(auto& bullet : bullets){
-							if(bullet->getTarget() == dango){
-								bullet->setTarget(nullptr);
-							}
-						}
-						if(generator->isDone() && dangos.size() == 1){
-							Size visibleSize = Director::getInstance()->getVisibleSize();
-							Node* node = Node::create();
-							Sprite* sugar = Sprite::create("res/buttons/life.png");
-							Sprite* shining = Sprite::create("res/buttons/shining.png");
+		// update generator
+		generator->update(dt, this);
+		if (!generator->isDone() && generator->isWaveDone() && dangos.empty()) {
+			generator->nextWave();
+		}
 
-							sugar->setScale(Cell::getCellWidth()/sugar->getContentSize().width);
-							shining->setScale(2*Cell::getCellWidth()/(shining->getContentSize().width));
-							node->addChild(shining);
-							node->addChild(sugar);
-
-							Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id];
-							auto* move1 = EaseOut::create(MoveBy::create(0.25f,Vec2(0, 75)),2);
-							auto* move2 = EaseBounceOut::create(MoveBy::create(1.0f,Vec2(0, -75)));
-
-							node->setPosition(dango->getPosition());
-							addChild(node,300);
-
-							RotateBy* rotation = RotateBy::create(3.0f,360);
-							shining->runAction(RepeatForever::create(rotation));
-
-							MoveBy* move_h1 = nullptr;
-							MoveBy* move_h2 = nullptr;
-							if(dango->getPosition().x - 60 < 0){
-								move_h1 = MoveBy::create(0.25f,Vec2(25, 0));
-								move_h2 = MoveBy::create(1.0f,Vec2(75, 0));
-							}
-							else{
-								move_h1 = MoveBy::create(0.25f,Vec2(-15, 0));
-								move_h2 = MoveBy::create(1.0f,Vec2(-45, 0));
-							}
-
-							EaseIn* move = EaseIn::create(MoveTo::create(1.5f,Vec2(visibleSize.width/2,visibleSize.height)),2);
-							EaseIn* scale = EaseIn::create(ScaleTo::create(1.5f,0.01f),2);
-
-							Action* action = node->runAction(Sequence::create(Spawn::createWithTwoActions(move1,move_h1),
-										Spawn::createWithTwoActions(move2,move_h2),
-										Spawn::createWithTwoActions(move, scale),nullptr));
-							action->retain();
-
-							if(config["reward"].asString() != "none"){
-								auto menu 			= Menu::create();
-								auto reward 		= Sprite::create(config["reward"].asString());
-								auto reward_item 	= MenuItemSprite::create(reward, reward, reward, [&](Ref *sender){
-                                               rewardCallback(this);
-                                           });
-								menu->addChild(reward_item);
-								menu->setPosition(Vec2(0,0));
-								reward_item->setPosition(dango->getPosition());
-								reward_item->setScale(Cell::getCellWidth()/reward->getContentSize().width);
-								addChild(menu,300);
-								MoveBy* move_h1 = nullptr;
-								MoveBy* move_h2 = nullptr;
-								if(60 + dango->getPosition().x <  visibleSize.width * 2 / 3){
-									move_h1 = MoveBy::create(0.25f,Vec2(15, 0));
-									move_h2 = MoveBy::create(1.0f,Vec2(45, 0));
-								}
-								else{
-									move_h1 = MoveBy::create(0.25f,Vec2(-25, 0));
-									move_h2 = MoveBy::create(1.0f,Vec2(-75, 0));
-								}
-								auto* scale = EaseOut::create(ScaleTo::create(1.0f,1),2);
-								// Since the level takes 3/4 of the screen. The center of the level is at 3/8.
-								auto* movetocenter = EaseIn::create(MoveTo::create(0.5f,Vec2(visibleSize.width * 3 / 8,
-									visibleSize.height/2)),2);
-
-								reward_item->runAction(Sequence::create(Spawn::createWithTwoActions(move1->clone(),move_h1),
-										Spawn::createWithTwoActions(move2->clone(),move_h2),
-										Spawn::createWithTwoActions(scale,movetocenter),nullptr));
-
-								// Add a Tap to continue to inform the user what to do.
-								auto tapToContinue = Label::createWithSystemFont("Tap to continue", "Arial", 25.f);
-								tapToContinue->setPosition(Vec2(visibleSize.width * 3 / 8, 50));
-
-								tapToContinue->setColor(Color3B::WHITE);
-								tapToContinue->setVisible(true);
-								FadeIn* fadeIn = FadeIn::create(0.75f);
-								FadeOut* fadeout = FadeOut::create(0.75f);
-
-								tapToContinue->runAction(RepeatForever::create(Sequence::create(fadeIn, fadeout, NULL)));
-								addChild(tapToContinue, 1000);
-								
-							}
-							else{
-								c_action = action;
-							}
-							state = ENDING;							
-						}
-						removeChild(dango);
-						dango = nullptr;
-					}
-				}
-				
-				// update towers
-				for (auto& tower : turrets){
-					if (!tower->hasToBeDestroyed()){
-						if (tower->isFixed()){
-							tower->chooseTarget(dangos);
-							tower->update(dt);
-						}
-					}
-					else{
-						for (unsigned int i(0); i < cells.size(); ++i){
-							for (unsigned int j(0); j < cells[i].size(); j++){
-								if (cells[i][j]->getObject() == tower){
-									cells[i][j]->setObject(nullptr);
-								}
-							}
-						}
-						removeChild(tower);
-						tower = nullptr;
-					}
-				}
-
-				// update bullets
-				for (auto& bullet: bullets){
-					bullet->update(dt);
-					if(bullet->isDone()){
-						removeChild(bullet);
-						bullet = nullptr;
-					}
-				}
-
-				//update wall
-				for (auto& wall : walls) {
-					if (wall != nullptr && wall->isDestroyed()) {
-						for (auto& path : paths) {
-							for (auto& cell : path) {
-								if (cell->getObject() == wall) {
-									cell->setObject(nullptr);
-								}
-							}
-						}
-						removeChild(wall);
-						wall = nullptr;
-					}
-				}
-				
-				bullets.erase(std::remove(bullets.begin(), bullets.end(), nullptr), bullets.end());
-				turrets.erase(std::remove(turrets.begin(), turrets.end(), nullptr), turrets.end());
-				dangos.erase(std::remove(dangos.begin(), dangos.end(), nullptr), dangos.end());
-			}
-			break;
-		case ENDING:
-			if (((AppDelegate*)Application::getInstance())->getConfig()["levels"][id]["reward"].asString() == "none") {
-				if (c_action->isDone()){
-					state = DONE;
-					c_action->release();
+		// update dangos
+		int i(0);
+		for (auto& dango : dangos) {
+			++i;
+			dango->update(dt);
+			bool del = false;
+			if (dango->isDone()) {
+				del = true;
+				if (life > 0) {
+					life -= 1;
 				}
 			}
-			break;
-		case DONE:
-			break;
-	};	
-}
-
-bool Level::isCellInPath(Cell* cell){
-	for (auto& path : paths) {
-		for (unsigned int i(0); i < path.size(); ++i) {
-			if (cell == path[i]) {
-				return true;
+			if (!dango->isAlive()) {
+				del = true;
+				sugar += dango->getGain();
+			}
+			if (del) {
+				for (auto& tower : turrets) {
+					if (tower->getTarget() == dango) {
+						tower->setTarget(nullptr);
+					}
+				}
+				for (auto& attack : attacks) {
+					if (attack->getTarget() == dango) {
+						attack->setTarget(nullptr);
+					}
+				}
+				if (generator->isDone() && dangos.size() == 1) {
+					SceneManager::getInstance()->getGame()->getMenu()->startRewarding(dango->getPosition());
+				}
+				removeChild(dango);
+				dango = nullptr;
 			}
 		}
+
+		// update towers
+		updateTowers(dt);
+
+		// update bullets
+		for (auto& attack : attacks) {
+			attack->update(dt);
+			if (attack->isDone()) {
+				removeChild(attack);
+				attack = nullptr;
+			}
+		}
+
+		//update wall
+		for (auto& wall : walls) {
+			if (wall != nullptr && wall->isDestroyed()) {
+				for (auto& path : paths) {
+					for (auto& cell : path) {
+						if (cell->getObject() == wall) {
+							cell->setObject(nullptr);
+						}
+					}
+				}
+				removeChild(wall);
+				wall = nullptr;
+			}
+		}
+
+		removeElements();
+	}	
+}
+
+void Level::updateTowers(float dt) {
+	for (auto& tower : turrets) {
+		if (!tower->hasToBeDestroyed()) {
+			if (tower->isFixed()) {
+				tower->chooseTarget(dangos);
+				tower->update(dt);
+			}
+		}
+		else {
+			for (unsigned int i(0); i < cells.size(); ++i) {
+				for (unsigned int j(0); j < cells[i].size(); j++) {
+					if (cells[i][j]->getObject() == tower) {
+						cells[i][j]->setObject(nullptr);
+					}
+				}
+			}
+			removeChild(tower);
+			tower = nullptr;
+		}
 	}
-	return false;
 }
 
-void Level::setSize(cocos2d::Size nsize){
-	size = nsize;
-}
-
-bool Level::isFinishing(){
-	return state == ENDING;
+void Level::removeElements() {
+	attacks.erase(std::remove(attacks.begin(), attacks.end(), nullptr), attacks.end());
+	turrets.erase(std::remove(turrets.begin(), turrets.end(), nullptr), turrets.end());
+	dangos.erase(std::remove(dangos.begin(), dangos.end(), nullptr), dangos.end());
 }
 
 bool Level::isPaused(){
@@ -498,6 +326,17 @@ void Level::addTurret(Tower* tower){
 	tower->setLocalZOrder(zGround);
 }
 
+std::vector<Dango*> Level::getEnemiesInRange(cocos2d::Vec2 position, double range) {
+	std::vector<Dango*> enemies_in_range;
+	for (auto& dango : dangos) {
+		double distance = dango->getPosition().distance(position);
+		if (distance < range) {
+			enemies_in_range.push_back(dango);
+		}
+	}
+	return enemies_in_range;
+}
+
 Cell* Level::getNearestCell(cocos2d::Vec2 position){
 	Cell* nearestCell = nullptr;
 	double lowestDistance = -5;
@@ -514,7 +353,7 @@ Cell* Level::getNearestCell(cocos2d::Vec2 position){
 }
 
 std::vector<Cell*> Level::getPath(int path){
-	if (path < paths.size()) {
+	if (path < (int)paths.size()) {
 		return paths[path];
 	}
 	else {
@@ -529,8 +368,8 @@ void Level::addDango(Dango* dango){
 	addChild(dango);
 }
 
-void Level::addBullet(Bullet* bullet){
-	bullets.push_back(bullet);
+void Level::addAttack(Attack* bullet){
+	attacks.push_back(bullet);
 	addChild(bullet);
 }
 
@@ -579,8 +418,8 @@ void Level::reorder(){
 		element->setLocalZOrder(i);
 		++i;
 	}
-	for(auto& bullet : bullets){
-		bullet->setLocalZOrder(i);
+	for(auto& attack : attacks){
+		attack->setLocalZOrder(i);
 		++i;
 	}
 }
@@ -594,18 +433,14 @@ void Level::reset(){
 		removeChild(tower);
 	}
 	turrets.clear();
-	for (auto& bullet : bullets){
-		removeChild(bullet);
+	for (auto& attack : attacks){
+		removeChild(attack);
 	}
-	bullets.clear();
+	attacks.clear();
+
 	sugar = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id]["sugar"].asDouble();
 	life = 3;
 	paused = false;
-	state = TITLE;
-	getChildByName("title")->setVisible(true);
-	getChildByName("start_counter")->setVisible(false);
-	((Label*)getChildByName("start_counter"))->setString("3...");
-	timer = 0;
 	generator->reset();
 	for (auto& tcell : cells){
 		for (auto& cell : tcell){
@@ -618,10 +453,6 @@ void Level::reset(){
 		}
 	}
 	initWalls();
-}
-
-bool Level::hasWon(){
-	return (state == DONE);
 }
 
 Tower* Level::touchingTower(cocos2d::Vec2 position){
@@ -641,10 +472,6 @@ Tower* Level::touchingTower(cocos2d::Vec2 position){
 	return nullptr;
 }
 
-void Level::rewardCallback(Level* sender){
-	state = DONE;
-}
-
-Level::State Level::getState(){
-	return state;
+std::vector<Attack*> Level::getAttacks() {
+	return attacks;
 }

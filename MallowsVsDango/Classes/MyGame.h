@@ -121,6 +121,14 @@ public:
 	* @return Pointer of the current level.
 	*/
 	Level* getLevel();
+
+	/**
+	* @brief Get a pointer to the current interface. Useful for get information
+	* about it.
+	* @return Pointer of the current interface.
+	*/
+	InterfaceGame* getMenu();
+
 	// implement the "static node()" method manually
 	CREATE_FUNC(MyGame);
 };
