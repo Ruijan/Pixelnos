@@ -1,4 +1,4 @@
-#include "Bullet.h"
+#include "Attack.h"
 #include "../Dangos/Dango.h"
 #include "../Towers/Tower.h"
 #include "../Lib/Functions.h"
@@ -14,7 +14,16 @@ Attack::Attack(Dango* ntarget, double ndamages, std::string njsontype): target(n
 }
 
 Attack::~Attack(){
-	
+	if (target != nullptr) {
+		target->removeTargetingAttack(this);
+	}
+}
+
+void Attack::removeTarget(Dango* dango) {
+	if (target == dango) {
+		target = nullptr;
+		hasToBeDeleted = true;
+	}
 }
 
 bool Attack::hasTouched(){
@@ -117,8 +126,10 @@ void WaterBall::update(float dt) {
 				Size visibleSize = Director::getInstance()->getVisibleSize();
 				if (distance < 10 * visibleSize.width / 960) {
 					touched = true;
+					target->removeTargetingAttack(this);
 					target->takeDamages(damages);
 					startAnimation();
+					target = nullptr;
 				}
 				else {
 					direction.normalize();
@@ -182,6 +193,7 @@ void WaterBombBall::update(float dt) {
 					touched = true;
 					std::vector<Dango*> enemies = SceneManager::getInstance()->getGame()->
 						getLevel()->getEnemiesInRange(target->getPosition(), range);
+					target->removeTargetingAttack(this);
 					for (auto& enemy : enemies) {
 						if (enemy == target) {
 							enemy->takeDamages(damages);
@@ -189,8 +201,8 @@ void WaterBombBall::update(float dt) {
 						else{
 							enemy->takeDamages(0.5*damages);
 						}
-						
 					}
+					target = nullptr;
 					startAnimation();
 				}
 				else {
@@ -240,7 +252,9 @@ void Slash::update(float dt) {
 		if (target != nullptr) {
 			if (!touched) {
 				touched = true;
+				target->removeTargetingAttack(this);
 				target->takeDamages(damages);
+				target = nullptr;
 				startAnimation();
 			}
 		}
@@ -251,5 +265,52 @@ void Slash::update(float dt) {
 }
 
 bool Slash::affectEnemy(Dangobese* enemy) {
+	return true;
+}
+
+/*
+DEEP SLASH
+*/
+DeepSlash::DeepSlash(Dango* ntarget, double ndamages, double duration, double percent) :
+	Slash(ntarget, ndamages){
+	effect = DeepWound::create(ntarget, duration, percent);
+}
+
+DeepSlash::~DeepSlash() {
+
+}
+
+DeepSlash* DeepSlash::create(Dango* ntarget, double damages, double duration, double percent) {
+	DeepSlash* pSprite = new DeepSlash(ntarget, damages, duration, percent);
+
+	if (pSprite->initWithFile("res/turret/bullet.png"))
+	{
+		pSprite->autorelease();
+		return pSprite;
+	}
+	CC_SAFE_DELETE(pSprite);
+	return NULL;
+}
+
+void DeepSlash::update(float dt) {
+	if (enabled) {
+		if (target != nullptr) {
+			if (!touched) {
+				touched = true;
+				target->removeTargetingAttack(this);
+				target->takeDamages(damages);
+				target->addEffect(effect);
+				effect->applyModifierToTarget();
+				target = nullptr;
+				startAnimation();
+			}
+		}
+		else {
+			hasToBeDeleted = true;
+		}
+	}
+}
+
+bool DeepSlash::affectEnemy(Dangobese* enemy) {
 	return true;
 }

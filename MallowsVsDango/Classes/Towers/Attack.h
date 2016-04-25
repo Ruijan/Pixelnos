@@ -1,7 +1,8 @@
-#ifndef BULLET_HPP
-#define BULLET_HPP
+#ifndef ATTACK_HPP
+#define ATTACK_HPP
 
 #include "cocos2d.h"
+#include "Effect.h"
 
 class Dango;
 class Dangobese;
@@ -14,6 +15,7 @@ public:
 	virtual void update(float dt) = 0;
 	void startAnimation();
 
+	void removeTarget(Dango* dango);
 	bool hasTouched();
 	bool isDone();
 	Dango* getTarget();
@@ -76,6 +78,20 @@ public:
 
 	void update(float dt);
 	virtual bool affectEnemy(Dangobese* enemy);
+};
+
+// DEEP SLASH
+class DeepSlash : public Slash {
+public:
+	DeepSlash(Dango* ntarget, double ndamages, double duration, double percent);
+	virtual ~DeepSlash();
+	static DeepSlash* create(Dango* ntarget, double damages, double duration, double percent);
+
+	void update(float dt);
+	virtual bool affectEnemy(Dangobese* enemy);
+
+private:
+	DeepWound* effect;
 };
 
 #endif

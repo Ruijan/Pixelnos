@@ -51,9 +51,9 @@ bool AudioController::save() {
 	root["sound"]["playMusic"]			= music_enabled;
 	root["sound"]["playEffects"]		= effects_enabled;
 	// set the current save to the new one.
-	((AppDelegate*)Application::getInstance())->getConfigClass().setSave(root);
+	((AppDelegate*)Application::getInstance())->getConfigClass()->setSave(root);
 	// apply the changes to the file
-	((AppDelegate*)Application::getInstance())->getConfigClass().save();
+	((AppDelegate*)Application::getInstance())->getConfigClass()->save();
 	return true;
 }
 

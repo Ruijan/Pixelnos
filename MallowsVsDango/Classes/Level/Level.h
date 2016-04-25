@@ -5,7 +5,7 @@
 #include "Cell.h"
 #include "../Dangos/Dango.h"
 #include "../Towers/Tower.h"
-#include "../Towers/Bullet.h"
+#include "../Towers/Attack.h"
 #include "DangoGenerator.h"
 #include "Wall.h"
 #include <iostream>
@@ -35,7 +35,6 @@ public:
 	void removeElements();
 
 	bool isPaused();
-	//bool isCellInPath(Cell* cell);
 	Quantity getQuantity();
 	Quantity getLife();
 	int getTotalExperience();
@@ -47,13 +46,18 @@ public:
 	void addTurret(Tower* turret);
 	Cell* getNearestCell(cocos2d::Vec2 position);
 	Tower* touchingTower(cocos2d::Vec2 position);
+	Dango* touchingDango(cocos2d::Vec2 position);
+
 	std::vector<Dango*> getEnemiesInRange(cocos2d::Vec2 position, double range);
+	std::vector<Dango*> getEnemies();
 	std::vector<Cell*> getPath(int path);
 	void addDango(Dango* dango);
 	void addAttack(Attack* bullet);
 	bool hasLost();
 	void reset();
 	std::vector<Attack*> getAttacks();
+
+	void showGrid(bool show);
 
 protected:
 	unsigned int id;

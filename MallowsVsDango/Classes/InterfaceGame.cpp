@@ -30,6 +30,7 @@ bool InterfaceGame::init(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	state = State::IDLE;
+	game_state = INTRO;
 
 	initParametersMenu();
 	initLoseMenu();
@@ -39,8 +40,6 @@ bool InterfaceGame::init(){
 	initStartMenu();
 	initDialoguesFromLevel();
 
-	game_state = INTRO;
-
 	addChild(ui::Layout::create(), 3, "black_mask");
 	ui::Button* mask = ui::Button::create("res/buttons/mask.png");
 	mask->setScaleX(visibleSize.width / mask->getContentSize().width);
@@ -49,7 +48,7 @@ bool InterfaceGame::init(){
 	getChildByName("black_mask")->addChild(mask);
 	getChildByName("black_mask")->setVisible(false);
 
-	selectedTurret = nullptr;
+	selected_turret = nullptr;
 
 	addEvents();
 
@@ -92,12 +91,12 @@ void InterfaceGame::addEvents()
 				auto item = getTowerFromPoint(touch->getStartLocation());
 				if (item.first != "nullptr"){
 					if (state == TURRET_SELECTED){
-						selectedTurret->displayRange(false);
+						selected_turret->displayRange(false);
 						hideTowerInfo();
-						selectedTurret = nullptr;
+						selected_turret = nullptr;
 					}
 					else if(state == TURRET_CHOSEN){
-						if(selectedTurret != nullptr){
+						if(selected_turret != nullptr){
 							removeTower();
 						}
 					}
@@ -109,66 +108,84 @@ void InterfaceGame::addEvents()
 					}
 				}
 				else{
-					if(selectedTurret != nullptr && state == TURRET_CHOSEN){
-						getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
+					if(selected_turret != nullptr && state == TURRET_CHOSEN){
 						removeTower();
-						state = IDLE;
 					}
-					else if (state == TURRET_SELECTED){
-						getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
-						selectedTurret->displayRange(false);
+					else if (selected_turret != nullptr && state == TURRET_SELECTED){
+						selected_turret->displayRange(false);
 						hideTowerInfo();
-						selectedTurret = nullptr;
+						selected_turret = nullptr;
 					}
+					getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
 					state = State::IDLE;
 				}
 			}
 			else{
+				if (game_state == TITLE) {
+					getChildByName("start")->setVisible(false);
+					getChildByName("title")->setVisible(false);
+				}
 				Tower* tower = game->getLevel()->touchingTower(p);
-				if (tower != nullptr && state != TURRET_CHOSEN){
-					if (state == TURRET_SELECTED){
-						selectedTurret->displayRange(false);
-					}
-					getChildByName("menu_panel")->getChildByName("informations")->setVisible(true);
-					selectedTurret = tower;
-					state = TURRET_SELECTED;
-					if (game_state == TITLE) {
-						getChildByName("start")->setVisible(false);
-						getChildByName("title")->setVisible(false);
-					}
-				}
-				else if (tower == nullptr && state == TURRET_SELECTED ){
-					state = IDLE;
-					getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
-					selectedTurret->displayRange(false);
-					hideTowerInfo();
-					selectedTurret = nullptr;
-					if (game_state == TITLE) {
-						getChildByName("start")->setVisible(true);
-						getChildByName("title")->setVisible(true);
-					}
-				}
-				else if(state == TOUCHED){ 
-					auto item = getTowerFromPoint(touch->getStartLocation());
-					if (item.first != "nullptr"){
-						if (game->getLevel()->getQuantity() >= Tower::getConfig()[item.first]["cost"][0].asDouble()){
-							state = State::TURRET_CHOSEN;
-							Tower::TowerType tape = Tower::getTowerTypeFromString(item.first);
-							menuTurretTouchCallback(Tower::getTowerTypeFromString(item.first));
-							moveSelectedTurret(touch->getLocation());
-							selectedTurret->displayRange(true);
-							selectedTurret->setVisible(true);
-							if (game_state == TITLE) {
-								getChildByName("start")->setVisible(false);
-								getChildByName("title")->setVisible(false);
-							}
+				if (tower != nullptr) {
+					if (state == TURRET_SELECTED) {
+						selected_turret->displayRange(false);
+						if (tower != selected_turret) {
+							selected_turret = tower;
+						}
+						else {
+							hideTowerInfo();
+							selected_turret = nullptr;
+							state = IDLE;
 						}
 					}
+					else if (state == IDLE) {
+						selected_turret = tower;
+						state = TURRET_SELECTED;
+					}
 				}
-				else if (selectedTurret != nullptr && !game->isPaused() && state == TURRET_CHOSEN){
-					Vec2 pos = touch->getLocation();
-					moveSelectedTurret(pos);
-					selectedTurret->setVisible(true);
+				else {
+					if (state == TURRET_SELECTED) {
+						selected_turret->displayRange(false);
+						hideTowerInfo();
+						if (game_state == TITLE) {
+							getChildByName("start")->setVisible(false);
+							getChildByName("title")->setVisible(false);
+						}
+						selected_turret = nullptr;
+						state = IDLE;
+					}
+					else if (state == TOUCHED) {
+						state = IDLE;
+						getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
+						//log("Problem, you shouldn't be in this state: TOUCHED when touched began in the background.");
+					}
+					else if (state == TURRET_CHOSEN) {
+						Vec2 pos = touch->getLocation();
+						moveSelectedTurret(pos);
+						selected_turret->setVisible(true);
+					}
+				}
+				Dango* dango = game->getLevel()->touchingDango(p);
+				if (dango != nullptr) {
+					if (state == TURRET_SELECTED) {
+						state = IDLE;
+						getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
+						selected_turret->displayRange(false);
+						hideTowerInfo();
+						selected_turret = nullptr;
+					}
+					if (state == IDLE || state == DANGO_SELECTED || state == TOUCHED) {
+						getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
+						selected_dango = dango;
+						state = DANGO_SELECTED;
+					}
+				}
+				else {
+					if (state == DANGO_SELECTED) {
+						hideDangoInfo();
+						selected_dango = nullptr;
+						state = IDLE;
+					}
 				}
 			}
 			return true; // to indicate that we have consumed it.
@@ -185,14 +202,26 @@ void InterfaceGame::addEvents()
 			if (tower != nullptr){
 				std::string name = tower->getSpecConfig()["name"].asString();
 				displayTowerInfos(tower->getSpecConfig()["name"].asString());
-				selectedTurret->displayRange(true);
+				selected_turret->displayRange(true);
 				showTowerInfo();
 			}
 			else{
 				getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
-				selectedTurret->displayRange(false);
-				hideTowerInfo();
-				selectedTurret = nullptr;
+				selected_turret = nullptr;
+				state = IDLE;
+				if (game_state == TITLE) {
+					getChildByName("start")->setVisible(true);
+					getChildByName("title")->setVisible(true);
+				}
+			}
+		}
+		else if (state == DANGO_SELECTED) {
+			Dango* dango = game->getLevel()->touchingDango(p);
+			if (dango != nullptr) {
+				showDangoInfo();
+			}
+			else {
+				selected_dango = nullptr;
 				state = IDLE;
 				if (game_state == TITLE) {
 					getChildByName("start")->setVisible(true);
@@ -205,20 +234,27 @@ void InterfaceGame::addEvents()
 				if(!isOnTower(p)){
 					builtCallback(nullptr);
 					state = State::IDLE;
-					selectedTurret->displayRange(false);
-					selectedTurret = nullptr;
+					selected_turret->displayRange(false);
+					getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
+					selected_turret = nullptr;
 					if (game_state == TITLE) {
 						getChildByName("start")->setVisible(true);
 						getChildByName("title")->setVisible(true);
 					}
 				}
+				if (((AppDelegate*)Application::getInstance())->getConfigClass()->isMovingGridEnabled()) {
+					game->getLevel()->showGrid(false);
+				}
 			}
 			else{
+				selected_turret->destroyCallback(this);
 				removeTower();
-				state = State::IDLE;
 				if (game_state == TITLE) {
 					getChildByName("start")->setVisible(true);
 					getChildByName("title")->setVisible(true);
+				}
+				if (((AppDelegate*)Application::getInstance())->getConfigClass()->isMovingGridEnabled()) {
+					game->getLevel()->showGrid(false);
 				}
 			}
 		}
@@ -227,20 +263,14 @@ void InterfaceGame::addEvents()
 				getChildByName("start")->setVisible(true);
 				getChildByName("title")->setVisible(true);
 			}
-			if(selectedTurret != nullptr){
-				destroyCallback(nullptr);
+			//state = IDLE;
+		}
+		if (state == IDLE) {
+			if (game_state == TITLE) {
+				getChildByName("start")->setVisible(true);
+				getChildByName("title")->setVisible(true);
 			}
-			auto item = getTowerFromPoint(p);
-			if (item.first != "nullptr"){
-				if (game->getLevel()->getQuantity() >= Tower::getConfig()[item.first]["cost"][0].asDouble()){
-					state = State::TURRET_CHOSEN;
-					Tower::TowerType tape = Tower::getTowerTypeFromString(item.first);
-					menuTurretTouchCallback(Tower::getTowerTypeFromString(item.first));
-				}
-				else{
-					state = IDLE;
-				}
-			}
+			getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
 		}
     };
 
@@ -250,27 +280,37 @@ void InterfaceGame::addEvents()
 
 			double dist = touch->getLocation().distanceSquared(touch->getStartLocation());
 			if (touch->getLocation().x - visibleSize.width * 3 / 4 < 0) {
+				if (((AppDelegate*)Application::getInstance())->getConfigClass()->isMovingGridEnabled()) {
+					game->getLevel()->showGrid(true);
+				}
 				auto item = getTowerFromPoint(touch->getStartLocation());
 				if (item.first != "nullptr") {
 					if (game->getLevel()->getQuantity() >= Tower::getConfig()[item.first]["cost"][0].asDouble()) {
-						state = State::TURRET_CHOSEN;
+						state = TURRET_CHOSEN;
 						Tower::TowerType tape = Tower::getTowerTypeFromString(item.first);
 						menuTurretTouchCallback(Tower::getTowerTypeFromString(item.first));
 						moveSelectedTurret(touch->getLocation());
-						selectedTurret->displayRange(true);
-						selectedTurret->setVisible(true);
+						selected_turret->displayRange(true);
+						selected_turret->setVisible(true);
 					}
 				}
 			}
-			/*if(dist > 100){
-				
-			}*/
 		}
-		else if(selectedTurret != nullptr && !game->isPaused() &&
-			state == State::TURRET_CHOSEN){
+		else if(state == State::TURRET_CHOSEN){
 			Vec2 pos = touch->getLocation();
-			moveSelectedTurret(pos);
-			selectedTurret->displayRange(true);
+			cocos2d::Rect rectrightpanel = getChildByName("menu_panel")->getChildByName("panel")->getBoundingBox();
+			rectrightpanel.origin += getChildByName("menu_panel")->getBoundingBox().origin;
+			if (rectrightpanel.containsPoint(pos)) {
+				selected_turret->destroyCallback(nullptr);
+				selected_turret = nullptr;
+				state = TOUCHED;
+				if (((AppDelegate*)Application::getInstance())->getConfigClass()->isMovingGridEnabled()) {
+					game->getLevel()->showGrid(false);
+				}
+			}
+			else {
+				moveSelectedTurret(pos);
+			}
 		}
 	};
 	//cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
@@ -309,8 +349,11 @@ void InterfaceGame::update(float dt){
 		life->setString(lifeText);
 		life->enableOutline(Color4B::BLACK, 1.0);
 	}
-	if (getChildByName("information_tower") != nullptr && selectedTurret != nullptr) {
-		selectedTurret->updateInformationLayout((ui::Layout*)getChildByName("information_tower"));
+	if (getChildByName("information_tower") != nullptr && selected_turret != nullptr) {
+		selected_turret->updateInformationLayout((ui::Layout*)getChildByName("information_tower"));
+	}
+	if (getChildByName("information_dango") != nullptr && selected_dango != nullptr) {
+		selected_dango->updateInformationLayout((ui::Layout*)getChildByName("information_dango"));
 	}
 	switch (game_state) {
 	case INTRO:
@@ -341,29 +384,29 @@ void InterfaceGame::update(float dt){
 }
 
 void InterfaceGame::menuTurretTouchCallback(Tower::TowerType turret){
-	if(selectedTurret == nullptr && !game->isPaused()){
+	if(selected_turret == nullptr && !game->isPaused()){
 		if (turret == Tower::TowerType::ARCHER){
 			Scorpion* createdTurret = Scorpion::create();
 			game->getLevel()->addTurret(createdTurret);
-			selectedTurret = createdTurret;
+			selected_turret = createdTurret;
 		}
 		else if (turret == Tower::TowerType::CUTTER){
 			Cutter* createdTurret = Cutter::create();
 			game->getLevel()->addTurret(createdTurret);
-			selectedTurret = createdTurret;
+			selected_turret = createdTurret;
 		}
 	}
 }
 
 void InterfaceGame::moveSelectedTurret(Vec2 pos){
-	if(selectedTurret != nullptr){
-		Cell* nearestCell = game->getLevel()->getNearestCell(selectedTurret->getPosition());
+	if(selected_turret != nullptr){
+		Cell* nearestCell = game->getLevel()->getNearestCell(selected_turret->getPosition());
 		Cell* nearestCell2 = game->getLevel()->getNearestCell(pos/game->getLevel()->getScale());
 		if(nearestCell2 != nullptr && nearestCell != nullptr){
 			if(nearestCell2->isFree() && !nearestCell2->isPath() && !nearestCell2->isOffLimit()){
 				nearestCell->setObject(nullptr);
-				nearestCell2->setObject(selectedTurret);
-				selectedTurret->setPosition(nearestCell2->getPosition());
+				nearestCell2->setObject(selected_turret);
+				selected_turret->setPosition(nearestCell2->getPosition());
 			}
 		}
 	}
@@ -371,7 +414,7 @@ void InterfaceGame::moveSelectedTurret(Vec2 pos){
 bool InterfaceGame::isOnTower(Vec2 pos){
 	Cell* nearestCell = game->getLevel()->getNearestCell(pos/game->getLevel()->getScale());
 	if(nearestCell != nullptr){
-		if((nearestCell->isFree()|| nearestCell->getObject() == selectedTurret) && !nearestCell->isPath() && !nearestCell->isOffLimit()){
+		if((nearestCell->isFree()|| nearestCell->getObject() == selected_turret) && !nearestCell->isPath() && !nearestCell->isOffLimit()){
 			return false;
 		}
 	}
@@ -397,10 +440,9 @@ void InterfaceGame::showWin(){
 void InterfaceGame::reset(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	state = IDLE;
-	game_state = INTRO;
-	selectedTurret = nullptr;
-	((AudioSlider*)getChildByName("menu_pause")->getChildByName("MusicVolume"))->enable(false);
-	((AudioSlider*)getChildByName("menu_pause")->getChildByName("EffectsVolume"))->enable(false);
+	game_state = TITLE;
+	selected_turret = nullptr;
+	selected_dango = nullptr;
 
 	getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
 	getChildByName("menu_lose")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
@@ -414,11 +456,12 @@ void InterfaceGame::reset(){
 	((Label*)getChildByName("title"))->runAction(FadeIn::create(0.5f));
 	removeChildByName("reward_layout");
 	removeChildByName("information_tower");
+	removeChildByName("information_dango");
 	if (dialogues != nullptr) {
 		removeChild(dialogues,1);
 		delete dialogues;
-		initDialoguesFromLevel();
 	}
+	initDialoguesFromLevel();
 }
 
 void InterfaceGame::initParametersMenu(){
@@ -430,9 +473,9 @@ void InterfaceGame::initParametersMenu(){
 	panel->setZoomScale(0);
 	menu_pause->addChild(panel, 1, "panel");
 	panel->setScaleX(0.45*visibleSize.width / panel->getContentSize().width);
-	panel->setScaleY(0.45*visibleSize.width / panel->getContentSize().width);
+	panel->setScaleY(0.8*visibleSize.width / panel->getContentSize().width);
 
-	Label* title = Label::createWithTTF("Settings", "fonts/LICABOLD.ttf", 45.0f);
+	Label* title = Label::createWithTTF("Settings", "fonts/LICABOLD.ttf", 45.0f * visibleSize.width / 1280);
 	title->setColor(Color3B::BLACK);
 	title->setPosition(0, panel->getContentSize().height*panel->getScaleY() / 2 - title->getContentSize().height);
 	menu_pause->addChild(title, 2, "title");
@@ -441,8 +484,6 @@ void InterfaceGame::initParametersMenu(){
 	resume->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			Size visibleSize = Director::getInstance()->getVisibleSize();
-			((AudioSlider*)getChildByName("menu_pause")->getChildByName("MusicVolume"))->enable(false);
-			((AudioSlider*)getChildByName("menu_pause")->getChildByName("EffectsVolume"))->enable(false);
 			auto* hideAction = TargetedAction::create(getChildByName("menu_pause"),
 				EaseBackIn::create(MoveTo::create(0.5f,Vec2(visibleSize.width/2,visibleSize.height * 1.5))));
 			getChildByName("menu_pause")->runAction(hideAction);
@@ -474,12 +515,15 @@ void InterfaceGame::initParametersMenu(){
 	music->setColor(Color3B::BLACK);
 	effects->setColor(Color3B::BLACK);
 	loop->setColor(Color3B::BLACK);
-	music->setPosition(-panel->getContentSize().width*panel->getScaleX() * 2 / 5 +
-		music->getContentSize().width / 2, panel->getContentSize().height*panel->getScaleX() * 2 / 12);
+	music->setPosition(-panel->getContentSize().width * panel->getScaleX() * 2 / 5 +
+		music->getContentSize().width / 2, title->getPosition().y - title->getContentSize().height -
+		music->getContentSize().height * 3 / 4);
 	effects->setPosition(-panel->getContentSize().width*panel->getScaleX() * 2 / 5 +
-		effects->getContentSize().width / 2, 0);
+		effects->getContentSize().width / 2, music->getPosition().y - music->getContentSize().height -
+		effects->getContentSize().height * 3 / 4);
 	loop->setPosition(-panel->getContentSize().width*panel->getScaleX() * 2 / 5 +
-		loop->getContentSize().width / 2, -panel->getContentSize().height*panel->getScaleX() * 2 / 12);
+		loop->getContentSize().width / 2, effects->getPosition().y - effects->getContentSize().height -
+		loop->getContentSize().height * 3 / 4);
 	menu_pause->addChild(music, 2);
 	menu_pause->addChild(effects, 2);
 	menu_pause->addChild(loop, 2);
@@ -494,29 +538,28 @@ void InterfaceGame::initParametersMenu(){
 	AudioSlider* sliderMusicVolume = AudioSlider::create(AudioSlider::Horizontal);
 	sliderMusicVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()
 		->getMaxMusicVolume());
-	sliderMusicVolume->setPosition(panel->getContentSize().width*panel->getScaleX()/7,
-		panel->getContentSize().height*panel->getScaleX() * 2 / 12);
+	sliderMusicVolume->setPosition(panel->getContentSize().width*panel->getScaleX() / 7,
+		music->getPosition().y);
 	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderMusicVolume, 
 		AudioController::SOUNDTYPE::MUSIC);
 	sliderMusicVolume->setScale(visibleSize.width / 1280);
-	sliderMusicVolume->enable(false);
 
 	AudioSlider* sliderEffectsVolume = AudioSlider::create(AudioSlider::Horizontal);
 	sliderEffectsVolume->setValue(0, 1, ((AppDelegate*)Application::getInstance())->getAudioController()
 		->getMaxEffectsVolume());
-	sliderEffectsVolume->setPosition(panel->getContentSize().width*panel->getScaleX()/7, 0);
-	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderEffectsVolume, 
+	sliderEffectsVolume->setPosition(panel->getContentSize().width*panel->getScaleX() / 7, effects->getPosition().y);
+	((AppDelegate*)Application::getInstance())->addAudioSlider(sliderEffectsVolume,
 		AudioController::SOUNDTYPE::EFFECT);
 	sliderEffectsVolume->setScale(visibleSize.width / 1280);
-	sliderEffectsVolume->enable(false);
 
-	checkbox_music->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX()* 2 / 5,
-		panel->getContentSize().height*panel->getScaleX() * 2 / 12));
+	checkbox_music->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() * 2 / 5,
+		music->getPosition().y));
 	checkbox_music->setScale(visibleSize.width / 1280);
-	checkbox_effects->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() * 2 / 5, 0));
+	checkbox_effects->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() * 2 / 5,
+		effects->getPosition().y));
 	checkbox_effects->setScale(visibleSize.width / 1280);
-	checkbox_loop->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() / 7, 
-		-panel->getContentSize().height*panel->getScaleX() * 2 / 12));
+	checkbox_loop->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() / 7,
+		loop->getPosition().y));
 	checkbox_loop->setScale(visibleSize.width / 1280);
 
 	((AppDelegate*)Application::getInstance())->getAudioController()->addButton(checkbox_music, 
@@ -557,6 +600,127 @@ void InterfaceGame::initParametersMenu(){
 	menu_pause->addChild(checkbox_effects, 6, "EffectsEnable");
 	menu_pause->addChild(checkbox_loop, 6, "LoopEnable");
 
+	// GLOBAL SETTINGS
+	Label* always_show_grid = Label::createWithTTF("Always", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* moving_show_grid = Label::createWithTTF("On Move", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* never_show_grid = Label::createWithTTF("Never", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+
+	Label* show_grid = Label::createWithTTF("Show Grid", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* auto_limit = Label::createWithTTF("Auto Limit", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* skip_dialogues = Label::createWithTTF("Play Dialogues", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	always_show_grid->setColor(Color3B::BLACK);
+	moving_show_grid->setColor(Color3B::BLACK);
+	never_show_grid->setColor(Color3B::BLACK);
+	show_grid->setColor(Color3B::BLACK);
+	auto_limit->setColor(Color3B::BLACK);
+	skip_dialogues->setColor(Color3B::BLACK);
+
+	double offset = panel->getContentSize().width * panel->getScaleX() / 40;
+
+	never_show_grid->setPosition(0, loop->getPosition().y - loop->getContentSize().height / 2 -
+		always_show_grid->getContentSize().height * 3 / 4);
+	moving_show_grid->setPosition(never_show_grid->getPosition().x + never_show_grid->getContentSize().width / 2 +
+		moving_show_grid->getContentSize().width / 2 + offset, loop->getPosition().y - loop->getContentSize().height / 2 -
+		always_show_grid->getContentSize().height * 3 / 4);
+	checkbox_loop->setPosition(Vec2(moving_show_grid->getPosition().x, checkbox_loop->getPosition().y));
+	always_show_grid->setPosition(moving_show_grid->getPosition().x + moving_show_grid->getContentSize().width / 2 +
+		always_show_grid->getContentSize().width / 2 + offset, loop->getPosition().y - loop->getContentSize().height / 2 -
+		always_show_grid->getContentSize().height * 3 / 4);
+	show_grid->setPosition(-panel->getContentSize().width * panel->getScaleX() * 2 / 5 +
+		show_grid->getContentSize().width / 2, always_show_grid->getPosition().y - always_show_grid->getContentSize().height / 2 -
+		show_grid->getContentSize().height * 3 / 4);
+	auto_limit->setPosition(-panel->getContentSize().width*panel->getScaleX() * 2 / 5 +
+		auto_limit->getContentSize().width / 2, show_grid->getPosition().y - show_grid->getContentSize().height / 2 -
+		auto_limit->getContentSize().height * 3 / 4);
+	skip_dialogues->setPosition(-panel->getContentSize().width*panel->getScaleX() * 2 / 5 +
+		skip_dialogues->getContentSize().width / 2, auto_limit->getPosition().y - auto_limit->getContentSize().height / 2 -
+		skip_dialogues->getContentSize().height * 3 / 4);
+
+	menu_pause->addChild(always_show_grid, 2);
+	menu_pause->addChild(moving_show_grid, 2);
+	menu_pause->addChild(never_show_grid, 2);
+	menu_pause->addChild(show_grid, 2);
+	menu_pause->addChild(auto_limit, 2);
+	menu_pause->addChild(skip_dialogues, 2);
+
+	auto checkbox_grid = cocos2d::ui::CheckBox::create("res/buttons/checkbox.png", "res/buttons/checkbox.png",
+		"res/buttons/filled.png", "res/buttons/checkbox.png", "res/buttons/checkbox.png");
+	((AppDelegate*)Application::getInstance())->getConfigClass()->addGridButton(checkbox_grid);
+	checkbox_grid->setPosition(Vec2(always_show_grid->getPosition().x,
+		show_grid->getPosition().y));
+	checkbox_grid->setSelected(((AppDelegate*)Application::getInstance())->getConfigClass()->isAlwaysGridEnabled());
+	checkbox_grid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			((AppDelegate*)Application::getInstance())->getConfigClass()->enableMovingGrid(false);
+			((AppDelegate*)Application::getInstance())->getConfigClass()->enableAlwaysGrid(true);
+			((AppDelegate*)Application::getInstance())->getConfigClass()->enableNeverGrid(false);
+			game->getLevel()->showGrid(true);
+		}
+	});
+
+	auto checkbox_never_grid = cocos2d::ui::CheckBox::create("res/buttons/checkbox.png", "res/buttons/checkbox.png",
+		"res/buttons/filled.png", "res/buttons/checkbox.png", "res/buttons/checkbox.png");
+	((AppDelegate*)Application::getInstance())->getConfigClass()->addNeverGridButton(checkbox_never_grid);
+	checkbox_never_grid->setPosition(Vec2(never_show_grid->getPosition().x,
+		show_grid->getPosition().y));
+	checkbox_never_grid->setSelected(((AppDelegate*)Application::getInstance())->getConfigClass()->isNeverGridEnabled());
+	checkbox_never_grid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			((AppDelegate*)Application::getInstance())->getConfigClass()->enableMovingGrid(false);
+			((AppDelegate*)Application::getInstance())->getConfigClass()->enableAlwaysGrid(false);
+			((AppDelegate*)Application::getInstance())->getConfigClass()->enableNeverGrid(true);
+			game->getLevel()->showGrid(false);
+		}
+	});
+
+	auto checkbox_moving_grid = cocos2d::ui::CheckBox::create("res/buttons/checkbox.png", "res/buttons/checkbox.png",
+		"res/buttons/filled.png", "res/buttons/checkbox.png", "res/buttons/checkbox.png");
+	((AppDelegate*)Application::getInstance())->getConfigClass()->addMovingGridButton(checkbox_moving_grid);
+	checkbox_moving_grid->setPosition(Vec2(moving_show_grid->getPosition().x,
+		show_grid->getPosition().y));
+	checkbox_moving_grid->setSelected(((AppDelegate*)Application::getInstance())->getConfigClass()->isMovingGridEnabled());
+	checkbox_moving_grid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			((AppDelegate*)Application::getInstance())->getConfigClass()->enableMovingGrid(true);
+			((AppDelegate*)Application::getInstance())->getConfigClass()->enableAlwaysGrid(false);
+			((AppDelegate*)Application::getInstance())->getConfigClass()->enableNeverGrid(false);
+			game->getLevel()->showGrid(false);
+		}
+	});
+
+	auto checkbox_limit = cocos2d::ui::CheckBox::create("res/buttons/checkbox.png", "res/buttons/checkbox.png",
+		"res/buttons/filled.png", "res/buttons/checkbox.png", "res/buttons/checkbox.png");
+	((AppDelegate*)Application::getInstance())->getConfigClass()->addLimitButton(checkbox_limit);
+	checkbox_limit->setPosition(Vec2(moving_show_grid->getPosition().x,
+		auto_limit->getPosition().y));
+	checkbox_limit->setSelected(((AppDelegate*)Application::getInstance())->getConfigClass()->isLimitEnabled());
+	checkbox_limit->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			((AppDelegate*)Application::getInstance())->getConfigClass()->enableAutoLimit(
+				((cocos2d::ui::CheckBox*)sender)->isSelected());
+		}
+	});
+
+	auto checkbox_dialogues = cocos2d::ui::CheckBox::create("res/buttons/checkbox.png", "res/buttons/checkbox.png",
+		"res/buttons/filled.png", "res/buttons/checkbox.png", "res/buttons/checkbox.png");
+	((AppDelegate*)Application::getInstance())->getConfigClass()->addDialogueButton(checkbox_dialogues);
+	checkbox_dialogues->setPosition(Vec2(moving_show_grid->getPosition().x,
+		skip_dialogues->getPosition().y));
+	bool selected = ((AppDelegate*)Application::getInstance())->getConfigClass()->isDialoguesEnabled();
+	checkbox_dialogues->setSelected(selected);
+	checkbox_dialogues->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			((AppDelegate*)Application::getInstance())->getConfigClass()->enableDialogues(
+				((cocos2d::ui::CheckBox*)sender)->isSelected());
+		}
+	});
+
+	menu_pause->addChild(checkbox_grid, 6, "GridEnable");
+	menu_pause->addChild(checkbox_never_grid, 6, "NeverGridEnable");
+	menu_pause->addChild(checkbox_moving_grid, 6, "MovingGridEnable");
+	menu_pause->addChild(checkbox_limit, 6, "LimitEnable");
+	menu_pause->addChild(checkbox_dialogues, 6, "DialogueEnable");
+
 	addChild(menu_pause, 4, "menu_pause");
 }
 void InterfaceGame::initStartMenu() {
@@ -565,8 +729,7 @@ void InterfaceGame::initStartMenu() {
 	Label* title = Label::createWithTTF("Level " + Value((int)(id + 1)).asString(), "fonts/LICABOLD.ttf", round(visibleSize.width / 12.0));
 	title->setColor(Color3B::YELLOW);
 	title->enableOutline(Color4B::BLACK, 3);
-	title->setPosition(round(visibleSize.width * 3 / 8.0), round(visibleSize.height));
-	//title->setPosition(round(visibleSize.width * 3 / 8.0), round(visibleSize.height / 2.0));
+	title->setPosition(round(visibleSize.width * 3 / 8.0), visibleSize.height + title->getContentSize().height/2);
 	addChild(title, 2, "title");
 
 	ui::Button* start = ui::Button::create("res/buttons/list_level_checkbox.png");
@@ -577,7 +740,6 @@ void InterfaceGame::initStartMenu() {
 	start->setTitleColor(Color3B::YELLOW);
 	start->setTitleAlignment(cocos2d::TextHAlignment::CENTER);
 	start->setPosition(Vec2(title->getPosition().x, -start->getContentSize().height * start->getScaleY()));
-	//start->setPosition(Vec2(title->getPosition().x, start->getContentSize().height * start->getScale()));
 	start->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			setListening(true);
@@ -780,8 +942,6 @@ void InterfaceGame::initRightPanel(){
 	parameters->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			Size visibleSize = Director::getInstance()->getVisibleSize();
-			((AudioSlider*)getChildByName("menu_pause")->getChildByName("MusicVolume"))->enable(true);
-			((AudioSlider*)getChildByName("menu_pause")->getChildByName("EffectsVolume"))->enable(true);
 			auto* showAction = TargetedAction::create(getChildByName("menu_pause"),
 				EaseBackOut::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2))));
 			getChildByName("menu_pause")->runAction(showAction);
@@ -966,14 +1126,16 @@ void InterfaceGame::displayTowerInfos(std::string item_name){
 		staticFrames.pushBack(steadyFrames.front());
 		staticFrames.pushBack(steadyFrames.front());
 		spriteBatchNode = SpriteBatchNode::create(Tower::getConfig()[item_name]["animation"].asString());
-		spriteBatchNode->setContentSize(Size(
-			getChildByName("menu_panel")->getChildByName("informations")->getContentSize().width / 2,
+		/*spriteBatchNode->setContentSize(Size(
+			getChildByName("menu_panel")->getChildByName("informations")->getContentSize().width / 3,
 			getChildByName("menu_panel")->getChildByName("informations")->getContentSize().height / 3));
-		spriteBatchNode->setAnchorPoint(Vec2(0.5f, 0.5f));
+		spriteBatchNode->setAnchorPoint(Vec2(0.5f, 0.5f));*/
 		Sprite* image = Sprite::createWithSpriteFrame(staticFrames.front());
+		image->setScale(getChildByName("menu_panel")->getChildByName("informations")->getContentSize().width / 3 * 0.95 / image->getContentSize().width);
 
 		spriteBatchNode->addChild(image);
-		spriteBatchNode->setPosition(Vec2(0, 0));
+		spriteBatchNode->setPosition(Vec2(-getChildByName("menu_panel")->getChildByName("informations")->getContentSize().width / 3,
+			getChildByName("menu_panel")->getChildByName("informations")->getChildByName("speed")->getPosition().y));
 
 		Animation* animation2 = Animation::createWithSpriteFrames(steadyFrames, 0.075f);
 		Animation* animation3 = Animation::createWithSpriteFrames(staticFrames, 0.5f);
@@ -1007,21 +1169,81 @@ void InterfaceGame::mainMenuCallBack(std::string id_menu) {
 }
 
 void InterfaceGame::removeTower(){
-	//selectedTurret->destroyCallback(nullptr);
-	selectedTurret = nullptr;
+	selected_turret = nullptr;
 	state = State::IDLE;
 }
 
 void InterfaceGame::destroyCallback(Ref* sender){
-	game->getLevel()->increaseQuantity(selectedTurret->getCost() * 0.5 * (selectedTurret->getLevel() + 1));
+	
+	game->getLevel()->increaseQuantity(selected_turret->getCost() * 0.5 * (selected_turret->getLevel() + 1));
 }
 
 void InterfaceGame::builtCallback(Ref* sender){
-	selectedTurret->builtCallback(sender);
-	selectedTurret->setFixed(true);
-	game->getLevel()->decreaseQuantity(selectedTurret->getCost());
-	//selectedTurret = nullptr;
+	selected_turret->builtCallback(sender);
+	selected_turret->setFixed(true);
+	game->getLevel()->decreaseQuantity(selected_turret->getCost());
+	//selected_turret = nullptr;
 	displayTowerInfos("");
+}
+
+
+
+void InterfaceGame::showDangoInfo() {
+	if (getChildByName("information_dango") != nullptr) {
+		auto scale_to = ScaleTo::create(0.125f, 0.f);
+		auto removeAndCreateLayout = CallFunc::create([&]() {
+			removeChildByName("information_dango");
+			auto layout = selected_dango->getInformationLayout(this);
+			addChild(layout, 1, "information_dango");
+			layout->setScale(0);
+			auto scale_to = ScaleTo::create(0.125f, 1.f);
+			layout->runAction(scale_to);
+		});
+		getChildByName("information_dango")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
+	}
+	else {
+		auto layout = selected_dango->getInformationLayout(this);
+		addChild(layout, 1, "information_dango");
+		layout->setScale(0);
+		auto scale_to = ScaleTo::create(0.125f, 1.f);
+		layout->runAction(scale_to);
+	}
+}
+
+void InterfaceGame::hideDangoInfo() {
+	if (getChildByName("information_dango") != nullptr) {
+		auto scale_to = ScaleTo::create(0.125f, 0.f);
+		auto removeAndCreateLayout = CallFunc::create([&]() {
+			removeChildByName("information_dango");
+		});
+		getChildByName("information_dango")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
+	}
+	if (game_state == TITLE) {
+		getChildByName("start")->setVisible(true);
+		getChildByName("title")->setVisible(true);
+	}
+}
+
+void InterfaceGame::showTowerInfo() {
+	if (getChildByName("information_tower") != nullptr) {
+		auto scale_to = ScaleTo::create(0.125f, 0.f);
+		auto removeAndCreateLayout = CallFunc::create([&]() {
+			removeChildByName("information_tower");
+			auto layout = selected_turret->getInformationLayout(this);
+			addChild(layout, 1, "information_tower");
+			layout->setScale(0);
+			auto scale_to = ScaleTo::create(0.125f, 1.f);
+			layout->runAction(scale_to);
+		});
+		getChildByName("information_tower")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
+	}
+	else {
+		auto layout = selected_turret->getInformationLayout(this);
+		addChild(layout, 1, "information_tower");
+		layout->setScale(0);
+		auto scale_to = ScaleTo::create(0.125f, 1.f);
+		layout->runAction(scale_to);
+	}
 }
 
 void InterfaceGame::hideTowerInfo() {
@@ -1035,28 +1257,6 @@ void InterfaceGame::hideTowerInfo() {
 	if (game_state == TITLE) {
 		getChildByName("start")->setVisible(true);
 		getChildByName("title")->setVisible(true);
-	}
-}
-
-void InterfaceGame::showTowerInfo() {
-	if (getChildByName("information_tower") != nullptr) {
-		auto scale_to = ScaleTo::create(0.125f, 0.f);
-		auto removeAndCreateLayout = CallFunc::create([&]() {
-			removeChildByName("information_tower");
-			auto layout = selectedTurret->getInformationLayout(this);
-			addChild(layout, 1, "information_tower");
-			layout->setScale(0);
-			auto scale_to = ScaleTo::create(0.125f, 1.f);
-			layout->runAction(scale_to);
-		});
-		getChildByName("information_tower")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
-	}
-	else {
-		auto layout = selectedTurret->getInformationLayout(this);
-		addChild(layout, 1, "information_tower");
-		layout->setScale(0);
-		auto scale_to = ScaleTo::create(0.125f, 1.f);
-		layout->runAction(scale_to);
 	}
 }
 
@@ -1074,8 +1274,8 @@ void InterfaceGame::updateButtonDisplay(){
 }
 
 void InterfaceGame::updateObjectDisplay(float dt){
-	if(selectedTurret != nullptr){
-		selectedTurret->updateDisplay(dt);
+	if(selected_turret != nullptr){
+		selected_turret->updateDisplay(dt);
 	}
 }
 
@@ -1204,17 +1404,31 @@ void InterfaceGame::startRewarding(Vec2 pos){
 }
 
 void InterfaceGame::initDialoguesFromLevel() {
+	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id];
-	bool play_dialogue = ((AppDelegate*)Application::getInstance())->getConfig()["play_dialogue"].asInt() > 0;
+	bool play_dialogue = ((AppDelegate*)Application::getInstance())->getConfigClass()->isDialoguesEnabled();
 	if (config["introDialogue"].size() != 0 && play_dialogue) {
 		dialogues = Dialogue::createFromConfig(config["introDialogue"]);
 		addChild(dialogues, 1, "dialogue");
 		dialogues->launch();
-		getChildByName("start")->setVisible(false);
-		getChildByName("title")->setVisible(false);
+		game_state = INTRO;
 	}
 	else {
 		game_state = TITLE;
+		getChildByName("title")->runAction(Sequence::create(EaseBackOut::create(MoveTo::create(0.5f, Vec2(getChildByName("title")->getPosition().x,
+			visibleSize.height / 2))), DelayTime::create(1.f), FadeOut::create(0.5f), nullptr));
+		getChildByName("start")->runAction(EaseBackOut::create(MoveTo::create(0.5f, Vec2(getChildByName("start")->getPosition().x,
+			getChildByName("start")->getContentSize().height * getChildByName("start")->getScaleY()))));
 		dialogues = nullptr;
 	}
+}
+
+Dango* InterfaceGame::getCurrentDango() {
+	return selected_dango;
+}
+
+void InterfaceGame::handleDeadDango() {
+	hideDangoInfo();
+	selected_dango = nullptr;
+	state = IDLE;
 }

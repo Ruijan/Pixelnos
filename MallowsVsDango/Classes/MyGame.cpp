@@ -179,8 +179,8 @@ bool MyGame::save(){
 		root["level"] = cLevel->getLevelId()+1;
 	}
 	root["exp"] = root["exp"].asInt() + cLevel->getTotalExperience();
-	((AppDelegate*)Application::getInstance())->getConfigClass().setSave(root);
-	((AppDelegate*)Application::getInstance())->getConfigClass().save();
+	((AppDelegate*)Application::getInstance())->getConfigClass()->setSave(root);
+	((AppDelegate*)Application::getInstance())->getConfigClass()->save();
 	return true;
 }
 

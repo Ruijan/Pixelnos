@@ -43,7 +43,7 @@ public:
 
 	Json::Value const getConfig() const;
 	Json::Value const getSave() const;
-	Config& getConfigClass();
+	Config* getConfigClass();
 	bool isSaveFile() const;
 
 	AudioController* getAudioController();
@@ -59,7 +59,7 @@ public:
 protected:
 	static AppDelegate* appDelegate;
 	SceneManager* manager;
-	Config config;
+	Config* config;
 	AudioController* controller;
 
 };

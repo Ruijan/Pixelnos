@@ -17,9 +17,11 @@ public:
 	static Json::Value getConfig();
 	virtual Json::Value getSpecConfig();
 
+	virtual void removeTarget(Dango* dango);
 	virtual void chooseTarget(std::vector<Dango*> targets);
 	virtual void givePDamages(double damage);
 	virtual void attack();
+	virtual void startLimit();
 };
 
 #endif

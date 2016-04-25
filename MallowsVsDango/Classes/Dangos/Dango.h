@@ -3,8 +3,13 @@
 
 #include "cocos2d.h"
 #include "../Config/json.h"
+#include "ui/CocosGUI.h"
+#include "Towers/Effect.h"
 
 class Cell;
+class InterfaceGame;
+class Tower;
+class Attack;
 
 class Dango : public cocos2d::Sprite{
 public:
@@ -48,6 +53,19 @@ public:
 	void move(float dt);
 	virtual void attack(float dt);
 	virtual void runAnimation(cocos2d::Animation* anim);
+	void addEffect(Effect* effect);
+
+	cocos2d::ui::Layout* getInformationLayout(InterfaceGame* interface_game);
+	virtual void updateInformationLayout(cocos2d::ui::Layout* layout);
+
+	void addTargetingTower(Tower* tower);
+	void addTargetingAttack(Attack* tower);
+	int addSpeedModifier(double speed_modifier);
+	int addDamagesModifier(double dmg_modifier);
+	void removeSpeedModifier(int id);
+	void removeDamageModifier(int id);
+	void removeTargetingTower(Tower* tower);
+	void removeTargetingAttack(Attack* tower);
 	
 protected:
 	STATE state;
@@ -57,6 +75,12 @@ protected:
 	std::vector<Cell*> path;
 	cocos2d::Action* cAction;
 
+	std::map<int, double> m_speed;
+	std::map<int, double> m_damages;
+	std::vector<Tower*> targeting_towers;
+	std::vector<Attack*> targeting_attacks;
+	int modifier_id;
+
 	double speed;
 	double hitPoints;
 	double pDamages;				// prosepctive damages
@@ -65,5 +89,6 @@ protected:
 	double attack_reloading;
 	int level;
 	
+	std::vector<Effect*> effects;
 };
 #endif

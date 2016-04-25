@@ -76,9 +76,16 @@ void Dialogue::launch(){
 	speechBubble = Node::create();
 	speechBubble->addChild(Sprite::create("res/buttons/speech.png"), 1, "NORMAL");
 	speechBubble->addChild(Sprite::create("res/buttons/speech_fury.png"), 1, "ANGRY");
+
+	speechBubble->getChildByName("NORMAL")->setScale(visibleSize.width / 3 / speechBubble->getChildByName("NORMAL")->getContentSize().width);
+	speechBubble->getChildByName("ANGRY")->setScale(visibleSize.width / 3 / speechBubble->getChildByName("NORMAL")->getContentSize().width);
+
+	double offset = speechBubble->getChildByName("NORMAL")->getContentSize().width * speechBubble->getChildByName("NORMAL")->getScale();
+
 	updateEmotionBubble();
 
 	currentHead = Sprite::create(textes[currentSpeech].second);
+	currentHead->setScale(visibleSize.width / 5 / currentHead->getContentSize().width);
 	currentHead->setPosition(Vec2(-currentHead->getContentSize().width,
 		visibleSize.height / 3));
 	auto moveto = MoveTo::create(0.35f,
@@ -90,14 +97,13 @@ void Dialogue::launch(){
 		speechBubble->getChildren().at(i)->setAnchorPoint(Vec2(0, 0.5));
 	}
 	
-	speechBubble->setPosition(Point(round(currentHead->getTextureRect().size.width*currentHead->getScale()),
+	speechBubble->setPosition(Vec2(round(currentHead->getTextureRect().size.width*currentHead->getScale()),
 		visibleSize.height / 2 + currentHead->getTextureRect().size.height*currentHead->getScale() / 2));
-	speech = Label::createWithTTF("", "fonts/Love Is Complicated Again.ttf", 30.f);
+	speech = Label::createWithTTF("", "fonts/Love Is Complicated Again.ttf", 30.f * visibleSize.width / 1280);
 	speech->setColor(Color3B::BLACK);
-	speech->setWidth(speechBubble->getChildByName("NORMAL")->getContentSize().width*
-		speechBubble->getScale() * 3 / 4);
-	speech->setPosition(Point(round(speechBubble->getPosition().x + 
-		speechBubble->getChildByName("NORMAL")->getContentSize().width*speechBubble->getScale() / 2), speechBubble->getPosition().y + 25));
+	speech->setWidth(offset * 3 / 4);
+	speech->setPosition(Point(round(speechBubble->getPosition().x - offset ), speechBubble->getPosition().y + 
+		speechBubble->getChildByName("NORMAL")->getContentSize().height * speechBubble->getChildByName("NORMAL")->getScale() / 10));
 	speech->setAlignment(TextHAlignment::CENTER);
 
 	auto skip = ui::Button::create("res/buttons/buttonSkip.png");
@@ -110,7 +116,7 @@ void Dialogue::launch(){
 	skip->setPosition(Vec2(visibleSize.width * 3 / 4 - skip->getContentSize().width*skip->getScale(),
 		skip->getContentSize().height*skip->getScale()/4));
 
-	tapToContinue = Label::createWithSystemFont("Tap to continue", "Arial", 25.f);
+	tapToContinue = Label::createWithSystemFont("Tap to continue", "Arial", 25.f * visibleSize.width / 1280);
 	tapToContinue->setPosition(Point(speech->getPosition().x, speechBubble->getPosition().y - 
 		speechBubble->getChildByName("NORMAL")->getContentSize().height*speechBubble->getScale() / 4));
 
@@ -226,9 +232,9 @@ void Dialogue::update(){
 				}
 				else{
 					speechBubble->setPosition(Point(round(visibleSize.width * 3 / 4 -
-						currentHead->getTextureRect().size.width*currentHead->getScale()) - 
-						speechBubble->getChildByName("NORMAL")->getContentSize().width,
-						visibleSize.height / 2 + currentHead->getTextureRect().size.height*currentHead->getScale() / 2));
+						currentHead->getTextureRect().size.width * currentHead->getScale()) - 
+						speechBubble->getChildByName("NORMAL")->getContentSize().width * speechBubble->getChildByName("NORMAL")->getScale(),
+						visibleSize.height / 2 + currentHead->getTextureRect().size.height * currentHead->getScale() / 2));
 				}
 				scaleSpeechBubble();
 			}
@@ -236,9 +242,11 @@ void Dialogue::update(){
 		case BUBBLE_APPEAR:
 			if (cAction->isDone()){
 				speech->setPosition(Point(round(speechBubble->getPosition().x + 
-					speechBubble->getChildByName("NORMAL")->getContentSize().width*speechBubble->getScale() / 2), speechBubble->getPosition().y + 25));
+					speechBubble->getChildByName("NORMAL")->getContentSize().width * speechBubble->getChildByName("NORMAL")->getScale() / 2), 
+					speechBubble->getPosition().y +	speechBubble->getChildByName("NORMAL")->getContentSize().height * 
+					speechBubble->getChildByName("NORMAL")->getScale() / 10));
 				tapToContinue->setPosition(Point(speech->getPosition().x, speechBubble->getPosition().y - 
-					speechBubble->getChildByName("NORMAL")->getContentSize().height*speechBubble->getScale() / 4));
+					speechBubble->getChildByName("NORMAL")->getContentSize().height * speechBubble->getChildByName("NORMAL")->getScale() / 4));
 				state = DISPLAYING;
 			}
 			break;
@@ -252,6 +260,7 @@ void Dialogue::update(){
 					removeChild(currentHead);
 					currentHead = nullptr;
 					currentHead = Sprite::create(textes[currentSpeech].second);
+					currentHead->setScale(visibleSize.width / 5 / currentHead->getContentSize().width);
 					Action* moveto;
 					if (directions[currentSpeech] == LEFT){
 						currentHead->setPosition(Vec2(-currentHead->getContentSize().width,

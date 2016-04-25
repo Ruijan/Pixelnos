@@ -17,6 +17,7 @@ public:
 		TOUCHED=1,
 		TURRET_CHOSEN=2,
 		TURRET_SELECTED=3,
+		DANGO_SELECTED=4,
 	};
 	enum GameState {
 		INTRO,
@@ -50,10 +51,14 @@ public:
 
 	void reset();
 	GameState getGameState() const;
+	Dango* getCurrentDango();
 	void setGameState(GameState g_state);
 	void startRewarding(cocos2d::Vec2 pos);
 	void removeTower();
+	void handleDeadDango();
 
+	void showDangoInfo();
+	void hideDangoInfo();
 	void showTowerInfo();
 	void hideTowerInfo();
 
@@ -65,7 +70,8 @@ private:
 	int id;
 	State state;
 	GameState game_state;
-	Tower* selectedTurret;
+	Tower* selected_turret;
+	Dango* selected_dango;
 
 	const double sizeButton;
 	const double sizeTower;

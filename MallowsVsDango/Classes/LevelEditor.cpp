@@ -31,11 +31,27 @@ bool LevelEditor::init(){
 	path_level = "";
 	generator = new DangoGenerator();
 
-	MenuItemImage* return_to_game_item = MenuItemImage::create("res/buttons/back.png", "res/buttons/back.png", 
-		CC_CALLBACK_1(LevelEditor::returnToGame, this));
-	return_to_game_item->setPosition(Vec2(visibleSize.width/2 - return_to_game_item->getContentSize().width / 2,
-		visibleSize.height/2 - return_to_game_item->getContentSize().height / 2));
-	addChild(Menu::createWithItem(return_to_game_item), 2, "back");
+	// Black mask to prevent any action during selection of enemy or dialogue or anything else like this.
+	addChild(ui::Layout::create(), 2, "black_mask");
+	ui::Button* mask = ui::Button::create("res/buttons/mask.png");
+	mask->setScaleX(visibleSize.width / mask->getContentSize().width);
+	mask->setScaleY(visibleSize.height / mask->getContentSize().height);
+	mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	getChildByName("black_mask")->addChild(mask);
+	getChildByName("black_mask")->setVisible(false);
+
+	// Instanciation du bouton de retour à la selection des niveaux
+	auto return_to_game_button = ui::Button::create("res/buttons/back.png");
+	return_to_game_button->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+		}
+	});
+	return_to_game_button->setPosition(Vec2(visibleSize.width, visibleSize.height));
+	return_to_game_button->setAnchorPoint(Vec2(1, 1));
+	return_to_game_button->setEnabled(true);
+	return_to_game_button->setScale(visibleSize.width / 10 / return_to_game_button->getContentSize().width);
+	addChild(return_to_game_button, 2, "back");
 
 	addChild(Layer::create(), 1, "level");
 	getChildByName("level")->addChild(Layer::create(), 0, "backgrounds");
@@ -77,20 +93,24 @@ bool LevelEditor::init(){
 	select_level->setVisible(false);
 	auto load_level = ui::Button::create("res/buttons/buttonLoadLevel.png", "res/buttons/buttonLoadLevel.png", "res/buttons/buttonLoadLevel_disable.png");
 	load_level->setEnabled(false);
+	load_level->setScale(visibleSize.width / 5 / load_level->getContentSize().width);
 	load_level->addTouchEventListener(CC_CALLBACK_2(LevelEditor::loadLevelFromFileName, this));
+
 	auto button_cancel = ui::Button::create("res/buttons/buttonCancel.png", "res/buttons/buttonCancel.png");
+	button_cancel->setScale(visibleSize.width / 5 / button_cancel->getContentSize().width);
 	button_cancel->addTouchEventListener(CC_CALLBACK_2(LevelEditor::hideExistingLevels, this));
 	auto middle_panel = Sprite::create("res/buttons/centralMenuPanel.png");
 	middle_panel->setScaleY(visibleSize.height / 2 / middle_panel->getContentSize().height);
 	middle_panel->setScaleX((2 * load_level->getContentSize().width * load_level->getScale() + 
 		button_cancel->getContentSize().width * 2 / 5 * button_cancel->getScale()) /
 		middle_panel->getContentSize().width);
-	Label* title = Label::createWithTTF("SELECT A LEVEL", "fonts/Love Is Complicated Again.ttf", 35);
+	Label* title = Label::createWithTTF("SELECT A LEVEL", "fonts/Love Is Complicated Again.ttf", 35 * visibleSize.width / 1280);
 	title->setColor(Color3B::BLACK);
 	title->setPosition(Vec2(0,
 		0.80*middle_panel->getContentSize().height * middle_panel->getScaleY() / 2));
 	title->setAnchorPoint(Vec2(0.5,1));
 	auto list_levels = ui::ListView::create();
+	list_levels->setGravity(ui::ListView::Gravity::CENTER_HORIZONTAL);
 	list_levels->setAnchorPoint(Vec2(0.5f, 0.5f));
 	list_levels->setContentSize(Size(middle_panel->getContentSize().width * middle_panel->getScaleX() * 0.85f,
 		middle_panel->getContentSize().height * middle_panel->getScaleY() * 0.6f));
@@ -112,12 +132,14 @@ bool LevelEditor::init(){
 	panel->addTouchEventListener(CC_CALLBACK_2(LevelEditor::hideShowMenu, this));
 	auto button_hide = ui::Button::create("res/buttons/wood_button_hide.png", "res/buttons/wood_button_hide.png");
 	button_hide->addTouchEventListener(CC_CALLBACK_2(LevelEditor::hideShowMenu, this));
+	button_hide->setScale(visibleSize.width / 30 / button_hide->getContentSize().width);
+
 	menu_left->addChild(panel, 0, "panel");
 	menu_left->addChild(button_hide, 0, "button_hide");
 	panel->setScaleY(visibleSize.height / panel->getContentSize().height);
 	panel->setScaleX(visibleSize.width / panel->getContentSize().width / 4);
 	panel->setPosition(Vec2(panel->getContentSize().width * panel->getScaleX() / 2, visibleSize.height / 2));
-	button_hide->setPosition(Vec2(visibleSize.width / 4 + button_hide->getContentSize().width / 2,
+	button_hide->setPosition(Vec2(visibleSize.width / 4 + button_hide->getContentSize().width * button_hide->getScale() / 2,
 		panel->getPosition().y));
 
 	ui::Layout* interface_manager = ui::Layout::create();
@@ -282,6 +304,7 @@ bool LevelEditor::init(){
 	level_title->setTouchAreaEnabled(true);
 	level_title->setSwallowTouches(true);
 	level_title->setMaxLength(10);
+	level_title->setColor(Color3B::BLACK);
 	level_title->setPlaceHolderColor(Color4B::BLACK);
 	level_title->setAnchorPoint(Vec2(0.5, 0.5));
 	level_title->addChild(Sprite::create("res/buttons/cursor.png"),0,"cursor");
@@ -316,6 +339,9 @@ bool LevelEditor::init(){
 
 	general_infos->addChild(level_title,1,"level_name");
 	general_infos->addChild(Sprite::create("res/buttons/wood_textfield.png"), 0, "background");
+	general_infos->getChildByName("background")->setScale(panel->getContentSize().width * panel->getScaleX() * 0.8 / 
+		general_infos->getChildByName("background")->getContentSize().width);
+
 	level_title->setTouchSize(Size(general_infos->getChildByName("background")->getContentSize().width * 
 		general_infos->getChildByName("background")->getScaleX(),
 		general_infos->getChildByName("background")->getContentSize().height * 
@@ -356,9 +382,12 @@ bool LevelEditor::init(){
 		scroll_view->addChild(level_background, 1, buttons_name[i]);
 	}
 
+	((ui::Button*)subContents[subContents.size() - 1].first)->setEnabled(false);
+
 	std::string path = "./res/levels/background/";
 	std::vector<std::string> files = read_directory(path);
-	double width_image = scroll_view->getContentSize().width * 2 / 5 / (visibleSize.width / 960);
+	//double width_image = scroll_view->getContentSize().width * 2 / 5;
+	double width_image = subContents[0].first->getContentSize().width * 1 / 3;
 	double offset = width_image / 4;
 	for (unsigned int i(2); i < files.size(); ++i) {
 		if (files[i].find(".png") != std::string::npos) {
@@ -376,9 +405,11 @@ bool LevelEditor::init(){
 				(visibleSize.width / 960), (i - 2) * width_image + width_image / 2));
 			drag_image->addTouchEventListener(CC_CALLBACK_2(LevelEditor::handleBackground, this, "res/levels/background/" + files[i], checkbox_image));
 			Label* image_name = Label::createWithTTF(files[i], "fonts/arial.ttf", 15);
-			image_name->setAlignment(TextHAlignment::LEFT);
+			image_name->setDimensions(0.95*width_image, width_image);
+			image_name->setAlignment(TextHAlignment::CENTER,TextVAlignment::CENTER);
 			image_name->setPosition(Vec2(scroll_view->getContentSize().width * 2 / 3 / 
 				(visibleSize.width / 960), (i - 2) * width_image + width_image / 2));
+			image_name->setColor(Color3B::BLACK);
 			subContents[0].first->getChildByName("layout")->addChild(checkbox_image);
 			subContents[0].first->getChildByName("layout")->addChild(drag_image);
 			subContents[0].first->getChildByName("layout")->addChild(image_name);
@@ -389,7 +420,7 @@ bool LevelEditor::init(){
 	// Create object menu
 	path = "./res/levels/objects/";
 	files = read_directory(path);
-	double lastVPos = offset;
+	double lastVPos = offset * 2;
 	for (unsigned int i(2); i < files.size(); ++i) {
 		if (files[i].find(".png") != std::string::npos) {
 			std::string plist = files[i];
@@ -409,7 +440,9 @@ bool LevelEditor::init(){
 				Label* image_name = Label::createWithTTF(iter->first, "fonts/arial.ttf", 15);
 				image_name->setPosition(Vec2(scroll_view->getContentSize().width * 2 / 3 / 
 					(visibleSize.width / 960), lastVPos));
-				image_name->setAlignment(TextHAlignment::LEFT);
+				image_name->setDimensions(0.95*width_image, width_image);
+				image_name->setColor(Color3B::BLACK);
+				image_name->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
 				subContents[1].first->getChildByName("layout")->addChild(drag_image);
 				subContents[1].first->getChildByName("layout")->addChild(image_name);
 				lastVPos = lastVPos + width_image;
@@ -442,15 +475,18 @@ bool LevelEditor::init(){
 	addChild(select_enemy, 2, "select_enemy");
 	select_enemy->setVisible(false);
 	auto create_enemy = ui::Button::create("res/buttons/buttonAddEnemy.png", "res/buttons/buttonAddEnemy.png", "res/buttons/buttonAddEnemy_disable.png");
+	create_enemy->setScale(visibleSize.width / 5 / create_enemy->getContentSize().width);
 	create_enemy->setEnabled(false);
 	create_enemy->addTouchEventListener(CC_CALLBACK_2(LevelEditor::createEnemy, this));
 	auto edit_enemy = ui::Button::create("res/buttons/buttonEditEnemy.png", "res/buttons/buttonEditEnemy.png", "res/buttons/buttonEditEnemy_disable.png");
+	edit_enemy->setScale(visibleSize.width / 5 / edit_enemy->getContentSize().width);
 	edit_enemy->setVisible(false);
 	edit_enemy->addTouchEventListener(CC_CALLBACK_2(LevelEditor::editEnemyValues, this));
 	auto button_cancel_creation = ui::Button::create("res/buttons/buttonCancel.png", "res/buttons/buttonCancel.png");
+	button_cancel_creation->setScale(visibleSize.width / 5 / button_cancel_creation->getContentSize().width);
 	button_cancel_creation->addTouchEventListener(CC_CALLBACK_2(LevelEditor::hideEnemyBox, this));
 	auto middle_panel_enemy = Sprite::create("res/buttons/centralMenuPanel.png");
-	middle_panel_enemy->setScaleY(visibleSize.height / 2 / middle_panel_enemy->getContentSize().height);
+	middle_panel_enemy->setScaleY(visibleSize.height / 2 / middle_panel_enemy->getContentSize().height * middle_panel_enemy->getScaleY());
 	middle_panel_enemy->setScaleX((1.5 * create_enemy->getContentSize().width * create_enemy->getScale() +
 		create_enemy->getContentSize().width * 2 / 5 * create_enemy->getScale()) /
 		create_enemy->getContentSize().width);
@@ -463,10 +499,10 @@ bool LevelEditor::init(){
 	title_enemy->setColor(Color3B::BLACK);
 	title_enemy->setAnchorPoint(Vec2(0.5, 1));
 	title_enemy->setPosition(Vec2(0, 0.90*middle_panel_enemy->getContentSize().height * middle_panel_enemy->getScaleY() / 2));
-	Label* delay_label = Label::createWithTTF("Delay", "fonts/LICABOLD.ttf", 20 * (visibleSize.width / 960));
+	Label* delay_label = Label::createWithTTF("Delay", "fonts/LICABOLD.ttf", round(20 * visibleSize.width / 960));
 	delay_label->setAlignment(TextHAlignment::RIGHT);
 	delay_label->setColor(Color3B::BLACK);
-	ui::TextField* enemy_time = ui::TextField::create("", "fonts/LICABOLD.ttf", 20 * (visibleSize.width / 960));
+	ui::TextField* enemy_time = ui::TextField::create("", "fonts/LICABOLD.ttf", round(20 * visibleSize.width / 960));
 	enemy_time->setString("1.0");
 	enemy_time->setColor(Color3B::BLACK);
 	enemy_time->setMaxLengthEnabled(true);
@@ -488,6 +524,9 @@ bool LevelEditor::init(){
 	select_enemy->getChildByName("background")->setScaleX(
 		middle_panel_enemy->getContentSize().width * middle_panel_enemy->getScaleX() / 8 /
 		select_enemy->getChildByName("background")->getContentSize().width);
+	select_enemy->getChildByName("background")->setScaleY(
+		middle_panel_enemy->getContentSize().height * middle_panel_enemy->getScaleY() / 12 /
+		select_enemy->getChildByName("background")->getContentSize().height);
 	enemy_time->setTouchSize(Size(general_infos->getChildByName("background")->getContentSize().width *
 		select_enemy->getChildByName("background")->getScaleX(),
 		select_enemy->getChildByName("background")->getContentSize().height *
@@ -496,11 +535,12 @@ bool LevelEditor::init(){
 		-middle_panel_enemy->getContentSize().height * middle_panel_enemy->getScaleY() / 3));
 	enemy_time->setPosition(select_enemy->getChildByName("background")->getPosition());
 	delay_label->setPosition(select_enemy->getChildByName("background")->getPosition() - 
-		Vec2(select_enemy->getChildByName("background")->getContentSize().width / 2,0));
+		Vec2(select_enemy->getChildByName("background")->getContentSize().width * select_enemy->getChildByName("background")->getScaleX(),0));
 
 	path = "./res/levels/dangos/";
 	files = read_directory(path);
 	unsigned int counter(0);
+	width_image = middle_panel_enemy->getContentSize().width * middle_panel_enemy->getScaleX() / 8;
 	for (unsigned int i(2); i < files.size(); ++i) {
 		if (files[i].find(".png") != std::string::npos) {
 			ui::Button* drag_image = ui::Button::create(path + files[i], path + files[i]);
@@ -522,10 +562,12 @@ bool LevelEditor::init(){
 			files[i] = files[i].substr(0, files[i].size() -  1);
 			drag_image->addTouchEventListener(CC_CALLBACK_2(LevelEditor::setCurrentEnemy, this, files[i], level_dango, checkbox_image));
 			checkbox_image->addTouchEventListener(CC_CALLBACK_2(LevelEditor::setCurrentEnemy, this, files[i], level_dango, checkbox_image));
-			Label* image_name = Label::createWithTTF(files[i] + "\n Lvl " + Value(level_dango + 1).asString(), "fonts/LICABOLD.ttf", 20);
+			Label* image_name = Label::createWithTTF(files[i] + "\n Lvl " + Value(level_dango + 1).asString(), 
+				"fonts/LICABOLD.ttf", 20 * visibleSize.width / 1280);
 			image_name->setAlignment(TextHAlignment::CENTER);
 			image_name->setColor(Color3B::BLACK);
-			image_name->setPosition(Vec2((i - 2) * (width_image + width_image / 4) + width_image * 3 / 4, width_image * 2));
+			image_name->setPosition(Vec2((i - 2) * (width_image + width_image / 4) + width_image * 3 / 4, width_image * 3 / 2));
+			image_name->setAnchorPoint(Vec2(0.5, 0));
 			std::string chekboxname = "checkbox_" + files[i] + Value(level_dango).asString();
 			enemy_layout->addChild(checkbox_image, 0, "checkbox_"+ files[i] + Value(level_dango).asString());
 			enemy_layout->addChild(drag_image, 0, "drag_image");
@@ -534,6 +576,9 @@ bool LevelEditor::init(){
 		}
 	}
 	enemy_layout->setInnerContainerSize(Size(counter * (width_image + width_image / 4), width_image * 3 / 2));
+	if (enemy_layout->getInnerContainerSize().width <= enemy_layout->getContentSize().width) {
+		enemy_layout->setScrollBarEnabled(false);
+	}
 	enemy_layout->setDirection(ui::ScrollView::Direction::HORIZONTAL);
 	ui::ScrollView* path_layout = ui::ScrollView::create();
 	path_layout->setDirection(ui::ScrollView::Direction::HORIZONTAL);
@@ -541,7 +586,7 @@ bool LevelEditor::init(){
 	path_layout->setPosition(Vec2(middle_panel_enemy->getContentSize().width * middle_panel_enemy->getScaleX() / 4
 		- path_layout->getContentSize().width / 2,
 		delay_label->getPosition().y - path_layout->getContentSize().height / 4));
-	Label* path_label = Label::createWithTTF("Path", "fonts/LICABOLD.ttf", 20 * (visibleSize.width / 960));
+	Label* path_label = Label::createWithTTF("Path", "fonts/LICABOLD.ttf", round(20 * visibleSize.width / 960));
 	path_label->setAlignment(TextHAlignment::RIGHT);
 	path_label->setColor(Color3B::BLACK);
 	path_label->setPosition(Vec2(path_layout->getPosition().x -
@@ -1065,8 +1110,10 @@ void LevelEditor::createPath(Ref* sender, cocos2d::ui::Widget::TouchEventType ty
 			}
 		};
 		layout->addChild(Sprite::create("res/buttons/wood_textfield.png"), 0, "background");
-		layout->getChildByName("background")->setScale(subContents[2].first->getContentSize().width * 
-			subContents[2].first->getScaleX() / 2 / layout->getChildByName("background")->getContentSize().width);
+		layout->getChildByName("background")->setScaleX(subContents[2].first->getContentSize().width / 2 / 
+			layout->getChildByName("background")->getContentSize().width);
+		layout->getChildByName("background")->setScaleY(path_title->getContentSize().height * 1.5 / 
+			layout->getChildByName("background")->getContentSize().height);
 		layout->getChildByName("background")->setPosition(Vec2(path_title->getContentSize().width *
 			path_title->getScale() / 2.0,
 			path_title->getContentSize().height *
@@ -1074,7 +1121,7 @@ void LevelEditor::createPath(Ref* sender, cocos2d::ui::Widget::TouchEventType ty
 		path_title->setTouchSize(Size(layout->getChildByName("background")->getContentSize().width *
 			layout->getChildByName("background")->getScaleX(),
 			layout->getChildByName("background")->getContentSize().height *
-			layout->getChildByName("background")->getScaleX()));
+			layout->getChildByName("background")->getScaleY()));
 		delete_path->setPosition(Vec2(path_title->getContentSize().width *
 			path_title->getScale() * 1.75 + delete_path->getContentSize().width * delete_path->getScaleX() / 2,
 			path_title->getContentSize().height *
@@ -1095,36 +1142,36 @@ void LevelEditor::createWave(Ref* sender, cocos2d::ui::Widget::TouchEventType ty
 
 		waves_id[wave_id] = generator->getNbWaves();
 
-		ui::Button* level_background = ui::Button::create("res/buttons/wood_pulldown.png", "res/buttons/wood_pulldown.png");
-		level_background->setScale(0.90f);
-		level_background->setTitleText("Wave " + Value((int)wave_id).asString());
-		level_background->setTitleFontSize(20);
-		level_background->setTitleFontName("fonts/Love Is Complicated Again.ttf");
+		ui::Button* wave_button = ui::Button::create("res/buttons/wood_pulldown.png", "res/buttons/wood_pulldown.png");
+		wave_button->setScale(0.90f);
+		wave_button->setTitleText("Wave " + Value((int)wave_id).asString());
+		wave_button->setTitleFontSize(20);
+		wave_button->setTitleFontName("fonts/Love Is Complicated Again.ttf");
 
 		ui::Button* delete_wave = ui::Button::create("res/buttons/delete.png", "res/buttons/delete.png");
 		delete_wave->addTouchEventListener(CC_CALLBACK_2(LevelEditor::removeWave, this, wave_id));
 
-		level_background->addChild(Sprite::create("res/buttons/plus.png"), 1, "plus");
-		level_background->addChild(Sprite::create("res/buttons/minus.png"), 1, "minus");
-		level_background->addChild(delete_wave, 1, "delete");
+		wave_button->addChild(Sprite::create("res/buttons/plus.png"), 1, "plus");
+		wave_button->addChild(Sprite::create("res/buttons/minus.png"), 1, "minus");
+		wave_button->addChild(delete_wave, 1, "delete");
 
-		delete_wave->setPosition(Vec2(0.95*level_background->getContentSize().width -
-			delete_wave->getContentSize().width / 2, level_background->getContentSize().height / 2));
-		level_background->getChildByName("plus")->setPosition(Vec2(0.05*level_background->getContentSize().width +
-			level_background->getChildByName("plus")->getContentSize().width / 2,
-			level_background->getContentSize().height / 2));
-		level_background->getChildByName("minus")->setPosition(Vec2(0.05*level_background->getContentSize().width +
-			level_background->getChildByName("minus")->getContentSize().width / 2,
-			level_background->getContentSize().height / 2));
-		level_background->getChildByName("minus")->setVisible(false);
-		level_background->addChild(ui::Layout::create(), 1, "layout");
-		level_background->getChildByName("layout")->setAnchorPoint(Vec2(0.5, 1));
-		ui::ListView* scroll_view = ((ui::ListView*)getChildByName("select_level")->getChildByName("list_levels"));
-		double innerWidth = scroll_view->getContentSize().width;
-		level_background->setPosition(Vec2(innerWidth / 4,
-			-level_background->getContentSize().height / 2));
-		level_background->getChildByName("layout")->setPosition(Vec2(innerWidth / 4,
-			-level_background->getContentSize().height / 2));
+		delete_wave->setPosition(Vec2(0.95*wave_button->getContentSize().width -
+			delete_wave->getContentSize().width / 2, wave_button->getContentSize().height / 2));
+		wave_button->getChildByName("plus")->setPosition(Vec2(0.05*wave_button->getContentSize().width +
+			wave_button->getChildByName("plus")->getContentSize().width / 2,
+			wave_button->getContentSize().height / 2));
+		wave_button->getChildByName("minus")->setPosition(Vec2(0.05*wave_button->getContentSize().width +
+			wave_button->getChildByName("minus")->getContentSize().width / 2,
+			wave_button->getContentSize().height / 2));
+		wave_button->getChildByName("minus")->setVisible(false);
+		wave_button->addChild(ui::Layout::create(), 1, "layout");
+		wave_button->getChildByName("layout")->setAnchorPoint(Vec2(0.5, 1));
+		double innerWidth = ((ui::ListView*)getChildByName("select_level")->getChildByName("list_levels"))->getContentSize().width;
+		wave_button->setPosition(Vec2(innerWidth / 4,
+			-wave_button->getContentSize().height / 2));
+		wave_button->setAnchorPoint(Vec2(0.5, 0.5));
+		wave_button->getChildByName("layout")->setPosition(Vec2(wave_button->getContentSize().width / wave_button->getScaleX() / 2,
+			-wave_button->getContentSize().height / 2));
 
 		ui::Button* add_enemy = ui::Button::create("res/buttons/wood_new.png", "res/buttons/wood_new.png");
 		add_enemy->setPosition(Vec2(0, -add_enemy->getContentSize().height / 2));
@@ -1138,17 +1185,17 @@ void LevelEditor::createWave(Ref* sender, cocos2d::ui::Widget::TouchEventType ty
 		lvl->setColor(Color3B::BLACK);
 		path->setColor(Color3B::BLACK);
 
-		level_background->getChildByName("layout")->addChild(add_enemy, 0, "add_enemy");
-		level_background->getChildByName("layout")->addChild(delay, 0, "delay_label");
-		level_background->getChildByName("layout")->addChild(name, 0, "enemy_label");
-		level_background->getChildByName("layout")->addChild(lvl, 0, "lvl_label");
-		level_background->getChildByName("layout")->addChild(path, 0, "path_label");
+		wave_button->getChildByName("layout")->addChild(add_enemy, 0, "add_enemy");
+		wave_button->getChildByName("layout")->addChild(delay, 0, "delay_label");
+		wave_button->getChildByName("layout")->addChild(name, 0, "enemy_label");
+		wave_button->getChildByName("layout")->addChild(lvl, 0, "lvl_label");
+		wave_button->getChildByName("layout")->addChild(path, 0, "path_label");
 
-		level_background->getChildByName("layout")->setVisible(false);
+		wave_button->getChildByName("layout")->setVisible(false);
 		
-		level_background->addTouchEventListener(CC_CALLBACK_2(LevelEditor::showWave, this, wave_id));
-		waves.push_back(std::make_pair(level_background, false));
-		subContents[3].first->getChildByName("layout")->addChild(level_background, 1, "wave_" + Value((int)wave_id).asString());
+		wave_button->addTouchEventListener(CC_CALLBACK_2(LevelEditor::showWave, this, wave_id));
+		waves.push_back(std::make_pair(wave_button, false));
+		subContents[3].first->getChildByName("layout")->addChild(wave_button, 1, "wave_" + Value((int)wave_id).asString());
 		updateDisplayWaveMenu();
 		generator->addWave();
 		showWave(this,cocos2d::ui::Widget::TouchEventType::ENDED, wave_id);
@@ -1158,15 +1205,18 @@ void LevelEditor::createWave(Ref* sender, cocos2d::ui::Widget::TouchEventType ty
 
 void LevelEditor::updateDisplayPathButtons() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-
-	getChildByName("select_enemy")->getChildByName("path_layout")->removeAllChildren();
+	auto path_layout = (ui::ScrollView*)getChildByName("select_enemy")->getChildByName("path_layout");
+	path_layout->removeAllChildren();
 	Size size(0,0);
 	for (unsigned int i(0); i < id_paths.size(); ++i){
 		ui::CheckBox* path_button = ui::CheckBox::create("res/buttons/wood.png", "res/buttons/wood.png",
 			"res/buttons/wood_selected.png", "res/buttons/wood.png", "res/buttons/wood.png");
+		path_button->setScale(path_layout->getContentSize().width / 3 /
+			path_button->getContentSize().width);
 		path_button->addTouchEventListener([&, path_button, i](Ref* sender, ui::Widget::TouchEventType type) {
 			if (type == ui::Widget::TouchEventType::ENDED) {
-				for (auto checkbox : getChildByName("select_enemy")->getChildByName("path_layout")->getChildren()) {
+				auto path_layout = (ui::ScrollView*)getChildByName("select_enemy")->getChildByName("path_layout");
+				for (auto checkbox : path_layout->getChildren()) {
 					((ui::CheckBox*)checkbox)->setSelected(false);
 				}
 				path_button->setSelected(true);
@@ -1177,25 +1227,32 @@ void LevelEditor::updateDisplayPathButtons() {
 				}
 			}
 		});
-		Label* path_number = Label::createWithTTF(Value((int)id_paths[i]).asString(), "fonts/LICABOLD.ttf",
-			20 * (visibleSize.width / 960));
+		Label* path_number = Label::createWithTTF(Value((int)id_paths[i]).asString(), "fonts/LICABOLD.ttf", 20);
 		path_number->setColor(Color3B::BLACK);
 		path_number->setPosition(path_button->getContentSize().width / 2, path_button->getContentSize().height / 2);
 		path_button->addChild(path_number);
-		path_button->setPosition(Vec2(path_button->getContentSize().width * (i + 1), path_button->getContentSize().height / 2));
-		getChildByName("select_enemy")->getChildByName("path_layout")->addChild(
+		path_button->setPosition(Vec2(path_button->getContentSize().width * path_button->getScale() * (i + 1), 
+			path_button->getContentSize().height * path_button->getScale() / 2));
+		path_layout->addChild(
 			path_button,1,"path_button" + Value((int)id_paths[i]).asString());
-		size = path_button->getContentSize();
+		size = path_button->getContentSize()*path_button->getScale();
 	}
 	if (id_paths.size() > 0) {
-		((ui::ScrollView*)getChildByName("select_enemy")->getChildByName("path_layout"))->setInnerContainerSize(Size(size.width *
+		((ui::ScrollView*)path_layout)->setInnerContainerSize(Size(size.width *
 			(id_paths.size() + 1), size.height));
+	}
+	if (path_layout->getInnerContainerSize().width <= path_layout->getContentSize().width) {
+		path_layout->setScrollBarEnabled(false);
+	}
+	else {
+		path_layout->setScrollBarEnabled(true);
 	}
 }
 
 void LevelEditor::showEnemyBox(Ref* sender, cocos2d::ui::Widget::TouchEventType type, unsigned int wave) {
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 		current_wave = waves_id[wave];
+		getChildByName("black_mask")->setVisible(true);
 		getChildByName("select_enemy")->getChildByName("edit_enemy")->setVisible(false);
 		getChildByName("select_enemy")->getChildByName("create_enemy")->setVisible(true);
 		getChildByName("select_enemy")->setVisible(true);
@@ -1215,6 +1272,7 @@ void LevelEditor::hideEnemyBox(Ref* sender, cocos2d::ui::Widget::TouchEventType 
 		enemy_checkbox = nullptr;
 		((ui::Button*)getChildByName("select_enemy")->getChildByName("create_enemy"))->setEnabled(false);
 		getChildByName("select_enemy")->setVisible(false);
+		getChildByName("black_mask")->setVisible(false);
 	}
 }
 
@@ -1280,13 +1338,13 @@ void LevelEditor::createEnemyDisplay(int id) {
 	duplicate->addTouchEventListener(CC_CALLBACK_2(LevelEditor::duplicateEnemy, this, id));
 	ui::Button* delete_enemy = ui::Button::create("res/buttons/delete.png");
 	delete_enemy->addTouchEventListener(CC_CALLBACK_2(LevelEditor::removeEnemy, this, id));
-	delete_enemy->setScale(2.0 / 3.0 * visibleSize.width / 1280);
+	delete_enemy->setScale(2.0f / 3.0f);
 	delete_enemy->setPosition(Vec2(path_label->getPosition().x + path_label->getContentSize().width / 2 +
 		delete_enemy->getContentSize().width * delete_enemy->getScaleX() / 2, 0));
-	edit->setScale(2.0 / 3.0 * visibleSize.width / 1280);
+	edit->setScale(2.0f / 3.0f);
 	edit->setPosition(Vec2(delay->getPosition().x - delay->getContentSize().width / 2 -
 		edit->getContentSize().width * edit->getScaleX() / 2, 0));
-	duplicate->setScale(2.0 / 3.0 * visibleSize.width / 1280);
+	duplicate->setScale(2.0f / 3.0f);
 	duplicate->setPosition(Vec2(edit->getPosition().x - edit->getContentSize().width * 
 		edit->getScaleX() / 2 -
 		duplicate->getContentSize().width * duplicate->getScaleX() / 2, 0));
@@ -1408,6 +1466,7 @@ void LevelEditor::editEnemy(Ref* sender, cocos2d::ui::Widget::TouchEventType typ
 
 		setCurrentEnemy(sender, type, name, level, enemy_checkbox);
 		getChildByName("select_enemy")->setVisible(true);
+		getChildByName("black_mask")->setVisible(true);
 	}
 }
 
@@ -1572,7 +1631,8 @@ void LevelEditor::loadLevelFromFileName(Ref* sender, cocos2d::ui::Widget::TouchE
 					std::string path_name = root["paths"][i]["path_name"].asString();
 					paths[i].second = path_name;
 					for (unsigned int j(0); j <  root["paths"][i]["path"].size(); ++j) {
-						addPath(Vec2(root["paths"][i]["path"][j][0].asFloat(), root["paths"][i]["path"][j][1].asFloat()));
+						addPath(Vec2(root["paths"][i]["path"][j][0].asFloat() * ratio, 
+							root["paths"][i]["path"][j][1].asFloat() * ratio));
 					}
 				}
 				for (int i(0); i < root["nbwaves"].asInt(); ++i) {
@@ -1654,28 +1714,23 @@ void LevelEditor::showExistingLevels(Ref* sender) {
 		std::vector<std::string> in_game_levels = read_directory("res/levels/config/");
 		ui::ListView* scroll_view = ((ui::ListView*)getChildByName("select_level")->getChildByName("list_levels"));
 		scroll_view->removeAllItems();
-		double innerWidth = scroll_view->getContentSize().width;
+		double innerWidth = scroll_view->getContentSize().width * scroll_view->getScale();
 
 		for (unsigned int i(2); i < files.size(); ++i) {
 			auto checkbox_level = cocos2d::ui::CheckBox::create("res/buttons/list_level_checkbox.png", "res/buttons/list_level_checkbox.png",
 				"res/buttons/list_level_checkbox_selected.png", "res/buttons/list_level_checkbox.png", "res/buttons/list_level_checkbox.png");
 			checkbox_level->setScale(innerWidth / checkbox_level->getContentSize().width * 0.9f);
+			double height = checkbox_level->getContentSize().height * checkbox_level->getScale() - checkbox_level->getContentSize().height + 
+				checkbox_level->getContentSize().height * checkbox_level->getScale() / 5;
+
+			scroll_view->setItemsMargin(height);
 			checkbox_level->addTouchEventListener(CC_CALLBACK_2(LevelEditor::setSelectedLevel, this, path + files[i]));
 			Label* level_name = Label::createWithTTF(files[i], "fonts/arial.ttf", 35);
 			level_name->setColor(Color3B::BLACK);
-			level_name->setPosition(Vec2(innerWidth / 2.0, checkbox_level->getContentSize().height / 2.0f));
+			level_name->setAlignment(TextHAlignment::CENTER);
+			level_name->setPosition(Vec2(checkbox_level->getContentSize().width / 2, checkbox_level->getContentSize().height / 2.0f));
 			checkbox_level->addChild(level_name,1,"level_name");
 			scroll_view->pushBackCustomItem(checkbox_level);
-		}
-		for (unsigned int i(2); i < in_game_levels.size(); ++i) {
-			auto checkbox_level = cocos2d::ui::CheckBox::create("res/buttons/list_level_checkbox.png", "res/buttons/list_level_checkbox.png",
-				"res/buttons/list_level_checkbox_selected.png", "res/buttons/list_level_checkbox.png", "res/buttons/list_level_checkbox.png");
-			checkbox_level->setScale(innerWidth / checkbox_level->getContentSize().width);
-			Label* level_name = Label::createWithTTF(files[i], "fonts/arial.ttf", 35);
-			level_name->setColor(Color3B::BLACK);
-			level_name->setPosition(Vec2(innerWidth / checkbox_level->getScale() / 2.0, checkbox_level->getContentSize().height / checkbox_level->getScale() / 2.0f));
-			checkbox_level->addChild(level_name);
-			scroll_view->addChild(checkbox_level);
 		}
 		getChildByName("select_level")->setVisible(true);
 	}
@@ -1845,10 +1900,10 @@ void LevelEditor::updateDisplayWaveMenu(unsigned int wave_index) {
 				offset / 10);
 		}
 	}
-	add_enemy->setPosition(lastPos.x, lastPos.y - 
+	add_enemy->setPosition(-offset, lastPos.y - 
 		add_enemy->getContentSize().height * add_enemy->getScaleY() / 2);
 	double total_label_width = delay_label->getContentSize().width / 2 + enemy_label->getContentSize().width +
-		lvl_label->getContentSize().width + path_label->getContentSize().width + (3 / 2) * offset;
+		lvl_label->getContentSize().width + path_label->getContentSize().width + 3 * offset;
 	delay_label->setPosition(-total_label_width / 2, 0);
 	enemy_label->setPosition(delay_label->getPosition().x + delay_label->getContentSize().width / 2 + 
 		enemy_label->getContentSize().width / 2 + offset, 0);

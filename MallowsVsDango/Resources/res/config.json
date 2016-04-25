@@ -2,13 +2,16 @@
   "dangos": {
     "dangosimple": {
       "cellperanim": 1.1,
+      "name" :  "Dango",
       "description": "Simple dango you can find everywhere.",
       "level": [
         {
           "animation": "res/dango/animations/dango1.png",
+          "nb_images_animation": 24,
+          "animation_duration" :  1,
           "attack": 1,
           "gain": 2,
-          "hitpoints": 2,
+          "hitpoints": 10,
           "image": "res/dango/dango1.png",
           "name": "dango1",
           "reload": 1.5,
@@ -16,6 +19,8 @@
         },
         {
           "animation": "res/dango/animations/dango2.png",
+          "nb_images_animation": 24,
+          "animation_duration" :  1,
           "attack": 1.5,
           "gain": 5,
           "hitpoints": 4,
@@ -28,10 +33,13 @@
     },
     "dangobese": {
       "cellperanim": 0.55,
+      "name" :  "Dangobese",
       "description": "So big ! So fat ! Wait... is that my sock ?",
       "level": [
         {
           "animation": "res/dango/animations/dangobese1.png",
+          "nb_images_animation": 24,
+          "animation_duration" :  1,
           "attack": 2,
           "attack_duration": 3,
           "gain": 5,
@@ -43,6 +51,8 @@
         },
         {
           "animation": "res/dango/animations/dangobese2.png",
+          "nb_images_animation": 24,
+          "animation_duration" :  1,
           "attack": 2.5,
           "attack_duration": 4,
           "gain": 7,
@@ -102,7 +112,7 @@
       "musics": [ "music/On-Tiptoe.mp3.mp3" ],
       "path": "res/levels/level1_path.csv",
       "reward": "res/levels/plan1.png",
-      "sugar": 80,
+      "sugar": 300,
       "tilemaptable": "res/tiles/ground.json",
       "tileset": "res/tiles/ground.plist",
       "tilesetpng": "res/tiles/ground.png",
@@ -139,7 +149,7 @@
       "musics": [ "music/On-Tiptoe.mp3.mp3" ],
       "path": "res/levels/level1_path.csv",
       "reward": "res/levels/plan1.png",
-      "sugar": 160,
+      "sugar": 300,
       "tilemaptable": "res/tiles/ground.json",
       "tileset": "res/tiles/ground.plist",
       "tilesetpng": "res/tiles/ground.png",
@@ -216,6 +226,7 @@
     "archer": {
       "animation": "res/turret/animations/archer.png",
       "animation_attack_size": 9,
+      "animation_attack_time": 0.5,
       "animation_bullet": "res/turret/animations/splash.png",
       "animation_bullet_size": 14,
       "animation_steady_size": 49,
@@ -224,16 +235,17 @@
       "sell": [15, 25, 35, 60],
       "range": [120, 135, 150, 150],
       "damages": [ 1, 1.5, 2, 2 ],
-      "description": "Archer: This mallow is a long distance attacker.",
+      "description": "Bomber: This mallow is a long distance attacker.",
       "last_level_description" :  "The water bombs are getting bigger and are doing damages in area.",
       "image": "res/turret/archer.png",
       "name": "archer",
-      
+      "limit": 5,
       "sound_bullet": "music/splash.mp3"
     },
     "cutter": {
       "animation": "res/turret/animations/cutter.png",
       "animation_attack_size": 9,
+      "animation_attack_time": 0.5,
       "animation_bullet": "res/turret/animations/cut.png",
       "animation_bullet_size": 14,
       "animation_steady_size": 49,
@@ -246,6 +258,9 @@
       "last_level_description": "Increase damages done by other towers on the target by 25%.",
       "image": "res/turret/cutter.png",
       "name": "cutter",
+      "limit": 20,
+      "deep_wound_duration": 5,
+      "deep_wound_percent" :  3,
       "sound_bullet": "music/slash.mp3"
     }
   },

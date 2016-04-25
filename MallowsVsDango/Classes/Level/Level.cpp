@@ -102,7 +102,10 @@ bool Level::init()
 				row.push_back(cell);
 				cell->setPosition(Vec2((i - nb_cells_maxwidth / 2.0 + 0.5) * Cell::getCellWidth() + visibleSize.width * 3 / 8,
 					(nb_cells_maxheight - j - 1 + 0.5 - nb_cells_maxheight / 2.0) * Cell::getCellHeight() + visibleSize.height / 2));
-				cell->setVisible(false);
+				if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isAlwaysGridEnabled()) {
+					cell->setVisible(false);
+				}
+				
 				if (abs(i + 0.5 - nb_cells_maxwidth / 2.0) >= nb_cells_width / 2.0 || abs(j + 0.5 - nb_cells_maxheight / 2.0) >= nb_cells_height / 2.0) {
 					cell->setOffLimit(true);
 				}
@@ -113,8 +116,9 @@ bool Level::init()
 		for (unsigned int i(0); i < root["paths"].size(); ++i) {
 			std::vector<Cell*> path;
 			for (unsigned int j(0); j < root["paths"][i]["path"].size(); ++j) {
-				Cell* cell = getNearestCell(Vec2(root["paths"][i]["path"][j][0].asFloat() + visibleSize.width * 3 / 8, 
-					root["paths"][i]["path"][j][1].asFloat() + visibleSize.height / 2));
+				Vec2 path_pos = Vec2(root["paths"][i]["path"][j][0].asFloat() * ratio + visibleSize.width * 3 / 8,
+					root["paths"][i]["path"][j][1].asFloat() * ratio + visibleSize.height / 2);
+				Cell* cell = getNearestCell(path_pos);
 				cell->setPath(true);
 				path.push_back(cell);
 			}
@@ -196,7 +200,7 @@ void Level::update(float dt)
 				sugar += dango->getGain();
 			}
 			if (del) {
-				for (auto& tower : turrets) {
+				/*for (auto& tower : turrets) {
 					if (tower->getTarget() == dango) {
 						tower->setTarget(nullptr);
 					}
@@ -205,9 +209,12 @@ void Level::update(float dt)
 					if (attack->getTarget() == dango) {
 						attack->setTarget(nullptr);
 					}
-				}
+				}*/
 				if (generator->isDone() && dangos.size() == 1) {
 					SceneManager::getInstance()->getGame()->getMenu()->startRewarding(dango->getPosition());
+				}
+				if (SceneManager::getInstance()->getGame()->getMenu()->getCurrentDango() == dango) {
+					SceneManager::getInstance()->getGame()->getMenu()->handleDeadDango();
 				}
 				removeChild(dango);
 				dango = nullptr;
@@ -324,6 +331,10 @@ void Level::addTurret(Tower* tower){
 	turrets.push_back(tower);
 	addChild(tower);
 	tower->setLocalZOrder(zGround);
+}
+
+std::vector<Dango*> Level::getEnemies() {
+	return dangos;
 }
 
 std::vector<Dango*> Level::getEnemiesInRange(cocos2d::Vec2 position, double range) {
@@ -472,6 +483,29 @@ Tower* Level::touchingTower(cocos2d::Vec2 position){
 	return nullptr;
 }
 
+Dango* Level::touchingDango(cocos2d::Vec2 position) {
+	for (auto& dango : dangos) {
+		Vec2 pointInSprite = position - dango->getPosition() * getScale();
+		pointInSprite.x += dango->getSpriteFrame()->getRect().size.width * dango->getScaleX() / 2;
+		pointInSprite.y += dango->getSpriteFrame()->getRect().size.height * dango->getScaleY() / 2;
+		Rect itemRect = Rect(0, 0, dango->getSpriteFrame()->getRect().size.width * dango->getScaleX(),
+			dango->getSpriteFrame()->getRect().size.height * dango->getScaleY());
+
+		if (itemRect.containsPoint(pointInSprite)) {
+			return dango;
+		}
+	}
+	return nullptr;
+}
+
 std::vector<Attack*> Level::getAttacks() {
 	return attacks;
+}
+
+void Level::showGrid(bool show) {
+	for (auto& row : cells) {
+		for (auto& cell : row) {
+			cell->setVisible(show);
+		}
+	}
 }
