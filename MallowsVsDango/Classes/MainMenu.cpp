@@ -10,7 +10,7 @@ bool MainMenu::init()
 	if(!Scene::init()){ return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	
-	/*loading sprites, setting position, scaling*/
+	/*loading sprites, setting position, scaling for main menu*/
 
 	Sprite* loadingBackground = Sprite::create("res/background/crissXcross.png");
 	loadingBackground->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
@@ -52,9 +52,9 @@ bool MainMenu::init()
 	flash->setPosition(visibleSize.width / 2, visibleSize.height / 2);
 	flash->setOpacity(0.0);
 
-	bg2 = Sprite::create("res/background/menu_background_battle.png");
+	Sprite* bg2 = Sprite::create("res/background/menu_background_battle.png");
 	addChild(bg2);
-	bg2->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	bg2->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	bg2->setScale((visibleSize.width) / bg2->getContentSize().width);
 	bg2->setOpacity(0.0);
 
@@ -97,8 +97,7 @@ bool MainMenu::init()
 	
 	/*action sequence*/
 	auto sequence = Sequence::create(fadein, delay, fadeout, fadeinbg1, fadeintxt1, fadeintxt2, fadeinvs, actionvs, fadeinf, fadeoutf1, fadeinf, fadeoutf1, fadeinf, actionbg2, fadeinbutton, nullptr);
-	c_action = bglogo->runAction(sequence);
-	c_action->retain();
+	bglogo->runAction(sequence);
 
 	return true;
 	

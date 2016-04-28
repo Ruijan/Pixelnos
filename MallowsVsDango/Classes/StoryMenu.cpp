@@ -4,6 +4,8 @@
 #include "SceneManager.h"
 #include "Lib/Functions.h"
 #include "Lib/FadeMusic.h"
+#include "Lib/AudioSlider.h"
+#include "Config/AudioController.h"
 
 
 USING_NS_CC;

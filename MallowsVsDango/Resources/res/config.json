@@ -270,5 +270,115 @@
       "res/levels/wall_wood_0.png",
       "res/levels/wall_wood_1.png"
     ]
-  }
+  },
+
+
+"skills": [
+    [ 
+      {        
+        "name": "C'est au pied du mur...",
+        "cost": 5,
+        "effect": [],
+        "sprite": "res/buttons/centralMenuPanel.png",
+        "description": "Cree un mur en sucre (2 PdV) au bout du chemin.",
+        "dependance": []
+      }     
+    ],
+
+    [ 
+        {        
+        "name": "Et un tour gratuit",
+        "cost": 10,
+        "effect": [],
+        "sprite": "res/buttons/centralMenuPanel.png",
+        "description": "Tous les 20 attaques, le Cutter, effectue un tour supplementaire",
+        "dependance": [0]
+       },   
+      {        
+        "name": "Une bombe peut en cacher une autre",
+        "cost": 10,
+        "effect": [],
+        "sprite": "res/buttons/centralMenuPanel.png",
+        "description": "Tous les 20 tirs, une deuxieme bombe est lancee par le Bombeur",
+        "dependance": [0]
+      }  
+    ],
+
+    [ 
+      {        
+        "name": "Et la t’es enerve ? Et la t’es enerve ? ...",
+        "cost": 15,
+        "effect": [],
+        "sprite": "res/buttons/centralMenuPanel.png",
+        "description": "Reduit de 1 le nombre d'attaques necessaires pour activer la limite du Cutter.",
+        "dependance": [0]
+      },
+      {        
+        "name": "Une balle de moins",
+        "cost": 15,
+        "effect": [],
+        "sprite": "res/buttons/centralMenuPanel.png",
+        "description": "Reduit de 1 le nombre de tirs necessaires pour activer la limite du Bombeur.",
+        "dependance": [1]
+      }
+    ],
+
+    [
+              {        
+        "name": "Qui a parle de barbecue ?",
+        "cost": 50,
+        "effect": [],
+        "sprite": "res/buttons/centralMenuPanel.png",
+        "description": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
+        "dependance": []
+      },
+      {        
+        "name": "L'age de glace",
+        "cost": 30,
+        "effect": [],
+        "sprite": "res/buttons/centralMenuPanel.png",
+        "description": "Debloque la tourelle Lance-Flamme",
+        "dependance": []
+        }
+    ],
+
+    [ 
+            {        
+        "name": "Qui a parle de barbecue ? (2)",
+        "cost": 50,
+        "effect": [],
+        "sprite": "res/buttons/centralMenuPanel.png",
+        "description": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
+        "dependance": [0]
+      },
+      {        
+        "name": "C'est les soldes !",
+        "cost": 50,
+        "effect": [],
+        "sprite": "res/buttons/centralMenuPanel.png",
+        "description": "Diminue le cout de creation de toutes les tourelles 5%",
+        "dependance": [1]
+      }
+    ],
+
+    [
+        {        
+        "name": "Qui a parle de barbecue ? (3)",
+        "cost": 50,
+        "effect": [],
+        "sprite": "res/buttons/centralMenuPanel.png",
+        "description": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
+        "dependance": [0]
+        },
+        {        
+        "name": "Jackpot",
+        "cost": 50,
+        "effect": [],
+        "sprite": "res/buttons/centralMenuPanel.png",
+        "description": "Un dango a 1% de chance de genere 1 sucrette lorsqu’il meurt.",
+        "dependance": [1]
+        }
+    ]
+  ]
+
 }

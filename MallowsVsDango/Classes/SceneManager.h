@@ -19,7 +19,8 @@ public:
 		LEVELS = 2,
 		LOADING = 3,
 		CREDIT = 4,
-		EDITOR = 5
+		EDITOR = 5,
+		SKILLS = 6
 	};
 
 	//Constructor & destructor
@@ -41,7 +42,7 @@ public:
 	
 private:
 	static SceneManager *manager;
-	std::array<cocos2d::Scene*,6> cacheScene;
+	std::array<cocos2d::Scene*,7> cacheScene;
 	cocos2d::Scene* currentscene;
 	int c_index;
 };
