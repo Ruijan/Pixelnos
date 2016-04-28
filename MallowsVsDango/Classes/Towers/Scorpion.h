@@ -13,6 +13,10 @@ public:
 	virtual Json::Value getSpecConfig();
 	
 	virtual void attack();
+	virtual void startLimit();
+
+private:
+	int nb_limit_attack;
 
 };
 

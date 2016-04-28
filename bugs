@@ -1,8 +1,7 @@
 TO CORRECT
 anchor points for animation of towers
-scale and positions of some buttons 
+
 size of images for different resolutions
-during dialogues, pause game, buttons of right panel are still active
 
 DONE
 color text cost towers
@@ -25,3 +24,5 @@ sound reset everytime a new music is playing
 after going back to menu, dialogues are not updated anymore (pause)
 sound sliders still active in background
 positions of parameters menu
+during dialogues, pause game, buttons of right panel are still active
+scale and positions of some buttons 

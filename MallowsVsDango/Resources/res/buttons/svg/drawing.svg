@@ -3533,6 +3533,32 @@
          stdDeviation="0.51585176"
          id="feGaussianBlur3970-3-1-7-9-1-5" />
     </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter5839"
+       x="-0.01905549"
+       width="1.038111"
+       y="-0.03227414"
+       height="1.0645483">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="2.5742471"
+         id="feGaussianBlur5841" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter5839-4"
+       x="-0.019055489"
+       width="1.038111"
+       y="-0.032274138"
+       height="1.0645483">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="2.5742471"
+         id="feGaussianBlur5841-1" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -3542,8 +3568,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="2135.4512"
-     inkscape:cy="1679.0608"
+     inkscape:cx="873.91073"
+     inkscape:cy="897.57285"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -3554,7 +3580,7 @@
      inkscape:window-maximized="1"
      units="mm"
      inkscape:snap-text-baseline="true"
-     showguides="false" />
+     showguides="true" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -3572,6 +3598,18 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,1927.5591)">
+    <rect
+       inkscape:export-ydpi="171.94121"
+       inkscape:export-xdpi="171.94121"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_information_panel_yellow_selected.png"
+       ry="19.291252"
+       y="-668.35211"
+       x="2204.3179"
+       height="191.42859"
+       width="324.22116"
+       id="rect5586-1"
+       style="opacity:1;fill:#fff41d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter5839)"
+       transform="matrix(1.0025221,0,0,1.0148259,-5.4633165,7.9848577)" />
     <rect
        y="-155.48816"
        x="2068.7693"
@@ -5968,7 +6006,7 @@
        style="fill:#552200;fill-opacity:1;stroke:none" />
     <path
        style="fill:#00ff00;fill-opacity:1;stroke:none"
-       d="m 1282.1617,820.25011 c 39.1923,0.506 122.8768,0.2891 158.3149,0 3.2177,-0.026 3.217,12.3539 0,12.2655 -10.5234,-0.289 -119.1226,-0.072 -158.3149,0 -3.2178,0.01 -3.2177,-12.307 0,-12.2655 z"
+       d="m 1283.3028,806.25011 c 57.7248,0.506 180.9803,0.2891 233.1757,0 4.7391,-0.026 4.7381,12.3539 0,12.2655 -15.4995,-0.289 -175.4509,-0.072 -233.1757,0 -4.7393,0.01 -4.7392,-12.307 0,-12.2655 z"
        id="path3092"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="sssss" />
@@ -9826,7 +9864,7 @@
        x="2210.0647"
        y="-664.78064"
        ry="18.571428"
-       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_information_panel_disabled.png"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_information_panel_yellow_selected.png"
        inkscape:export-xdpi="171.94121"
        inkscape:export-ydpi="171.94121" />
     <rect
@@ -9838,7 +9876,7 @@
        id="rect5337"
        style="opacity:1;fill:#864123;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        rx="14.510212"
-       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_information_panel_disabled.png"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_information_panel_yellow_selected.png"
        inkscape:export-xdpi="171.94121"
        inkscape:export-ydpi="171.94121" />
     <path
@@ -9846,7 +9884,7 @@
        d="m 2224.7644,-660.4946 c -6.4808,0 -11.6977,7.575 -11.6977,16.9863 l 0,11.6289 10.0067,3.3535 -10.0067,2.6094 0,23.2636 12.3093,3.586 -12.3093,2.4609 0,26.8653 14.5462,3.291 -14.5462,2.2578 0,29.6601 6.5042,1.8946 -6.5042,1.3008 0,22.4238 c 0,9.4113 5.2169,16.9902 11.6977,16.9902 l 284.8216,0 c 6.4808,0 11.6976,-7.5789 11.6976,-16.9902 l 0,-13.4629 -11.3351,-1.6328 11.3351,-2.3809 0,-12.2773 -7.3333,-1.0567 7.3333,-1.541 0,-27.3242 -12.8359,-1.8496 12.8359,-2.6953 0,-24.3946 -5.3316,-0.7675 5.3316,-1.1192 0,-25.2558 -5.3316,-0.7676 5.3316,-1.1191 0,-16.9512 c 0,-9.4113 -5.2168,-16.9863 -11.6976,-16.9863 l -284.8216,0 z"
        id="rect5339"
        inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_information_panel_disabled.png"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_information_panel_yellow_selected.png"
        inkscape:export-xdpi="171.94121"
        inkscape:export-ydpi="171.94121" />
     <path
@@ -9855,7 +9893,7 @@
        style="opacity:1;fill:#ffddba;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ssccccccccccccsssscccccccccccccccsss"
-       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_information_panel_disabled.png"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_information_panel_yellow_selected.png"
        inkscape:export-xdpi="171.94121"
        inkscape:export-ydpi="171.94121" />
     <rect
@@ -10143,11 +10181,106 @@
        inkscape:export-xdpi="171.94121"
        inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_information_panel_disabled.png"
        ry="18.571428"
-       y="-663.77045"
-       x="2210.0647"
+       y="-948.05615"
+       x="2587.2075"
        height="184.28572"
        width="314.22116"
        id="rect5586"
        style="opacity:1;fill:#2e2926;fill-opacity:0.42405066;fill-rule:nonzero;stroke:none;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <path
+       style="fill:#803300;fill-opacity:1;stroke:none"
+       d="m 2158.9041,312.1387 240,0 c 0,0 2.9741,73.76547 2.3774,112.72424 -0.3049,19.90539 -0.5892,43.7031 -1.5585,63.58721 -0.6483,13.29986 -0.8189,39.93855 -0.8189,39.93855 l 0,20.75 0,20.75 0,20.75 c 0,0 -0.3819,13.84389 0,20.75 0.5058,9.14722 1.1034,62.1057 1.5152,71.25763 2.2097,49.10536 -1.5152,103.49237 -1.5152,103.49237 l 0,166 -240,0 z"
+       id="rect2985-7-3"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccssccccsscccc"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_panel_4.png"
+       inkscape:export-xdpi="85.012535"
+       inkscape:export-ydpi="85.012535" />
+    <rect
+       y="315.49551"
+       x="2161.4497"
+       height="632.58234"
+       width="233.97498"
+       id="rect3758-2-2"
+       style="fill:#aa4400;fill-opacity:1;stroke:none"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_panel_4.png"
+       inkscape:export-xdpi="85.012535"
+       inkscape:export-ydpi="85.012535" />
+    <rect
+       style="fill:#ffddba;fill-opacity:1;stroke:none"
+       id="rect3760-6-4"
+       width="235.02104"
+       height="640.56201"
+       x="2157.6692"
+       y="312.2605"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_panel_4.png"
+       inkscape:export-xdpi="85.012535"
+       inkscape:export-ydpi="85.012535" />
+    <path
+       style="fill:#aa4400;fill-opacity:1;stroke:none"
+       d="m 2353.8533,396.66288 39.5462,-9.85897 0.8327,6.89654 -0.9864,8.43283 z"
+       id="rect3762-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_panel_4.png"
+       inkscape:export-xdpi="85.012535"
+       inkscape:export-ydpi="85.012535" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
+       id="path3769-4"
+       d="m 2368.9016,754.55517 24.4975,8.4253 1.3619,-6.5402 0.1851,-7.3611 z"
+       style="fill:#aa4400;fill-opacity:1;stroke:none"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_panel_4.png"
+       inkscape:export-xdpi="85.012535"
+       inkscape:export-ydpi="85.012535" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
+       id="path3769-4-4"
+       d="m 2371.9479,886.66127 24.4975,5.97637 1.3619,-4.6392 0.1851,-5.22149 z"
+       style="fill:#aa4400;fill-opacity:1;stroke:none"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_panel_4.png"
+       inkscape:export-xdpi="85.012535"
+       inkscape:export-ydpi="85.012535" />
+    <path
+       style="fill:#aa4400;fill-opacity:1;stroke:none"
+       d="m 2373.9885,419.97079 19.7467,5.97637 1.0978,-4.6392 0.1492,-5.22149 z"
+       id="path5886"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_panel_4.png"
+       inkscape:export-xdpi="85.012535"
+       inkscape:export-ydpi="85.012535" />
+    <path
+       style="fill:#aa4400;fill-opacity:1;stroke:none"
+       d="m 2360.2085,678.30468 33.0488,2.91522 1.8373,-2.26295 0.2497,-2.54699 z"
+       id="path5886-3"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\wood_panel_4.png"
+       inkscape:export-xdpi="85.012535"
+       inkscape:export-ydpi="85.012535" />
+    <rect
+       inkscape:export-ydpi="171.94121"
+       inkscape:export-xdpi="171.94121"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\yellow_selected.png"
+       ry="19.291252"
+       y="-668.35211"
+       x="2204.3179"
+       height="191.42859"
+       width="324.22116"
+       id="rect5586-1-6"
+       style="opacity:1;fill:#fff41d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter5839-4)"
+       transform="matrix(1.0025221,0,0,1.0148259,103.31747,619.20414)" />
+    <path
+       style="fill:#48d725;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 732.85795,-88.359914 -5,5 14.58158,14.7982 24.70413,-21.9411 -5,-5 -19.07651,18.6222 z"
+       id="path5051-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccc"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\validate.png"
+       inkscape:export-xdpi="111.17727"
+       inkscape:export-ydpi="111.17727" />
   </g>
 </svg>

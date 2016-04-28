@@ -1,35 +1,20 @@
 #include "Tower.h"
 #include "../Level/Cell.h"
 #include "../Dangos/Dango.h"
-#include "../Towers/Bullet.h"
+#include "../Towers/Attack.h"
 #include "../AppDelegate.h"
 #include "../InterfaceGame.h"
 
 USING_NS_CC;
 
-Tower::Tower(double nspeed, double ndamage, double nrange, double ncost,
- double nd_damage, double nd_range, double nd_speed) :
+Tower::Tower(double nspeed, double ndamage, double nrange, double ncost) :
 state(State::IDLE), fixed(false), destroy(false), target(nullptr), cost(ncost), 
 attackSpeed(nspeed), damage(ndamage), range(nrange), timer(0), timerIDLE(0), level(0), 
-currentAction(nullptr), d_speed(nd_speed), d_damage(nd_damage), d_range(nd_range)
+currentAction(nullptr), nb_attacks(0)
 {}
 
 Tower::~Tower() {}
 
-/*Tower* Tower::create()
-{
-	Tower* pSprite = new Tower();
-	std::string name = Tower::getConfig()["image"].asString();
-	if (pSprite->initWithFile(name))
-	{
-		pSprite->initDebug();
-		return pSprite;
-	}
-
-	CC_SAFE_DELETE(pSprite);
-	return NULL;
-}
-*/
 void Tower::initDebug(){
 	setScale(Cell::getCellWidth() / getContentSize().width);
 	autorelease();
@@ -46,7 +31,6 @@ void Tower::initDebug(){
 	circle->setVisible(false);
 	addChild(circle, 0, "range");
 }
-
 
 
 void Tower::destroyCallback(Ref* sender){
@@ -88,28 +72,44 @@ bool Tower::isSelected(){
 	return selected;
 }
 
+void Tower::removeTarget(Dango* dango) {
+	if (target == dango) {
+		target = nullptr;
+	}
+}
+
 void Tower::chooseTarget(std::vector<Dango*> targets){
 	if(state != State::ATTACKING && state != State::RELOADING){
 		double bestScore(0);
 		bool chosen = false;
 
-		for(auto cTarget : targets){
+		for(auto& cTarget : targets){
 			if(cTarget != nullptr){
 				int first = cTarget->getTargetedCell();
 				double dist = cTarget->getPosition().distanceSquared(this->getPosition());
 				double minDist = pow(getRange(), 2);
 				if (first > bestScore && dist <= minDist && cTarget->willBeAlive()){
 					bestScore = first;
+					if (target != nullptr) {
+						target->removeTargetingTower(this);
+					}
 					target = cTarget;
+					target->addTargetingTower(this);
 					chosen = true;
 				}
 			}
 		}
 		if(!chosen){
+			if (target != nullptr) {
+				target->removeTargetingTower(this);
+			}
 			target = nullptr;
 		}
 	}
 	else if(state == State::RELOADING){
+		if (target != nullptr) {
+			target->removeTargetingTower(this);
+		}
 		target = nullptr;
 	}
 }
@@ -120,10 +120,6 @@ void Tower::givePDamages(double damage){
 double Tower::getRange(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	return range * visibleSize.width / 960.0;
-}
-
-double Tower::getNextLevelRange(){
-	return d_range;
 }
 
 double Tower::getCost(){
@@ -137,15 +133,9 @@ Dango* Tower::getTarget(){
 double Tower::getDamage(){
 	return damage;
 }
-double Tower::getNextLevelDamage(){
-	return d_damage;
-}
 
 double Tower::getAttackSpeed(){
 	return attackSpeed;
-}
-double Tower::getNextLevelSpeed(){
-	return d_speed;
 }
 
 cocos2d::Vector<SpriteFrame*> Tower::getAnimation(Tower::State animState){
@@ -247,6 +237,9 @@ void Tower::update(float dt) {
 					timerIDLE = 0;
 					if(target != nullptr){
 						attack();
+						if (((AppDelegate*)Application::getInstance())->getSave()["auto_limit"].asBool()) {
+							startLimit();
+						}
 					}
 				}
 				if(timerIDLE > 2){
@@ -296,6 +289,10 @@ void Tower::updateDisplay(float dt){
 	}
 }
 
+bool Tower::isLimitReached() {
+	return nb_attacks >= getSpecConfig()["limit"].asInt();
+}
+
 bool Tower::hasToBeDestroyed(){
 	return destroy;
 }
@@ -305,13 +302,13 @@ void Tower::displayRange(bool disp){
 	loadingCircle->setVisible(disp);
 }
 
-
-void Tower::startAnimation(){
+void Tower::startAnimation(float speed){
 	if(currentAction != nullptr){
 		stopAllActions();
 	}
 	cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(state);
-	Animation* currentAnimation = Animation::createWithSpriteFrames(animFrames, 0.05f);
+	double delay = getSpecConfig()["animation_attack_time"].asDouble() / getSpecConfig()["animation_attack_size"].asDouble() / speed;
+	Animation* currentAnimation = Animation::createWithSpriteFrames(animFrames, delay);
 	currentAction = runAction(Animate::create(currentAnimation));
 	currentAction->retain();
 }
@@ -397,7 +394,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	current_level_layout->addChild(speed, 1, "speed");
 	current_level_layout->addChild(range_i, 1, "range");
 
-	double size_sprite = panel->getContentSize().width / 10;
+	double size_sprite = panel->getContentSize().width * panel->getScaleX() / 10;
 
 	attack->setScale(size_sprite / attack->getContentSize().width);
 	speed->setScale(size_sprite / speed->getContentSize().width);
@@ -483,9 +480,9 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 					((Label*)layout->getChildByName("next_level_layout")->getChildByName("cost_label"))->
 						setColor(Color3B::YELLOW);
 				}
+				((Label*)layout->getChildByName("next_level_layout")->getChildByName("level_label"))->
+					setString("Level " + Value(level + 2).asString());
 				if (level + 1 < (int)getSpecConfig()["cost"].size() - 1) {
-					((Label*)layout->getChildByName("next_level_layout")->getChildByName("level_label"))->
-						setString("Level " + Value(level + 2).asString());
 					((Label*)layout->getChildByName("next_level_layout")->getChildByName("attack_label"))->
 						setString(getSpecConfig()["damages"][level + 1].asString());
 					((Label*)layout->getChildByName("next_level_layout")->getChildByName("speed_label"))->
@@ -496,6 +493,8 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 						setString(getSpecConfig()["cost"][level + 1].asString());
 				}
 				else if (level >= (int)getSpecConfig()["damages"].size() - 2) {
+					((Label*)layout->getChildByName("next_level_layout")->getChildByName("cost_label"))->
+						setString(getSpecConfig()["cost"][level + 1].asString());
 					layout->getChildByName("next_level_layout")->getChildByName("range")->setVisible(false);
 					layout->getChildByName("next_level_layout")->getChildByName("speed")->setVisible(false);
 					layout->getChildByName("next_level_layout")->getChildByName("attack")->setVisible(false);
@@ -572,7 +571,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	upgrade_label->enableOutline(Color4B::BLACK, 1);
 	upgrade_label->setAlignment(cocos2d::TextHAlignment::CENTER);
 	upgrade_label->setPosition(nextlevel_layout->getContentSize().width * nextlevel_layout->getScaleX() / 2,
-		range_ni->getPosition().y - range_ni->getContentSize().height / 2 -
+		range_ni->getPosition().y - range_ni->getContentSize().height * range_ni->getScaleY()/ 2 -
 		upgrade_label->getContentSize().height / 2);
 	nextlevel_layout->addChild(upgrade_label, 1, "upgrade");
 

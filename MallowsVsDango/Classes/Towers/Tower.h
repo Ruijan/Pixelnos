@@ -17,17 +17,16 @@ public:
 		AWARE,
 		ATTACKING,
 		RELOADING,
+		LIMIT_BURSTING,
 		BLINKING_UP,
 		BLINKING_DOWN 
 	};
-
 	enum TowerType{
 		ARCHER,
 		CUTTER
 	};
 
-	Tower(double nspeed, double ndamage, double nrange, double ncost,
-		double nd_damage, double nd_range, double nd_speed);
+	Tower(double nspeed, double ndamage, double nrange, double ncost);
 	virtual ~Tower();
 	void initDebug();
 
@@ -36,15 +35,13 @@ public:
 	void setFixed(bool f);
 	bool isSelected();
 	void setSelected(bool select);
+	bool isLimitReached();
 	bool hasToBeDestroyed();
 	double getRange();
-	double getNextLevelRange();
 	double getCost();
 	Dango* getTarget();
 	double getDamage();
-	double getNextLevelDamage();
 	double getAttackSpeed();
-	double getNextLevelSpeed();
 	int getLevel();
 	Tower::State getState();
 	void setState(Tower::State state);
@@ -54,6 +51,7 @@ public:
 	static TowerType getTowerTypeFromString(std::string type);
 	cocos2d::Vector<cocos2d::SpriteFrame*> getAnimation(Tower::State animState);
 	static cocos2d::Vector<cocos2d::SpriteFrame*> getAnimationFromName(std::string name, Tower::State animState);
+	virtual void removeTarget(Dango* dango);
 	
 	// Updates
 	virtual void update(float dt);
@@ -63,20 +61,17 @@ public:
 	virtual void givePDamages(double damage);
 	virtual void reload();
 	
-	
 	// Callbacks
 	void destroyCallback(Ref* sender);
 	void builtCallback(Ref* sender);
 	void upgradeCallback(Ref* sender);
+	virtual void startLimit() = 0;
 
 	// Config
 	static Json::Value getConfig();
 	virtual Json::Value getSpecConfig() = 0;
 
 protected:
-	
-	//void updateDisplay(double dt);
-	
 	//State attribute
 	State state;
 	bool fixed;
@@ -88,14 +83,13 @@ protected:
 	// Characteristics
 	double cost;
 	double attackSpeed;
-	double d_speed;
 	double damage;
-	double d_damage;
 	double range;
-	double d_range;
 	double timer;
 	double timerIDLE;
 	int level;
+
+	int nb_attacks;
 	
 	//
 	cocos2d::DrawNode* loadingCircle;
@@ -104,8 +98,7 @@ protected:
 	
 	//methods
 	virtual void attack() = 0;
-	void startAnimation();
-	
+	void startAnimation(float speed = 1);
 };
 
 

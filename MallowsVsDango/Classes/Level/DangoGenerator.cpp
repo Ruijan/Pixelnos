@@ -210,8 +210,8 @@ void DangoGenerator::setPath(unsigned int path, unsigned int step, unsigned int 
 
 void DangoGenerator::saveInRoot(Json::Value& root) {
 	root["nbwaves"] = getNbWaves();
-	for (unsigned int i(0); i < getNbWaves(); ++i) {
-		for (unsigned int j(0); j < getNbSteps(i); ++j) {
+	for (int i(0); i < getNbWaves(); ++i) {
+		for (int j(0); j < getNbSteps(i); ++j) {
 			root["dangosChain"][i][j] = sequenceDango[i][j];
 			root["dangosTime"][i][j] = sequenceTimer[i][j];
 			root["dangosPath"][i][j] = sequencePath[i][j];

@@ -33,89 +33,71 @@ bool CreditScreen::init(){
 	double ratioX = visibleSize.width / 960;
 	double ratioY = visibleSize.height / 640;
 	getChildByName("background")->setScale(visibleSize.width / getChildByName("background")->getContentSize().width);
-	
-	menu = Menu::create();
 
 	// Instanciation du bouton de retour à la selection des niveaux
-	std::string return_to_game_button_icon = "res/buttons/back.png";
-	Color3B return_to_game_button_icon_color = Color3B::WHITE;
-	Sprite* return_to_game_sprite = Sprite::create(return_to_game_button_icon);
-	MenuItemSprite* return_to_game_item = MenuItemSprite::create(return_to_game_sprite, return_to_game_sprite, CC_CALLBACK_1(CreditScreen::returnToGame, this));
-	return_to_game_item->setPosition(Vec2(visibleSize.width - return_to_game_item->getContentSize().width / 2,
-		visibleSize.height - return_to_game_item->getContentSize().height / 2));
-	return_to_game_item->setEnabled(true);
-	return_to_game_item->setScale(ratioX);
+	auto return_to_game_button = ui::Button::create("res/buttons/back.png");
+	return_to_game_button->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+		}
+	});
+	return_to_game_button->setPosition(Vec2(visibleSize.width, visibleSize.height));
+	return_to_game_button->setAnchorPoint(Vec2(1, 1));
+	return_to_game_button->setEnabled(true);
+	return_to_game_button->setScale(visibleSize.width / 10 / return_to_game_button->getContentSize().width);
+	addChild(return_to_game_button, 2);
 	
 	// Instanciation du texte des crédits. On itère les deux listes en faisant correspondre les éléments entre eux.
-	credit_label = Label::createWithTTF(credit_title, "fonts/Love Is Complicated Again.ttf", 36);
-	int between_sub_content = 15;
-	double shift_left = credit_label->getContentSize().width / 2;
-	for (unsigned int i = 0; i < credit_content_subtitle.size(); i++) {
-		Label* credit_subtitle_bold = Label::createWithTTF(credit_subtitle[i], "fonts/Love Is Complicated Again.ttf", 28);
-		credit_subtitle_bold->setAlignment(TextHAlignment::CENTER);
-		credit_subtitle_bold->setPosition(Vec2(shift_left, -between_sub_content));
-		credit_subtitle_bold->setAnchorPoint(Vec2(0.5, 1));
-		credit_subtitle_bold->enableOutline(Color4B::ORANGE, 3);
-		credit_label->addChild(credit_subtitle_bold);
-		between_sub_content += 28;
-		Label* credit_subtitle_content = Label::createWithTTF(credit_content_subtitle[i], "fonts/Love Is Complicated Again.ttf", 22);
-		credit_subtitle_content->setAlignment(TextHAlignment::CENTER);
-		credit_subtitle_content->setColor(Color3B::WHITE);
-		credit_subtitle_content->setPosition(Vec2(shift_left, -between_sub_content));
-		credit_subtitle_content->setAnchorPoint(Vec2(0.5, 1));
-		credit_subtitle_content->enableOutline(Color4B::WHITE, 1);
-		credit_label->addChild(credit_subtitle_content);
-		between_sub_content += 20 + ((countLine(credit_content_subtitle[i])) * 25);
-	}
+	auto layout = ui::Layout::create();
+	addChild(layout, 2, "layout");
+	credit_label = Label::createWithTTF(credit_title, "fonts/Love Is Complicated Again.ttf", 72 * visibleSize.width / 1280);
 	credit_label->enableOutline(Color4B::ORANGE, 3);
-	//credit_label->setPosition(Vec2(-visibleSize.width / 16 - 10 * visibleSize.width / 960 - 360, 0));
 	credit_label->setPosition(Vec2(visibleSize.width / 2, 0));
 	credit_label->setAnchorPoint(Vec2(0.5, 1));
+	layout->addChild(credit_label, 2);
+	Label* previous_label = credit_label;
+	double total_height = credit_label->getContentSize().height;
+	for (unsigned int i = 0; i < credit_content_subtitle.size(); i++) {
+		Label* credit_subtitle_bold = Label::createWithTTF(credit_subtitle[i], "fonts/Love Is Complicated Again.ttf", 56 * visibleSize.width / 1280);
+		credit_subtitle_bold->setAlignment(TextHAlignment::CENTER);
+		credit_subtitle_bold->setPosition(Vec2(visibleSize.width / 2, previous_label->getPosition().y - 
+			previous_label->getContentSize().height - visibleSize.height / 15 ));
+		credit_subtitle_bold->setAnchorPoint(Vec2(0.5, 1));
+		credit_subtitle_bold->enableOutline(Color4B::ORANGE, 3);
+		layout->addChild(credit_subtitle_bold);
+		previous_label = credit_subtitle_bold;
 
-	//return_to_game_item->addChild(credit_label);
-	addChild(credit_label,2);
-
-
-	menu->addChild(return_to_game_item);
-	menu->setPosition(0, 0);
-
-	addChild(menu, 2);
+		Label* credit_subtitle_content = Label::createWithTTF(credit_content_subtitle[i], "fonts/Love Is Complicated Again.ttf", 44 * visibleSize.width / 1280);
+		credit_subtitle_content->setAlignment(TextHAlignment::CENTER);
+		credit_subtitle_content->setColor(Color3B::WHITE);
+		credit_subtitle_content->setPosition(Vec2(visibleSize.width / 2, previous_label->getPosition().y -
+			previous_label->getContentSize().height));
+		credit_subtitle_content->setAnchorPoint(Vec2(0.5, 1));
+		credit_subtitle_content->enableOutline(Color4B::WHITE, 1);
+		layout->addChild(credit_subtitle_content);
+		total_height = -credit_subtitle_content->getPosition().y + credit_subtitle_content->getContentSize().height;
+		previous_label = credit_subtitle_content;
+	}
+	layout->setContentSize(Size(visibleSize.width,total_height));
 
 	return true;
 }
 
 void CreditScreen::onEnterTransitionDidFinish(){
 	Scene::onEnterTransitionDidFinish();
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
 	// On créé le mouvement de scroll + le callback permettant de revenir à la "Selection des niveaux" lorsque les crédits sont finis.
-	auto moveBy = MoveBy::create(15, Vec2(0, 1500));
+	auto moveBy = MoveBy::create(15, Vec2(0, getChildByName("layout")->getContentSize().height + visibleSize.height));
 	auto callBackToGame = CallFunc::create([]() {
 		SceneManager::getInstance()->setScene(SceneManager::LEVELS);
 	});
 	Sequence* seq = Sequence::create(moveBy, callBackToGame, NULL);
-	credit_label->runAction(seq);
+	getChildByName("layout")->runAction(seq);
 }
 
 void CreditScreen::onExitTransitionDidStart() {
 	Scene::onExitTransitionDidStart();
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	credit_label->setPosition(Vec2(visibleSize.width / 2, 0));
-}
-
-
-/**	Fonction permettant de retourner dans le la scène "Selection des niveaux"
-*	@param Ref sender : Scène qui va être changée.
-*/
-void CreditScreen::returnToGame(Ref* sender){
-	SceneManager::getInstance()->setScene(SceneManager::LEVELS);
-}
-
-/** Fonction permettant de compter le nombre de ligne dans un texte donné
-*	@param std:string text : texte de lignes à compter.
-*	@return int : Nombre de lignes.
-*/
-int CreditScreen::countLine(std::string text) {
-	int count = 0;
-	for (unsigned int i = 0; i < text.size(); i++)
-		if (text[i] == '\n') count++;
-	return (count + 1);
 }

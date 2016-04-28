@@ -15,12 +15,34 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="drawing.svg"
+   sodipodi:docname="buttons.svg"
    inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\zoomout.png"
    inkscape:export-xdpi="85.012535"
    inkscape:export-ydpi="85.012535">
   <defs
      id="defs4">
+    <linearGradient
+       id="linearGradient5233">
+      <stop
+         id="stop5235"
+         offset="0"
+         style="stop-color:#ffc3bb;stop-opacity:1" />
+      <stop
+         id="stop5237"
+         offset="1"
+         style="stop-color:#f85d41;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3868-0">
+      <stop
+         id="stop5229"
+         offset="0"
+         style="stop-color:#ff9955;stop-opacity:1;" />
+      <stop
+         id="stop5231"
+         offset="1"
+         style="stop-color:#eb6909;stop-opacity:1;" />
+    </linearGradient>
     <linearGradient
        id="linearGradient3903">
       <stop
@@ -838,6 +860,29 @@
          result="color2"
          id="feColorMatrix5066" />
     </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter3854-8"
+       x="-0.11851983"
+       width="1.2370397"
+       y="-0.12201068"
+       height="1.2440214">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="1.7463358"
+         id="feGaussianBlur3856-4" />
+    </filter>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5233"
+       id="radialGradient3876-9"
+       cx="113.64216"
+       cy="688.70654"
+       fx="113.64216"
+       fy="688.70654"
+       r="18.934456"
+       gradientTransform="matrix(1,0,0,0.9732823,-76.710866,89.382265)"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -847,8 +892,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
-     inkscape:cx="931.14804"
-     inkscape:cy="895.25992"
+     inkscape:cx="51.455316"
+     inkscape:cy="300.49716"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -1471,7 +1516,8 @@
        id="g3878"
        inkscape:export-filename="/home/ruijan/Pixelnos/MallowsVsDango/Resources/res/buttons/level_button.png"
        inkscape:export-xdpi="89.875404"
-       inkscape:export-ydpi="89.875404">
+       inkscape:export-ydpi="89.875404"
+       transform="translate(0,-1.4285714)">
       <path
          transform="matrix(1.0683432,0,0,1.0146429,-19.218267,-9.2837447)"
          sodipodi:type="arc"
@@ -2775,5 +2821,36 @@
        id="path4510"
        d="m 838.14554,204.49788 42.95433,-38.54961 6.17598,6.12286 -43.75789,38.99604 z"
        style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       sodipodi:open="true"
+       sodipodi:end="1.7357528"
+       sodipodi:start="1.7893773"
+       d="m 109.80885,705.47127 a 17.67767,17.172594 0 0 1 -13.473579,-20.26271 17.67767,17.172594 0 0 1 20.676169,-13.35908 17.67767,17.172594 0 0 1 14.02794,19.90453 17.67767,17.172594 0 0 1 -20.30006,13.89275"
+       sodipodi:ry="17.172594"
+       sodipodi:rx="17.67767"
+       sodipodi:cy="688.70728"
+       sodipodi:cx="113.64216"
+       id="path3848-5"
+       style="fill:#da1000;fill-opacity:1;stroke:none;filter:url(#filter3854-8)"
+       sodipodi:type="arc"
+       transform="matrix(1.0350446,0,0,0.99034505,-80.124709,80.125771)"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\level_button_pink.png"
+       inkscape:export-xdpi="89.875404"
+       inkscape:export-ydpi="89.875404" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient3876-9);fill-opacity:1;stroke:#ec4d40;stroke-width:2.50600004;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path3078-5"
+       sodipodi:cx="36.931293"
+       sodipodi:cy="759.6889"
+       sodipodi:rx="17.67767"
+       sodipodi:ry="17.172594"
+       d="M 33.097987,776.4529 A 17.67767,17.172594 0 0 1 19.624406,756.19019 17.67767,17.172594 0 0 1 40.300578,742.83111 17.67767,17.172594 0 0 1 54.328516,762.73564 17.67767,17.172594 0 0 1 34.028454,776.62839"
+       sodipodi:start="1.7893773"
+       sodipodi:end="1.7357528"
+       sodipodi:open="true"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\level_button_pink.png"
+       inkscape:export-xdpi="89.875404"
+       inkscape:export-ydpi="89.875404" />
   </g>
 </svg>

@@ -34,8 +34,7 @@ SceneManager::SceneManager(){
 	cacheScene[SKILLS] = skills;
 	cacheScene[SKILLS]->retain();
 
-	currentscene = cacheScene[SKILLS];
-
+	currentscene = cacheScene[LEVELS];
 	c_index = 0;
 	Director::getInstance()->runWithScene(currentscene);
 	if(((AppDelegate*)Application::getInstance())->getConfig()["play_sound"].asBool()){
@@ -55,7 +54,7 @@ SceneManager::~SceneManager(){
 void SceneManager::setScene(SceneManager::SceneType type){
 	currentscene = cacheScene[type];
 	TransitionFade* transition = TransitionFade::create(0.5f, currentscene);
-	Director::getInstance()->replaceScene(transition);// , false));
+	Director::getInstance()->replaceScene(transition);
 	std::string music = ((AppDelegate*)Application::getInstance())->getConfig()["sound_transition"][c_index][(int)type].asString();
 
 	if(music != "none" && ((AppDelegate*)Application::getInstance())->getConfig()["play_sound"].asBool()){

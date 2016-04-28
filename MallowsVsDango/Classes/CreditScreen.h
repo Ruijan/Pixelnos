@@ -10,13 +10,6 @@ public:
 	CREATE_FUNC(CreditScreen);
 	virtual void onEnterTransitionDidFinish();
 	virtual void onExitTransitionDidStart();
-
-	void returnToGame(Ref* sender);
-	int countLine(std::string text);
-
-private:
-	cocos2d::Menu* menu;
-	//State state;
 };
 
 #endif

@@ -11,7 +11,7 @@ static cocos2d::Size designResolutionSize = cocos2d::Size(1280,720);
 //static cocos2d::Size designResolutionSize = cocos2d::Size(960, 640);
 
 
-AppDelegate::AppDelegate() : config("res/config.json", "MvDSave"), controller(new AudioController()) {
+AppDelegate::AppDelegate() : config(new Config("res/config.json", "MvDSave")), controller(new AudioController()) {
 }
 
 AppDelegate::~AppDelegate()
@@ -85,7 +85,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 
     auto fileUtils = FileUtils::getInstance();
-    config.init();
+    config->init();
 
 	controller->initFromConfig(getSave());
 
@@ -115,18 +115,18 @@ void AppDelegate::applicationWillEnterForeground() {
 }
 
 Json::Value const AppDelegate::getConfig() const{
-	return config.getConfigValues();
+	return config->getConfigValues();
 }
 
 Json::Value const AppDelegate::getSave() const{
-	return config.getSaveValues();
+	return config->getSaveValues();
 }
-Config& AppDelegate::getConfigClass(){
+Config* AppDelegate::getConfigClass(){
 	return config;
 }
 
 bool AppDelegate::isSaveFile() const{
-	return config.isSaveFile();
+	return config->isSaveFile();
 }
 
 void AppDelegate::addAudioSlider(AudioSlider* slider, AudioController::SOUNDTYPE type){

@@ -1,22 +1,14 @@
 ============================================================================
 FEATURES TO CODE (137h)
 ============================================================================
-money system and skill tree to code and design (20h): (Thomas)
-	- dynamical positioning of skill from a file (read a file to find all the skills and create automatically the tree)
-	- save and load skills in save json file
-	- "buy" a skill
-Story menu interface for parameters (sound, credit, skill tree button) and gold (4-5h) (Xianle)
-Player powers (13h) (Xianle):
-	-limit for towers -> after killing a certain amount of dango power plus for a specific time (3h)
-	-throw randomly a certain amount of water bombs on dangos (2-3h)
-	-slice dangos (3-4h)
-	-freeze all dangos for a certain amount of time (3h)
-sound (2h) (Xianle):
-	-losing
-	-winning
-	-sound for dialogue ???
+field boost for specific towers
+create dangosoy class and behavior (10h)
+create dangolant class and behavior (10h)
+create mama dango class and behavior (10h)
+create freezing tower class and behavior (10h)
+add boss
+multilanguages game (15h)
 make tutorial (1st level) (10h)
-display information about dango on click/tap (1h30)
 improve gameplay and level design (30h without level editor, 5-10h with level editor):
 	-level 1 map & generator & dialogue & reward
 	-level 2 map & generator & dialogue & reward
@@ -39,11 +31,24 @@ Level editor (70h/ 40h): (29 / 38 features)
 		-apparition (left/right)
 		-character (image)
 		-emotion
-		-show the time for the dialogue to be displayed
-create dangosoy class and behavior (10h)
-create mama dango class and behavior (10h)
-create freezing tower class and behavior (10h)
+sound (2h):
+	-losing 
+	-winning
+	-sound for dialogue
 
+============================================================================
+CURRENT FEATURES CODING (137h)
+============================================================================
+money system and skill tree to code and design (20h): (Xianle)
+	- dynamical positioning of skill from a file (read a file to find all the skills and create automatically the tree)
+	- save and load skills in save json file
+	- "buy" a skill
+
+limit for towers -> after killing a certain amount of dango, power plus for a specific time (3h):
+	-saucer
+
+effects of towers :
+	- slowing down 50%
 
 ============================================================================
 FEATURES TO DESIGN (141h)
@@ -128,7 +133,19 @@ Level editor:
 (OK) code behavior dangobese (aspiring bullets) (5h)
 (OK) Company logo screen (30min) (Xianle)
 (OK) remake main menu with cocos2d actions (1h) (Xianle)
-
+(OK) remake interfaceGame
+(OK) water bomb attack
+(OK) Story menu interface for parameters (sound, credit, skill tree button) and gold (4-5h)
+(OK) display information about dango on click/tap (1h30)
+(OK) limit for towers -> after killing a certain amount of dango, power plus for a specific time (3h):
+	-(OK) bomber
+	-(OK) cutter
+(OK) effects of towers:
+	-(OK) +50% damages done by other towers
+	-(OK) burn effect 1dmg/s
+(OK) show grid in game in settings (2h)
+(OK) show dialogue in game in settings (2h)
+(OK) show limit in game in settings (2h)
 		
 
 
