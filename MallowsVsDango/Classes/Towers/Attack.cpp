@@ -73,10 +73,14 @@ void Attack::startAnimation(){
 	((AppDelegate*)Application::getInstance())->getAudioController()->playEffect(sound.c_str());
 }
 
+void Attack::setDamagesId(int id) {
+	damages_id = id;
+}
+
 void Attack::setEnabled(bool enable) {
 	enabled = enable;
 	if (target != nullptr) {
-		target->removePDamages(damages);
+		target->removePDamages(damages_id);
 	}
 }
 
@@ -127,7 +131,7 @@ void WaterBall::update(float dt) {
 				if (distance < 10 * visibleSize.width / 960) {
 					touched = true;
 					target->removeTargetingAttack(this);
-					target->takeDamages(damages);
+					target->applyProspectiveDamages(damages_id);
 					startAnimation();
 					target = nullptr;
 				}
@@ -189,14 +193,14 @@ void WaterBombBall::update(float dt) {
 				Vec2 direction = target->getPosition() - getPosition();
 				double distance = sqrt(direction.x*direction.x + direction.y*direction.y);
 				Size visibleSize = Director::getInstance()->getVisibleSize();
-				if (distance < 10 * visibleSize.width / 960) {
+				if (distance < target->getContentSize().width * target->getScaleX() / 2) {
 					touched = true;
 					std::vector<Dango*> enemies = SceneManager::getInstance()->getGame()->
 						getLevel()->getEnemiesInRange(target->getPosition(), range);
 					target->removeTargetingAttack(this);
 					for (auto& enemy : enemies) {
 						if (enemy == target) {
-							enemy->takeDamages(damages);
+							enemy->applyProspectiveDamages(damages_id);
 						}
 						else{
 							enemy->takeDamages(0.5*damages);
@@ -253,7 +257,7 @@ void Slash::update(float dt) {
 			if (!touched) {
 				touched = true;
 				target->removeTargetingAttack(this);
-				target->takeDamages(damages);
+				target->applyProspectiveDamages(damages);
 				target = nullptr;
 				startAnimation();
 			}
@@ -298,7 +302,7 @@ void DeepSlash::update(float dt) {
 			if (!touched) {
 				touched = true;
 				target->removeTargetingAttack(this);
-				target->takeDamages(damages);
+				target->applyProspectiveDamages(damages_id);
 				target->addEffect(effect);
 				effect->applyModifierToTarget();
 				target = nullptr;

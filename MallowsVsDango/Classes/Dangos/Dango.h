@@ -25,8 +25,8 @@ public:
 		RELOAD,
 		MOVE
 	};
-	Dango(std::vector<Cell*> npath, double nspeed, double hp, int level,
-		double damages, double a_speed);
+	Dango(std::vector<Cell*> npath, double nspeed, double hp, int nlevel,
+		double damages, double a_reload, double anim_duration, int nb_frames, std::string nname);
 	virtual ~Dango();
 	//static Dango* create(std::string image, std::vector<Cell*> npath, int level);
 
@@ -47,8 +47,9 @@ public:
 	void updateDirection(cocos2d::Vec2 direction);
 
 	void takeDamages(double damages);
-	void takePDamages(double damages);
-	void removePDamages(double damages);
+	void applyProspectiveDamages(int id_damage);
+	int takePDamages(double damages, double delay);
+	void removePDamages(int id_damage);
 	
 	void move(float dt);
 	virtual void attack(float dt);
@@ -60,8 +61,8 @@ public:
 
 	void addTargetingTower(Tower* tower);
 	void addTargetingAttack(Attack* tower);
-	int addSpeedModifier(double speed_modifier);
-	int addDamagesModifier(double dmg_modifier);
+	int addSpeedModifier(std::pair<double, Effect*> pair);
+	int addDamagesModifier(std::pair<double, Effect*> pair);
 	void removeSpeedModifier(int id);
 	void removeDamageModifier(int id);
 	void removeTargetingTower(Tower* tower);
@@ -75,8 +76,12 @@ protected:
 	std::vector<Cell*> path;
 	cocos2d::Action* cAction;
 
-	std::map<int, double> m_speed;
-	std::map<int, double> m_damages;
+	double animation_duration;
+	double nb_frames_anim;
+	std::string name;
+
+	std::map<int, std::pair<double, Effect*>> m_speed;
+	std::map<int, std::pair<double, Effect*>> m_damages;
 	std::vector<Tower*> targeting_towers;
 	std::vector<Attack*> targeting_attacks;
 	int modifier_id;
@@ -84,6 +89,8 @@ protected:
 	double speed;
 	double hitPoints;
 	double pDamages;				// prosepctive damages
+	std::map<int, double> prospective_damages;
+	int id_damages;
 	double reload_timer;
 	double attack_damages;
 	double attack_reloading;

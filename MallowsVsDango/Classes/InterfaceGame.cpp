@@ -97,6 +97,7 @@ void InterfaceGame::addEvents()
 					}
 					else if(state == TURRET_CHOSEN){
 						if(selected_turret != nullptr){
+							selected_turret->destroyCallback(this);
 							removeTower();
 						}
 					}
@@ -649,6 +650,7 @@ void InterfaceGame::initParametersMenu(){
 	checkbox_grid->setPosition(Vec2(always_show_grid->getPosition().x,
 		show_grid->getPosition().y));
 	checkbox_grid->setSelected(((AppDelegate*)Application::getInstance())->getConfigClass()->isAlwaysGridEnabled());
+	checkbox_grid->setScale(visibleSize.width / 1280);
 	checkbox_grid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			((AppDelegate*)Application::getInstance())->getConfigClass()->enableMovingGrid(false);
@@ -664,6 +666,7 @@ void InterfaceGame::initParametersMenu(){
 	checkbox_never_grid->setPosition(Vec2(never_show_grid->getPosition().x,
 		show_grid->getPosition().y));
 	checkbox_never_grid->setSelected(((AppDelegate*)Application::getInstance())->getConfigClass()->isNeverGridEnabled());
+	checkbox_never_grid->setScale(visibleSize.width / 1280);
 	checkbox_never_grid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			((AppDelegate*)Application::getInstance())->getConfigClass()->enableMovingGrid(false);
@@ -679,6 +682,7 @@ void InterfaceGame::initParametersMenu(){
 	checkbox_moving_grid->setPosition(Vec2(moving_show_grid->getPosition().x,
 		show_grid->getPosition().y));
 	checkbox_moving_grid->setSelected(((AppDelegate*)Application::getInstance())->getConfigClass()->isMovingGridEnabled());
+	checkbox_moving_grid->setScale(visibleSize.width / 1280);
 	checkbox_moving_grid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			((AppDelegate*)Application::getInstance())->getConfigClass()->enableMovingGrid(true);
@@ -694,6 +698,7 @@ void InterfaceGame::initParametersMenu(){
 	checkbox_limit->setPosition(Vec2(moving_show_grid->getPosition().x,
 		auto_limit->getPosition().y));
 	checkbox_limit->setSelected(((AppDelegate*)Application::getInstance())->getConfigClass()->isLimitEnabled());
+	checkbox_limit->setScale(visibleSize.width / 1280);
 	checkbox_limit->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			((AppDelegate*)Application::getInstance())->getConfigClass()->enableAutoLimit(
@@ -708,6 +713,7 @@ void InterfaceGame::initParametersMenu(){
 		skip_dialogues->getPosition().y));
 	bool selected = ((AppDelegate*)Application::getInstance())->getConfigClass()->isDialoguesEnabled();
 	checkbox_dialogues->setSelected(selected);
+	checkbox_dialogues->setScale(visibleSize.width / 1280);
 	checkbox_dialogues->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			((AppDelegate*)Application::getInstance())->getConfigClass()->enableDialogues(
@@ -1002,7 +1008,7 @@ void InterfaceGame::initRightPanel(){
 			cost->getPosition().y));
 		tower->addChild(sugar, 6, "sugar");
 
-		towers_menu[Tower::getConfig().getMemberNames()[i]] = tower;
+		towers_menu[Tower::getConfig().getMemberNames()[i]] = std::make_pair(tower, Tower::getConfig()[Tower::getConfig().getMemberNames()[i]]["cost"][0].asDouble());
 		++j;
 	}
 	menu_panel->addChild(towers, 2, "towers");
@@ -1262,13 +1268,20 @@ void InterfaceGame::hideTowerInfo() {
 
 void InterfaceGame::updateButtonDisplay(){
 	for (auto& tower : towers_menu) {
-		if (game->getLevel()->getQuantity() < Tower::getConfig()[tower.first]["cost"][0].asDouble()) {
-			((Label*)tower.second->getChildByName("cost"))->setColor(Color3B::RED);
-			((Label*)tower.second->getChildByName("cost"))->enableOutline(Color4B::BLACK, 1.0);
+		auto cost_label = (Label*)tower.second.first->getChildByName("cost");
+		double cost = tower.second.second;
+		double quantity = game->getLevel()->getQuantity();
+		if (quantity < cost) {
+			if (cost_label->getColor() != Color3B::RED) {
+				cost_label->setColor(Color3B::RED);
+				cost_label->enableOutline(Color4B::BLACK, 1.0);
+			}
 		}
 		else {
-			((Label*)tower.second->getChildByName("cost"))->setColor(Color3B::GREEN);
-			((Label*)tower.second->getChildByName("cost"))->enableOutline(Color4B::BLACK, 1.0);
+			if (cost_label->getColor() != Color3B::GREEN) {
+				cost_label->setColor(Color3B::GREEN);
+				cost_label->enableOutline(Color4B::BLACK, 1.0);
+			}
 		}
 	}
 }
@@ -1283,16 +1296,16 @@ std::pair<std::string, cocos2d::Sprite*> InterfaceGame::getTowerFromPoint(cocos2
 	cocos2d::Vec2 origin = getChildByName("menu_panel")->getBoundingBox().origin + 
 		getChildByName("menu_panel")->getChildByName("towers")->getPosition();
 	for (auto& item : towers_menu){
-		Vec2 pointInSprite = location - item.second->getPosition() - origin;
-		pointInSprite.x += item.second->getSpriteFrame()->getRect().size.width *
-			item.second->getScale() / 2;
-		pointInSprite.y += item.second->getSpriteFrame()->getRect().size.height *
-			item.second->getScale() / 2;
-		Rect itemRect = Rect(0, 0, item.second->getSpriteFrame()->getRect().size.width *
-			item.second->getScale(),
-			item.second->getSpriteFrame()->getRect().size.height * item.second->getScale());
+		Vec2 pointInSprite = location - item.second.first->getPosition() - origin;
+		pointInSprite.x += item.second.first->getSpriteFrame()->getRect().size.width *
+			item.second.first->getScale() / 2;
+		pointInSprite.y += item.second.first->getSpriteFrame()->getRect().size.height *
+			item.second.first->getScale() / 2;
+		Rect itemRect = Rect(0, 0, item.second.first->getSpriteFrame()->getRect().size.width *
+			item.second.first->getScale(),
+			item.second.first->getSpriteFrame()->getRect().size.height * item.second.first->getScale());
 		if (itemRect.containsPoint(pointInSprite)){
-			return item;
+			return std::make_pair(item.first,item.second.first);
 		}
 	}
 	std::pair<std::string, Sprite*> item;

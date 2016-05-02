@@ -258,10 +258,29 @@
       "last_level_description": "Increase damages done by other towers on the target by 25%.",
       "image": "res/turret/cutter.png",
       "name": "cutter",
-      "limit": 20,
-      "deep_wound_duration": 5,
-      "deep_wound_percent" :  3,
+      "limit": 3,
+      "deep_wound_duration": 3,
+      "deep_wound_percent" : 0.5,
       "sound_bullet": "music/slash.mp3"
+    },
+    "saucer": {
+      "animation": "res/turret/animations/archer.png",
+      "animation_attack_size": 9,
+      "animation_attack_time": 0.5,
+      "animation_bullet": "res/turret/animations/splash.png",
+      "animation_bullet_size": 14,
+      "animation_steady_size": 49,
+      "attack_speed": [1.5, 1.25, 1, 1],
+      "cost": [ 30, 15, 25, 50 ],
+      "sell": [15, 25, 35, 60],
+      "range": [120, 135, 150, 150],
+      "damages": [ 1, 1.5, 2, 2 ],
+      "description": "Saucer: Slow down enemies with sweet soy sauce.",
+      "last_level_description" :  "The water bombs are getting bigger and are doing damages in area.",
+      "image": "res/turret/archer.png",
+      "name": "archer",
+      "limit": 5,
+      "sound_bullet": "music/splash.mp3"
     }
   },
   "wall": {

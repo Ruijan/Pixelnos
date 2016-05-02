@@ -154,8 +154,8 @@ bool Level::init()
 void Level::initWalls() {
 	for (auto& path : paths) {
 		Wall* wall = Wall::create();
-		path[path.size() - 2]->setObject(wall);
-		wall->setPosition(path[path.size() - 2]->getPosition());
+		path[path.size() - 3]->setObject(wall);
+		wall->setPosition(path[path.size() - 3]->getPosition());
 		wall->setPosition(wall->getPositionX(), wall->getPositionY() + Cell::getCellHeight() / 4);
 		wall->setScale(Cell::getCellWidth() / wall->getChildren().at(0)->getContentSize().width);
 		addChild(wall);
@@ -165,6 +165,7 @@ void Level::initWalls() {
 
 Level::~Level()
 {
+	reset();
 	log("deletion of level");
 	removeAllChildren();
 	log("All children deleted");
@@ -200,17 +201,7 @@ void Level::update(float dt)
 				sugar += dango->getGain();
 			}
 			if (del) {
-				/*for (auto& tower : turrets) {
-					if (tower->getTarget() == dango) {
-						tower->setTarget(nullptr);
-					}
-				}
-				for (auto& attack : attacks) {
-					if (attack->getTarget() == dango) {
-						attack->setTarget(nullptr);
-					}
-				}*/
-				if (generator->isDone() && dangos.size() == 1) {
+				if (generator->isDone() && dangos.size() == 1 && life > 0) {
 					SceneManager::getInstance()->getGame()->getMenu()->startRewarding(dango->getPosition());
 				}
 				if (SceneManager::getInstance()->getGame()->getMenu()->getCurrentDango() == dango) {
@@ -340,9 +331,11 @@ std::vector<Dango*> Level::getEnemies() {
 std::vector<Dango*> Level::getEnemiesInRange(cocos2d::Vec2 position, double range) {
 	std::vector<Dango*> enemies_in_range;
 	for (auto& dango : dangos) {
-		double distance = dango->getPosition().distance(position);
-		if (distance < range) {
-			enemies_in_range.push_back(dango);
+		if (dango != nullptr) {
+			double distance = dango->getPosition().distance(position);
+			if (distance < range) {
+				enemies_in_range.push_back(dango);
+			}
 		}
 	}
 	return enemies_in_range;

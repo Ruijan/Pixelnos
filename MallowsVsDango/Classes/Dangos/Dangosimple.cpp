@@ -8,7 +8,10 @@ Dangosimple::Dangosimple(std::vector<Cell*> npath, int nlevel) :
 Dango(npath, Dangosimple::getConfig()["level"][nlevel]["speed"].asDouble(),
 	Dangosimple::getConfig()["level"][nlevel]["hitpoints"].asDouble(),nlevel,
 	Dangosimple::getConfig()["level"][nlevel]["attack"].asDouble(),
-	Dangosimple::getConfig()["level"][nlevel]["reload"].asDouble()){
+	Dangosimple::getConfig()["level"][nlevel]["reload"].asDouble(),
+	Dangosimple::getConfig()["level"][nlevel]["animation_duration"].asDouble(),
+	Dangosimple::getConfig()["level"][nlevel]["nb_images_animation"].asInt(),
+	Dangosimple::getConfig()["level"][nlevel]["name"].asString()){
 }
 
 Dangosimple::~Dangosimple() {

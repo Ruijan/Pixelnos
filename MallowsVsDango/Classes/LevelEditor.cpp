@@ -50,7 +50,7 @@ bool LevelEditor::init(){
 	return_to_game_button->setPosition(Vec2(visibleSize.width, visibleSize.height));
 	return_to_game_button->setAnchorPoint(Vec2(1, 1));
 	return_to_game_button->setEnabled(true);
-	return_to_game_button->setScale(visibleSize.width / 10 / return_to_game_button->getContentSize().width);
+	return_to_game_button->setScale(visibleSize.width / 15 / return_to_game_button->getContentSize().width);
 	addChild(return_to_game_button, 2, "back");
 
 	addChild(Layer::create(), 1, "level");

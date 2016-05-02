@@ -77,8 +77,6 @@ bool Skills::init(){
 		}
 	});
 
-
-	
 	//generating skills' button
 	for (unsigned int i(0); i < config.size(); ++i) {
 
@@ -194,8 +192,8 @@ void Skills::setSkill(int tier_id, int skill_id){ //create skill button
 					}
 					if (skill_bought == 0){
 						root["skill"][tier_id][skill_id] = 1;
-						((AppDelegate*)Application::getInstance())->getConfigClass().setSave(root);
-						((AppDelegate*)Application::getInstance())->getConfigClass().save();
+						((AppDelegate*)Application::getInstance())->getConfigClass()->setSave(root);
+						((AppDelegate*)Application::getInstance())->getConfigClass()->save();
 						removeChildByName("buy_info");
 						removeChildByName("yes");
 						removeChildByName("no");
@@ -204,8 +202,6 @@ void Skills::setSkill(int tier_id, int skill_id){ //create skill button
 					}
 				}
 			});
-
-
 		}
 	});
 		

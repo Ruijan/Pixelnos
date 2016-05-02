@@ -23,12 +23,15 @@ public:
 	std::string getType();
 	void setEnabled(bool enable);
 	void setHasToBeDeleted(bool deleted);
+	void setDamagesId(int id);
 
 	virtual bool affectEnemy(Dangobese* enemy) = 0;
 
 protected:
 	Dango* target;
+	int id;
 	double damages;
+	int damages_id;
 
 	// deletion attributes
 	bool touched;
