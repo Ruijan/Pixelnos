@@ -15,7 +15,7 @@ public:
 	static Cutter* create();
 
 	static Json::Value getConfig();
-	virtual Json::Value getSpecConfig();
+	virtual const Json::Value getSpecConfig();
 
 	virtual void removeTarget(Dango* dango);
 	virtual void chooseTarget(std::vector<Dango*> targets);

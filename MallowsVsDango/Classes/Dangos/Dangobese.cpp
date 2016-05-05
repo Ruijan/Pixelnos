@@ -9,7 +9,10 @@ Dangobese::Dangobese(std::vector<Cell*> npath, int nlevel) :
 Dango(npath, Dangobese::getConfig()["level"][nlevel]["speed"].asDouble(),
 	Dangobese::getConfig()["level"][nlevel]["hitpoints"].asDouble(),nlevel,
 	Dangobese::getConfig()["level"][nlevel]["attack"].asDouble(),
-	Dangobese::getConfig()["level"][nlevel]["reload"].asDouble()),
+	Dangobese::getConfig()["level"][nlevel]["reload"].asDouble(),
+	Dangobese::getConfig()["level"][nlevel]["animation_duration"].asDouble(),
+	Dangobese::getConfig()["level"][nlevel]["nb_images_animation"].asInt(),
+	Dangobese::getConfig()["level"][nlevel]["name"].asString()),
 	attack_duration(Dangobese::getConfig()["level"][nlevel]["attack_duration"].asDouble()),
 	attack_timer(0){
 }

@@ -28,6 +28,10 @@ bool Effect::isDone() {
 	return timer > duration;
 }
 
+bool Effect::willBeDone(double delay) {
+	return timer + delay > duration;
+}
+
 
 // DEEPWOUND CLASS
 DeepWound::DeepWound(Dango* ntarget, float nduration, float ndmg_percent):
@@ -57,7 +61,7 @@ float DeepWound::getDmgPercent() {
 }
 
 void DeepWound::applyModifierToTarget() {
-	id = target->addDamagesModifier(dmg_percent);
+	id = target->addDamagesModifier(std::make_pair(dmg_percent,this));
 }
 
 

@@ -23,12 +23,15 @@ public:
 	};
 	enum TowerType{
 		ARCHER,
-		CUTTER
+		CUTTER,
+		SAUCER
 	};
 
-	Tower(double nspeed, double ndamage, double nrange, double ncost);
+	Tower();
 	virtual ~Tower();
 	void initDebug();
+	void initEnragePanel();
+	void initFromConfig();
 
 	// Setters & Getters
 	bool isFixed();
@@ -57,6 +60,8 @@ public:
 	virtual void update(float dt);
 	virtual void updateDisplay(float dt);
 	virtual void updateInformationLayout(cocos2d::ui::Layout* layout);
+	virtual void updateEnrageLayout();
+	virtual void handleEnrageMode();
 	virtual void chooseTarget(std::vector<Dango*> targets);
 	virtual void givePDamages(double damage);
 	virtual void reload();
@@ -69,7 +74,7 @@ public:
 
 	// Config
 	static Json::Value getConfig();
-	virtual Json::Value getSpecConfig() = 0;
+	virtual const Json::Value getSpecConfig() = 0;
 
 protected:
 	//State attribute
@@ -79,10 +84,11 @@ protected:
 	bool destroy;
 	
 	Dango* target;
+	std::map<Dango*, int> attacked_enemies;
 	
 	// Characteristics
 	double cost;
-	double attackSpeed;
+	double attack_speed;
 	double damage;
 	double range;
 	double timer;
@@ -90,11 +96,15 @@ protected:
 	int level;
 
 	int nb_attacks;
+	int nb_max_attacks_limit;
 	
 	//
 	cocos2d::DrawNode* loadingCircle;
-	cocos2d::Action* currentAction;
-	cocos2d::Animation currentAnimation;
+
+	// parameters for animation
+	double animation_duration;
+	double nb_frames_anim;
+	std::string name;
 	
 	//methods
 	virtual void attack() = 0;

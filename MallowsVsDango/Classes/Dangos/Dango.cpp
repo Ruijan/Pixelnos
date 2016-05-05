@@ -10,10 +10,11 @@
 USING_NS_CC;
 
 Dango::Dango(std::vector<Cell*> npath, double nspeed, double hp, int nlevel, 
-	double damages, double a_reload) : path(npath), targetedCell(0), speed(nspeed),
+	double damages, double a_reload, double anim_duration, int nb_frames, std::string nname) : path(npath), targetedCell(0), speed(nspeed),
 	hitPoints(hp), level(nlevel), cAction(nullptr), cDirection(RIGHT), pDamages(0.0), 
 	state(IDLE), reload_timer(0), attack_damages(damages), attack_reloading(a_reload),
-	modifier_id(0){
+	modifier_id(0), animation_duration(anim_duration), nb_frames_anim(nb_frames),
+	name(nname), id_damages(0){
 }
 
 Dango::~Dango() { 
@@ -142,7 +143,7 @@ void Dango::updateAnimation(){
 		stopAction(cAction);
 	}
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-	std::string preString(getSpecConfig()["level"][level]["name"].asString());
+	std::string preString(name);
 	double x = this->getScaleX();
 	if (state == ATTACK) {
 		switch (cDirection) {
@@ -184,12 +185,13 @@ void Dango::updateAnimation(){
 	}
 	cocos2d::Vector<SpriteFrame*> animFrames;
 	char str[100] = { 0 };
-	for (int i = 0; i < 24; ++i){
+	for (int i = 0; i < nb_frames_anim; ++i){
 		sprintf(str, "%s%03d.png", preString.c_str(), i);
 		SpriteFrame* frame = cache->getSpriteFrameByName(str);
 		animFrames.pushBack(frame);
 	}
-	double delay = getSpecConfig()["level"][level]["animation_duration"].asDouble() / getSpecConfig()["level"][level]["nb_images_animation"].asDouble();
+	//double delay = getSpecConfig()["level"][level]["animation_duration"].asDouble() / getSpecConfig()["level"][level]["nb_images_animation"].asDouble();
+	double delay = animation_duration / nb_frames_anim;
 	Animation* animation = Animation::createWithSpriteFrames(animFrames, delay);
 	// Cell::getCellWidth() / getSpeed() / 24 * getSpecConfig()["cellperanim"].asFloat()
 	runAnimation(animation);
@@ -207,29 +209,39 @@ void Dango::takeDamages(double damages){
 	runAction(Sequence::create(Hide::create(), DelayTime::create(0.1f), Show::create(), nullptr));
 	double total_dmg(0);
 	for (auto modifier : m_damages) {
-		total_dmg += modifier.second;
+		total_dmg += modifier.second.first;
 	}
 	double final_damages = damages + damages * total_dmg;
 	hitPoints -= final_damages;
-	pDamages -= damages;
 	if(hitPoints < 0){
 		hitPoints = 0;
 	}
-	if (pDamages < 0) {
-		log("We have a problem, the prospective damages should not be below zero");
+}
+
+void Dango::applyProspectiveDamages(int id_damage) {
+	runAction(Sequence::create(Hide::create(), DelayTime::create(0.1f), Show::create(), nullptr));
+	hitPoints -= prospective_damages[id_damage];
+	removePDamages(id_damage);
+	if (hitPoints < 0) {
+		hitPoints = 0;
 	}
 }
 
-void Dango::takePDamages(double damages){
-	pDamages += damages;
+int Dango::takePDamages(double damages, double delay){
+	double total_dmg(0);
+	for (auto modifier : m_damages) {
+		if (!modifier.second.second->willBeDone(delay)) {
+			total_dmg += modifier.second.first;
+		}
+	}
+	double final_damages = damages + damages * total_dmg;
+	prospective_damages[id_damages] = final_damages;
+	++id_damages;
+	return id_damages - 1;
 }
 
-void Dango::removePDamages(double damages) {
-	pDamages -= damages;
-	if (pDamages < 0) {
-		log("prospectives damages negative");
-		pDamages = 0;
-	}
+void Dango::removePDamages(int id_damage) {
+	prospective_damages.erase(prospective_damages.find(id_damage));
 }
 
 bool Dango::shouldAttack() {
@@ -242,7 +254,11 @@ bool Dango::isAlive(){
 }
 
 bool Dango::willBeAlive(){
-	return (hitPoints - pDamages > 0);
+	double total_dmg(0);
+	for (auto dmg : prospective_damages) {
+		total_dmg += dmg.second;
+	}
+	return (hitPoints - total_dmg > 0);
 }
 
 bool Dango::isDone(){
@@ -262,7 +278,7 @@ double Dango::getSpeed(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	double total_speed(0);
 	for (auto modifier : m_speed) {
-		total_speed += modifier.second;
+		total_speed += modifier.second.first;
 	}
 	return speed * visibleSize.width / 960.0 + total_speed * speed * visibleSize.width / 960.0;
 }
@@ -281,7 +297,7 @@ void Dango::addEffect(Effect* effect) {
 	addChild(effect,3);
 }
 
-int Dango::addSpeedModifier(double speed_modifier) {
+int Dango::addSpeedModifier(std::pair<double, Effect*> speed_modifier) {
 	m_speed[modifier_id] = speed_modifier;	
 	++modifier_id;
 	return modifier_id - 1;
@@ -313,7 +329,7 @@ void Dango::removeTargetingAttack(Attack* tower) {
 	targeting_attacks.erase(std::remove(targeting_attacks.begin(), targeting_attacks.end(), tower), targeting_attacks.end());
 }
 
-int Dango::addDamagesModifier(double dmg_modifier) {
+int Dango::addDamagesModifier(std::pair<double, Effect*> dmg_modifier) {
 	m_damages[modifier_id] = dmg_modifier;
 	++modifier_id;
 	return modifier_id - 1;

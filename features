@@ -7,7 +7,6 @@ create dangolant class and behavior (10h)
 create mama dango class and behavior (10h)
 create freezing tower class and behavior (10h)
 add boss
-multilanguages game (15h)
 make tutorial (1st level) (10h)
 improve gameplay and level design (30h without level editor, 5-10h with level editor):
 	-level 1 map & generator & dialogue & reward
@@ -35,14 +34,14 @@ sound (2h):
 	-losing 
 	-winning
 	-sound for dialogue
+	-sound of death of a dango
+	-sound enrage of a tower
+	-
 
 ============================================================================
 CURRENT FEATURES CODING (137h)
 ============================================================================
-money system and skill tree to code and design (20h): (Xianle)
-	- dynamical positioning of skill from a file (read a file to find all the skills and create automatically the tree)
-	- save and load skills in save json file
-	- "buy" a skill
+multilanguages game (15h)
 
 limit for towers -> after killing a certain amount of dango, power plus for a specific time (3h):
 	-saucer
@@ -146,6 +145,10 @@ Level editor:
 (OK) show grid in game in settings (2h)
 (OK) show dialogue in game in settings (2h)
 (OK) show limit in game in settings (2h)
+(OK) money system and skill tree to code and design (20h): (Xianle)
+	- dynamical positioning of skill from a file (read a file to find all the skills and create automatically the tree)
+	- save and load skills in save json file
+	- "buy" a skill
 		
 
 

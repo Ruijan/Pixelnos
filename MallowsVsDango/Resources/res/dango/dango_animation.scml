@@ -4,7 +4,7 @@
         <file id="0" name="dango.svg" width="184" height="151" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
     <folder id="1" name="animation/parts">
-        <file id="0" name="animation/parts/body.svg" width="184" height="151" pivot_x="0.5" pivot_y="0.5"/>
+        <file id="0" name="body.svg" width="184" height="151" pivot_x="0.5" pivot_y="0.5"/>
         <file id="1" name="animation/parts/eyes.svg" width="27" height="24" pivot_x="0" pivot_y="1"/>
         <file id="2" name="animation/parts/flush.svg" width="121" height="38" pivot_x="0" pivot_y="1"/>
         <file id="3" name="animation/parts/bodyBlue.svg" width="184" height="151" pivot_x="0" pivot_y="1"/>

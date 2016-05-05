@@ -9,7 +9,7 @@ Config::Config(std::string configfilename, std::string savename) :
 	limit_enabled(false), dialogues_enabled(false){
 }
 
-Json::Value const Config::getConfigValues() const{
+const Json::Value& Config::getConfigValues() const{
 	return root;
 }
 

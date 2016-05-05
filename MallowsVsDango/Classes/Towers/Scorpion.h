@@ -10,7 +10,7 @@ public:
 	Scorpion();
 	static Scorpion* create();
 	static Json::Value getConfig();
-	virtual Json::Value getSpecConfig();
+	virtual const Json::Value getSpecConfig();
 	
 	virtual void attack();
 	virtual void startLimit();

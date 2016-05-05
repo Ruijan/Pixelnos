@@ -32,7 +32,7 @@ public:
 	/**
 	* @brief Return the current configuration json value.
 	*/
-	Json::Value const getConfigValues() const;
+	const Json::Value&  getConfigValues() const;
 
 	/**
 	* @brief Return the current save json value.

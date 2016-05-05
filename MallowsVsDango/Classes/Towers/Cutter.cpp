@@ -6,8 +6,7 @@
 
 USING_NS_CC;
 
-Cutter::Cutter() : Tower(Cutter::getConfig()["attack_speed"][0].asDouble(), Cutter::getConfig()["damages"][0].asDouble(),
-	Cutter::getConfig()["range"][0].asDouble(), Cutter::getConfig()["cost"][0].asDouble()){
+Cutter::Cutter() : Tower(){
 
 }
 
@@ -17,7 +16,9 @@ Cutter* Cutter::create()
 
 	if (pSprite->initWithFile(Cutter::getConfig()["image"].asString()))
 	{
+		pSprite->initFromConfig();
 		pSprite->initDebug();
+		pSprite->initEnragePanel();
 		return pSprite;
 	}
 
@@ -26,11 +27,11 @@ Cutter* Cutter::create()
 }
 
 Json::Value Cutter::getConfig(){
-	return Tower::getConfig()["cutter"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["cutter"];
 }
 
-Json::Value Cutter::getSpecConfig(){
-	return Tower::getConfig()["cutter"];
+const Json::Value Cutter::getSpecConfig(){
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["cutter"];
 }
 
 void Cutter::removeTarget(Dango* dango) {
@@ -44,7 +45,7 @@ void Cutter::removeTarget(Dango* dango) {
 }
 
 void Cutter::chooseTarget(std::vector<Dango*> targets){
-	if(state != State::ATTACKING && state != State::RELOADING){
+	if(state != State::ATTACKING /*&& state != State::RELOADING*/){
 		for (auto& c_target : otherTargets) {
 			c_target->removeTargetingTower(this);
 		}
@@ -78,7 +79,9 @@ void Cutter::chooseTarget(std::vector<Dango*> targets){
 
 void Cutter::givePDamages(double damage){
 	for (auto& cTarget : otherTargets){
-		cTarget->takePDamages(damage);
+		if (cTarget != nullptr) {
+			attacked_enemies[cTarget] = cTarget->takePDamages(damage, animation_duration);
+		}
 	}
 }
 
@@ -94,6 +97,8 @@ void Cutter::attack(){
 			else {
 				slash = Slash::create(cTarget, damage);
 			}
+			slash->setDamagesId(attacked_enemies[cTarget]);
+			attacked_enemies.erase(attacked_enemies.find(cTarget));
 			target->addTargetingAttack(slash);
 			slash->setPosition(cTarget->getPosition());
 			slash->setScale(visibleSize.width/960);
@@ -105,25 +110,36 @@ void Cutter::attack(){
 }
 
 void Cutter::startLimit() {
-	if (isLimitReached()) {
-		chooseTarget(SceneManager::getInstance()->getGame()->getLevel()->getEnemies());
-		if (target != nullptr) {
-			state = LIMIT_BURSTING;
-			cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(ATTACKING);
-			Animation* currentAnimation = Animation::createWithSpriteFrames(animFrames,
-				getSpecConfig()["animation_attack_time"].asDouble() / getSpecConfig()["animation_attack_size"].asDouble() / 3.0f);
+	chooseTarget(SceneManager::getInstance()->getGame()->getLevel()->getEnemies());
 
-			auto callbackAttack = CallFunc::create([&]() {
-				attack();
-				nb_attacks = 0;
-				timer = 0;
-				timerIDLE = 0;
-				state = RELOADING;
-			});
-
-			// create a sequence with the actions and callbacks
-			auto seq = Sequence::create(Animate::create(currentAnimation), callbackAttack, nullptr);
-			runAction(seq);
+	if (isLimitReached() && target != nullptr) {
+		if (state == ATTACKING) {
+			for (auto& cTarget : otherTargets) {
+				cTarget->removePDamages(attacked_enemies[cTarget]);
+			}
+			attacked_enemies.empty();
 		}
+
+		state = LIMIT_BURSTING;
+		//((Label*)getChildByName("label_state"))->setString("LIMIT_BURSTING");
+		cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(ATTACKING);
+		Animation* currentAnimation = Animation::createWithSpriteFrames(animFrames,
+			animation_duration / nb_frames_anim / 3.0f);
+
+		auto callbackAttack = CallFunc::create([&]() {
+			givePDamages(damage);
+			attack();
+			nb_attacks = 0;
+			timer = 0;
+			timerIDLE = 0;
+			state = RELOADING;
+			std::string frameName = name + "_attack_movement_000.png";
+			SpriteFrameCache* cache = SpriteFrameCache::getInstance();
+			setSpriteFrame(cache->getSpriteFrameByName(frameName.c_str()));
+		});
+
+		// create a sequence with the actions and callbacks
+		auto seq = Sequence::create(Animate::create(currentAnimation), callbackAttack, nullptr);
+		runAction(seq);
 	}
 }

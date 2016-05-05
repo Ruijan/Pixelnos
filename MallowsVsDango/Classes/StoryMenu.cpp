@@ -16,6 +16,10 @@ bool StoryMenu::init(){
 
 	// Background
 	addChild(Sprite::create("res/background/levels.png"),1,"background");
+
+	double offset_horizontal = visibleSize.width / 32;
+	double offset_vertical = 0;
+
 	getChildByName("background")->setAnchorPoint(Vec2(0.5,0.5));
 	getChildByName("background")->setPosition(visibleSize.width/2,visibleSize.height/2);
 	double ratioX = visibleSize.width / 960;
@@ -25,28 +29,41 @@ bool StoryMenu::init(){
 	
 	// Interface with buttons and settings
 	addChild(ui::Layout::create(), 2, "interface");
-	ui::Button* level_editor = ui::Button::create("res/buttons/level_editor.png", "res/buttons/level_editor.png");
+	ui::Button* level_editor = ui::Button::create("res/buttons/menu_button_editor.png");
 	level_editor->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::EDITOR);
 		}
 	});
-	level_editor->setScale(visibleSize.width / 15 / level_editor->getContentSize().width);
-	level_editor->setPosition(Vec2(visibleSize.width, 0));
-	level_editor->setAnchorPoint(Vec2(1.f, 0.3f));
+	level_editor->setScale(visibleSize.width / 8 / level_editor->getContentSize().width);
+	level_editor->setPosition(Vec2(visibleSize.width - offset_horizontal, offset_vertical));
+	level_editor->setAnchorPoint(Vec2(1.f, 0.f));
 	getChildByName("interface")->addChild(level_editor);
 
-	//Skills tree
-	cocos2d::ui::Button* skill_tree = ui::Button::create("res/buttons/parameters_wood.png");
-	getChildByName("interface")->addChild(skill_tree);
-	skill_tree->setScale(visibleSize.width / skill_tree->getContentSize().width / 15);
-	skill_tree->setAnchorPoint(Vec2(0.f, 0.3f));
-	skill_tree->setPosition(Vec2(visibleSize.width * 0.8, 0.f));
+	ui::Button* skill_tree = ui::Button::create("res/buttons/menu_button_skill_tree.png");
 	skill_tree->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			SceneManager::getInstance()->setScene(SceneManager::SKILLS);
+			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::SKILLS);
 		}
 	});
+	skill_tree->setScale(visibleSize.width / 8 / skill_tree->getContentSize().width);
+	skill_tree->setPosition(Vec2(level_editor->getPosition().x - 
+		level_editor->getContentSize().width * level_editor->getScaleX() - offset_horizontal, offset_vertical));
+	skill_tree->setAnchorPoint(Vec2(1.f, 0.f));
+	getChildByName("interface")->addChild(skill_tree);
+
+	ui::Button* shop = ui::Button::create("res/buttons/menu_button_shop.png");
+	shop->setEnabled(false);
+	shop->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::SKILLS);
+		}
+	});
+	shop->setScale(visibleSize.width / 8 / skill_tree->getContentSize().width);
+	shop->setPosition(Vec2(skill_tree->getPosition().x -
+		skill_tree->getContentSize().width * skill_tree->getScaleX() - offset_horizontal, offset_vertical));
+	shop->setAnchorPoint(Vec2(1.f, 0.f));
+	getChildByName("interface")->addChild(shop);
 
 	auto settings = ui::Layout::create();
 	getChildByName("interface")->addChild(settings, 2, "settings");
@@ -221,6 +238,7 @@ bool StoryMenu::init(){
 	checkbox_grid->setPosition(Vec2(always_show_grid->getPosition().x,
 		show_grid->getPosition().y));
 	checkbox_grid->setSelected(((AppDelegate*)Application::getInstance())->getConfigClass()->isAlwaysGridEnabled());
+	checkbox_grid->setScale(visibleSize.width / 1280);
 	checkbox_grid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			((AppDelegate*)Application::getInstance())->getConfigClass()->enableMovingGrid(false);
@@ -235,6 +253,7 @@ bool StoryMenu::init(){
 	checkbox_never_grid->setPosition(Vec2(never_show_grid->getPosition().x,
 		show_grid->getPosition().y));
 	checkbox_never_grid->setSelected(((AppDelegate*)Application::getInstance())->getConfigClass()->isNeverGridEnabled());
+	checkbox_never_grid->setScale(visibleSize.width / 1280);
 	checkbox_never_grid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			((AppDelegate*)Application::getInstance())->getConfigClass()->enableMovingGrid(false);
@@ -249,6 +268,7 @@ bool StoryMenu::init(){
 	checkbox_moving_grid->setPosition(Vec2(moving_show_grid->getPosition().x,
 		show_grid->getPosition().y));
 	checkbox_moving_grid->setSelected(((AppDelegate*)Application::getInstance())->getConfigClass()->isMovingGridEnabled());
+	checkbox_moving_grid->setScale(visibleSize.width / 1280);
 	checkbox_moving_grid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			((AppDelegate*)Application::getInstance())->getConfigClass()->enableMovingGrid(true);
@@ -263,6 +283,7 @@ bool StoryMenu::init(){
 	checkbox_limit->setPosition(Vec2(moving_show_grid->getPosition().x,
 		auto_limit->getPosition().y));
 	checkbox_limit->setSelected(((AppDelegate*)Application::getInstance())->getConfigClass()->isLimitEnabled());
+	checkbox_limit->setScale(visibleSize.width / 1280);
 	checkbox_limit->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if(type == ui::Widget::TouchEventType::ENDED){
 			((AppDelegate*)Application::getInstance())->getConfigClass()->enableAutoLimit(
@@ -277,6 +298,7 @@ bool StoryMenu::init(){
 		skip_dialogues->getPosition().y));
 	bool selected = ((AppDelegate*)Application::getInstance())->getConfigClass()->isDialoguesEnabled();
 	checkbox_dialogues->setSelected(selected);
+	checkbox_dialogues->setScale(visibleSize.width / 1280);
 	checkbox_dialogues->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			((AppDelegate*)Application::getInstance())->getConfigClass()->enableDialogues(

@@ -63,7 +63,7 @@ public:
 	void hideTowerInfo();
 
 private:
-	std::unordered_map<std::string, cocos2d::Sprite*> towers_menu;
+	std::unordered_map<std::string, std::pair<cocos2d::Sprite*, double>> towers_menu;
 	cocos2d::EventListenerTouchOneByOne* listener;
 
 	MyGame* game;

@@ -14,6 +14,7 @@ public:
 	
 	virtual void update(float dt);
 	bool isDone();
+	bool willBeDone(double delay);
 
 protected:
 	float duration;
