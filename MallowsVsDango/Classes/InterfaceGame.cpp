@@ -4,6 +4,7 @@
 #include "MyGame.h"
 #include "Towers/Cutter.h"
 #include "Towers/Scorpion.h"
+#include "Towers/Saucer.h"
 #include "Lib/Functions.h"
 #include "Lib/AudioSlider.h"
 #include "Config/AudioController.h"
@@ -393,6 +394,11 @@ void InterfaceGame::menuTurretTouchCallback(Tower::TowerType turret){
 		}
 		else if (turret == Tower::TowerType::CUTTER){
 			Cutter* createdTurret = Cutter::create();
+			game->getLevel()->addTurret(createdTurret);
+			selected_turret = createdTurret;
+		}
+		else if (turret == Tower::TowerType::SAUCER) {
+			Saucer* createdTurret = Saucer::create();
 			game->getLevel()->addTurret(createdTurret);
 			selected_turret = createdTurret;
 		}
@@ -984,12 +990,13 @@ void InterfaceGame::initRightPanel(){
 		std::string sprite3_disable_filename = "res/buttons/tower_inactive.png";
 		std::string sprite3_clip_filename = "res/buttons/tower_button_clip.png";
 		std::string sprite7_active_filename = "res/buttons/tower_active.png";
-		std::string tower_name = Tower::getConfig().getMemberNames()[i];
 		
 		auto tower = Sprite::create(sprite3_background_filename);
 		tower->addChild(Sprite::create(sprite3_filename), 5, "sprite");
 		towers->addChild(tower, 1, Value(Tower::getConfig().getMemberNames()[i]).asString());
 		tower->setScale(sizeTower / tower->getContentSize().width);
+		tower->getChildByName("sprite")->setScale(tower->getContentSize().width * 0.9 /
+			tower->getChildByName("sprite")->getContentSize().width);
 		tower->setPosition(Vec2(sizeTower / 2 + j % 2 * (sizeTower + towers->getContentSize().width / 20)+
 			towers->getContentSize().width / 20,
 			- sizeTower / 2 - (j / 2) * (sizeTower + towers->getContentSize().width / 20) - 
@@ -1132,10 +1139,6 @@ void InterfaceGame::displayTowerInfos(std::string item_name){
 		staticFrames.pushBack(steadyFrames.front());
 		staticFrames.pushBack(steadyFrames.front());
 		spriteBatchNode = SpriteBatchNode::create(Tower::getConfig()[item_name]["animation"].asString());
-		/*spriteBatchNode->setContentSize(Size(
-			getChildByName("menu_panel")->getChildByName("informations")->getContentSize().width / 3,
-			getChildByName("menu_panel")->getChildByName("informations")->getContentSize().height / 3));
-		spriteBatchNode->setAnchorPoint(Vec2(0.5f, 0.5f));*/
 		Sprite* image = Sprite::createWithSpriteFrame(staticFrames.front());
 		image->setScale(getChildByName("menu_panel")->getChildByName("informations")->getContentSize().width / 3 * 0.95 / image->getContentSize().width);
 
@@ -1188,7 +1191,6 @@ void InterfaceGame::builtCallback(Ref* sender){
 	selected_turret->builtCallback(sender);
 	selected_turret->setFixed(true);
 	game->getLevel()->decreaseQuantity(selected_turret->getCost());
-	//selected_turret = nullptr;
 	displayTowerInfos("");
 }
 

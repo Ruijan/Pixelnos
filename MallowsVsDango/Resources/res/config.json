@@ -72,8 +72,6 @@
       "effects": [ "music/splash.mp3", "music/slash.mp3" ],
       "exp": 150,
       "path_level": "res/level_1.json",
-      "generator": "res/level_1.json",
-      "height": 12,
       "introDialogue": [
         {
           "emotion": [
@@ -108,15 +106,12 @@
           ]
         }
       ],
-      "map": "res/levels/level1_map.csv",
       "musics": [ "music/On-Tiptoe.mp3.mp3" ],
-      "path": "res/levels/level1_path.csv",
       "reward": "res/levels/plan1.png",
       "sugar": 300,
       "tilemaptable": "res/tiles/ground.json",
       "tileset": "res/tiles/ground.plist",
       "tilesetpng": "res/tiles/ground.png",
-      "width": 14,
       "x": 70,
       "y": 325
     },
@@ -126,7 +121,6 @@
       "effects": [ "music/splash.mp3", "music/slash.mp3" ],
       "exp": 150,
       "path_level": "C:/Users/MSI-GP60/AppData/Local/MallowsVsDango/Levels/Level_2.json",
-      "height": 12,
       "introDialogue": [
         {
           "emotion": [
@@ -145,15 +139,12 @@
           ]
         }
       ],
-      "map": "res/levels/level1_map.csv",
       "musics": [ "music/On-Tiptoe.mp3.mp3" ],
-      "path": "res/levels/level1_path.csv",
       "reward": "res/levels/plan1.png",
       "sugar": 300,
       "tilemaptable": "res/tiles/ground.json",
       "tileset": "res/tiles/ground.plist",
       "tilesetpng": "res/tiles/ground.png",
-      "width": 14,
       "x": 240,
       "y": 350
     },
@@ -265,11 +256,11 @@
     },
     "saucer": {
       "animation": "res/turret/animations/archer.png",
-      "animation_attack_size": 9,
+      "animation_attack_size": -1,
       "animation_attack_time": 0.5,
       "animation_bullet": "res/turret/animations/splash.png",
       "animation_bullet_size": 14,
-      "animation_steady_size": 49,
+      "animation_steady_size": -1,
       "attack_speed": [1.5, 1.25, 1, 1],
       "cost": [ 30, 15, 25, 50 ],
       "sell": [15, 25, 35, 60],
@@ -277,8 +268,8 @@
       "damages": [ 1, 1.5, 2, 2 ],
       "description": "Saucer: Slow down enemies with sweet soy sauce.",
       "last_level_description" :  "The water bombs are getting bigger and are doing damages in area.",
-      "image": "res/turret/archer.png",
-      "name": "archer",
+      "image": "res/turret/saucer_try1.png",
+      "name": "saucer",
       "limit": 5,
       "sound_bullet": "music/splash.mp3"
     }
@@ -302,7 +293,8 @@
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
         "description": "Cree un mur en sucre (2 PdV) au bout du chemin.",
         "dependance": [],
-        "level_unlocked": 0
+        "level_unlocked": 0,
+        "id" : 1
       }     
     ],
 
@@ -315,7 +307,8 @@
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
         "description": "Tous les 20 attaques, le Cutter, effectue un tour supplementaire",
         "dependance": [0],
-        "level_unlocked": 0
+        "level_unlocked": 0,
+        "id" : 2
        },   
       {        
         "name": "Une bombe peut en cacher une autre",
@@ -325,7 +318,8 @@
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
         "description": "Tous les 20 tirs, une deuxieme bombe est lancee par le Bombeur",
         "dependance": [0],
-        "level_unlocked": 0
+        "level_unlocked": 0,
+        "id" : 3
       }  
     ],
 
@@ -338,7 +332,8 @@
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
         "description": "Reduit de 1 le nombre d'attaques necessaires pour activer la limite du Cutter.",
         "dependance": [0],
-        "level_unlocked": 0
+        "level_unlocked": 0,
+        "id" : 4
       },
       {        
         "name": "Une balle de moins",
@@ -348,7 +343,8 @@
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
         "description": "Reduit de 1 le nombre de tirs necessaires pour activer la limite du Bombeur.",
         "dependance": [0, 1],
-        "level_unlocked": 0
+        "level_unlocked": 0,
+        "id" : 5
       }
     ],
 
@@ -361,7 +357,8 @@
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
         "description": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
         "dependance": [],
-        "level_unlocked": 2
+        "level_unlocked": 2,
+        "id" : 6
       },
       {        
         "name": "L'age de glace",
@@ -371,7 +368,8 @@
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
         "description": "Augmente le mur de 1 PdV",
         "dependance": [],
-        "level_unlocked": 4
+        "level_unlocked": 4,
+        "id" : 7
         }
     ],
 
@@ -384,7 +382,8 @@
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
         "description": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
         "dependance": [0],
-        "level_unlocked": 0
+        "level_unlocked": 0,
+        "id" : 8
       },
       {        
         "name": "C'est les soldes !",
@@ -394,7 +393,8 @@
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
         "description": "Diminue le cout de creation de toutes les tourelles 5%",
         "dependance": [],
-        "level_unlocked": 2
+        "level_unlocked": 2,
+        "id" : 9
       }
     ],
 
@@ -407,7 +407,8 @@
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
         "description": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
         "dependance": [0],
-        "level_unlocked": 0
+        "level_unlocked": 0,
+        "id" : 10
         },
         {        
         "name": "Jackpot",
@@ -417,7 +418,8 @@
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
         "description": "Un dango a 1% de chance de genere 1 sucrette lorsqu’il meurt.",
         "dependance": [1],
-        "level_unlocked": 0
+        "level_unlocked": 0,
+        "id" : 11
         }
     ]
   ]

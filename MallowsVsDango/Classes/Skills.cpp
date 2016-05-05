@@ -12,6 +12,42 @@ bool Skills::init(){
 	config = ((AppDelegate*)Application::getInstance())->getConfig()["skills"]; //load data file
 	root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 
+	if (!root.isMember("holy_sugar")) {
+		root["holy_sugar"] = 0;
+	}
+
+	Json::Value root2 = root;
+	root2["skill"] = {};
+	for (int k(0); k < config.size(); ++k) {
+		for (int l(0); l < config[k].size(); ++l) {
+			auto conf = config[k][l]["id"].asInt();
+			root2["skill"][k][l]["id"] = config[k][l]["id"].asInt();
+			root2["skill"][k][l]["bought"] = false;
+		}
+	}
+
+	for (int i(0); i < root["skill"].size(); ++i) {
+		for (int j(0); j < root["skill"][i].size(); ++j) {
+			if (config[i][j]["id"].asInt() != root["skill"][i][j]["id"].asInt()) {
+				for (int k(0); k < config.size(); ++k) {
+					for (int l(0); l < config[k].size(); ++l) {
+						if (config[k][l]["id"].asInt() == root["skill"][i][j]["id"].asInt()) {
+							root2["skill"][k][l]["id"] = config[k][l]["id"].asInt();
+							root2["skill"][k][l]["bought"] = root["skill"][i][j]["bought"].asBool();
+						}
+					}
+				}
+			}
+			else {
+				root2["skill"][i][j]["id"] = config[i][j]["id"].asInt();
+				root2["skill"][i][j]["bought"] = root["skill"][i][j]["bought"].asBool();
+			}
+		}
+	}
+	root = root2;
+	((AppDelegate*)Application::getInstance())->getConfigClass()->setSave(root);
+	((AppDelegate*)Application::getInstance())->getConfigClass()->save();
+
 	//generating a background for skills 
 	Sprite* loading_background = Sprite::create("res/background/crissXcross.png");
 	loading_background->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
@@ -21,7 +57,7 @@ bool Skills::init(){
 	//return button to levels on the top right corner
 	cocos2d::ui::Button* back = ui::Button::create("res/buttons/back.png");
 	addChild(back, 2);
-	back->setScale(visibleSize.width / back->getContentSize().width / 11);
+	back->setScale(visibleSize.width / back->getContentSize().width / 15);
 	back->setAnchorPoint(Vec2(1.f, 1.f));
 	back->setPosition(Vec2(visibleSize.width, visibleSize.height));
 	back->addTouchEventListener([back](Ref* sender, ui::Widget::TouchEventType type) {
@@ -91,7 +127,8 @@ bool Skills::init(){
 	buy_button->setScaleY(visibleSize.height / buy_button->getContentSize().height / 6);
 	buy_button->setPosition(Vec2(visibleSize.width / 8, visibleSize.height * 0.1));
 	addChild(buy_button, 3, "buy_button");
-	if (root["skill"][0][0] == 1){
+	if (root["skill"][0][0]["bought"].asBool() || 
+		config[0][0]["cost"].asInt() > root["holy_sugar"].asInt()){
 		buy_button->setEnabled(false);
 	}
 
@@ -114,6 +151,9 @@ bool Skills::init(){
 	Label* skill_cost = Label::createWithTTF("X " + config[0][0]["cost"].asString(), "fonts/LICABOLD.ttf", round(visibleSize.width / 45));
 	skill_cost->setColor(Color3B::BLACK);
 	skill_cost->setPosition(Vec2(visibleSize.width / 8 + visibleSize.width / 50, sugar_sprite2->getPosition().y - visibleSize.height * 0.005));
+	if (config[0][0]["cost"].asInt() > root["holy_sugar"].asInt()) {
+		skill_cost->setColor(Color3B::RED);
+	}
 	addChild(skill_cost, 3, "skill_cost");
 
 	//total number of skill tiers
@@ -146,9 +186,7 @@ bool Skills::init(){
 
 	//generating skills' button
 	for (unsigned int i(0); i < config.size(); ++i) {
-
 		for (unsigned int j(0); j < config[i].size(); ++j){
-
 			set_skill(i, j);
 			set_dependancy(i, j);
 		};
@@ -200,7 +238,9 @@ bool Skills::init(){
 			
 			yes->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 				if (type == ui::Widget::TouchEventType::ENDED) {
-					int is_skill_bought = root["skill"][selected_tier_id][selected_skill_id].asInt();
+					root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
+
+					int is_skill_bought = root["skill"][selected_tier_id][selected_skill_id]["bought"].asBool();
 
 					//have enough holy_sugar ???
 					if (root["holy_sugar"].asInt() >= config[selected_tier_id][selected_skill_id]["cost"].asInt()){
@@ -229,9 +269,7 @@ bool Skills::init(){
 							
 							for (int i(0); i < config[selected_tier_id + 1].size(); ++i){
 							skill_update(selected_tier_id + 1, i, (ui::Button*) getChildByName("scrollView")->getChildByName(Value(selected_tier_id +1).asString() + "_" + Value(i).asString())->getChildByName("skill"));
-
 							}
-
 						}
 					}
 					else {
@@ -263,16 +301,12 @@ void Skills::set_skill(int tier_id, int skill_id){ //create skill button
 	skill_bought->setScaleY(visibleSize.height / skill_bought->getContentSize().height * 0.1);
 	skill->addChild(skill_bought, 3, "skill_bought");
 	skill_bought->setVisible(false);
-	if (root["skill"][tier_id][skill_id].asInt() == 1){
+	if (root["skill"][tier_id][skill_id]["bought"].asBool()){
 		skill_bought->setVisible(true);
 	}
-
 	skill_update(tier_id, skill_id, skill);
 
 	layout->addChild(skill, 2, "skill");
-
-
-
 	skill->addTouchEventListener([&, tier_id, skill_id](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -302,14 +336,14 @@ void Skills::set_skill(int tier_id, int skill_id){ //create skill button
 					((ui::Button*)getChildByName("buy_button"))->setEnabled(false);
 				}
 				else{
-					if (root["skill"][tier_id][skill_id].asInt() == 1){
+					if (root["skill"][tier_id][skill_id]["bought"].asBool()){
 						((ui::Button*)getChildByName("buy_button"))->setEnabled(false);
 					}
 					else{
 						bool enable1(true);
 						for (unsigned i(0); i < config[tier_id][skill_id]["dependance"].size(); ++i){
 							int j = config[tier_id][skill_id]["dependance"][i].asInt();
-							if (root["skill"][tier_id - 1][j].asInt() == 0){
+							if (!root["skill"][tier_id - 1][j]["bought"].asBool()){
 								enable1 = false;
 							}
 							if (enable1 == false){
@@ -377,9 +411,9 @@ void Skills::set_dependancy(int tier_id, int skill_id){ // create link between s
 void Skills::skill_update(int tier_id, int skill_id, ui::Button* skill){ //create skill button
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	if (tier_id == 0){ // skill n° 0_0
+	/*if (tier_id == 0){ // skill n° 0_0
 		skill->loadTextureNormal(config[tier_id][skill_id]["sprite_enabled"].asString());
-	}
+	}*/
 	if (root["level"].asInt() < config[tier_id][skill_id]["level_unlocked"].asInt()){ // compaign level < level_unlocked then disabled
 		skill->loadTextureNormal(config[tier_id][skill_id]["sprite_disabled"].asString());
 	}
@@ -391,7 +425,7 @@ void Skills::skill_update(int tier_id, int skill_id, ui::Button* skill){ //creat
 			bool enable(true);
 			for (unsigned i(0); i < config[tier_id][skill_id]["dependance"].size(); ++i){ // count dependance size
 				int j = config[tier_id][skill_id]["dependance"][i].asInt();
-				if (root["skill"][tier_id - 1][j].asInt() == 0){ // if one prerequisite is not checked then false
+				if (!root["skill"][tier_id - 1][j]["bought"].asBool()){ // if one prerequisite is not checked then false
 					enable = false;
 				}
 			}
