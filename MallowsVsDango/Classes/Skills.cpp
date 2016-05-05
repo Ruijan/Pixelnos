@@ -25,22 +25,24 @@ bool Skills::init(){
 			root2["skill"][k][l]["bought"] = false;
 		}
 	}
-
+	
 	for (int i(0); i < root["skill"].size(); ++i) {
 		for (int j(0); j < root["skill"][i].size(); ++j) {
-			if (config[i][j]["id"].asInt() != root["skill"][i][j]["id"].asInt()) {
-				for (int k(0); k < config.size(); ++k) {
-					for (int l(0); l < config[k].size(); ++l) {
-						if (config[k][l]["id"].asInt() == root["skill"][i][j]["id"].asInt()) {
-							root2["skill"][k][l]["id"] = config[k][l]["id"].asInt();
-							root2["skill"][k][l]["bought"] = root["skill"][i][j]["bought"].asBool();
+			if (root["skill"][i][j].isMember("id")) {
+				if (config[i][j]["id"].asInt() != root["skill"][i][j]["id"].asInt()) {
+					for (int k(0); k < config.size(); ++k) {
+						for (int l(0); l < config[k].size(); ++l) {
+							if (config[k][l]["id"].asInt() == root["skill"][i][j]["id"].asInt()) {
+								root2["skill"][k][l]["id"] = config[k][l]["id"].asInt();
+								root2["skill"][k][l]["bought"] = root["skill"][i][j]["bought"].asBool();
+							}
 						}
 					}
 				}
-			}
-			else {
-				root2["skill"][i][j]["id"] = config[i][j]["id"].asInt();
-				root2["skill"][i][j]["bought"] = root["skill"][i][j]["bought"].asBool();
+				else {
+					root2["skill"][i][j]["id"] = config[i][j]["id"].asInt();
+					root2["skill"][i][j]["bought"] = root["skill"][i][j]["bought"].asBool();
+				}
 			}
 		}
 	}
