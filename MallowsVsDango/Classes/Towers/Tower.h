@@ -23,7 +23,8 @@ public:
 	};
 	enum TowerType{
 		ARCHER,
-		CUTTER
+		CUTTER,
+		SAUCER
 	};
 
 	Tower();

@@ -255,12 +255,12 @@ cocos2d::Vector<SpriteFrame*> Tower::getAnimationFromName(std::string name, Towe
 			break;
 	};
 	
-	unsigned int animation_size = Tower::getConfig()[name]["animation_"+ action +"_size"].asInt();
+	int animation_size = Tower::getConfig()[name]["animation_"+ action +"_size"].asInt();
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
 	cocos2d::Vector<SpriteFrame*> animFrames;
 
 	char str[100] = { 0 };
-	for (unsigned int i = 0; i <= animation_size; ++i)
+	for (int i(0); i <= animation_size; ++i)
 	{
 		std::string frameName =  name+"_"+action+"_movement_%03d.png";
 		sprintf(str, frameName.c_str(), i);
@@ -470,6 +470,9 @@ Tower::TowerType Tower::getTowerTypeFromString(std::string type){
 	}
 	else if (!strcmp(type.c_str(), "cutter")){
 		return Tower::TowerType::CUTTER;
+	}
+	else if (!strcmp(type.c_str(), "saucer")) {
+		return Tower::TowerType::SAUCER;
 	}
 	else{
 		return Tower::TowerType::ARCHER;
