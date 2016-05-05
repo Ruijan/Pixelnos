@@ -3,7 +3,8 @@
     "dangosimple": {
       "cellperanim": 1.1,
       "name" :  "Dango",
-      "description": "Simple dango you can find everywhere.",
+      "description_en": "Simple dango you can find everywhere.",
+      "description_fr": "Dango de base, fait à partir d'eau et de farine de riz.",
       "level": [
         {
           "animation": "res/dango/animations/dango1.png",
@@ -34,7 +35,8 @@
     "dangobese": {
       "cellperanim": 0.55,
       "name" :  "Dangobese",
-      "description": "So big ! So fat ! Wait... is that my sock ?",
+      "description_en": "So big ! So fat ! Wait... is that my sock?!",
+      "description_fr": "Si grand ! Si gros ! Mais... c'est ma chausette ?!",
       "level": [
         {
           "animation": "res/dango/animations/dangobese1.png",
@@ -226,8 +228,9 @@
       "sell": [15, 25, 35, 60],
       "range": [120, 135, 150, 150],
       "damages": [ 1, 1.5, 2, 2 ],
-      "description": "Bomber: This mallow is a long distance attacker.",
-      "last_level_description" :  "The water bombs are getting bigger and are doing damages in area.",
+      "description_en": "Bomber: This mallow is a long distance attacker.",
+      "description_fr": "Bomber : ce mallow bombarde ses ennemis d'eau jusqu'à les dissoudre totalement",
+      "last_level_description_en" :  "The water bombs are getting bigger and are doing damages in area.",
       "image": "res/turret/archer.png",
       "name": "archer",
       "limit": 5,
@@ -245,8 +248,8 @@
       "sell": [25, 40, 65, 95],
       "damages": [ 1, 1.5, 2, 2 ],
       "range": [80, 90, 100, 100],
-      "description": "Sword Master: Attack all the dangos around him",
-      "last_level_description": "Increase damages done by other towers on the target by 25%.",
+      "description_en": "Sword Master: Attack all the dangos around him",
+      "last_level_description_en": "Increase damages done by other towers on the target by 25%.",
       "image": "res/turret/cutter.png",
       "name": "cutter",
       "limit": 3,
@@ -286,13 +289,15 @@
 "skills": [
     [ 
       {        
-        "name": "C'est au pied du mur...",
+        "name_en": "Down to the base...",
+        "name_fr": "C'est au pied du mur...",
         "cost": 5,
         "effect": [],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
-        "description": "Cree un mur en sucre (2 PdV) au bout du chemin.",
-        "dependance": [],
+        "description_en": "Create a sugar wall (2HP) at the end of the path.",
+        "description_fr": "Cree un mur en sucre (2 PdV) au bout du chemin.",
+        "dependance": [-1],
         "level_unlocked": 0,
         "id" : 1
       }     
@@ -300,23 +305,27 @@
 
     [ 
         {        
-        "name": "Et un tour gratuit",
+        "name_en": "And one free ride",
+        "name_fr": "Et un tour gratuit",
         "cost": 10,
         "effect": [],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
-        "description": "Tous les 20 attaques, le Cutter, effectue un tour supplementaire",
+        "description_en": "Every 20 attacks, the Cutter, performs a free attack.",
+        "description_fr": "Tous les 20 attaques, le Cutter, effectue un tour supplementaire",
         "dependance": [0],
         "level_unlocked": 0,
         "id" : 2
        },   
       {        
-        "name": "Une bombe peut en cacher une autre",
+        "name_en": "There may be other bombs",
+        "name_fr": "Une bombe peut en cacher une autre",
         "cost": 10,
         "effect": [],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
-        "description": "Tous les 20 tirs, une deuxieme bombe est lancee par le Bombeur",
+        "description_en": "Every 20 shots, the Bomber throws 2 additional bombs during its next attack.",
+        "description_fr": "Tous les 20 tirs, une deuxieme bombe est lancee par le Bombeur",
         "dependance": [0],
         "level_unlocked": 0,
         "id" : 3
@@ -325,23 +334,27 @@
 
     [ 
       {        
-        "name": "Et la t’es enerve ? Et la t’es enerve ? ...",
+        "name_en": "Plz don't get mad. Plz don't get mad...",
+        "name_fr": "Et la t’es enerve ? Et la t’es enerve ? ...",
         "cost": 15,
         "effect": [],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
-        "description": "Reduit de 1 le nombre d'attaques necessaires pour activer la limite du Cutter.",
+        "description_en": "The Cutter needs 1 less attack to charge its limit's gauge.",
+        "description_fr": "Reduit de 1 le nombre d'attaques necessaires pour activer la limite du Cutter.",
         "dependance": [0],
         "level_unlocked": 0,
         "id" : 4
       },
       {        
-        "name": "Une balle de moins",
+        "name_en": "",
+        "name_fr": "Une balle de moins",
         "cost": 15,
         "effect": [],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
-        "description": "Reduit de 1 le nombre de tirs necessaires pour activer la limite du Bombeur.",
+        "description_en": "The Bomber needs 1 less attack to charge its limit's gauge.",
+        "description_fr": "Reduit de 1 le nombre de tirs necessaires pour activer la limite du Bombeur.",
         "dependance": [0, 1],
         "level_unlocked": 0,
         "id" : 5
@@ -350,24 +363,28 @@
 
     [
               {        
-        "name": "Qui a parle de barbecue ?",
+        "name_en": "It's BBQ time!",
+        "name_fr": "Qui a parle de barbecue ?",
         "cost": 50,
         "effect": [],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
-        "description": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
-        "dependance": [],
+        "description_en": "Unlock Pyro, a specialist in fireworks.",
+        "description_fr": "Débloque Pyro, l'expert en feux d'artifices. ",
+        "dependance": [-1],
         "level_unlocked": 2,
         "id" : 6
       },
-      {        
-        "name": "L'age de glace",
+      {       
+        "name": "Icing sugar age",
+        "name": "L'âge de glace",
         "cost": 30,
         "effect": [],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
-        "description": "Augmente le mur de 1 PdV",
-        "dependance": [],
+        "description_en": "Icing sugar age. The wall's HP is increased by 1.",
+        "description_fr": "La décourvete du sucre glace fait entrer dans une nouvelle ère. Augmente le mur de 1 PdV",
+        "dependance": [-1],
         "level_unlocked": 4,
         "id" : 7
         }
@@ -375,48 +392,56 @@
 
     [ 
             {        
-        "name": "Qui a parle de barbecue ? (2)",
+        "name_en": "It's BBQ time! (2)",
+        "name_fr": "Qui a parle de barbecue ? (2)",
         "cost": 50,
         "effect": [],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
-        "description": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
+        "description_en": "Every 40s of attack, Pyro is overheating. The flame is wider for 2s.",
+        "description_fr": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
         "dependance": [0],
         "level_unlocked": 0,
         "id" : 8
       },
       {        
-        "name": "C'est les soldes !",
+        "name_en": "Sales are comming",
+        "name_fr": "C'est les soldes !",
         "cost": 50,
         "effect": [],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
-        "description": "Diminue le cout de creation de toutes les tourelles 5%",
-        "dependance": [],
+        "description_en": "All Mallows' cost is reduced by 5%.",
+        "description_fr": "Diminue le cout de creation de toutes les tourelles 5%",
+        "dependance": [-1],
         "level_unlocked": 2,
         "id" : 9
       }
     ],
 
     [
-        {        
-        "name": "Qui a parle de barbecue ? (3)",
+        {       
+        "name_en": "It's BBQ time! (3)",
+        "name_fr": "Qui a parle de barbecue ? (3)",
         "cost": 50,
         "effect": [],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
-        "description": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
+        "description_en": "Every 40s of attack, Pyro is overheating. The flame is wider for 2s.",
+        "description_fr": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
         "dependance": [0],
         "level_unlocked": 0,
         "id" : 10
         },
         {        
-        "name": "Jackpot",
+        "name_en": "Jackpot",
+        "name_fr": "Jackpot",
         "cost": 50,
         "effect": [],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
-        "description": "Un dango a 1% de chance de genere 1 sucrette lorsqu’il meurt.",
+        "description_en": "Dangos have an 1% chance to drop holy sugar when they died.",
+        "description_fr": "Un dango a 1% de chance de genere 1 sucrette lorsqu’il meurt.",
         "dependance": [1],
         "level_unlocked": 0,
         "id" : 11

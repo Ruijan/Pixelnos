@@ -65,7 +65,6 @@ bool StoryMenu::init(){
 	shop->setAnchorPoint(Vec2(1.f, 0.f));
 	getChildByName("interface")->addChild(shop);
 
-
 	auto settings = ui::Layout::create();
 	getChildByName("interface")->addChild(settings, 2, "settings");
 	ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel.png");
