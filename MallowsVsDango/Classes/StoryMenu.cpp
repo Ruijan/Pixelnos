@@ -36,6 +36,18 @@ bool StoryMenu::init(){
 	level_editor->setAnchorPoint(Vec2(1.f, 0.3f));
 	getChildByName("interface")->addChild(level_editor);
 
+	//Skills tree
+	cocos2d::ui::Button* skill_tree = ui::Button::create("res/buttons/parameters_wood.png");
+	getChildByName("interface")->addChild(skill_tree);
+	skill_tree->setScale(visibleSize.width / skill_tree->getContentSize().width / 15);
+	skill_tree->setAnchorPoint(Vec2(0.f, 0.3f));
+	skill_tree->setPosition(Vec2(visibleSize.width * 0.8, 0.f));
+	skill_tree->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			SceneManager::getInstance()->setScene(SceneManager::SKILLS);
+		}
+	});
+
 	auto settings = ui::Layout::create();
 	getChildByName("interface")->addChild(settings, 2, "settings");
 	ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel.png");
