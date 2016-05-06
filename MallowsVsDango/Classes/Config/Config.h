@@ -18,6 +18,7 @@ private:
 	bool never_grid_enabled;
 	bool limit_enabled;
 	bool dialogues_enabled;
+	std::string language; 
 
 	std::vector<cocos2d::ui::CheckBox*> always_grid_buttons;
 	std::vector<cocos2d::ui::CheckBox*> never_grid_buttons;

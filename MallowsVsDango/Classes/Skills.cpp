@@ -254,7 +254,7 @@ bool Skills::init(){
 							return;
 						}
 						if (is_skill_bought == 0){
-							root["skill"][selected_tier_id][selected_skill_id] = 1;
+							root["skill"][selected_tier_id][selected_skill_id]["bought"] = true;
 
 							((cocos2d::ui::Button*)getChildByName("buy_button"))->setEnabled(false);
 							removeChildByName("buy_layout");
@@ -341,11 +341,14 @@ void Skills::set_skill(int tier_id, int skill_id){ //create skill button
 						bool enable1(true);
 						for (unsigned i(0); i < config[tier_id][skill_id]["dependance"].size(); ++i){
 							int j = config[tier_id][skill_id]["dependance"][i].asInt();
-							if (!root["skill"][tier_id - 1][j]["bought"].asBool()){
-								enable1 = false;
-							}
-							if (enable1 == false){
-								((ui::Button*)getChildByName("buy_button"))->setEnabled(false);
+							if (j != -1) {
+								if (!root["skill"][tier_id - 1][j]["bought"].asBool()) {
+									enable1 = false;
+								}
+
+								if (enable1 == false) {
+									((ui::Button*)getChildByName("buy_button"))->setEnabled(false);
+								}
 							}
 						}
 					}
@@ -409,9 +412,9 @@ void Skills::set_dependancy(int tier_id, int skill_id){ // create link between s
 void Skills::skill_update(int tier_id, int skill_id, ui::Button* skill){ //create skill button
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	/*if (tier_id == 0){ // skill n° 0_0
+	if (tier_id == 0){ // skill n° 0_0
 		skill->loadTextureNormal(config[tier_id][skill_id]["sprite_enabled"].asString());
-	}*/
+	}
 	if (root["level"].asInt() < config[tier_id][skill_id]["level_unlocked"].asInt()){ // compaign level < level_unlocked then disabled
 		skill->loadTextureNormal(config[tier_id][skill_id]["sprite_disabled"].asString());
 	}

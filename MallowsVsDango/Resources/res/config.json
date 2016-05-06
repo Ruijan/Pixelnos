@@ -347,7 +347,7 @@
         "id" : 4
       },
       {        
-        "name_en": "",
+        "name_en": "It's bullet time!",
         "name_fr": "Une balle de moins",
         "cost": 15,
         "effect": [],
@@ -376,8 +376,8 @@
         "id" : 6
       },
       {       
-        "name": "Icing sugar age",
-        "name": "L'âge de glace",
+        "name_en": "Icing sugar age",
+        "name_fr": "L'âge de glace",
         "cost": 30,
         "effect": [],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
