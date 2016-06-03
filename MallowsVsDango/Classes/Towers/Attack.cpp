@@ -79,8 +79,9 @@ void Attack::setDamagesId(int id) {
 
 void Attack::setEnabled(bool enable) {
 	enabled = enable;
-	if (target != nullptr) {
+	if (target != nullptr && !enable) {
 		target->removePDamages(damages_id);
+		target = nullptr;
 	}
 }
 
@@ -110,7 +111,20 @@ WaterBall::~WaterBall() {
 WaterBall* WaterBall::create(Dango* ntarget, double damages, double nspeed) {
 	WaterBall* pSprite = new WaterBall(ntarget, damages, nspeed);
 
-	if (pSprite->initWithFile("res/turret/bullet.png"))
+	if (pSprite->initWithFile("res/turret/yellow_bomb.png"))
+	{
+		pSprite->autorelease();
+		return pSprite;
+	}
+
+	CC_SAFE_DELETE(pSprite);
+	return NULL;
+}
+
+WaterBall* WaterBall::createWithFile(std::string file, Dango* ntarget, double damages, double nspeed) {
+	WaterBall* pSprite = new WaterBall(ntarget, damages, nspeed);
+
+	if (pSprite->initWithFile(file))
 	{
 		pSprite->autorelease();
 		return pSprite;
@@ -193,7 +207,7 @@ void WaterBombBall::update(float dt) {
 				Vec2 direction = target->getPosition() - getPosition();
 				double distance = sqrt(direction.x*direction.x + direction.y*direction.y);
 				Size visibleSize = Director::getInstance()->getVisibleSize();
-				if (distance < target->getContentSize().width * target->getScaleX() / 2) {
+				if (distance < Cell::getCellWidth() / 2) {
 					touched = true;
 					std::vector<Dango*> enemies = SceneManager::getInstance()->getGame()->
 						getLevel()->getEnemiesInRange(target->getPosition(), range);

@@ -31,6 +31,13 @@ bool LevelEditor::init(){
 	path_level = "";
 	generator = new DangoGenerator();
 
+	Label* file_saved_label = Label::createWithTTF("Level Saved", "fonts/LICABOLD.ttf", 54.f * visibleSize.width / 1280.f);
+	file_saved_label->setColor(Color3B::GREEN);
+	file_saved_label->enableOutline(Color4B::BLACK, 2.f);
+	file_saved_label->setPosition(visibleSize.width * 5 / 8, visibleSize.height * 1 / 10);
+	file_saved_label->setOpacity(0.f);
+	addChild(file_saved_label, 5, "level_saved_label");
+
 	// Black mask to prevent any action during selection of enemy or dialogue or anything else like this.
 	addChild(ui::Layout::create(), 2, "black_mask");
 	ui::Button* mask = ui::Button::create("res/buttons/mask.png");
@@ -486,10 +493,9 @@ bool LevelEditor::init(){
 	button_cancel_creation->setScale(visibleSize.width / 5 / button_cancel_creation->getContentSize().width);
 	button_cancel_creation->addTouchEventListener(CC_CALLBACK_2(LevelEditor::hideEnemyBox, this));
 	auto middle_panel_enemy = Sprite::create("res/buttons/centralMenuPanel.png");
-	middle_panel_enemy->setScaleY(visibleSize.height / 2 / middle_panel_enemy->getContentSize().height * middle_panel_enemy->getScaleY());
-	middle_panel_enemy->setScaleX((1.5 * create_enemy->getContentSize().width * create_enemy->getScale() +
-		create_enemy->getContentSize().width * 2 / 5 * create_enemy->getScale()) /
-		create_enemy->getContentSize().width);
+	middle_panel_enemy->setScaleY(visibleSize.height * 0.7 / middle_panel_enemy->getContentSize().height);
+	middle_panel_enemy->setScaleX(visibleSize.width * 0.65 /
+		middle_panel_enemy->getContentSize().width);
 	auto enemy_layout = ui::ScrollView::create();
 	enemy_layout->setContentSize(Size(0.90*middle_panel_enemy->getContentSize().width * middle_panel_enemy->getScaleX(),
 		middle_panel_enemy->getContentSize().height * middle_panel_enemy->getScaleY() * 0.50));
@@ -1570,6 +1576,8 @@ void LevelEditor::saveLevel(Ref* sender) {
 	bool succeed = FileUtils::getInstance()->writeStringToFile(outputSave, path);
 	if (succeed) {
 		log("Saved File in %s", path.c_str());
+		getChildByName("level_saved_label")->runAction(Sequence::create(FadeIn::create(0.5f), 
+			DelayTime::create(1.f), FadeOut::create(0.5f), nullptr));
 	}
 	else {
 		log("error saving file %s", path.c_str());

@@ -14,13 +14,13 @@ Cutter* Cutter::create()
 {
 	Cutter* pSprite = new Cutter();
 
-	if (pSprite->initWithFile(Cutter::getConfig()["image"].asString()))
-	{
+	/*if (pSprite->initWithFile(Cutter::getConfig()["image"].asString()))
+	{*/
 		pSprite->initFromConfig();
 		pSprite->initDebug();
 		pSprite->initEnragePanel();
 		return pSprite;
-	}
+	//}
 
 	CC_SAFE_DELETE(pSprite);
 	return NULL;
@@ -122,12 +122,13 @@ void Cutter::startLimit() {
 
 		state = LIMIT_BURSTING;
 		//((Label*)getChildByName("label_state"))->setString("LIMIT_BURSTING");
-		cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(ATTACKING);
+		/*cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(ATTACKING);
 		Animation* currentAnimation = Animation::createWithSpriteFrames(animFrames,
-			animation_duration / nb_frames_anim / 3.0f);
+			animation_duration / nb_frames_anim / 3.0f);*/
+		givePDamages(damage);
+		startAnimation(3.f);
 
-		auto callbackAttack = CallFunc::create([&]() {
-			givePDamages(damage);
+		/*auto callbackAttack = CallFunc::create([&]() {
 			attack();
 			nb_attacks = 0;
 			timer = 0;
@@ -140,6 +141,13 @@ void Cutter::startLimit() {
 
 		// create a sequence with the actions and callbacks
 		auto seq = Sequence::create(Animate::create(currentAnimation), callbackAttack, nullptr);
-		runAction(seq);
+		runAction(seq);*/
 	}
+}
+
+void Cutter::handleEndEnrageAnimation() {
+	nb_attacks = 0;
+	timer = 0;
+	timerIDLE = 0;
+	state = RELOADING;
 }

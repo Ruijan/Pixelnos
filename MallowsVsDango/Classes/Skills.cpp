@@ -18,19 +18,19 @@ bool Skills::init(){
 
 	Json::Value root2 = root;
 	root2["skill"] = {};
-	for (int k(0); k < config.size(); ++k) {
-		for (int l(0); l < config[k].size(); ++l) {
+	for (unsigned int k(0); k < config.size(); ++k) {
+		for (unsigned int l(0); l < config[k].size(); ++l) {
 			auto conf = config[k][l]["id"].asInt();
 			root2["skill"][k][l]["id"] = config[k][l]["id"].asInt();
 			root2["skill"][k][l]["bought"] = false;
 		}
 	}
 
-	for (int i(0); i < root["skill"].size(); ++i) {
-		for (int j(0); j < root["skill"][i].size(); ++j) {
+	for (unsigned int i(0); i < root["skill"].size(); ++i) {
+		for (unsigned int j(0); j < root["skill"][i].size(); ++j) {
 			if (config[i][j]["id"].asInt() != root["skill"][i][j]["id"].asInt()) {
-				for (int k(0); k < config.size(); ++k) {
-					for (int l(0); l < config[k].size(); ++l) {
+				for (unsigned int k(0); k < config.size(); ++k) {
+					for (unsigned int l(0); l < config[k].size(); ++l) {
 						if (config[k][l]["id"].asInt() == root["skill"][i][j]["id"].asInt()) {
 							root2["skill"][k][l]["id"] = config[k][l]["id"].asInt();
 							root2["skill"][k][l]["bought"] = root["skill"][i][j]["bought"].asBool();
@@ -267,8 +267,8 @@ bool Skills::init(){
 							getChildByName("scrollView")->getChildByName(Value(selected_tier_id).asString() + "_" + Value(selected_skill_id).asString())->getChildByName("skill")->getChildByName("skill_bought")->setVisible(true);
 							skill_update(selected_tier_id, selected_skill_id, (ui::Button*) getChildByName("scrollView")->getChildByName(Value(selected_tier_id).asString() + "_" + Value(selected_skill_id).asString())->getChildByName("skill"));
 							
-							for (int i(0); i < config[selected_tier_id + 1].size(); ++i){
-							skill_update(selected_tier_id + 1, i, (ui::Button*) getChildByName("scrollView")->getChildByName(Value(selected_tier_id +1).asString() + "_" + Value(i).asString())->getChildByName("skill"));
+							for (unsigned int i(0); i < config[selected_tier_id + 1].size(); ++i){
+							skill_update(selected_tier_id + 1, i, (ui::Button*) getChildByName("scrollView")->getChildByName(Value(selected_tier_id +1).asString() + "_" + Value((int)i).asString())->getChildByName("skill"));
 							}
 						}
 					}

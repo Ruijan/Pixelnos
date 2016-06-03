@@ -5,13 +5,16 @@
 #include "../Config/json.h"
 #include "ui/CocosGUI.h"
 #include "Towers/Effect.h"
+#include <spine/spine-cocos2dx.h>
 
 class Cell;
 class InterfaceGame;
 class Tower;
 class Attack;
 
-class Dango : public cocos2d::Sprite{
+using namespace spine;
+
+class Dango : public cocos2d::Node{
 public:
 	enum DIRECTION {
 		RIGHT,
@@ -23,15 +26,17 @@ public:
 		IDLE,
 		ATTACK,
 		RELOAD,
-		MOVE
+		MOVE,
+		DYING,
+		DEAD
 	};
-	Dango(std::vector<Cell*> npath, double nspeed, double hp, int nlevel,
-		double damages, double a_reload, double anim_duration, int nb_frames, std::string nname);
+	Dango(std::vector<Cell*> npath, int nlevel);
 	virtual ~Dango();
 	//static Dango* create(std::string image, std::vector<Cell*> npath, int level);
 
 	static Json::Value getConfig();
 	virtual Json::Value getSpecConfig() = 0;
+	void initFromConfig();
 
 	bool isAlive();
 	bool isDone();
@@ -44,6 +49,8 @@ public:
 
 	virtual void update(float dt);
 	void updateAnimation();
+	void pauseAnimation();
+	void resumeAnimation();
 	void updateDirection(cocos2d::Vec2 direction);
 
 	void takeDamages(double damages);
@@ -67,6 +74,8 @@ public:
 	void removeDamageModifier(int id);
 	void removeTargetingTower(Tower* tower);
 	void removeTargetingAttack(Attack* tower);
+
+	void die();
 	
 protected:
 	STATE state;
@@ -79,6 +88,7 @@ protected:
 	double animation_duration;
 	double nb_frames_anim;
 	std::string name;
+	SkeletonAnimation* skeleton;
 
 	std::map<int, std::pair<double, Effect*>> m_speed;
 	std::map<int, std::pair<double, Effect*>> m_damages;
@@ -94,8 +104,9 @@ protected:
 	double reload_timer;
 	double attack_damages;
 	double attack_reloading;
+	bool on_ground;
 	int level;
-	
+
 	std::vector<Effect*> effects;
 };
 #endif

@@ -244,10 +244,10 @@ void Level::update(float dt)
 }
 
 void Level::updateTowers(float dt) {
-	for (auto& tower : turrets) {
+	for (auto& tower : towers) {
 		if (!tower->hasToBeDestroyed()) {
 			if (tower->isFixed()) {
-				tower->chooseTarget(dangos);
+				//tower->chooseTarget(dangos);
 				tower->update(dt);
 			}
 		}
@@ -267,7 +267,7 @@ void Level::updateTowers(float dt) {
 
 void Level::removeElements() {
 	attacks.erase(std::remove(attacks.begin(), attacks.end(), nullptr), attacks.end());
-	turrets.erase(std::remove(turrets.begin(), turrets.end(), nullptr), turrets.end());
+	towers.erase(std::remove(towers.begin(), towers.end(), nullptr), towers.end());
 	dangos.erase(std::remove(dangos.begin(), dangos.end(), nullptr), dangos.end());
 }
 
@@ -308,6 +308,12 @@ void Level::pause(){
 	for(auto child: getChildren()){
 		child->pause();
 	}
+	for (auto tower : towers) {
+		tower->pauseAnimation();
+	}
+	for (auto dango : dangos) {
+		dango->pauseAnimation();
+	}
 	paused = true;
 }
 
@@ -316,10 +322,16 @@ void Level::resume(){
 	for(auto child: getChildren()){
 		child->resume();
 	}
+	for (auto tower : towers) {
+		tower->resumeAnimation();
+	}
+	for (auto dango : dangos) {
+		dango->resumeAnimation();
+	}
 	paused = false;
 }
 void Level::addTurret(Tower* tower){
-	turrets.push_back(tower);
+	towers.push_back(tower);
 	addChild(tower);
 	tower->setLocalZOrder(zGround);
 }
@@ -403,7 +415,7 @@ bool sortZOrder(Node* sprite1, Node* sprite2){
 
 void Level::reorder(){
 	std::vector<Node*> elements;
-	for(auto& tower : turrets){
+	for(auto& tower : towers){
 		if (tower != nullptr)
 			elements.push_back(tower);
 	}
@@ -433,10 +445,10 @@ void Level::reset(){
 		removeChild(dango);
 	}
 	dangos.clear();
-	for (auto& tower : turrets){
+	for (auto& tower : towers){
 		removeChild(tower);
 	}
-	turrets.clear();
+	towers.clear();
 	for (auto& attack : attacks){
 		removeChild(attack);
 	}
@@ -460,14 +472,14 @@ void Level::reset(){
 }
 
 Tower* Level::touchingTower(cocos2d::Vec2 position){
-	for (auto& tower : turrets){
+	for (auto& tower : towers){
 		Vec2 pointInSprite = position - tower->getPosition() * getScale();
 		double scale1 = tower->getScale();
 		double scale2 = getScale();
-		pointInSprite.x += tower->getSpriteFrame()->getRect().size.width * tower->getScale() / 2;
-		pointInSprite.y += tower->getSpriteFrame()->getRect().size.height * tower->getScale() / 2;
-		Rect itemRect = Rect(0, 0, tower->getSpriteFrame()->getRect().size.width * tower->getScale(),
-			tower->getSpriteFrame()->getRect().size.height * tower->getScale());
+		pointInSprite.x += Cell::getCellWidth() / 2;
+		pointInSprite.y += Cell::getCellWidth() / 2;
+		Rect itemRect = Rect(0, 0, Cell::getCellWidth(),
+			Cell::getCellHeight());
 
 		if (itemRect.containsPoint(pointInSprite)){
 			return tower;
@@ -479,10 +491,10 @@ Tower* Level::touchingTower(cocos2d::Vec2 position){
 Dango* Level::touchingDango(cocos2d::Vec2 position) {
 	for (auto& dango : dangos) {
 		Vec2 pointInSprite = position - dango->getPosition() * getScale();
-		pointInSprite.x += dango->getSpriteFrame()->getRect().size.width * dango->getScaleX() / 2;
-		pointInSprite.y += dango->getSpriteFrame()->getRect().size.height * dango->getScaleY() / 2;
-		Rect itemRect = Rect(0, 0, dango->getSpriteFrame()->getRect().size.width * dango->getScaleX(),
-			dango->getSpriteFrame()->getRect().size.height * dango->getScaleY());
+		pointInSprite.x += Cell::getCellWidth() / 2;
+		pointInSprite.y += Cell::getCellHeight() / 2;
+		Rect itemRect = Rect(0, 0, Cell::getCellWidth(),
+			Cell::getCellHeight());
 
 		if (itemRect.containsPoint(pointInSprite)) {
 			return dango;

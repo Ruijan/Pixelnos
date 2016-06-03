@@ -4,12 +4,13 @@
 #include "../Towers/Attack.h"
 #include "../AppDelegate.h"
 #include "../InterfaceGame.h"
+#include <math.h>
 
 USING_NS_CC;
 
 Tower::Tower() :
-state(State::IDLE), fixed(false), destroy(false), target(nullptr), timer(0), timerIDLE(0), level(0),
-nb_attacks(0)
+	state(State::IDLE), fixed(false), destroy(false), target(nullptr), timer(0), timerIDLE(0), level(0),
+	nb_attacks(0), spritesheet(false), direction(DOWN)
 {}
 
 Tower::~Tower() {}
@@ -24,34 +25,104 @@ void Tower::initFromConfig() {
 	nb_frames_anim = config["animation_attack_size"].asInt();
 	name = config["name"].asString();
 	nb_max_attacks_limit = config["limit"].asInt();
+
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	
+	skeleton = SkeletonAnimation::createWithFile(config["skeleton"].asString(),
+		config["atlas"].asString(), 0.15f * visibleSize.width / 1280);
+
+	skeleton->setStartListener([this](int trackIndex) {
+		spTrackEntry* entry = spAnimationState_getCurrent(skeleton->getState(), trackIndex);
+		const char* animationName = (entry && entry->animation) ? entry->animation->name : 0;
+		log("%d start: %s", trackIndex, animationName);
+	});
+	skeleton->setEndListener([this](int trackIndex) {
+
+	});
+	skeleton->setCompleteListener([this](int trackIndex, int loopCount) {
+		std::string name = skeleton->getCurrent()->animation->name;
+		if (Value(skeleton->getCurrent()->animation->name).asString() == "blink" ||
+			Value(skeleton->getCurrent()->animation->name).asString() == "hello") {
+			skeleton->clearTracks();
+			skeleton->setAnimation(0, "still", false);
+			skeleton->addAnimation(0, "blink", false);
+		}
+		if (state == LIMIT_BURSTING) {
+			handleEndEnrageAnimation();
+		}
+	});
+	skeleton->setEventListener([this](int trackIndex, spEvent* event) {
+		if (Value(event->data->name).asString() == "throw_bomb") {
+			if (state != LIMIT_BURSTING) {
+				this->state = State::RELOADING;
+			}
+			timer = 0;
+			timerIDLE = 0;
+			if (target != nullptr) {
+				attack();
+			}
+		}
+
+		log("%d event: %s, %d, %f, %s", trackIndex, event->data->name, event->intValue, event->floatValue, event->stringValue);
+	});
+
+	skeleton->setAnimation(0, "still", false);
+	skeleton->addAnimation(0, "blink", false);
+	skeleton->setSkin("normal_" + Value(level + 1).asString());
+	skeleton->setPosition(Vec2(0, -Cell::getCellHeight() * 3 / 10));
+
+	addChild(skeleton);
+
+	/*auto clipper = ClippingNode::create();
+	clipper->setContentSize(Size(Cell::getCellWidth(), Cell::getCellWidth()));
+	clipper->setAnchorPoint(Vec2(0.5, 0.5));
+	clipper->setAlphaThreshold(0.05f);
+	addChild(clipper);
+
+
+	auto stencil = Sprite::create("res/turret/splash.png");
+	stencil->setPosition(clipper->getContentSize().width, clipper->getContentSize().height);
+	clipper->setStencil(skeleton);
+	clipper->addChild(stencil);*/
 }
 
 void Tower::initDebug(){
-	setScale(Cell::getCellWidth() / getContentSize().width);
 	autorelease();
 
 	loadingCircle = DrawNode::create();
 	loadingCircle->setVisible(false);
 	addChild(loadingCircle);
-		
-	DrawNode *circle = DrawNode::create();
-	circle->setPosition(Vec2(getSpriteFrame()->getRect().size.width / 2,
-		getSpriteFrame()->getRect().size.height / 2));
+
+
+
+	Sprite* range = Sprite::create("res/turret/range.png");
+	range->setScale(getRange() / range->getContentSize().width * 2);
+	addChild(range, 0, "range");
+
+	/*DrawNode *circle = DrawNode::create();
 	circle->drawCircle(Vec2(0, 0), getRange() / getScaleX(),
-		0, 60, false, 1, 1, Color4F(0, 0, 0, 1));
-	circle->setVisible(false);
-	addChild(circle, 0, "range");
+		M_PI_4/2, 60, true, 1, 1, Color4F(1, 0, 0, 0.5));
+	circle->drawCircle(Vec2(0, 0), getRange() / getScaleX(),
+		7 * M_PI_4 / 2, 60, true, 1, 1, Color4F(1, 1, 0, 0.5));
+	circle->drawCircle(Vec2(0, 0), getRange() / getScaleX(),
+		9 * M_PI_4 / 2, 60, true, 1, 1, Color4F(1, 1, 1, 0.5));
+	circle->drawCircle(Vec2(0, 0), getRange() / getScaleX(),
+		15 * M_PI_4 / 2, 60, true, 1, 1, Color4F(0, 0, 0, 0.5));
+	addChild(circle);*/
+
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+	
 
 	/*auto label_state = Label::createWithTTF("IDLE", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	label_state->enableOutline(Color4B::BLACK, 2);
 	addChild(label_state,3,"label_state");*/
 }
 
 void Tower::initEnragePanel() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	auto enrage_panel = ui::Layout::create();
-	enrage_panel->setPosition(Vec2(Cell::getCellWidth() / getScaleX() / 2, Cell::getCellWidth() / getScaleX()));
+	enrage_panel->setPosition(Vec2(0, Cell::getCellWidth() / getScaleX()));
 
 	auto bubble = Sprite::create("res/buttons/speech_fury_red.png");
 	bubble->setScale(2.25 * Cell::getCellWidth() / getScaleX() / bubble->getContentSize().width);
@@ -66,8 +137,7 @@ void Tower::initEnragePanel() {
 				startLimit();
 				getChildByName("enrage_panel")->stopAllActions();
 				getChildByName("enrage_panel")->setPosition(Vec2(
-					Cell::getCellWidth() / getScaleX() / 2, 
-					Cell::getCellWidth() / getScaleX()));
+					0, Cell::getCellWidth() / getScaleX()));
 				getChildByName("enrage_panel")->setScale(1.0f);
 				((ui::Button*)getChildByName("enrage_panel")->
 					getChildByName("enrage_button"))->setEnabled(false);
@@ -110,6 +180,7 @@ void Tower::destroyCallback(Ref* sender){
 
 void Tower::builtCallback(Ref* sender){
 	fixed = true;
+	skeleton->setAnimation(0, "hello", false);
 }
 
 void Tower::upgradeCallback(Ref* sender){
@@ -119,14 +190,11 @@ void Tower::upgradeCallback(Ref* sender){
 		range = config["range"][level].asDouble();
 		damage = config["damages"][level].asDouble();
 		attack_speed = config["attack_speed"][level].asDouble();
-		
-		removeChild(getChildByName("range"),true);
-		DrawNode *circle = DrawNode::create();
-		circle->setPosition(Vec2(getSpriteFrame()->getRect().size.width / 2,
-			getSpriteFrame()->getRect().size.height / 2));
-		circle->drawCircle(Vec2(0, 0), getRange() / getScaleX(),
-			360, 60, false, 1, 1, Color4F(0, 0, 0, 1));
-		addChild(circle, 0, "range");
+		state = IDLE;
+		timerIDLE = 0;
+		skeleton->setSkin("normal_" + Value(level + 1).asString());
+		startAnimation();
+		getChildByName("range")->runAction(ScaleTo::create(0.25f,getRange() / getChildByName("range")->getContentSize().width * 2));
 	}
 }
 
@@ -150,34 +218,26 @@ void Tower::removeTarget(Dango* dango) {
 }
 
 void Tower::chooseTarget(std::vector<Dango*> targets){
-	if(state != State::ATTACKING/* && state != State::RELOADING*/){
-		double bestScore(0);
-		bool chosen = false;
+	double bestScore(0);
+	bool chosen = false;
 
-		for(auto& cTarget : targets){
-			if(cTarget != nullptr){
-				int first = cTarget->getTargetedCell();
-				double dist = cTarget->getPosition().distanceSquared(this->getPosition());
-				double minDist = pow(getRange(), 2);
-				if (first > bestScore && dist <= minDist && cTarget->willBeAlive()){
-					bestScore = first;
-					if (target != nullptr) {
-						target->removeTargetingTower(this);
-					}
-					target = cTarget;
-					target->addTargetingTower(this);
-					chosen = true;
+	for(auto& cTarget : targets){
+		if(cTarget != nullptr){
+			int first = cTarget->getTargetedCell();
+			double dist = cTarget->getPosition().distanceSquared(this->getPosition());
+			double minDist = pow(getRange(), 2);
+			if (first > bestScore && dist <= minDist && cTarget->willBeAlive()){
+				bestScore = first;
+				if (target != nullptr) {
+					target->removeTargetingTower(this);
 				}
+				target = cTarget;
+				target->addTargetingTower(this);
+				chosen = true;
 			}
-		}
-		if(!chosen){
-			if (target != nullptr) {
-				target->removeTargetingTower(this);
-			}
-			target = nullptr;
 		}
 	}
-	else if(state == State::RELOADING){
+	if(!chosen){
 		if (target != nullptr) {
 			target->removeTargetingTower(this);
 		}
@@ -270,6 +330,32 @@ cocos2d::Vector<SpriteFrame*> Tower::getAnimationFromName(std::string name, Towe
 	return animFrames;
 }
 
+SkeletonAnimation* Tower::getSkeletonAnimationFromName(std::string name) {
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	auto config = getConfig()[name];
+	SkeletonAnimation* animated_skeleton = SkeletonAnimation::createWithFile(config["skeleton"].asString(),
+		config["atlas"].asString(), 1.f);
+	animated_skeleton->setCompleteListener([animated_skeleton](int trackIndex, int loopCount) {
+		std::string name = animated_skeleton->getCurrent()->animation->name;
+		if (Value(animated_skeleton->getCurrent()->animation->name).asString() == "hello") {
+			animated_skeleton->clearTracks();
+			animated_skeleton->setAnimation(0, "still", false);
+			animated_skeleton->addAnimation(0, "blink", false);
+			animated_skeleton->addAnimation(0, "still", false);
+			animated_skeleton->addAnimation(0, "hello", false);
+			//animated_skeleton->setSkin()
+		}
+	});
+
+	animated_skeleton->setAnimation(0, "still", false);
+	animated_skeleton->addAnimation(0, "blink", false);
+	animated_skeleton->addAnimation(0, "still", false);
+	animated_skeleton->addAnimation(0, "hello", false);
+	animated_skeleton->setSkin("normal_1");
+	return animated_skeleton;
+}
+
 void Tower::handleEnrageMode() {
 	if (target != nullptr) {
 		if (isLimitReached() && ((AppDelegate*)Application::getInstance())->getConfigClass()->isLimitEnabled()) {
@@ -278,8 +364,7 @@ void Tower::handleEnrageMode() {
 		else if (isLimitReached() && !getChildByName("enrage_panel")->isVisible()) {
 			getChildByName("enrage_panel")->setVisible(true);
 			getChildByName("enrage_panel")->stopAllActions();
-			getChildByName("enrage_panel")->setPosition(Vec2(Cell::getCellWidth() / 
-				getScaleX() / 2, Cell::getCellWidth() / getScaleX()));
+			getChildByName("enrage_panel")->setPosition(Vec2(0, Cell::getCellWidth() / getScaleX()));
 			getChildByName("enrage_panel")->setScale(0.0001f);
 			((ui::Button*)getChildByName("enrage_panel")->
 				getChildByName("enrage_button"))->setEnabled(true);
@@ -312,6 +397,7 @@ void Tower::handleEnrageMode() {
 
 void Tower::update(float dt) {
 	// display update
+	
 	updateDisplay(dt);
 	if (isLimitReached() && getChildByName("enrage_panel")->isVisible()) {
 		updateEnrageLayout();
@@ -321,6 +407,7 @@ void Tower::update(float dt) {
 		timer += dt;
 		switch(state){
 			case State::IDLE:
+				chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
 				if (target != nullptr){
 					state = State::AWARE;
 					//((Label*)getChildByName("label_state"))->setString("AWARE");
@@ -329,14 +416,15 @@ void Tower::update(float dt) {
 				break;
 			case State::AWARE:
 				timerIDLE += dt;
+				chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
 				if (target != nullptr){
-					state = State::ATTACKING;
-					cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(state);
+					handleEnrageMode();
+					/*cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(state);
 					double delay = animation_duration / nb_frames_anim;
 					auto callbackAttack = CallFunc::create([&]() {
 						state = State::RELOADING;
 						//((Label*)getChildByName("label_state"))->setString("RELOADING");
-						std::string frameName = name + "_attack_movement_000.png";
+						/*std::string frameName = name + "_attack_movement_000.png";
 						SpriteFrameCache* cache = SpriteFrameCache::getInstance();
 						setSpriteFrame(cache->getSpriteFrameByName(frameName.c_str()));
 						timer = 0;
@@ -344,12 +432,15 @@ void Tower::update(float dt) {
 						if (target != nullptr) {
 							attack();
 						}
-					});
-					runAction(Sequence::create(Animate::create(Animation::createWithSpriteFrames(animFrames, delay)), callbackAttack, nullptr));
+					});*/
+					//runAction(Sequence::create(Animate::create(Animation::createWithSpriteFrames(animFrames, delay)), callbackAttack, nullptr));
 					//((Label*)getChildByName("label_state"))->setString("ATTACKING");
-					givePDamages(damage);
-					startAnimation();
-					timerIDLE = 0;
+					if (state != LIMIT_BURSTING) {
+						state = State::ATTACKING;
+						givePDamages(damage);
+						startAnimation();
+						timerIDLE = 0;
+					}
 				}
 				if(timerIDLE > 2){
 					state = State::IDLE;
@@ -365,6 +456,7 @@ void Tower::update(float dt) {
 				}
 				break;
 			case State::RELOADING:
+				chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
 				reload();
 				handleEnrageMode();
 				break;
@@ -396,11 +488,11 @@ void Tower::updateEnrageLayout() {
 
 void Tower::updateDisplay(float dt){
 	if(!fixed){
-		float opacity = getOpacity();
+		float opacity = skeleton->getOpacity();
 		if (state == BLINKING_UP){
 			if(opacity < 250){
-				opacity = getOpacity() + 510 * dt < 250 ? getOpacity() + 510 * dt : 250;
-				setOpacity(opacity);
+				opacity = skeleton->getOpacity() + 510 * dt < 250 ? skeleton->getOpacity() + 510 * dt : 250;
+				skeleton->setOpacity(opacity);
 			}
 			else{
 				state = BLINKING_DOWN;
@@ -408,8 +500,8 @@ void Tower::updateDisplay(float dt){
 		}
 		else if(state == BLINKING_DOWN){
 			if(opacity > 50){
-				opacity = getOpacity() + 510 * dt >50 ? getOpacity() - 510 * dt : 50;
-				setOpacity(opacity);
+				opacity = skeleton->getOpacity() + 510 * dt >50 ? skeleton->getOpacity() - 510 * dt : 50;
+				skeleton->setOpacity(opacity);
 			}
 			else{
 				state = BLINKING_UP;
@@ -420,7 +512,7 @@ void Tower::updateDisplay(float dt){
 		}
 	}
 	else{
-		setOpacity(255);
+		skeleton->setOpacity(255);
 	}
 }
 
@@ -438,10 +530,73 @@ void Tower::displayRange(bool disp){
 }
 
 void Tower::startAnimation(float speed){
+	/*
 	cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(state);
 	double delay = animation_duration / nb_frames_anim / speed;
 	Animation* current_animation = Animation::createWithSpriteFrames(animFrames, delay);
 	runAction(Animate::create(current_animation));
+	*/
+	std::string action("");
+	skeleton->clearTracks();
+
+	switch (state) {
+	case IDLE:
+		skeleton->setTimeScale(1.f * speed);
+		skeleton->setSkin("normal_" + Value(level + 1).asString());
+		skeleton->setAnimation(0, "still", false);
+		skeleton->setAnimation(1, "blink", false);
+		break;
+	case ATTACKING:
+		skeleton->setTimeScale(1.5f * speed);
+		skeleton->setSkin("normal_" + Value(level + 1).asString());
+		updateDirection();
+		switch (direction) {
+		case DOWN:
+			skeleton->setAnimation(0, "attackfront", false);
+			break;
+		case UP:
+			skeleton->setAnimation(0, "attacktop", false);
+			break;
+		case RIGHT:
+			skeleton->setAnimation(0, "attackright", false);
+			break;
+		case LEFT:
+			skeleton->setAnimation(0, "attackleft", false);
+			break;
+		default:
+			skeleton->setAnimation(0, "attackfront", false);
+			break;
+		}
+		break;
+	case LIMIT_BURSTING:
+		skeleton->setTimeScale(1.5f * speed);
+		skeleton->setSkin("enraged_" + Value(level + 1).asString());
+		updateDirection();
+		switch (direction) {
+		case DOWN:
+			skeleton->setAnimation(0, "attackfront", false);
+			break;
+		case UP:
+			skeleton->setAnimation(0, "attacktop", false);
+			break;
+		case RIGHT:
+			skeleton->setAnimation(0, "attackright", false);
+			break;
+		case LEFT:
+			skeleton->setAnimation(0, "attackleft", false);
+			break;
+		default:
+			skeleton->setAnimation(0, "attackfront", false);
+			break;
+		}
+		break;
+	default:
+		std::cerr << "No animation found for this state.";
+		std::cerr << "Steady state animation used instead." << std::endl;
+		action = "steady";
+		break;
+	};
+	
 }
 
 Json::Value Tower::getConfig(){
@@ -572,7 +727,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	
 	double position_x = getPosition().x;
 	double position_y = getPosition().y + panel->getContentSize().height * panel->getScaleY() / 2 +
-		getContentSize().height*getScaleY() / 2;
+		Cell::getCellHeight() / 2;
 	if (position_x - panel->getContentSize().width * panel->getScaleX() / 2 < 0) {
 		position_x += abs(position_x - panel->getContentSize().width * panel->getScaleX() / 2);
 	}
@@ -581,7 +736,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	}
 	if (position_y + panel->getContentSize().height * panel->getScaleY() / 2 > visibleSize.height) {
 		position_y = getPosition().y - panel->getContentSize().height * panel->getScaleY() / 2 -
-			getContentSize().height*getScaleY() / 2;
+			Cell::getCellHeight() / 2;
 	}
 	layout->setPosition(Vec2(position_x, position_y));
 	layout->addChild(current_level_layout, 2, "current_level_layout");
@@ -852,4 +1007,29 @@ void Tower::updateInformationLayout(ui::Layout* layout) {
 		((Label*)layout->getChildByName("next_level_layout")->getChildByName("cost_label"))->
 			setColor(Color3B::YELLOW);
 	}
+}
+
+void Tower::updateDirection() {
+	Vec2 vec = target->getPosition() - getPosition();
+	float angle = vec.getAngle();
+	if (abs(angle) <= M_PI_4 / 2) {
+		direction = RIGHT;
+	}
+	else if (abs(angle) >= 7 * M_PI_4 / 2) {
+		direction = LEFT;
+	}
+	else if (angle < -M_PI_4 / 2 && angle > -7 * M_PI_4 / 2) {
+		direction = DOWN;
+	}
+	else if (angle > M_PI_4 / 2 && angle < 7 * M_PI_4 / 2) {
+		direction = UP;
+	}
+}
+
+void Tower::pauseAnimation() {
+	skeleton->pause();
+}
+
+void Tower::resumeAnimation() {
+	skeleton->resume();
 }

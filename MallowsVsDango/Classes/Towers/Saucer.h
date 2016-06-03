@@ -14,6 +14,7 @@ public:
 	
 	virtual void attack();
 	virtual void startLimit();
+	virtual void handleEndEnrageAnimation();
 
 private:
 	int nb_limit_attack;

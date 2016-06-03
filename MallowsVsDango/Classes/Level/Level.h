@@ -64,7 +64,7 @@ protected:
 	cocos2d::Size size;
 
 	std::vector<Dango*> dangos;
-	std::vector<Tower*> turrets;
+	std::vector<Tower*> towers;
 	std::vector<Attack*> attacks;
 	std::vector<Wall*> walls;
 

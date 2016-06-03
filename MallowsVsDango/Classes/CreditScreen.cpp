@@ -15,11 +15,11 @@ std::vector <std::string> credit_subtitle = {	"Game developers",
 												"Graphic helpers", 
 												"Acknowledgement", 
 												"Softwares & libraries" };
-std::vector <std::string> credit_content_subtitle = {	"Julien Rechenmann\nXianle Wang\nThomas Czereba", 
-														"Julien Rechenmann\n Xianle Wang\nThomas Czereba", 
+std::vector <std::string> credit_content_subtitle = {	"Julien Rechenmann\nXianle Wang", 
+														"Julien Rechenmann\n Xianle Wang", 
 														"Bensound.com\nSoundeffect-lab.info\npurple-planet.com", 
 														"Subtlepatterns.com", 
-														"Omid Ahoura\nAnn Pongsakul\nGenia Shevchenko\nAvril Li",
+														"Thomas Czereba\nOmid Ahoura\nAnn Pongsakul\nGenia Shevchenko\nAvril Li",
 														"Cocos2d-x\nTexturePacker\nTiledMap\nInkscape\nGIMP\nSpriter" };
 
 bool CreditScreen::init(){
@@ -98,6 +98,7 @@ void CreditScreen::onEnterTransitionDidFinish(){
 
 void CreditScreen::onExitTransitionDidStart() {
 	Scene::onExitTransitionDidStart();
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	credit_label->setPosition(Vec2(visibleSize.width / 2, 0));
+	Size visibleSize = Director::getInstance()->getVisibleSize(); 
+	getChildByName("layout")->stopAllActions();
+	getChildByName("layout")->setPosition(Vec2(0, 0));
 }

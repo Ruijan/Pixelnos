@@ -4,12 +4,16 @@
 #include "cocos2d.h"
 #include "../Config/json.h"
 #include "ui/CocosGUI.h"
+#include <spine/spine-cocos2dx.h>
+
 
 class Cell;
 class Dango;
 class InterfaceGame;
 
-class Tower : public cocos2d::Sprite{
+using namespace spine;
+
+class Tower : public cocos2d::Node{
 
 public:
 	enum State{
@@ -26,12 +30,21 @@ public:
 		CUTTER,
 		SAUCER
 	};
+	enum Direction {
+		RIGHT,
+		UP,
+		DOWN,
+		LEFT
+	};
 
 	Tower();
 	virtual ~Tower();
 	void initDebug();
 	void initEnragePanel();
 	void initFromConfig();
+
+	void pauseAnimation();
+	void resumeAnimation();
 
 	// Setters & Getters
 	bool isFixed();
@@ -53,6 +66,7 @@ public:
 	cocos2d::ui::Layout* getInformationLayout(InterfaceGame* interface_game);
 	static TowerType getTowerTypeFromString(std::string type);
 	cocos2d::Vector<cocos2d::SpriteFrame*> getAnimation(Tower::State animState);
+	static SkeletonAnimation* getSkeletonAnimationFromName(std::string name);
 	static cocos2d::Vector<cocos2d::SpriteFrame*> getAnimationFromName(std::string name, Tower::State animState);
 	virtual void removeTarget(Dango* dango);
 	
@@ -62,6 +76,7 @@ public:
 	virtual void updateInformationLayout(cocos2d::ui::Layout* layout);
 	virtual void updateEnrageLayout();
 	virtual void handleEnrageMode();
+	virtual void handleEndEnrageAnimation() = 0;
 	virtual void chooseTarget(std::vector<Dango*> targets);
 	virtual void givePDamages(double damage);
 	virtual void reload();
@@ -85,6 +100,7 @@ protected:
 	
 	Dango* target;
 	std::map<Dango*, int> attacked_enemies;
+	Direction direction;
 	
 	// Characteristics
 	double cost;
@@ -105,10 +121,14 @@ protected:
 	double animation_duration;
 	double nb_frames_anim;
 	std::string name;
+	SkeletonAnimation* skeleton;
+	cocos2d::Sprite* image;
+	bool spritesheet;
 	
 	//methods
 	virtual void attack() = 0;
 	void startAnimation(float speed = 1);
+	void updateDirection();
 };
 
 

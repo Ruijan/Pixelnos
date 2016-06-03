@@ -9,12 +9,9 @@
 
 USING_NS_CC;
 
-Dango::Dango(std::vector<Cell*> npath, double nspeed, double hp, int nlevel, 
-	double damages, double a_reload, double anim_duration, int nb_frames, std::string nname) : path(npath), targetedCell(0), speed(nspeed),
-	hitPoints(hp), level(nlevel), cAction(nullptr), cDirection(RIGHT), pDamages(0.0), 
-	state(IDLE), reload_timer(0), attack_damages(damages), attack_reloading(a_reload),
-	modifier_id(0), animation_duration(anim_duration), nb_frames_anim(nb_frames),
-	name(nname), id_damages(0){
+Dango::Dango(std::vector<Cell*> npath, int nlevel) : path(npath), targetedCell(0), level(nlevel), 
+	cAction(nullptr), cDirection(RIGHT), pDamages(0.0), 
+	state(IDLE), reload_timer(0), modifier_id(0), id_damages(0), on_ground(false){
 }
 
 Dango::~Dango() { 
@@ -26,6 +23,59 @@ Dango::~Dango() {
 		attack->removeTarget(this);
 	}
 	//std::cerr << "Dango Destroyed ! confirmed !" << std::endl;
+}
+
+void Dango::initFromConfig() {
+	auto config = getSpecConfig();
+	hitPoints = config["level"][level]["hitpoints"].asDouble();
+	speed = config["level"][level]["speed"].asDouble();
+	attack_reloading = config["level"][level]["reload"].asDouble();
+	attack_damages = config["level"][level]["damages"].asDouble();
+	animation_duration = config["level"][level]["animation_attack_time"].asDouble();
+	nb_frames_anim = config["level"][level]["animation_attack_size"].asInt();
+	name = config["level"][level]["name"].asString();
+
+
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	skeleton = SkeletonAnimation::createWithFile(config["skeleton"].asString(),
+		config["atlas"].asString(), 0.12f * visibleSize.width / 1280);
+
+	skeleton->setStartListener([this](int trackIndex) {
+		spTrackEntry* entry = spAnimationState_getCurrent(skeleton->getState(), trackIndex);
+		const char* animationName = (entry && entry->animation) ? entry->animation->name : 0;
+		log("%d start: %s", trackIndex, animationName);
+	});
+	skeleton->setEndListener([this](int trackIndex) {
+
+	});
+	skeleton->setCompleteListener([this](int trackIndex, int loopCount) {
+		std::string name = skeleton->getCurrent()->animation->name;
+		if (Value(skeleton->getCurrent()->animation->name).asString() == "blink" ||
+			Value(skeleton->getCurrent()->animation->name).asString() == "hello") {
+			skeleton->clearTracks();
+			skeleton->setAnimation(0, "still", false);
+			skeleton->addAnimation(0, "blink", false);
+		}
+		if (Value(skeleton->getCurrent()->animation->name).asString() == "death_normal") {
+			state = DEAD;
+		}
+	});
+	skeleton->setEventListener([this](int trackIndex, spEvent* event) {
+		/*if (Value(event->data->name).asString() == "up") {
+			on_ground = false;
+		}
+		else if (Value(event->data->name).asString() == "down") {
+			on_ground = true;
+		}*/
+		log("%d event: %s, %d, %f, %s", trackIndex, event->data->name, event->intValue, event->floatValue, event->stringValue);
+	});
+	skeleton->setSkin(config["level"][level]["skin"].asString());
+	updateAnimation();
+	/*auto anim = skeleton->setAnimation(0,"jump_side",true);
+	skeleton->setTimeScale(1 / (getSpeed() * anim->animation->duration));*/
+	//skeleton->setPosition(Vec2(0, -Cell::getCellHeight() * 3 / 10));
+	addChild(skeleton,2);
 }
 
 void Dango::update(float dt) {
@@ -75,11 +125,16 @@ void Dango::update(float dt) {
 			}
 			break;
 		case MOVE:
-			move(dt);
+			if (!on_ground) {
+				move(dt);
+			}
+			
 			if (shouldAttack()) {
 				state = ATTACK;
 				updateAnimation();
 			}
+			break;
+		default:
 			break;
 	}
 }
@@ -109,7 +164,7 @@ void Dango::move(float dt){
 		Vec2 direction = path[targetedCell]->getPosition() - path[targetedCell - 1]->getPosition();
 		direction.normalize();
 		updateDirection(direction);
-		setPosition(previousPos + direction * getSpeed() * dt);
+		setPosition(previousPos + direction * getSpeed() * Cell::getCellWidth() * dt);
 	}
 	
 }
@@ -142,59 +197,50 @@ void Dango::updateAnimation(){
 	if(cAction != nullptr){
 		stopAction(cAction);
 	}
-	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-	std::string preString(name);
 	double x = this->getScaleX();
+	spTrackEntry* anim;
 	if (state == ATTACK) {
 		switch (cDirection) {
 		case UP:
-			preString += "_attack_";
+			
+			anim = skeleton->setAnimation(0, "attack_up", false);
+			skeleton->setTimeScale(1.25f);
 			break;
 		case RIGHT:
+			skeleton->setTimeScale(1.25f);
 			this->setScaleX(((x > 0) - (x < 0))* x);
-			preString += "_attack_";
+			anim = skeleton->setAnimation(0, "attack_side", false);
 			break;
 		case LEFT:
+			skeleton->setTimeScale(1.25f);
 			this->setScaleX(-((x > 0) - (x < 0))*x);
-			preString += "_attack_";
+			anim = skeleton->setAnimation(0, "attack_side", false);
 			break;
 		case DOWN:
-			this->setScaleX(-((x > 0) - (x < 0))*x);
-			preString += "_attack_";
+			skeleton->setTimeScale(1.25f);
+			anim = skeleton->setAnimation(0, "attack_down", false);
 			break;
 		}
 	}
-	else {
+	else if(state == MOVE) {
 		switch (cDirection) {
 		case UP:
-			preString += "_ju_";
+			anim = skeleton->setAnimation(0, "jump_up", true);
 			break;
 		case RIGHT:
 			this->setScaleX(((x > 0) - (x < 0))* x);
-			preString += "_j_";
+			anim = skeleton->setAnimation(0, "jump_side", true);
 			break;
 		case LEFT:
 			this->setScaleX(-((x > 0) - (x < 0))*x);
-			preString += "_j_";
+			anim = skeleton->setAnimation(0, "jump_side", true);
 			break;
 		case DOWN:
-			this->setScaleX(-((x > 0) - (x < 0))*x);
-			preString += "_jd_";
+			anim = skeleton->setAnimation(0, "jump_down", true);
 			break;
 		}
+		skeleton->setTimeScale(anim->animation->duration * getSpeed());
 	}
-	cocos2d::Vector<SpriteFrame*> animFrames;
-	char str[100] = { 0 };
-	for (int i = 0; i < nb_frames_anim; ++i){
-		sprintf(str, "%s%03d.png", preString.c_str(), i);
-		SpriteFrame* frame = cache->getSpriteFrameByName(str);
-		animFrames.pushBack(frame);
-	}
-	//double delay = getSpecConfig()["level"][level]["animation_duration"].asDouble() / getSpecConfig()["level"][level]["nb_images_animation"].asDouble();
-	double delay = animation_duration / nb_frames_anim;
-	Animation* animation = Animation::createWithSpriteFrames(animFrames, delay);
-	// Cell::getCellWidth() / getSpeed() / 24 * getSpecConfig()["cellperanim"].asFloat()
-	runAnimation(animation);
 }
 
 double Dango::getHitPoints(){
@@ -216,6 +262,10 @@ void Dango::takeDamages(double damages){
 	if(hitPoints < 0){
 		hitPoints = 0;
 	}
+	if (hitPoints == 0) {
+		state = DYING;
+		die();
+	}
 }
 
 void Dango::applyProspectiveDamages(int id_damage) {
@@ -225,6 +275,15 @@ void Dango::applyProspectiveDamages(int id_damage) {
 	if (hitPoints < 0) {
 		hitPoints = 0;
 	}
+	if (hitPoints == 0) {
+		state = DYING;
+		die();
+	}
+	log("take prospective damages id : %i, size: %i", id_damage, prospective_damages.size());
+	for (auto id : prospective_damages){
+		log("-> damages id : %i", id);
+	}
+	
 }
 
 int Dango::takePDamages(double damages, double delay){
@@ -236,6 +295,7 @@ int Dango::takePDamages(double damages, double delay){
 	}
 	double final_damages = damages + damages * total_dmg;
 	prospective_damages[id_damages] = final_damages;
+	log("add prospective damages id : %i, size: %i", id_damages, prospective_damages.size());
 	++id_damages;
 	return id_damages - 1;
 }
@@ -250,7 +310,19 @@ bool Dango::shouldAttack() {
 
 
 bool Dango::isAlive(){
-	return hitPoints > 0;
+	return state != DEAD;
+	//return hitPoints > 0;
+}
+
+void Dango::die() {
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	skeleton->setAnimation(0, "death_normal", false);
+	auto star = Sprite::create("res/levels/star.png");
+	star->setScale(Cell::getCellWidth() / 5 / star->getContentSize().width);
+	star->setPosition(_position);
+	SceneManager::getInstance()->getGame()->getLevel()->addChild(star,2,"star");
+	star->runAction(MoveTo::create(1.5f, Vec2(0, visibleSize.height)));
 }
 
 bool Dango::willBeAlive(){
@@ -280,7 +352,7 @@ double Dango::getSpeed(){
 	for (auto modifier : m_speed) {
 		total_speed += modifier.second.first;
 	}
-	return speed * visibleSize.width / 960.0 + total_speed * speed * visibleSize.width / 960.0;
+	return speed + total_speed * speed;
 }
 
 void Dango::runAnimation(Animation* anim) {
@@ -339,6 +411,7 @@ ui::Layout* Dango::getInformationLayout(InterfaceGame* interface_game) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	auto layout = ui::Layout::create();
+	layout->setPosition(Vec2(-Cell::getCellWidth() / 2, -Cell::getCellWidth() / 2));
 	/*
 	auto panel = ui::Button::create("res/buttons/wood_information_panel.png");
 	panel->setScaleX(visibleSize.width / 5 / panel->getContentSize().width);
@@ -412,11 +485,13 @@ ui::Layout* Dango::getInformationLayout(InterfaceGame* interface_game) {
 
 	ui::LoadingBar* loading_bar = ui::LoadingBar::create("res/buttons/sliderProgress.png");
 	loading_bar->setPercent((double)hitPoints / getSpecConfig()["level"][level]["hitpoints"].asDouble() * 100);
-	loading_bar->setScale(visibleSize.width / 15 / loading_bar->getContentSize().width);
+	loading_bar->setScaleX(Cell::getCellWidth() / 2 / loading_bar->getContentSize().width);
+	loading_bar->setScaleY(Cell::getCellWidth() / 5 / loading_bar->getContentSize().width);
 	layout->addChild(loading_bar, 2, "loading_bar");
 
 	Sprite* loading_background = Sprite::create("res/buttons/loaderBackground.png");
-	loading_background->setScale(visibleSize.width / 15 / loading_background->getContentSize().width);
+	loading_background->setScaleX(Cell::getCellWidth() / 2 / loading_background->getContentSize().width);
+	loading_background->setScaleY(Cell::getCellWidth() / 5 / loading_background->getContentSize().width);
 	layout->addChild(loading_background, 1, "loading_background");
 
 	double position_x = getPosition().x;
@@ -456,4 +531,12 @@ void Dango::updateInformationLayout(cocos2d::ui::Layout* layout) {
 			getContentSize().height*getScaleY() / 2;
 	}
 	layout->setPosition(Vec2(position_x, position_y));
+}
+
+void Dango::pauseAnimation() {
+	skeleton->pause();
+}
+
+void Dango::resumeAnimation() {
+	skeleton->resume();
 }

@@ -1,6 +1,7 @@
 #include "Saucer.h"
 #include "../Towers/Attack.h"
 #include "../AppDelegate.h"
+#include "../Level/Cell.h"
 
 USING_NS_CC;
 
@@ -11,13 +12,13 @@ Saucer* Saucer::create()
 {
 	Saucer* pSprite = new Saucer();
 
-	if (pSprite->initWithFile(Saucer::getConfig()["image"].asString()))
-	{
+	/*if (pSprite->initWithFile(Saucer::getConfig()["image"].asString()))
+	{*/
 		pSprite->initFromConfig();
 		pSprite->initDebug();
 		pSprite->initEnragePanel();
 		return pSprite;
-	}
+	//}
 
 	CC_SAFE_DELETE(pSprite);
 	return NULL;
@@ -44,7 +45,8 @@ void Saucer::attack(){
 		ball->setDamagesId(attacked_enemies[target]);
 		attacked_enemies.erase(attacked_enemies.find(target));
 		target->addTargetingAttack(ball);
-		ball->setPosition(getPosition() - Vec2(0, getSpriteFrame()->getRect().size.width / 2 * getScale()));
+		//ball->setPosition(getPosition() - Vec2(0, getSpriteFrame()->getRect().size.width / 2 * getScale()));
+		ball->setPosition(getPosition() - Vec2(0, Cell::getCellWidth() / 2 * getScale()));
 		ball->setScale(visibleSize.width / 960);
 		SceneManager::getInstance()->getGame()->getLevel()->addAttack(ball);
 		++nb_attacks;
@@ -82,8 +84,12 @@ void Saucer::startLimit() {
 		timer = 0;
 		timerIDLE = 0;
 		state = RELOADING;
-		std::string frameName = name + "_attack_movement_000.png";
+		/*std::string frameName = name + "_attack_movement_000.png";
 		SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-		setSpriteFrame(cache->getSpriteFrameByName(frameName.c_str()));
+		setSpriteFrame(cache->getSpriteFrameByName(frameName.c_str()));*/
 	}
+}
+
+void Saucer::handleEndEnrageAnimation() {
+	startLimit();
 }

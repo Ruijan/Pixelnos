@@ -89,18 +89,18 @@ void InterfaceGame::addEvents()
 
         if(rect.containsPoint(p)){
 			if(rectrightpanel.containsPoint(p)){
+				if (state == TURRET_CHOSEN) {
+					if (selected_turret != nullptr) {
+						selected_turret->destroyCallback(this);
+						removeTower();
+					}
+				}
 				auto item = getTowerFromPoint(touch->getStartLocation());
 				if (item.first != "nullptr"){
 					if (state == TURRET_SELECTED){
 						selected_turret->displayRange(false);
 						hideTowerInfo();
 						selected_turret = nullptr;
-					}
-					else if(state == TURRET_CHOSEN){
-						if(selected_turret != nullptr){
-							selected_turret->destroyCallback(this);
-							removeTower();
-						}
 					}
 					state = State::TOUCHED;
 					displayTowerInfos(item.first);
@@ -479,15 +479,23 @@ void InterfaceGame::initParametersMenu(){
 	ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel.png");
 	panel->setZoomScale(0);
 	menu_pause->addChild(panel, 1, "panel");
-	panel->setScaleX(0.45*visibleSize.width / panel->getContentSize().width);
-	panel->setScaleY(0.8*visibleSize.width / panel->getContentSize().width);
+	panel->setScale(0.45*visibleSize.width / panel->getContentSize().width);
+	//panel->setScaleY(0.8*visibleSize.width / panel->getContentSize().width);
 
 	Label* title = Label::createWithTTF("Settings", "fonts/LICABOLD.ttf", 45.0f * visibleSize.width / 1280);
 	title->setColor(Color3B::BLACK);
 	title->setPosition(0, panel->getContentSize().height*panel->getScaleY() / 2 - title->getContentSize().height);
 	menu_pause->addChild(title, 2, "title");
 
-	ui::Button* resume = ui::Button::create("res/buttons/buttonResume.png");
+	//ui::Button* resume = ui::Button::create("res/buttons/buttonResume.png");
+	ui::Button* resume = ui::Button::create("res/buttons/common_button_wood.png");
+	resume->setTitleText("Resume");
+	resume->setTitleFontName("fonts/LICABOLD.ttf");
+	resume->setTitleFontSize(45.f * visibleSize.width / 1280);
+	Label* resume_label = resume->getTitleRenderer();
+	resume_label->setColor(Color3B::WHITE);
+	resume_label->enableOutline(Color4B::BLACK, 2);
+	resume_label->setPosition(resume->getContentSize() / 2);
 	resume->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -498,19 +506,27 @@ void InterfaceGame::initParametersMenu(){
 			game->resume();
 		}
 	});
-	resume->setScale(panel->getContentSize().width*panel->getScaleX() / 3 / resume->getContentSize().width);
+	resume->setScale(panel->getContentSize().width*panel->getScaleX() * 0.4 / resume->getContentSize().width);
 	resume->setPosition(Vec2(-panel->getContentSize().width*panel->getScaleX() / 4,
 		-panel->getContentSize().height*panel->getScaleY() / 2 +
 		resume->getContentSize().height*resume->getScaleY() / 4));
 	menu_pause->addChild(resume, 1, "resume");
 
-	ui::Button* main_menu_back = ui::Button::create("res/buttons/buttonMainMenu.png");
+	//ui::Button* main_menu_back = ui::Button::create("res/buttons/buttonMainMenu.png");
+	ui::Button* main_menu_back = ui::Button::create("res/buttons/common_button_wood.png");
+	main_menu_back->setTitleText("Main Menu");
+	main_menu_back->setTitleFontName("fonts/LICABOLD.ttf");
+	main_menu_back->setTitleFontSize(45.f * visibleSize.width / 1280);
+	Label* main_menu_back_label = main_menu_back->getTitleRenderer();
+	main_menu_back_label->setColor(Color3B::WHITE);
+	main_menu_back_label->enableOutline(Color4B::BLACK, 2);
+	main_menu_back_label->setPosition(main_menu_back->getContentSize() / 2);
 	main_menu_back->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			mainMenuCallBack("menu_pause");
 		}
 	});
-	main_menu_back->setScale(panel->getContentSize().width*panel->getScaleX() / 3 / main_menu_back->getContentSize().width);
+	main_menu_back->setScale(panel->getContentSize().width*panel->getScaleX() * 0.4 / main_menu_back->getContentSize().width);
 	main_menu_back->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() / 4,
 		-panel->getContentSize().height*panel->getScaleY() / 2 +
 		main_menu_back->getContentSize().height*main_menu_back->getScaleY() / 4));
@@ -995,7 +1011,7 @@ void InterfaceGame::initRightPanel(){
 		tower->addChild(Sprite::create(sprite3_filename), 5, "sprite");
 		towers->addChild(tower, 1, Value(Tower::getConfig().getMemberNames()[i]).asString());
 		tower->setScale(sizeTower / tower->getContentSize().width);
-		tower->getChildByName("sprite")->setScale(tower->getContentSize().width * 0.9 /
+		tower->getChildByName("sprite")->setScale(tower->getContentSize().width * 0.75 /
 			tower->getChildByName("sprite")->getContentSize().width);
 		tower->setPosition(Vec2(sizeTower / 2 + j % 2 * (sizeTower + towers->getContentSize().width / 20)+
 			towers->getContentSize().width / 20,
@@ -1028,7 +1044,7 @@ void InterfaceGame::initRightPanel(){
 	informations->setVisible(false);
 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
 
-	SpriteBatchNode* animation = SpriteBatchNode::create("res/turret/animations/archer.png");
+	Node* animation = Node::create();
 	informations->addChild(animation, 1, "animation");
 
 	Sprite* attack = Sprite::create("res/buttons/attack.png");
@@ -1043,6 +1059,7 @@ void InterfaceGame::initRightPanel(){
 		attack->getScaleY() / 2 - speed->getContentSize().height * speed->getScaleY() * 3 / 4);
 	range->setPosition(0, speed->getPosition().y - speed->getContentSize().height*
 		speed->getScaleY() / 2 - range->getContentSize().height * range->getScaleY() * 3 / 4);
+	animation->setPosition(-informations->getContentSize().width * 0.33, range->getPosition().y);
 	informations->addChild(attack, 1, "attack");
 	informations->addChild(speed, 1, "speed");
 	informations->addChild(range, 1, "range");
@@ -1079,7 +1096,7 @@ void InterfaceGame::initRightPanel(){
 	Sprite* sugar = Sprite::create("res/buttons/sugar.png");
 	sugar->setScale(sizeButton / 2 / sugar->getContentSize().width);
 	sugar->setPosition(Vec2(informations->getContentSize().width / 4,
-		description_tower->getPosition().y - description_tower->getContentSize().height / 2 - 
+		description_tower->getPosition().y - 
 		sugar->getContentSize().height * sugar->getScaleY() / 2));
 	informations->addChild(sugar, 1, "sugar");
 	Label* sugar_label = Label::createWithTTF("30", "fonts/LICABOLD.ttf", 35 * visibleSize.width / 1280);
@@ -1097,18 +1114,8 @@ void InterfaceGame::initRightPanel(){
 void InterfaceGame::displayTowerInfos(std::string item_name){
 	if (item_name != "") {
 		getChildByName("menu_panel")->getChildByName("informations")->setVisible(true);
-		SpriteBatchNode* batch = (SpriteBatchNode*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("animation");
+		Node* batch = getChildByName("menu_panel")->getChildByName("informations")->getChildByName("animation");
 		batch->removeAllChildren();
-		getChildByName("menu_panel")->getChildByName("informations")->removeChild(batch, true);
-
-		cocos2d::Vector<SpriteFrame*> attackFrames;
-		cocos2d::Vector<SpriteFrame*> steadyFrames;
-		cocos2d::Vector<SpriteFrame*> staticFrames;
-		std::string firstFrame;
-
-		SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-
-		SpriteBatchNode* spriteBatchNode;
 
 		Size visibleSize = Director::getInstance()->getVisibleSize();
 		unsigned int required_quantity(0);
@@ -1121,10 +1128,8 @@ void InterfaceGame::displayTowerInfos(std::string item_name){
 		s.resize(4);
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("range_label"))->setString(
 			s);
-
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("description_tower"))->setString(
 			Tower::getConfig()[item_name]["description"].asString());
-
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("sugar_label"))->setString(
 			Tower::getConfig()[item_name]["cost"][0].asString());
 		required_quantity = Tower::getConfig()[item_name]["cost"][0].asDouble();
@@ -1135,30 +1140,11 @@ void InterfaceGame::displayTowerInfos(std::string item_name){
 			((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("sugar_label"))->setColor(Color3B::GREEN);
 		}
 
-		steadyFrames = Tower::getAnimationFromName(item_name, Tower::IDLE);
-		staticFrames.pushBack(steadyFrames.front());
-		staticFrames.pushBack(steadyFrames.front());
-		spriteBatchNode = SpriteBatchNode::create(Tower::getConfig()[item_name]["animation"].asString());
-		Sprite* image = Sprite::createWithSpriteFrame(staticFrames.front());
-		image->setScale(getChildByName("menu_panel")->getChildByName("informations")->getContentSize().width / 3 * 0.95 / image->getContentSize().width);
-
-		spriteBatchNode->addChild(image);
-		spriteBatchNode->setPosition(Vec2(-getChildByName("menu_panel")->getChildByName("informations")->getContentSize().width / 3,
-			getChildByName("menu_panel")->getChildByName("informations")->getChildByName("speed")->getPosition().y));
-
-		Animation* animation2 = Animation::createWithSpriteFrames(steadyFrames, 0.075f);
-		Animation* animation3 = Animation::createWithSpriteFrames(staticFrames, 0.5f);
-		Vector<FiniteTimeAction*> sequence;
-		sequence.pushBack(Animate::create(animation2));
-		sequence.pushBack(Animate::create(animation2)->reverse());
-		sequence.pushBack(Animate::create(animation3));
-		sequence.pushBack(Animate::create(animation2));
-		sequence.pushBack(Animate::create(animation2)->reverse());
-		sequence.pushBack(Animate::create(animation3));
-		sequence.pushBack(Animate::create(animation3));
-		image->runAction(RepeatForever::create(Sequence::create(sequence)));
-
-		getChildByName("menu_panel")->getChildByName("informations")->addChild(spriteBatchNode, 1, "animation");
+		auto animated_skeleton = Tower::getSkeletonAnimationFromName(item_name);
+		animated_skeleton->setScale(
+			getChildByName("menu_panel")->getChildByName("informations")->getContentSize().width * 
+			0.40 / animated_skeleton->getSkeleton()->data->width);
+		batch->addChild(animated_skeleton);
 	}
 	else {
 		getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);

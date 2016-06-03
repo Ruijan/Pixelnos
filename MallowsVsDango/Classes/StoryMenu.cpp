@@ -7,7 +7,6 @@
 #include "Lib/AudioSlider.h"
 #include "Config/AudioController.h"
 
-
 USING_NS_CC;
 
 bool StoryMenu::init(){
@@ -68,18 +67,18 @@ bool StoryMenu::init(){
 
 	auto settings = ui::Layout::create();
 	getChildByName("interface")->addChild(settings, 2, "settings");
-	ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel.png");
+	ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel2.png");
 	panel->setZoomScale(0);
 	settings->addChild(panel, 1, "panel");
 	panel->setScale9Enabled(true);
-	panel->setScaleX(0.45*visibleSize.width / panel->getContentSize().width);
-	panel->setScaleY(0.8*visibleSize.width / panel->getContentSize().width);
+	panel->setScale(0.45*visibleSize.width / panel->getContentSize().width);
+	//panel->setScaleY(0.6*visibleSize.height / panel->getContentSize().height);
 
 	settings->setPosition(Vec2(visibleSize.width / 2, visibleSize.height +
 		getChildByName("interface")->getChildByName("settings")->getChildByName("panel")->getContentSize().height *
 		getChildByName("interface")->getChildByName("settings")->getChildByName("panel")->getScaleY()));
 
-	auto close = ui::Button::create("res/buttons/close.png");
+	auto close = ui::Button::create("res/buttons/close2.png");
 	close->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if(type == ui::Widget::TouchEventType::ENDED){
 			Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -89,13 +88,18 @@ bool StoryMenu::init(){
 			getChildByName("interface")->getChildByName("settings")->runAction(showAction);
 		}
 	});
-	close->setScale(panel->getContentSize().width*panel->getScaleX() / 11 / close->getContentSize().width);
-	close->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() / 2 - close->getContentSize().width*close->getScale() / 3,
-		panel->getContentSize().height*panel->getScaleY() / 2 - close->getContentSize().height*close->getScale() / 3));
+	close->setScale(panel->getContentSize().width*panel->getScaleX() / 8 / close->getContentSize().width);
+	close->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() / 2,
+		panel->getContentSize().height*panel->getScaleY() / 2));
+	Sprite* close_shadow = Sprite::create("res/buttons/close2_shadow.png");
+	close_shadow->setScale(close->getScale() * 1.05);
+	close_shadow->setPosition(close->getPosition());
+	settings->addChild(close_shadow, -1);
 	settings->addChild(close, 5, "close");
 
 	Label* title = Label::createWithTTF("Settings", "fonts/LICABOLD.ttf", 45.0f * visibleSize.width / 1280);
-	title->setColor(Color3B::BLACK);
+	title->setColor(Color3B::WHITE);
+	title->enableOutline(Color4B::BLACK, 2);
 	title->setPosition(0, panel->getContentSize().height*panel->getScaleY() / 2 - title->getContentSize().height);
 	settings->addChild(title, 2, "title");
 
@@ -313,20 +317,36 @@ bool StoryMenu::init(){
 	settings->addChild(checkbox_limit, 6, "LimitEnable");
 	settings->addChild(checkbox_dialogues, 6, "DialogueEnable");
 	
-	auto credits = ui::Button::create("res/buttons/buttonCredits.png");
+	//auto credits = ui::Button::create("res/buttons/buttonCredits.png");
+	auto credits = ui::Button::create("res/buttons/yellow_button.png");
+	credits->setTitleText("Credits");
+	credits->setTitleFontName("fonts/LICABOLD.ttf");
+	credits->setTitleFontSize(45.f * visibleSize.width / 1280);
+	Label* credits_label = credits->getTitleRenderer();
+	credits_label->setColor(Color3B::WHITE);
+	credits_label->enableOutline(Color4B::BLACK,2);
+	credits_label->setPosition(credits->getContentSize() / 2);
+
 	credits->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::CREDIT);
 		}
 	});
 	credits->setScale(panel->getContentSize().width*panel->getScaleX() / 2 / credits->getContentSize().width);
-	credits->setPosition(Vec2(0,
+	/*credits->setPosition(Vec2(0,
 		-panel->getContentSize().height*panel->getScaleY() / 2 +
-		credits->getContentSize().height*credits->getScaleY() / 5));
+		credits->getContentSize().height*credits->getScaleY() / 5));*/
+	credits->setPosition(Vec2(0,
+		-panel->getContentSize().height*panel->getScaleY() / 2 - 
+		credits->getContentSize().height*credits->getScaleY() * 0.42));
+	Sprite* credits_shadow = Sprite::create("res/buttons/shadow_button.png");
+	credits_shadow->setScale(credits->getScale());
+	credits_shadow->setPosition(credits->getPosition());
+	settings->addChild(credits_shadow, -1);
 	settings->addChild(credits, 5, "credits");
 	//settings->setVisible(false);
 
-	ui::Button* show_setting = ui::Button::create("res/buttons/settings.png");
+	ui::Button* show_setting = ui::Button::create("res/buttons/settings2.png");
 	show_setting->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			Size visibleSize = Director::getInstance()->getVisibleSize();

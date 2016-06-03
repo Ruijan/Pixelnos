@@ -22,6 +22,7 @@ public:
 	virtual void givePDamages(double damage);
 	virtual void attack();
 	virtual void startLimit();
+	virtual void handleEndEnrageAnimation();
 };
 
 #endif

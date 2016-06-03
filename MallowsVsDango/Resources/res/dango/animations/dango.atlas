@@ -1,0 +1,55 @@
+
+dango.png
+size: 256,64
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+blush
+  rotate: false
+  xy: 184, 20
+  size: 45, 42
+  orig: 45, 42
+  offset: 0, 0
+  index: -1
+dango_splash
+  rotate: false
+  xy: 64, 25
+  size: 60, 37
+  orig: 60, 37
+  offset: 0, 0
+  index: -1
+eyes
+  rotate: true
+  xy: 2, 3
+  size: 8, 28
+  orig: 8, 28
+  offset: 0, 0
+  index: -1
+green_tea_cap
+  rotate: false
+  xy: 64, 2
+  size: 60, 21
+  orig: 60, 21
+  offset: 0, 0
+  index: -1
+pink_body
+  rotate: false
+  xy: 2, 13
+  size: 60, 49
+  orig: 60, 49
+  offset: 0, 0
+  index: -1
+reflect
+  rotate: false
+  xy: 126, 9
+  size: 21, 13
+  orig: 21, 13
+  offset: 0, 0
+  index: -1
+soy_cap
+  rotate: false
+  xy: 126, 24
+  size: 56, 38
+  orig: 56, 38
+  offset: 0, 0
+  index: -1

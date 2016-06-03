@@ -6,15 +6,7 @@
 USING_NS_CC;
 
 Dangobese::Dangobese(std::vector<Cell*> npath, int nlevel) :
-Dango(npath, Dangobese::getConfig()["level"][nlevel]["speed"].asDouble(),
-	Dangobese::getConfig()["level"][nlevel]["hitpoints"].asDouble(),nlevel,
-	Dangobese::getConfig()["level"][nlevel]["attack"].asDouble(),
-	Dangobese::getConfig()["level"][nlevel]["reload"].asDouble(),
-	Dangobese::getConfig()["level"][nlevel]["animation_duration"].asDouble(),
-	Dangobese::getConfig()["level"][nlevel]["nb_images_animation"].asInt(),
-	Dangobese::getConfig()["level"][nlevel]["name"].asString()),
-	attack_duration(Dangobese::getConfig()["level"][nlevel]["attack_duration"].asDouble()),
-	attack_timer(0){
+Dango(npath, nlevel){
 }
 
 Dangobese::~Dangobese() {
@@ -25,8 +17,8 @@ Dangobese* Dangobese::create(std::vector<Cell*> npath, int nlevel)
 {
 	Dangobese* pSprite = new Dangobese(npath, nlevel);
 
-	if (pSprite->initWithFile(getConfig()["level"][nlevel]["image"].asString()))
-	{
+	/*if (pSprite->initWithFile(getConfig()["level"][nlevel]["image"].asString()))
+	{*/
 		pSprite->setScale(Cell::getCellWidth() / pSprite->getContentSize().width);
 		pSprite->autorelease();
 
@@ -34,7 +26,7 @@ Dangobese* Dangobese::create(std::vector<Cell*> npath, int nlevel)
 		pSprite->updateAnimation();
 
 		return pSprite;
-	}
+	//}
 
 	CC_SAFE_DELETE(pSprite);
 	return NULL;
