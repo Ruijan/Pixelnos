@@ -1,5 +1,6 @@
 #include "Config.h"
 #include "cocos2d.h"
+#include "AppDelegate.h"
 
 USING_NS_CC;
 
@@ -72,6 +73,8 @@ void Config::init(){
 	limit_enabled = rootSav["settings"]["auto_limit"].asBool();
 	dialogues_enabled = rootSav["settings"]["dialogues"].asBool();
 	save();
+
+	language = Application::getInstance()->getCurrentLanguageCode();
 	
 }
 

@@ -34,7 +34,7 @@ SceneManager::SceneManager(){
 	cacheScene[SKILLS] = skills;
 	cacheScene[SKILLS]->retain();
 
-	currentscene = cacheScene[LEVELS];
+	currentscene = cacheScene[SKILLS];
 	c_index = 0;
 	Director::getInstance()->runWithScene(currentscene);
 	if(((AppDelegate*)Application::getInstance())->getConfig()["play_sound"].asBool()){
