@@ -1,8 +1,12 @@
 {
+  "advice": [
+    "Towers are more efficient placed near a turn of the path. Try to place towers near path!",
+    "The bomber is a basic tower that does not deal a lot of damages. Try to upgrade it!"
+  ],
   "dangos": {
     "dangosimple": {
       "cellperanim": 1.1,
-      "name" :  "Dango",
+      "name": "Dango",
       "skeleton": "res/dango/animations/dango.json",
       "atlas": "res/dango/animations/dango.atlas",
       "description_en": "Simple dango you can find everywhere.",
@@ -16,7 +20,12 @@
           "name": "dango1",
           "reload": 1.5,
           "speed": 1,
-          "skin": "normal"
+          "xp": 3,
+          "skin": "normal",
+          "holy_sugar": {
+            "mean": 0,
+            "std": 0.5
+          }
         },
         {
           "attack": 1.5,
@@ -25,8 +34,13 @@
           "image": "res/dango/dango2.png",
           "name": "dango2",
           "reload": 1.5,
-          "speed": 0.5,
-          "skin": "soy"
+          "speed": 1,
+          "xp": 7,
+          "skin": "soy",
+          "holy_sugar": {
+            "mean": 0,
+            "std": 0.25
+          }
         },
         {
           "attack": 1.5,
@@ -36,20 +50,25 @@
           "name": "dango3",
           "reload": 1.5,
           "speed": 1,
-          "skin": "soy"
+          "xp": 15,
+          "skin": "soy",
+          "holy_sugar": {
+            "mean": 0,
+            "std": 0.25
+          }
         }
       ]
     },
     "dangobese": {
       "cellperanim": 0.55,
-      "name" :  "Dangobese",
+      "name": "Dangobese",
       "description_en": "So big ! So fat ! Wait... is that my sock?!",
       "description_fr": "Si grand ! Si gros ! Mais... c'est ma chausette ?!",
       "level": [
         {
           "animation": "res/dango/animations/dangobese1.png",
           "nb_images_animation": 24,
-          "animation_duration" :  1,
+          "animation_duration": 1,
           "attack": 2,
           "attack_duration": 3,
           "gain": 5,
@@ -62,7 +81,7 @@
         {
           "animation": "res/dango/animations/dangobese2.png",
           "nb_images_animation": 24,
-          "animation_duration" :  1,
+          "animation_duration": 1,
           "attack": 2.5,
           "attack_duration": 4,
           "gain": 7,
@@ -75,175 +94,128 @@
       ]
     }
   },
-  "levels": [
+  "worlds": [
     {
-      "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist" ],
-      "background": "res/levels/background2.png",
-      "effects": [ "music/splash.mp3", "music/slash.mp3" ],
-      "exp": 150,
-      "path_level": "res/level_1.json",
-      "introDialogue": [
+      "id": 1,
+      "name_en": "Forest Frontier",
+      "name_fr": "Forest Frontier",
+      "levels": [
         {
-          "emotion": [
-            "ANGRY",
-            "NORMAL",
-            "NORMAL",
-            "ANGRY"
-          ],
-          "side": "LEFT",
-          "speaker": "res/turret/general.png",
-          "text": [
-            "WE ARE AT WAR !",
-            "Our spies told me a small group of dangos have been seen near the border.",
-            "General Mallow strawberry perfume commands you to protect our nation!",
-            "The Mallow Nation won't fall !"
-          ]
+          "id": 1,
+          "dialogues_file": "Levels/lvl_1_dialogues.json",
+          "animations": [ "res/turret/animations/splash.plist", "res/turret/animations/cut.plist" ],
+          "background": "res/levels/background2.png",
+          "effects": [ "music/splash.mp3", "music/slash.mp3" ],
+          "exp": 20,
+          "holy_sugar": 1,
+          "finalized": false,
+          "path_level": "Level_1.json",
+          "musics": [ "music/On-Tiptoe.mp3.mp3" ],
+          "reward": "res/levels/plan1.png",
+          "sugar": 90,
+          "tilemaptable": "res/tiles/ground.json",
+          "tileset": "res/tiles/ground.plist",
+          "tilesetpng": "res/tiles/ground.png",
+          "x": -0.45,
+          "y": 0.085
         },
         {
-          "emotion": [
-            "ANGRY",
-            "NORMAL",
-            "NORMAL",
-            "NORMAL"
-          ],
-          "side": "RIGHT",
-          "speaker": "res/turret/general.png",
-          "text": [
-            "CAPTAIN !",
-            "I am here to assist you during this invasion.",
-            "I am also new at this job don't be too harsh on me.",
-            "The General told us to defend the road, why not using a water tower near it?"
-          ]
-        }
-      ],
-      "musics": [ "music/On-Tiptoe.mp3.mp3" ],
-      "reward": "res/levels/plan1.png",
-      "sugar": 300,
-      "tilemaptable": "res/tiles/ground.json",
-      "tileset": "res/tiles/ground.plist",
-      "tilesetpng": "res/tiles/ground.png",
-      "x": 70,
-      "y": 325
-    },
-    {
-      "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist" ],
-      "background": "res/levels/background2.png",
-      "effects": [ "music/splash.mp3", "music/slash.mp3" ],
-      "exp": 150,
-      "path_level": "C:/Users/MSI-GP60/AppData/Local/MallowsVsDango/Levels/Level_2.json",
-      "introDialogue": [
+          "id": 2,
+          "dialogues_file": "Levels/lvl_2_dialogues.json",
+          "animations": [ "res/turret/animations/splash.plist", "res/turret/animations/cut.plist" ],
+          "background": "res/levels/background2.png",
+          "effects": [ "music/splash.mp3", "music/slash.mp3" ],
+          "exp": 25,
+          "holy_sugar": 2,
+          "finalized": false,
+          "path_level": "Level_2.json",
+          "musics": [ "music/On-Tiptoe.mp3.mp3" ],
+          "reward": "res/levels/plan1.png",
+          "sugar": 90,
+          "tilemaptable": "res/tiles/ground.json",
+          "tileset": "res/tiles/ground.plist",
+          "tilesetpng": "res/tiles/ground.png",
+          "x": -0.35,
+          "y": 0.11
+        },
         {
-          "emotion": [
-            "NORMAL",
-            "NORMAL",
-            "NORMAL",
-            "ANGRY"
-          ],
-          "side": "LEFT",
-          "speaker": "res/turret/general.png",
-          "text": [
-            "We don't know what this small group wanted to do here.",
-            "Maybe they were lost.",
-            "Wait, an another group have been seen near your area.",
-            "Stop them all ! General Mallow strawberry perfume is counting on you!"
-          ]
-        }
-      ],
-      "musics": [ "music/On-Tiptoe.mp3.mp3" ],
-      "reward": "res/levels/plan1.png",
-      "sugar": 300,
-      "tilemaptable": "res/tiles/ground.json",
-      "tileset": "res/tiles/ground.plist",
-      "tilesetpng": "res/tiles/ground.png",
-      "x": 240,
-      "y": 350
-    },
-    {
-      "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist" ],
-      "background": "res/levels/background2.png",
-      "effects": [ "music/splash.mp3", "music/slash.mp3" ],
-      "exp": 150,
-      "generator": "res/level3_generator.json",
-      "height": 12,
-      "introDialogue": [
+          "id": 3,
+          "dialogues_file": "Levels/lvl_3_dialogues.json",
+          "animations": [ "res/turret/animations/splash.plist", "res/turret/animations/cut.plist" ],
+          "background": "res/levels/background2.png",
+          "effects": [ "music/splash.mp3", "music/slash.mp3" ],
+          "exp": 25,
+          "holy_sugar": 2,
+          "finalized": false,
+          "path_level": "Level_3.json",
+          "musics": [ "music/On-Tiptoe.mp3.mp3" ],
+          "reward": "res/levels/plan1.png",
+          "sugar": 90,
+          "tilemaptable": "res/tiles/ground.json",
+          "tileset": "res/tiles/ground.plist",
+          "tilesetpng": "res/tiles/ground.png",
+          "x": -0.23,
+          "y": 0.115
+        },
         {
-          "emotion": [
-            "NORMAL",
-            "NORMAL",
-            "NORMAL",
-            "ANGRY"
-          ],
-          "speaker": "res/turret/general.png",
-          "side": "LEFT",
-          "text": [
-            "Apparently they are looking for one of our great treasure but which one.",
-            "Our nation is wide and ancient, our vaults are full of precious items.",
-            "We will think about it late. Another group is willing to invade our territory.",
-            "Make a syrupshed ! General Mallow strawberry perfume is counting on you!"
-          ]
+          "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist", "res/dango/animations/dangobese1.plist" ],
+          "background": "res/levels/background2.png",
+          "effects": [ "music/splash.mp3", "music/slash.mp3" ],
+          "exp": 150,
+          "generator": "res/level4_generator.json",
+          "height": 12,
+          "map": "res/levels/level1_map.csv",
+          "musics": [ "music/On-Tiptoe.mp3.mp3" ],
+          "path": "res/levels/level1_path.csv",
+          "reward": "res/levels/plan1.png",
+          "sugar": 80,
+          "tilemaptable": "res/tiles/ground.json",
+          "tileset": "res/tiles/ground.plist",
+          "tilesetpng": "res/tiles/ground.png",
+          "width": 14,
+          "x": 560,
+          "y": 240
         }
-      ],
-      "map": "res/levels/level1_map.csv",
-      "musics": [ "music/On-Tiptoe.mp3.mp3" ],
-      "path": "res/levels/level1_path.csv",
-      "reward": "res/levels/plan1.png",
-      "sugar": 80,
-      "tilemaptable": "res/tiles/ground.json",
-      "tileset": "res/tiles/ground.plist",
-      "tilesetpng": "res/tiles/ground.png",
-      "width": 14,
-      "x": 400,
-      "y": 265
+      ]
     },
     {
-      "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist", "res/dango/animations/dangobese1.plist" ],
-      "background": "res/levels/background2.png",
-      "effects": [ "music/splash.mp3", "music/slash.mp3" ],
-      "exp": 150,
-      "generator": "res/level4_generator.json",
-      "height": 12,
-      "map": "res/levels/level1_map.csv",
-      "musics": [ "music/On-Tiptoe.mp3.mp3" ],
-      "path": "res/levels/level1_path.csv",
-      "reward": "res/levels/plan1.png",
-      "sugar": 80,
-      "tilemaptable": "res/tiles/ground.json",
-      "tileset": "res/tiles/ground.plist",
-      "tilesetpng": "res/tiles/ground.png",
-      "width": 14,
-      "x": 560,
-      "y": 240
+      "id": 1
     }
   ],
+
+    
   "play_dialogue": true,
   "play_sound": true,
   "sound_transition": [
-    [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none" ],
-    [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3" ],
-    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "none" ],
-    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "music/On-Tiptoe.mp3.mp3" ]
+    [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "none", "none", "none" ],
+    [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "none", "none", "none","none" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "music/On-Tiptoe.mp3.mp3", "none", "none" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "none", "music/On-Tiptoe.mp3.mp3", "none" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "none", "none", "music/On-Tiptoe.mp3.mp3" ]
   ],
   "towers": {
-    "archer": {
-      "skeleton": "res/turret/animations/skeleton.json",
-      "atlas": "res/turret/animations/skeleton.atlas",
-      "animation": "res/turret/animations/archer.png",
-      "animation_attack_size": 9,
-      "animation_attack_time": 0.5,
+    "bomber": {
+      "skeleton": "res/turret/animations/bomber.json",
+      "atlas": "res/turret/animations/bomber.atlas",
       "animation_bullet": "res/turret/animations/splash.png",
       "animation_bullet_size": 14,
-      "animation_steady_size": 49,
       "attack_speed": [ 1.5, 1.25, 1, 1 ],
       "cost": [ 30, 15, 25, 50 ],
       "sell": [ 15, 25, 35, 60 ],
       "range": [ 120, 135, 150, 150 ],
       "damages": [ 1, 1.5, 2, 2 ],
+      "xp_level": [0, 100, 1000, 10000],
       "image": "res/turret/bombeur.png",
       "description_en": "Bomber: This mallow is a long distance attacker.",
       "description_fr": "Bomber : ce mallow bombarde ses ennemis d'eau jusqu'à les dissoudre totalement",
-      "last_level_description_en" :  "The water bombs are getting bigger and are doing damages in area.",
-      "name": "archer",
+      "last_level_description_en": "The water bombs are getting bigger and are doing damages in area.",
+      "name": "bomber",
+      "unlock_level": -1,
+      "unlock_skill": -1,
       "limit": 2,
+      "limit_skill_id": 3,
       "sound_bullet": "music/splash.mp3"
     },
     "cutter": {
@@ -253,37 +225,46 @@
       "animation_bullet": "res/turret/animations/cut.png",
       "animation_bullet_size": 14,
       "animation_steady_size": 49,
-      "attack_speed": [2.5, 2.25, 2, 2],
+      "attack_speed": [ 2.5, 2.25, 2, 2 ],
       "cost": [ 50, 30, 45, 60 ],
-      "sell": [25, 40, 65, 95],
+      "sell": [ 25, 40, 65, 95 ],
       "damages": [ 1, 1.5, 2, 2 ],
-      "range": [80, 90, 100, 100],
+      "range": [ 80, 90, 100, 100 ],
+      "xp_level": [0,0,2000,1000],
       "image": "res/turret/cutter2.png",
       "description_en": "Sword Master: Attack all the dangos around him",
       "last_level_description_en": "Increase damages done by other towers on the target by 25%.",
       "name": "cutter",
       "limit": 3,
+      "limit_skill_id": 2,
+      "unlock_level": 2, 
+      "unlock_skill": -1,
       "deep_wound_duration": 3,
-      "deep_wound_percent" : 0.5,
+      "deep_wound_percent": 0.5,
       "sound_bullet": "music/slash.mp3"
     },
     "saucer": {
-      "animation": "res/turret/animations/archer.png",
-      "animation_attack_size": -1,
-      "animation_attack_time": 0.5,
+      "skeleton": "res/turret/animations/bomber.json",
+      "atlas": "res/turret/animations/bomber.atlas",
       "animation_bullet": "res/turret/animations/splash.png",
       "animation_bullet_size": 14,
-      "animation_steady_size": -1,
-      "attack_speed": [1.5, 1.25, 1, 1],
-      "cost": [ 30, 15, 25, 50 ],
-      "sell": [15, 25, 35, 60],
-      "range": [120, 135, 150, 150],
-      "damages": [ 1, 1.5, 2, 2 ],
-      "description": "Saucer: Slow down enemies with sweet soy sauce.",
-      "last_level_description" :  "The water bombs are getting bigger and are doing damages in area.",
+      "attack_speed": [ 1.5, 1.25, 1, 1 ],
+      "cost": [ 20, 10, 15, 25 ],
+      "sell": [ 10, 17, 30, 45 ],
+      "range": [ 100, 115, 135, 135 ],
+      "damages": [ 0, 0, 0, 0 ],
+      "slow": [ -0.3, -0.4, -0.5, -0.5 ],
+      "slow_duration": [ 2, 2.5, 3, 3 ],
+      "xp_level": [0, 250, 1000, 10000],
       "image": "res/turret/saucer3.png",
+      "description_en": "Saucer: Slow down the enemies by spitting digested chocolate on them",
+      "description_fr": "Saucer : ralentit les ennemis en leur crachant du chocolat digere",
+      "last_level_description_en": "The chocolat becomes so acid it dissolve the enemies over time",
       "name": "saucer",
-      "limit": 5,
+      "unlock_level": -1,
+      "unlock_skill": -1,
+      "limit": 2,
+      "limit_skill_id": 3,
       "sound_bullet": "music/splash.mp3"
     }
   },
@@ -296,166 +277,166 @@
   },
 
 
-"skills": [
-    [ 
-      {        
+  "skills": [
+    [
+      {
         "name_en": "Down to the base...",
         "name_fr": "C'est au pied du mur...",
         "cost": 5,
-        "effect": [],
-        "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
+        "effect": [ ],
+        "sprite_enabled": "res/buttons/Skills/wall.png",
+        "sprite_disabled": "res/buttons/Skills/wall_disabled.png",
         "description_en": "Create a sugar wall (2HP) at the end of the path.",
         "description_fr": "Cree un mur en sucre (2 PdV) au bout du chemin.",
-        "dependance": [-1],
+        "dependance": [ -1 ],
         "level_unlocked": 0,
-        "id" : 1
-      }     
+        "id": 1
+      }
     ],
 
-    [ 
-        {        
+    [
+      {
         "name_en": "And one free ride",
         "name_fr": "Et un tour gratuit",
         "cost": 10,
-        "effect": [],
+        "effect": [ ],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
+        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
         "description_en": "Every 20 attacks, the Cutter, performs a free attack.",
         "description_fr": "Tous les 20 attaques, le Cutter, effectue un tour supplementaire",
-        "dependance": [0],
+        "dependance": [ 0 ],
         "level_unlocked": 0,
-        "id" : 2
-       },   
-      {        
+        "id": 2
+      },
+      {
         "name_en": "There may be other bombs",
         "name_fr": "Une bombe peut en cacher une autre",
         "cost": 10,
-        "effect": [],
+        "effect": [ ],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
+        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
         "description_en": "Every 20 shots, the Bomber throws 2 additional bombs during its next attack.",
         "description_fr": "Tous les 20 tirs, une deuxieme bombe est lancee par le Bombeur",
-        "dependance": [0],
+        "dependance": [ 0 ],
         "level_unlocked": 0,
-        "id" : 3
-      }  
+        "id": 3
+      }
     ],
 
-    [ 
-      {        
+    [
+      {
         "name_en": "Plz don't get mad. Plz don't get mad...",
         "name_fr": "Et la t’es enerve ? Et la t’es enerve ? ...",
         "cost": 15,
-        "effect": [],
+        "effect": [ ],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
+        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
         "description_en": "The Cutter needs 1 less attack to charge its limit's gauge.",
         "description_fr": "Reduit de 1 le nombre d'attaques necessaires pour activer la limite du Cutter.",
-        "dependance": [0],
+        "dependance": [ 0 ],
         "level_unlocked": 0,
-        "id" : 4
+        "id": 4
       },
-      {        
+      {
         "name_en": "It's bullet time!",
         "name_fr": "Une balle de moins",
         "cost": 15,
-        "effect": [],
+        "effect": [ ],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
+        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
         "description_en": "The Bomber needs 1 less attack to charge its limit's gauge.",
         "description_fr": "Reduit de 1 le nombre de tirs necessaires pour activer la limite du Bombeur.",
-        "dependance": [0, 1],
+        "dependance": [ 0, 1 ],
         "level_unlocked": 0,
-        "id" : 5
+        "id": 5
       }
     ],
 
     [
-              {        
+      {
         "name_en": "It's BBQ time!",
         "name_fr": "Qui a parle de barbecue ?",
         "cost": 50,
-        "effect": [],
+        "effect": [ ],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
+        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
         "description_en": "Unlock Pyro, a specialist in fireworks.",
         "description_fr": "Débloque Pyro, l'expert en feux d'artifices. ",
-        "dependance": [-1],
+        "dependance": [ -1 ],
         "level_unlocked": 2,
-        "id" : 6
+        "id": 6
       },
-      {       
+      {
         "name_en": "Icing sugar age",
         "name_fr": "L'âge de glace",
         "cost": 30,
-        "effect": [],
+        "effect": [ ],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
+        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
         "description_en": "Icing sugar age. The wall's HP is increased by 1.",
         "description_fr": "La décourvete du sucre glace fait entrer dans une nouvelle ère. Augmente le mur de 1 PdV",
-        "dependance": [-1],
+        "dependance": [ -1 ],
         "level_unlocked": 4,
-        "id" : 7
-        }
-    ],
-
-    [ 
-            {        
-        "name_en": "It's BBQ time! (2)",
-        "name_fr": "Qui a parle de barbecue ? (2)",
-        "cost": 50,
-        "effect": [],
-        "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
-        "description_en": "Every 40s of attack, Pyro is overheating. The flame is wider for 2s.",
-        "description_fr": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
-        "dependance": [0],
-        "level_unlocked": 0,
-        "id" : 8
-      },
-      {        
-        "name_en": "Sales are comming",
-        "name_fr": "C'est les soldes !",
-        "cost": 50,
-        "effect": [],
-        "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
-        "description_en": "All Mallows' cost is reduced by 5%.",
-        "description_fr": "Diminue le cout de creation de toutes les tourelles 5%",
-        "dependance": [-1],
-        "level_unlocked": 2,
-        "id" : 9
+        "id": 7
       }
     ],
 
     [
-        {       
+      {
+        "name_en": "It's BBQ time! (2)",
+        "name_fr": "Qui a parle de barbecue ? (2)",
+        "cost": 50,
+        "effect": [ ],
+        "sprite_enabled": "res/buttons/centralMenuPanel.png",
+        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
+        "description_en": "Every 40s of attack, Pyro is overheating. The flame is wider for 2s.",
+        "description_fr": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
+        "dependance": [ 0 ],
+        "level_unlocked": 0,
+        "id": 8
+      },
+      {
+        "name_en": "Sales are comming",
+        "name_fr": "C'est les soldes !",
+        "cost": 50,
+        "effect": [ ],
+        "sprite_enabled": "res/buttons/centralMenuPanel.png",
+        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
+        "description_en": "All Mallows' cost is reduced by 5%.",
+        "description_fr": "Diminue le cout de creation de toutes les tourelles 5%",
+        "dependance": [ -1 ],
+        "level_unlocked": 2,
+        "id": 9
+      }
+    ],
+
+    [
+      {
         "name_en": "It's BBQ time! (3)",
         "name_fr": "Qui a parle de barbecue ? (3)",
         "cost": 50,
-        "effect": [],
+        "effect": [ ],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
+        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
         "description_en": "Every 40s of attack, Pyro is overheating. The flame is wider for 2s.",
         "description_fr": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
-        "dependance": [0],
+        "dependance": [ 0 ],
         "level_unlocked": 0,
-        "id" : 10
-        },
-        {        
+        "id": 10
+      },
+      {
         "name_en": "Jackpot",
         "name_fr": "Jackpot",
         "cost": 50,
-        "effect": [],
+        "effect": [ ],
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/wood_information_panel_disabled.png",
+        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
         "description_en": "Dangos have an 1% chance to drop holy sugar when they died.",
         "description_fr": "Un dango a 1% de chance de genere 1 sucrette lorsqu’il meurt.",
-        "dependance": [1],
+        "dependance": [ 1 ],
         "level_unlocked": 0,
-        "id" : 11
-        }
+        "id": 11
+      }
     ]
   ]
 

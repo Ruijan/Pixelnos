@@ -24,6 +24,22 @@ Wall* Wall::create() {
 	return NULL;
 }
 
+Wall* Wall::create(unsigned int n_max_hp) {
+	Wall* wall = new Wall(n_max_hp, n_max_hp);
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["wall"];
+
+	if (wall->init()) {
+		for (unsigned int i(0); i < config["sprites"].size(); ++i) {
+			wall->addChild(Sprite::create(config["sprites"][i].asString()));
+			wall->getChildren().at(i)->setVisible(false);
+		}
+		wall->getChildren().at(0)->setVisible(true);
+		return wall;
+	}
+	CC_SAFE_DELETE(wall);
+	return NULL;
+}
+
 void Wall::takeDamages(unsigned int damages) {
 	if (hp > 0){
 		hp -= 1;

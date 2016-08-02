@@ -4,7 +4,7 @@
 
 USING_NS_CC;
 
-DangoGenerator::DangoGenerator(): timer(0),step(0),cWave(0){
+DangoGenerator::DangoGenerator(): timer(0),step(0),cWave(0), total_steps(0), progress(0){
 
 }
 
@@ -67,6 +67,7 @@ void DangoGenerator::update(double dt, Level* level){
 				dango->setPosition(level->getPath(sequencePath[cWave][step])[0]->getPosition());
 				level->addDango(dango);
 				++step;
+				++progress;
 				timer = 0;
 			}
 		}
@@ -78,6 +79,7 @@ bool DangoGenerator::addStep(std::string dango, double time, unsigned int path, 
 		sequenceTimer[wave].push_back(time);
 		sequenceDango[wave].push_back(dango);
 		sequencePath[wave].push_back(path);
+		++total_steps;
 		return true;
 	}
 	else{
@@ -105,8 +107,7 @@ void DangoGenerator::duplicateStep(unsigned int step, unsigned int wave) {
 		sequenceTimer[wave].push_back(sequenceTimer[wave][step]);
 		sequencePath[wave].push_back(sequencePath[wave][step]);
 	}
-	
-
+	++total_steps;
 }
 
 void DangoGenerator::duplicateWave(unsigned int wave) {
@@ -120,12 +121,14 @@ void DangoGenerator::duplicateWave(unsigned int wave) {
 		sequenceTimer.push_back(sequenceTimer[wave]);
 		sequencePath.push_back(sequencePath[wave]);
 	}
+	total_steps += getNbSteps(wave);
 }
 
 void DangoGenerator::reset(){
 	timer = 0;
 	step = 0;
 	cWave = 0;
+	progress = 0;
 }
 
 void DangoGenerator::empty() {
@@ -167,6 +170,7 @@ void DangoGenerator::removeStep(unsigned int step, unsigned int wave) {
 			sequenceTimer[wave].erase(sequenceTimer[wave].begin() + step);
 			sequenceDango[wave].erase(sequenceDango[wave].begin() + step);
 			sequencePath[wave].erase(sequencePath[wave].begin() + step);
+			--total_steps;
 		}
 		else {
 			log("DangoGenerator: Step out of wave size.");
@@ -179,10 +183,10 @@ void DangoGenerator::removeStep(unsigned int step, unsigned int wave) {
 
 void DangoGenerator::removeWave(unsigned int wave) {
 	if ((int)wave < getNbWaves()) {
+		total_steps -= getNbSteps(wave);
 		sequenceTimer.erase(sequenceTimer.begin() + wave);
 		sequenceDango.erase(sequenceDango.begin() + wave);
 		sequencePath.erase(sequencePath.begin() + wave);
-
 	}
 	else {
 		log("DangoGenerator: Wave does not exits (out of bound).");
@@ -218,4 +222,8 @@ void DangoGenerator::saveInRoot(Json::Value& root) {
 
 		}
 	}
+}
+
+float DangoGenerator::getProgress() {
+	return ((float)progress) / ((float)total_steps);
 }

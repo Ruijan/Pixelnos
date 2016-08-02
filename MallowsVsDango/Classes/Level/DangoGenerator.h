@@ -17,6 +17,8 @@ private:
 	double timer;
 	unsigned int step;
 	int cWave;
+	int total_steps;
+	int progress;
 
 public:
 	DangoGenerator();
@@ -52,6 +54,7 @@ public:
 	void reset();
 	void empty();
 	void saveInRoot(Json::Value& root);
+	float getProgress();
 };
 
 #endif

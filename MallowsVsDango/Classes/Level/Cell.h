@@ -12,8 +12,6 @@ public:
 	virtual ~Cell();
 	static Cell* create();
 
-	void touchEvent(cocos2d::Touch* touch, cocos2d::Vec2 _p);
-
 	const Node* getObject() { return object; }
 	void setObject(Node* nObject);
 	bool isFree();

@@ -4,7 +4,7 @@
 #include "cocos2d.h"
 #include "../Config/json.h"
 #include "ui/CocosGUI.h"
-#include "Towers/Effect.h"
+#include "../Towers/Effect.h"
 #include <spine/spine-cocos2dx.h>
 
 class Cell;
@@ -39,6 +39,7 @@ public:
 	void initFromConfig();
 
 	bool isAlive();
+	bool isDying();
 	bool isDone();
 	bool willBeAlive();
 	virtual bool shouldAttack();
@@ -46,6 +47,8 @@ public:
 	double getGain();
 	int getTargetedCell();
 	double getSpeed();
+	int getXP();
+	int getHolySugar();
 
 	virtual void update(float dt);
 	void updateAnimation();
@@ -106,6 +109,8 @@ protected:
 	double attack_reloading;
 	bool on_ground;
 	int level;
+	int xp;
+	int holy_sugar;
 
 	std::vector<Effect*> effects;
 };

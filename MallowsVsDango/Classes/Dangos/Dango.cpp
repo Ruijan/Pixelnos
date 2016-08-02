@@ -3,9 +3,14 @@
 #include "../AppDelegate.h"
 #include "../Level/Wall.h"
 #include "../AppDelegate.h"
-#include "../InterfaceGame.h"
+#include "../SceneManager.h"
+#include "../Level/InterfaceGame.h"
 #include "../Towers/Tower.h"
 #include "../Towers/Attack.h"
+#include <random>
+#include <stdio.h>      /* printf, NULL */
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
 
 USING_NS_CC;
 
@@ -34,7 +39,13 @@ void Dango::initFromConfig() {
 	animation_duration = config["level"][level]["animation_attack_time"].asDouble();
 	nb_frames_anim = config["level"][level]["animation_attack_size"].asInt();
 	name = config["level"][level]["name"].asString();
-
+	xp = config["level"][level]["xp"].asInt();
+	double a = config["level"][level]["holy_sugar"]["mean"].asDouble();
+	double b = config["level"][level]["holy_sugar"]["std"].asDouble();
+	std::default_random_engine generator(time(NULL));
+	std::normal_distribution<double> distribution(config["level"][level]["holy_sugar"]["mean"].asDouble(),
+		config["level"][level]["holy_sugar"]["std"].asDouble());
+	holy_sugar = round(abs(distribution(generator)));
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
@@ -243,6 +254,14 @@ void Dango::updateAnimation(){
 	}
 }
 
+int Dango::getXP() {
+	return xp;
+}
+
+int Dango::getHolySugar() {
+	return holy_sugar;
+}
+
 double Dango::getHitPoints(){
 	return hitPoints;
 }
@@ -279,10 +298,10 @@ void Dango::applyProspectiveDamages(int id_damage) {
 		state = DYING;
 		die();
 	}
-	log("take prospective damages id : %i, size: %i", id_damage, prospective_damages.size());
+	/*log("take prospective damages id : %i, size: %i", id_damage, prospective_damages.size());
 	for (auto id : prospective_damages){
 		log("-> damages id : %i", id);
-	}
+	}*/
 	
 }
 
@@ -313,6 +332,9 @@ bool Dango::isAlive(){
 	return state != DEAD;
 	//return hitPoints > 0;
 }
+bool Dango::isDying() {
+	return state == DYING;
+}
 
 void Dango::die() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -322,7 +344,18 @@ void Dango::die() {
 	star->setScale(Cell::getCellWidth() / 5 / star->getContentSize().width);
 	star->setPosition(_position);
 	SceneManager::getInstance()->getGame()->getLevel()->addChild(star,2,"star");
-	star->runAction(MoveTo::create(1.5f, Vec2(0, visibleSize.height)));
+	auto element = SceneManager::getInstance()->getGame()->getMenu()->getChildByName("label_information")->getChildByName("sugar");
+	int posx = element->getPosition().x + element->getContentSize().width * (0.5 - element->getAnchorPoint().x);
+	int posy = element->getPosition().y + element->getContentSize().height * (0.5 - element->getAnchorPoint().y);
+	posx += SceneManager::getInstance()->getGame()->getMenu()->getChildByName("label_information")->getPosition().x;
+	posy += SceneManager::getInstance()->getGame()->getMenu()->getChildByName("label_information")->getPosition().y;
+
+	auto autoRemove = CallFunc::create([star]() {
+		SceneManager::getInstance()->getGame()->getLevel()->removeChild(star);
+	});
+	star->runAction(Sequence::create(Spawn::createWithTwoActions(
+		EaseBackOut::create(MoveBy::create(1.f, Vec2(0, posy - _position.y))),
+		MoveBy::create(1.f, Vec2(posx - _position.x, 0))), autoRemove, nullptr));
 }
 
 bool Dango::willBeAlive(){
@@ -351,6 +384,9 @@ double Dango::getSpeed(){
 	double total_speed(0);
 	for (auto modifier : m_speed) {
 		total_speed += modifier.second.first;
+	}
+	if (total_speed < -1) {
+		total_speed = -1;
 	}
 	return speed + total_speed * speed;
 }

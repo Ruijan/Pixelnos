@@ -1,14 +1,10 @@
 #include "SceneManager.h"
-#include "MainMenu.h"
-#include "StoryMenu.h"
 #include "Lib/Loader.h"
 #include "AppDelegate.h"
 #include "Config/Config.h"
 #include "Config/json.h"
 #include "Lib/FadeMusic.h"
-#include "CreditScreen.h"
-#include "LevelEditor.h"
-#include "Skills.h"
+
 USING_NS_CC;
 
 SceneManager *SceneManager::manager;
@@ -20,6 +16,7 @@ SceneManager::SceneManager(){
 	CreditScreen* credit_screen = CreditScreen::create();
 	LevelEditor* editor = LevelEditor::create();
 	Skills* skills = Skills::create();
+	Shop* shop = Shop::create();
 
 	cacheScene[MENU] = menu;
 	cacheScene[MENU]->retain();
@@ -33,8 +30,10 @@ SceneManager::SceneManager(){
 	cacheScene[EDITOR]->retain();
 	cacheScene[SKILLS] = skills;
 	cacheScene[SKILLS]->retain();
+	cacheScene[SHOP] = shop;
+	cacheScene[SHOP]->retain();
 
-	currentscene = cacheScene[SKILLS];
+	currentscene = cacheScene[MENU];
 	c_index = 0;
 	Director::getInstance()->runWithScene(currentscene);
 	if(((AppDelegate*)Application::getInstance())->getConfig()["play_sound"].asBool()){
@@ -52,6 +51,12 @@ SceneManager::~SceneManager(){
 }
 
 void SceneManager::setScene(SceneManager::SceneType type){
+	TrackingEvent c_event;
+	c_event.from_scene = (SceneType)c_index;
+	c_event.to_scene = type;
+	c_event.time = time(0);
+
+	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
 	currentscene = cacheScene[type];
 	TransitionFade* transition = TransitionFade::create(0.5f, currentscene);
 	Director::getInstance()->replaceScene(transition);

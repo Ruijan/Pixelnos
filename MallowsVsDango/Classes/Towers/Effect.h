@@ -5,6 +5,13 @@
 
 class Dango;
 
+/*
+List Effects
+DEEPWOUND
+BURN
+SLOW
+*/
+
 // EFFECT
 class Effect: public cocos2d::Sprite{
 public:
@@ -51,6 +58,22 @@ public:
 protected:
 	float dmg;
 	float timer_dmg;
+};
+
+// SLOW EFFECT
+class Slow : public Effect {
+public:
+	Slow(Dango* ntarget, float duration, float nslow);
+	virtual ~Slow();
+	static Slow* create(Dango* ntarget, float duration, float slow_percent);
+
+	virtual void update(float dt);
+	float getSlow();
+	void applyModifierToTarget();
+
+protected:
+	float slow_percent;
+	int id;
 };
 
 #endif

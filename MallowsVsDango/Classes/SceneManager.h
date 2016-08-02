@@ -2,7 +2,13 @@
 #define SCENEMANAGER_HPP
 
 #include "cocos2d.h"
-#include "MyGame.h"
+#include "Scenes/MainMenu.h"
+#include "Scenes/StoryMenu.h"
+#include "Scenes/CreditScreen.h"
+#include "Scenes/LevelEditor.h"
+#include "Scenes/Skills.h"
+#include "Scenes/MyGame.h"
+#include "Scenes/Shop.h"
 #include "Lib/Loader.h"
 #include <array>
 
@@ -20,7 +26,8 @@ public:
 		LOADING = 3,
 		CREDIT = 4,
 		EDITOR = 5,
-		SKILLS = 6
+		SKILLS = 6,
+		SHOP = 7
 	};
 
 	//Constructor & destructor
@@ -42,7 +49,7 @@ public:
 	
 private:
 	static SceneManager *manager;
-	std::array<cocos2d::Scene*,7> cacheScene;
+	std::array<cocos2d::Scene*,8> cacheScene;
 	cocos2d::Scene* currentscene;
 	int c_index;
 };

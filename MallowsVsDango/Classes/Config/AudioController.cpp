@@ -22,16 +22,27 @@ void AudioController::init(std::vector<std::pair<AudioSlider*, SOUNDTYPE>> nslid
 	}
 }
 
-void AudioController::initFromConfig(Json::Value config){
+void AudioController::initFromConfig(){
+	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass();
+	if (!config->isSaveFile()) {
+		Json::Value save_file = config->getSaveValues();
+		save_file["sound"]["maxVolumeMusic"] = 0.5f;
+		save_file["sound"]["maxVolumeEffects"] = 0.5f;
+		save_file["sound"]["loopMusic"] = true;
+		save_file["sound"]["playMusic"] = true;
+		save_file["sound"]["playEffects"] = true;
+		config->setSave(save_file);
+		config->save();
+	}
 	// Set the parameters from json file
-	max_music_volume	= config["sound"]["maxVolumeMusic"].asDouble();
-	max_effects_volume	= config["sound"]["maxVolumeEffects"].asDouble();
-	loop_enabled		= config["sound"]["loopMusic"].asBool();
-	music_enabled		= config["sound"]["playMusic"].asBool();
-	effects_enabled		= config["sound"]["playEffects"].asBool();
+	max_music_volume	= config->getSaveValues()["sound"]["maxVolumeMusic"].asDouble();
+	max_effects_volume	= config->getSaveValues()["sound"]["maxVolumeEffects"].asDouble();
+	loop_enabled		= config->getSaveValues()["sound"]["loopMusic"].asBool();
+	music_enabled		= config->getSaveValues()["sound"]["playMusic"].asBool();
+	effects_enabled		= config->getSaveValues()["sound"]["playEffects"].asBool();
 	// Set the volume of the current music if there is a music playing
 	if (music_ID != AudioEngine::INVALID_AUDIO_ID) {
-		AudioEngine::setVolume(music_ID, max_music_volume);
+		AudioEngine::setVolume(music_ID, pow(max_effects_volume, 2));
 	}
 	// Set the volume of the current effects if there are effects playing
 	for (unsigned int i(0); i < effects_ID.size(); ++i) {
@@ -54,6 +65,7 @@ bool AudioController::save() {
 	((AppDelegate*)Application::getInstance())->getConfigClass()->setSave(root);
 	// apply the changes to the file
 	((AppDelegate*)Application::getInstance())->getConfigClass()->save();
+	((AppDelegate*)Application::getInstance())->getConfigClass()->setSettingsNeedSave(true);
 	return true;
 }
 
@@ -170,7 +182,8 @@ void AudioController::update(float dt){
 	for(auto& slider : sliders_music){
 		if(slider->getValue() != max_music_volume){
 			if (music_ID != AudioEngine::INVALID_AUDIO_ID) {
-				AudioEngine::setVolume(music_ID, slider->getValue());
+				float n_volume = exp(slider->getValue()) / exp(1);
+				AudioEngine::setVolume(music_ID, pow(slider->getValue(),2));
 			}
 			max_music_volume = slider->getValue();
 			save();

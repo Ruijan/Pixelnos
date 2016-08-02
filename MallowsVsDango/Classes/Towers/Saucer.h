@@ -11,13 +11,18 @@ public:
 	static Saucer* create();
 	static Json::Value getConfig();
 	virtual const Json::Value getSpecConfig();
+	void initSpecial();
 	
 	virtual void attack();
 	virtual void startLimit();
 	virtual void handleEndEnrageAnimation();
+	virtual bool isSameType(std::string type);
+
 
 private:
 	int nb_limit_attack;
+	float slow_percent;
+	float slow_duration;
 
 };
 

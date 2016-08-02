@@ -1,0 +1,37 @@
+{
+  "level_id": 1,
+  "introDialogue": [
+    {
+      "emotion": [
+        "ANGRY",
+        "NORMAL",
+        "NORMAL",
+        "ANGRY"
+      ],
+      "side": "LEFT",
+      "speaker": "res/turret/general.png",
+      "text": [
+        "WE ARE AT WAR !",
+        "Our spies told me a small group of dangos have been seen near the border.",
+        "General Mallow strawberry perfume commands you to protect our nation!",
+        "The Mallow Nation won't fall !"
+      ]
+    },
+    {
+      "emotion": [
+        "ANGRY",
+        "NORMAL",
+        "NORMAL",
+        "NORMAL"
+      ],
+      "side": "RIGHT",
+      "speaker": "res/turret/general.png",
+      "text": [
+        "CAPTAIN !",
+        "I am here to assist you during this invasion.",
+        "I am also new at this job don't be too harsh on me.",
+        "The General told us to defend the road, why not using a water tower near it?"
+      ]
+    }
+  ]
+}

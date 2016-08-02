@@ -28,6 +28,13 @@ public:
 	static Wall* create();
 
 	/**
+	* @brief Create a Wall from the configuration file and the save file. Needs
+	* to be improved when we will have the skill tree and real save file.
+	* @return A pointer to the wall.
+	*/
+	static Wall* create(unsigned int n_max_hp);
+
+	/**
 	* @brief Decrease the hps and update the display.
 	* @param damages amount of damages that will be inflicted.
 	*/

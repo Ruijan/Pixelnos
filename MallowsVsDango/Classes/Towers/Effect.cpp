@@ -76,6 +76,7 @@ Burn* Burn::create(Dango* ntarget, float duration, float dmg_percent) {
 	Burn* burn = new Burn(ntarget, duration, dmg_percent);
 	if (burn->Effect::initWithFile("res/turret/burn.png")) {
 		burn->autorelease();
+
 		return burn;
 	}
 	CC_SAFE_DELETE(burn);
@@ -93,4 +94,41 @@ void Burn::update(float dt) {
 
 float Burn::getDamage() {
 	return dmg;
+}
+
+
+// SLOW CLASS
+Slow::Slow(Dango* ntarget, float nduration, float nslow) :
+	Effect(ntarget, nduration), slow_percent(nslow) {
+}
+
+Slow::~Slow() {
+	if (target != nullptr) {
+		target->removeSpeedModifier(id);
+	}
+}
+
+Slow* Slow::create(Dango* ntarget, float duration, float slow_percent) {
+	Slow* slow = new Slow(ntarget, duration, slow_percent);
+	if (slow->Effect::initWithFile("res/turret/burn.png")) {
+		Size visibleSize = Director::getInstance()->getVisibleSize();
+
+		slow->setScale(0.020 * visibleSize.width / slow->getContentSize().width);
+		slow->autorelease();
+		return slow;
+	}
+	CC_SAFE_DELETE(slow);
+	return NULL;
+}
+
+void Slow::update(float dt) {
+	Effect::update(dt);
+}
+
+float Slow::getSlow() {
+	return slow_percent;
+}
+
+void Slow::applyModifierToTarget() {
+	id = target->addSpeedModifier(std::make_pair(slow_percent, this));
 }

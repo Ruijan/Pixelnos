@@ -1,0 +1,21 @@
+{
+  "level_id": 2,
+  "introDialogue": [
+    {
+      "emotion": [
+        "NORMAL",
+        "NORMAL",
+        "NORMAL",
+        "ANGRY"
+      ],
+      "side": "LEFT",
+      "speaker": "res/turret/general.png",
+      "text": [
+        "We don't know what this small group wanted to do here.",
+        "Maybe they were lost.",
+        "Wait, an another group have been seen near your area.",
+        "Stop them all ! General Mallow strawberry perfume is counting on you!"
+      ]
+    }
+  ]
+}

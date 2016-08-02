@@ -2,13 +2,16 @@
 #include "../AppDelegate.h"
 #include "../Config/json.h"
 #include "../Lib/Functions.h"
+#include "../SceneManager.h"
+#include "../Dangos/Dango.h"
+#include "../Scenes/MyGame.h"
 #include "Wall.h"
 #include <fstream>
 
 USING_NS_CC;
 
-Level* Level::create(unsigned int nLevel){
-	Level* level = new Level(nLevel);
+Level* Level::create(unsigned int nLevel, unsigned int nWorld){
+	Level* level = new Level(nLevel, nWorld);
 	if (level->init()){
 		level->autorelease();
 		return level;
@@ -18,7 +21,7 @@ Level* Level::create(unsigned int nLevel){
 	return NULL;
 }
 
-Level::Level(unsigned int nLevel) : id(nLevel), size(14,12), sugar(60), life(3),
+Level::Level(unsigned int nLevel, unsigned int nWorld) : id(nLevel), id_world(nWorld), size(14,12), sugar(60), life(3),
 
 paused(false), zGround(0), experience(0){}
 
@@ -29,22 +32,38 @@ bool Level::init()
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id];
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["worlds"][id_world]["levels"][id];
+	Json::Value save_file = ((AppDelegate*)Application::getInstance())->getSave();
+
+	for (unsigned int i(0); i < config["towers"].size(); ++i) {
+		tower_xp[config["towers"].getMemberNames()[i]] = 0;
+	}
 	
 	std::vector<Node*> elements;
 	sugar = config["sugar"].asDouble();
 	experience = config["exp"].asInt();
+	if (save_file["c_level"].asInt() < (int)id + 1) {
+		holy_sugar = config["holy_sugar"].asInt();
+	}
+	else {
+		holy_sugar = 0;
+	}
 	generator = new DangoGenerator();
 	auto fileUtils = FileUtils::getInstance();
-
-	std::string level_config = fileUtils->getStringFromFile(config["path_level"].asString());
+	std::string level_config("");
+	if (config["finalized"].asBool()) {
+		level_config += "res/";
+	}
+	else {
+		level_config += FileUtils::getInstance()->getWritablePath() + "Levels/";
+	}
+	level_config = fileUtils->getStringFromFile(level_config + config["path_level"].asString());
 	Json::Reader reader;
 	Json::Value root;
 	bool parsingConfigSuccessful = reader.parse(level_config, root, false);
 	if (!parsingConfigSuccessful) {
 		// report to the user the failure and their locations in the document.
 		std::string error = reader.getFormattedErrorMessages();
-		log(error.c_str());
 	}
 	else {
 		addChild(Layer::create(), 0, "backgrounds");
@@ -124,6 +143,12 @@ bool Level::init()
 			}
 			paths.push_back(path);
 		}
+		for (unsigned int i(0); i < root["locked_cell"].size(); ++i) {
+			Vec2 cell_pos = Vec2(root["locked_cell"][i]["pos"][0].asFloat() * ratio + visibleSize.width * 3 / 8,
+				root["locked_cell"][i]["pos"][1].asFloat() * ratio + visibleSize.height / 2);
+			Cell* cell = getNearestCell(cell_pos);
+			cell->setOffLimit(true);
+		}
 		for (int i(0); i < root["nbwaves"].asInt(); ++i) {
 			generator->addWave();
 			for (unsigned int j(0); j < root["dangosChain"][i].size(); ++j) {
@@ -151,15 +176,39 @@ bool Level::init()
 	return true;
 }
 
+void Level::incrementXPTower(std::string name, int amount) {
+	tower_xp[name] += amount;
+	for (auto& tower : towers) {
+		if (tower->isSameType(name)) {
+			tower->incrementXP(amount);
+		}
+	}
+}
+
+int Level::getTowerXP(std::string name) {
+	return tower_xp[name];
+}
+
+int Level::getHolySugar() {
+	return holy_sugar;
+}
+
+float Level::getProgress() {
+	return generator->getProgress();
+}
+
 void Level::initWalls() {
-	for (auto& path : paths) {
-		Wall* wall = Wall::create();
-		path[path.size() - 3]->setObject(wall);
-		wall->setPosition(path[path.size() - 3]->getPosition());
-		wall->setPosition(wall->getPositionX(), wall->getPositionY() + Cell::getCellHeight() / 4);
-		wall->setScale(Cell::getCellWidth() / wall->getChildren().at(0)->getContentSize().width);
-		addChild(wall);
-		walls.push_back(wall);
+	if (((AppDelegate*)Application::getInstance())->getConfigClass()->
+		findSkill(1)["bought"].asBool()) {
+		for (auto& path : paths) {
+			Wall* wall = Wall::create(2);
+			path[path.size() - 3]->setObject(wall);
+			wall->setPosition(path[path.size() - 3]->getPosition());
+			wall->setPosition(wall->getPositionX(), wall->getPositionY() + Cell::getCellHeight() / 4);
+			wall->setScale(Cell::getCellWidth() / wall->getChildren().at(0)->getContentSize().width);
+			addChild(wall);
+			walls.push_back(wall);
+		}
 	}
 }
 
@@ -201,6 +250,10 @@ void Level::update(float dt)
 				sugar += dango->getGain();
 			}
 			if (del) {
+				if (dango->getHolySugar() > 0) {
+					SceneManager::getInstance()->getGame()->getMenu()->generateHolySugar(dango->getPosition());
+					holy_sugar += dango->getHolySugar();
+				}
 				if (generator->isDone() && dangos.size() == 1 && life > 0) {
 					SceneManager::getInstance()->getGame()->getMenu()->startRewarding(dango->getPosition());
 				}
@@ -238,7 +291,6 @@ void Level::update(float dt)
 				wall = nullptr;
 			}
 		}
-
 		removeElements();
 	}	
 }
@@ -288,6 +340,10 @@ Quantity Level::getLife(){
 
 unsigned int Level::getLevelId(){
 	return id;
+}
+
+unsigned int Level::getWorldId() {
+	return id_world;
 }
 
 void Level::increaseQuantity(Quantity add){
@@ -454,7 +510,7 @@ void Level::reset(){
 	}
 	attacks.clear();
 
-	sugar = ((AppDelegate*)Application::getInstance())->getConfig()["levels"][id]["sugar"].asDouble();
+	sugar = ((AppDelegate*)Application::getInstance())->getConfig()["worlds"][id_world]["levels"][id]["sugar"].asDouble();
 	life = 3;
 	paused = false;
 	generator->reset();

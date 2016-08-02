@@ -93,14 +93,30 @@ std::string Attack::getType() {
 	return jsontype;
 }
 
+/*
+SUCKABLE
+*/
+Suckable::Suckable(): force_applied(false) {
 
+}
 
+bool Suckable::isForceApplied() {
+	return force_applied;
+}
+
+void Suckable::setForceApplied(bool applied) {
+	force_applied = applied;
+}
+
+void Suckable::update() {
+	force_applied = false;
+}
 /*
 WATERBALL
 */
 
 WaterBall::WaterBall(Dango* ntarget, double ndamages, double nspeed): 
-	Attack(ntarget,ndamages, "archer"), speed(nspeed) {
+	Attack(ntarget,ndamages, "bomber"), speed(nspeed), Suckable(){
 
 }
 
@@ -135,7 +151,7 @@ WaterBall* WaterBall::createWithFile(std::string file, Dango* ntarget, double da
 }
 
 void WaterBall::update(float dt) {
-	force_applied = false;
+	Suckable::update();
 	if (enabled) {
 		if (target != nullptr) {
 			if (!touched) {
@@ -143,10 +159,16 @@ void WaterBall::update(float dt) {
 				double distance = sqrt(direction.x*direction.x + direction.y*direction.y);
 				Size visibleSize = Director::getInstance()->getVisibleSize();
 				if (distance < 10 * visibleSize.width / 960) {
+					bool is_enemy_alive = target->isDying();
+
 					touched = true;
 					target->removeTargetingAttack(this);
 					target->applyProspectiveDamages(damages_id);
 					startAnimation();
+					if (target->isDying() && !is_enemy_alive) {
+						SceneManager::getInstance()->getGame()->getLevel()->incrementXPTower(jsontype,
+							target->getXP());
+					}
 					target = nullptr;
 				}
 				else {
@@ -166,20 +188,12 @@ bool WaterBall::affectEnemy(Dangobese* enemy) {
 	return false;
 }
 
-bool WaterBall::isForceApplied() {
-	return force_applied;
-}
-
-void WaterBall::setForceApplied(bool applied) {
-	force_applied = applied;
-}
-
 /*
-SLASH
+WaterBombBall
 */
 WaterBombBall::WaterBombBall(Dango* ntarget, double ndamages, double nspeed, double nrange):
 	WaterBall(ntarget, ndamages, nspeed), range(nrange){
-	jsontype = "archer";
+	jsontype = "bomber";
 }
 
 WaterBombBall::~WaterBombBall() {
@@ -200,7 +214,7 @@ WaterBombBall* WaterBombBall::create(Dango* ntarget, double damages, double nspe
 }
 
 void WaterBombBall::update(float dt) {
-	force_applied = false;
+	Suckable::update();
 	if (enabled) {
 		if (target != nullptr) {
 			if (!touched) {
@@ -213,13 +227,20 @@ void WaterBombBall::update(float dt) {
 						getLevel()->getEnemiesInRange(target->getPosition(), range);
 					target->removeTargetingAttack(this);
 					for (auto& enemy : enemies) {
+						bool is_enemy_alive = enemy->isDying();
+
 						if (enemy == target) {
 							enemy->applyProspectiveDamages(damages_id);
 						}
 						else{
 							enemy->takeDamages(0.5*damages);
 						}
+						if (enemy->isDying() && is_enemy_alive) {
+							SceneManager::getInstance()->getGame()->getLevel()->incrementXPTower(jsontype,
+								enemy->getXP());
+						}
 					}
+					
 					target = nullptr;
 					startAnimation();
 				}
@@ -239,6 +260,87 @@ void WaterBombBall::update(float dt) {
 bool WaterBombBall::affectEnemy(Dangobese* enemy) {
 	return false;
 }
+
+/*
+ChocoSpit
+*/
+
+ChocoSpit::ChocoSpit(Dango* ntarget, double slow, double duration, double nspeed):
+	Attack(ntarget, 0, "saucer"), speed(nspeed), Suckable(), slow_percent(slow), 
+	slow_duration(duration){
+}
+
+ChocoSpit::~ChocoSpit() {
+
+}
+
+ChocoSpit* ChocoSpit::create(Dango* ntarget, double slow, double slow_duration, double nspeed) {
+	ChocoSpit* pSprite = new ChocoSpit(ntarget, slow, slow_duration, nspeed);
+
+	if (pSprite->initWithFile("res/turret/yellow_bomb.png"))
+	{
+		pSprite->autorelease();
+		return pSprite;
+	}
+
+	CC_SAFE_DELETE(pSprite);
+	return NULL;
+}
+
+ChocoSpit* ChocoSpit::createWithFile(std::string file, Dango* ntarget, double slow, double slow_duration, double nspeed) {
+	ChocoSpit* pSprite = new ChocoSpit(ntarget, slow, slow_duration, nspeed);
+
+	if (pSprite->initWithFile(file))
+	{
+		pSprite->autorelease();
+		return pSprite;
+	}
+
+	CC_SAFE_DELETE(pSprite);
+	return NULL;
+}
+
+void ChocoSpit::update(float dt) {
+	Suckable::update();
+	if (enabled) {
+		if (target != nullptr) {
+			if (!touched) {
+				Vec2 direction = target->getPosition() - getPosition();
+				double distance = sqrt(direction.x*direction.x + direction.y*direction.y);
+				Size visibleSize = Director::getInstance()->getVisibleSize();
+				if (distance < 10 * visibleSize.width / 960) {
+					bool is_enemy_alive = target->isDying();
+
+					touched = true;
+					target->applyProspectiveDamages(damages_id);
+					target->removeTargetingAttack(this);
+					Slow* effect = Slow::create(target, slow_duration, slow_percent);
+					target->addEffect(effect);
+					effect->applyModifierToTarget();
+					startAnimation();
+					if (target->isDying() && !is_enemy_alive) {
+						SceneManager::getInstance()->getGame()->getLevel()->incrementXPTower(jsontype,
+							target->getXP());
+					}
+					target = nullptr;
+				}
+				else {
+					direction.normalize();
+					setPosition(getPosition() + direction * speed * dt);
+					setRotation(getRotation() + 360 * dt);
+				}
+			}
+		}
+		else {
+			hasToBeDeleted = true;
+		}
+	}
+}
+
+bool ChocoSpit::affectEnemy(Dangobese* enemy) {
+	return false;
+}
+
 
 /*
 SLASH
@@ -269,9 +371,15 @@ void Slash::update(float dt) {
 	if (enabled) {
 		if (target != nullptr) {
 			if (!touched) {
+				bool is_enemy_alive = target->isAlive();
+
 				touched = true;
 				target->removeTargetingAttack(this);
 				target->applyProspectiveDamages(damages);
+				if (target->isDying() && !is_enemy_alive) {
+					SceneManager::getInstance()->getGame()->getLevel()->incrementXPTower(jsontype,
+						target->getXP());
+				}
 				target = nullptr;
 				startAnimation();
 			}
@@ -314,11 +422,17 @@ void DeepSlash::update(float dt) {
 	if (enabled) {
 		if (target != nullptr) {
 			if (!touched) {
+				bool is_enemy_alive = target->isAlive();
+
 				touched = true;
 				target->removeTargetingAttack(this);
 				target->applyProspectiveDamages(damages_id);
 				target->addEffect(effect);
 				effect->applyModifierToTarget();
+				if (target->isDying() && !is_enemy_alive) {
+					SceneManager::getInstance()->getGame()->getLevel()->incrementXPTower(jsontype,
+						target->getXP());
+				}
 				target = nullptr;
 				startAnimation();
 			}

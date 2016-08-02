@@ -1,5 +1,7 @@
 #include "AppDelegate.h"
 #include "audio/include/SimpleAudioEngine.h"
+//#include "PluginIAP/PluginIAP.h"
+
 
 USING_NS_CC;
 
@@ -38,6 +40,9 @@ static int register_all_packages()
 }
 
 bool AppDelegate::applicationDidFinishLaunching() {
+	//In-App Purchase
+	//sdkbox::IAP::init();
+
     // initialize director
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
@@ -86,8 +91,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     auto fileUtils = FileUtils::getInstance();
     config->init();
-
-	controller->initFromConfig(getSave());
+	controller->initFromConfig();
 
     register_all_packages();
 

@@ -24,9 +24,9 @@ class Level : public cocos2d::Layer
 {
 	
 public:
-	Level(unsigned int nLevel);
+	Level(unsigned int nLevel, unsigned int nWorld);
 	virtual ~Level();
-	static Level* create(unsigned int nLevel);
+	static Level* create(unsigned int nLevel, unsigned int nWorld);
 	virtual bool init();
 	void initWalls();
 
@@ -39,6 +39,8 @@ public:
 	Quantity getLife();
 	int getTotalExperience();
 	unsigned int getLevelId();
+	unsigned int getWorldId();
+	float getProgress();
 	void increaseQuantity(Quantity add);
 	bool decreaseQuantity(Quantity removed);
 	virtual void pause();
@@ -47,6 +49,11 @@ public:
 	Cell* getNearestCell(cocos2d::Vec2 position);
 	Tower* touchingTower(cocos2d::Vec2 position);
 	Dango* touchingDango(cocos2d::Vec2 position);
+
+	void incrementXPTower(std::string name, int amount);
+	int getTowerXP(std::string name);
+	int getHolySugar();
+
 
 	std::vector<Dango*> getEnemiesInRange(cocos2d::Vec2 position, double range);
 	std::vector<Dango*> getEnemies();
@@ -61,12 +68,14 @@ public:
 
 protected:
 	unsigned int id;
+	unsigned int id_world;
 	cocos2d::Size size;
 
 	std::vector<Dango*> dangos;
 	std::vector<Tower*> towers;
 	std::vector<Attack*> attacks;
 	std::vector<Wall*> walls;
+	std::map<std::string, int> tower_xp;
 
 	DangoGenerator* generator;
 
@@ -78,6 +87,7 @@ protected:
 	Quantity sugar;
 	Quantity life;
 	int experience;
+	int holy_sugar;
 	
 	void reorder();
 };

@@ -151,3 +151,7 @@ void Cutter::handleEndEnrageAnimation() {
 	timerIDLE = 0;
 	state = RELOADING;
 }
+
+bool Cutter::isSameType(std::string type) {
+	return Tower::getTowerTypeFromString(type) == Tower::TowerType::CUTTER;
+}

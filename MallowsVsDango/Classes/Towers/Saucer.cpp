@@ -14,41 +14,53 @@ Saucer* Saucer::create()
 
 	/*if (pSprite->initWithFile(Saucer::getConfig()["image"].asString()))
 	{*/
-		pSprite->initFromConfig();
-		pSprite->initDebug();
-		pSprite->initEnragePanel();
-		return pSprite;
+	pSprite->initFromConfig();
+	pSprite->initSpecial();
+	pSprite->initDebug();
+	pSprite->initEnragePanel();
+	return pSprite;
 	//}
 
 	CC_SAFE_DELETE(pSprite);
 	return NULL;
 }
 
+void Saucer::initSpecial() {
+	auto config = getSpecConfig();
+	auto save = ((AppDelegate*)Application::getInstance())->getSave();
+	slow_percent = config["slow"][level].asDouble();
+	slow_duration = config["slow_duration"][level].asDouble();
+}
+
 Json::Value Saucer::getConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["archer"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["saucer"];
 }
 
 const Json::Value Saucer::getSpecConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["archer"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["saucer"];
 }
 
 void Saucer::attack(){
 	if (target != nullptr) {
 		Size visibleSize = Director::getInstance()->getVisibleSize();
-		WaterBall* ball = nullptr;
+		ChocoSpit* spit = nullptr;
 		if (level >= (int)getConfig()["cost"].size() - 1) {
-			ball = WaterBombBall::create(target, damage, 500 * visibleSize.width / 960, 100);
+			//spit = AcidChocoSpit::create(target, damage, 500 * visibleSize.width / 960);
+			spit = ChocoSpit::create(target, slow_percent, slow_duration, 500 * visibleSize.width / 960);
 		}
 		else {
-			ball = WaterBall::create(target, damage, 500 * visibleSize.width / 960);
+			spit = ChocoSpit::create(target, slow_percent, slow_duration, 500 * visibleSize.width / 960);
 		}
-		ball->setDamagesId(attacked_enemies[target]);
+		spit->setDamagesId(attacked_enemies[target]);
 		attacked_enemies.erase(attacked_enemies.find(target));
-		target->addTargetingAttack(ball);
-		//ball->setPosition(getPosition() - Vec2(0, getSpriteFrame()->getRect().size.width / 2 * getScale()));
-		ball->setPosition(getPosition() - Vec2(0, Cell::getCellWidth() / 2 * getScale()));
-		ball->setScale(visibleSize.width / 960);
-		SceneManager::getInstance()->getGame()->getLevel()->addAttack(ball);
+		target->addTargetingAttack(spit);
+		spit->setPosition(getPosition() - Vec2(0, Cell::getCellWidth() / 2 * getScale()));
+		spit->setScale(0.020 * visibleSize.width / spit->getContentSize().width);
+		SceneManager::getInstance()->getGame()->getLevel()->addAttack(spit);
+		if (target != nullptr) {
+			target->removeTargetingTower(this);
+		}
+		target = nullptr;
 		++nb_attacks;
 	}
 }
@@ -92,4 +104,8 @@ void Saucer::startLimit() {
 
 void Saucer::handleEndEnrageAnimation() {
 	startLimit();
+}
+
+bool Saucer::isSameType(std::string type) {
+	return Tower::getTowerTypeFromString(type) == Tower::TowerType::SAUCER;
 }

@@ -23,6 +23,8 @@ public:
 	virtual void attack();
 	virtual void startLimit();
 	virtual void handleEndEnrageAnimation();
+	virtual bool isSameType(std::string type);
+
 };
 
 #endif

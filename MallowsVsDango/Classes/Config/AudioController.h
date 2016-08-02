@@ -34,7 +34,7 @@ public:
 	* @param Json value obtained by reading a json file. It is usually the save
 	* file that can be obtained through AppDelegate::getSave().
 	*/
-	void initFromConfig(Json::Value config);
+	void initFromConfig();
 
 	/**
 	* @brief Save the configuration of the sound so next time the player will enter

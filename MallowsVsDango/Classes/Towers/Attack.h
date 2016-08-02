@@ -42,8 +42,18 @@ protected:
 	std::string jsontype;
 };
 
+class Suckable {
+public:
+	Suckable();
+	bool isForceApplied();
+	void setForceApplied(bool applied);
+	void update();
+protected:
+	bool force_applied;
+};
+
 // WATERBALL
-class WaterBall : public Attack {
+class WaterBall : public Attack, public Suckable {
 public:
 	WaterBall(Dango* ntarget, double ndamages, double nspeed);
 	virtual ~WaterBall();
@@ -52,11 +62,9 @@ public:
 
 	void update(float dt);
 	virtual bool affectEnemy(Dangobese* enemy);
-	bool isForceApplied();
-	void setForceApplied(bool applied);
+	
 protected:
 	double speed;
-	bool force_applied;
 };
 
 // WATERBOMBBALL
@@ -72,6 +80,36 @@ public:
 protected:
 	double range;
 };
+
+// CHOCOSPIT
+class ChocoSpit : public Attack, public Suckable {
+public:
+	ChocoSpit(Dango* ntarget, double slow, double slow_duration, double nspeed);
+	virtual ~ChocoSpit();
+	static ChocoSpit* create(Dango* ntarget, double slow, double slow_duration, double nspeed);
+	static ChocoSpit* createWithFile(std::string file, Dango* ntarget, double slow, double slow_duration, double nspeed);
+
+	void update(float dt);
+	virtual bool affectEnemy(Dangobese* enemy);
+protected:
+	double speed;
+	float slow_percent;
+	float slow_duration;
+};
+
+/*// ACIDCHOCOSPIT
+class AcidChocoSpit : public ChocoSpit {
+public:
+	AcidChocoSpit(Dango* ntarget, double slow, double slow_duration, double nspeed);
+	virtual ~AcidChocoSpit();
+	static AcidChocoSpit* create(Dango* ntarget, double slow, double slow_duration, double nspeed);
+	static AcidChocoSpit* createWithFile(std::string file, Dango* ntarget, double slow, double slow_duration, double nspeed);
+
+	void update(float dt);
+	virtual bool affectEnemy(Dangobese* enemy);
+protected:
+	Burn* effect;
+};*/
 
 // SLASH
 class Slash : public Attack {
@@ -97,5 +135,7 @@ public:
 private:
 	DeepWound* effect;
 };
+
+
 
 #endif

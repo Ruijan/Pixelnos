@@ -26,7 +26,7 @@ public:
 		BLINKING_DOWN 
 	};
 	enum TowerType{
-		ARCHER,
+		BOMBER,
 		CUTTER,
 		SAUCER
 	};
@@ -63,12 +63,14 @@ public:
 	void setState(Tower::State state);
 	void setTarget(Dango* dango);
 	void displayRange(bool disp);
+	virtual bool isSameType(std::string type) = 0;
 	cocos2d::ui::Layout* getInformationLayout(InterfaceGame* interface_game);
 	static TowerType getTowerTypeFromString(std::string type);
 	cocos2d::Vector<cocos2d::SpriteFrame*> getAnimation(Tower::State animState);
 	static SkeletonAnimation* getSkeletonAnimationFromName(std::string name);
 	static cocos2d::Vector<cocos2d::SpriteFrame*> getAnimationFromName(std::string name, Tower::State animState);
 	virtual void removeTarget(Dango* dango);
+	void incrementXP(int amount);
 	
 	// Updates
 	virtual void update(float dt);
@@ -97,6 +99,7 @@ protected:
 	bool fixed;
 	bool selected;
 	bool destroy;
+	bool limit_enabled;
 	
 	Dango* target;
 	std::map<Dango*, int> attacked_enemies;
@@ -110,6 +113,8 @@ protected:
 	double timer;
 	double timerIDLE;
 	int level;
+	int level_max;
+	int xp;
 
 	int nb_attacks;
 	int nb_max_attacks_limit;
