@@ -52,8 +52,8 @@ SceneManager::~SceneManager(){
 
 void SceneManager::setScene(SceneManager::SceneType type){
 	TrackingEvent c_event;
-	c_event.from_scene = (SceneType)c_index;
-	c_event.to_scene = type;
+	c_event.from_scene = Config::getStringFromSceneType((SceneType)c_index);
+	c_event.to_scene = Config::getStringFromSceneType(type);
 	c_event.time = time(0);
 
 	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);

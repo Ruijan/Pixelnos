@@ -58,6 +58,7 @@ public:
 	Dango* getTarget();
 	double getDamage();
 	double getAttackSpeed();
+	std::string getName();
 	int getLevel();
 	Tower::State getState();
 	void setState(Tower::State state);

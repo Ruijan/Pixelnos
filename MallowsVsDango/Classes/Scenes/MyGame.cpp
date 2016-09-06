@@ -77,7 +77,7 @@ void MyGame::onExitTransitionDidStart(){
 	cache->removeUnusedSpriteFrames();
 }
 
-void MyGame::update(float delta){
+void MyGame::update(float delta) {
 	//update the scene, the interface and the level.
 	Scene::update(delta);
 	menu->update(delta);
@@ -86,11 +86,13 @@ void MyGame::update(float delta){
 	if (cLevel->hasLost() && !cLevel->isPaused()){
 		menu->showLose();
 		cLevel->pause();
+		updateTracker(cLevel->getHolySugar(), "lost", time(0));
 	}
 	
 	// In case of reloading
 	if (reloading){
 		reload();
+		createNewTracker();
 		reloading = false;
 	}
 	// If it has been asked to go to the next level then we delete the current level,
@@ -108,8 +110,9 @@ void MyGame::update(float delta){
 			cLevel = Level::create(new_level_id, id_world);
 			menu->reset();
 			menu->setListening(true);
-			acceleration = 1.0;
+			acceleration = 1.;0;
 			addChild(cLevel,0);
+			createNewTracker();
 		}
 		else{
 			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
@@ -117,11 +120,17 @@ void MyGame::update(float delta){
 	}
 	else if (menu->getGameState() == InterfaceGame::GameState::RUNNING) {
 		cLevel->update(delta * acceleration);
+		// update tracking event of the level
+		if (cLevel->getHolySugar() != l_event.holy_sugar) {
+			updateTracker(cLevel->getHolySugar(), "running", time(0));
+		}
+
 	}
 	else if (menu->getGameState() == InterfaceGame::GameState::DONE && !cLevel->isPaused()) {
 		menu->showWin();
 		cLevel->pause();
 		save();
+		updateTracker(cLevel->getHolySugar(), "completed", time(0) - l_event.time);
 	}
 }
 
@@ -233,6 +242,7 @@ void MyGame::initAttributes(){
 	loadingScreen->stop();
 	menu->setVisible(true);
 	menu->setListening(true);
+	createNewTracker();
 }
 
 void MyGame::updateLoading(float dt){
@@ -245,4 +255,28 @@ void MyGame::updateLoading(float dt){
 	Loader::loading(dt);
 	loadingScreen->setLoadingPercent(getProgress()*100);
 	// update loading bar to the exact percentage
+}
+
+void MyGame::addActionToTracker(Json::Value action) {
+	l_event.actions.append(action);
+	l_event.duration = time(0) - l_event.time;
+	((AppDelegate*)Application::getInstance())->getConfigClass()->updateCurrentLevelTrackingEvent(l_event);
+}
+
+void MyGame::createNewTracker() {
+	l_event.level_id = id_level;
+	l_event.world_id = id_world;
+	l_event.holy_sugar = cLevel->getHolySugar();
+	l_event.state = "starting";
+	l_event.duration = 0;
+	l_event.actions = Json::Value();
+	l_event.time = time(0);
+	((AppDelegate*)Application::getInstance())->getConfigClass()->addLevelTrackingEvent(l_event);
+}
+
+void MyGame::updateTracker(int holy_sugar, std::string state, int c_time) {
+	l_event.holy_sugar = holy_sugar;
+	l_event.duration = c_time - l_event.time;
+	l_event.state = state;
+	((AppDelegate*)Application::getInstance())->getConfigClass()->updateCurrentLevelTrackingEvent(l_event);
 }

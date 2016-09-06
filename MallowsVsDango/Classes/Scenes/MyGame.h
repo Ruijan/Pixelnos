@@ -7,6 +7,15 @@
 #include "Lib/Loader.h"
 #include "LoadingScreen.h"
 
+struct LevelTrackingEvent {
+	int level_id;
+	int world_id;
+	std::string state;
+	int holy_sugar;
+	int duration;
+	time_t time;
+	Json::Value actions;
+};
 
 /** @class MyGame
  * @brief
@@ -26,6 +35,7 @@ private:
 	bool paused;
 	bool reloading;
 	int experience;
+	LevelTrackingEvent l_event;
 
 protected:
 	virtual void onEnterTransitionDidFinish();
@@ -129,6 +139,10 @@ public:
 	* @return Pointer of the current interface.
 	*/
 	InterfaceGame* getMenu();
+
+	void addActionToTracker(Json::Value action);
+	void createNewTracker();
+	void updateTracker(int holy_sugar, std::string state, int duration);
 
 	// implement the "static node()" method manually
 	CREATE_FUNC(MyGame);

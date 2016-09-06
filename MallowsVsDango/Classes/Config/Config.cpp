@@ -3,7 +3,8 @@
 #include "AppDelegate.h"
 #include "extensions/cocos-ext.h"
 #include "NetworkController.h"
-
+#include "../SceneManager.h"
+#include "../Level/InterfaceGame.h"
 
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -14,14 +15,13 @@ Config::Config(std::string configfilename, std::string savename) :
 	always_grid_enabled(false), never_grid_enabled(false), moving_grid_enabled(false),
 	limit_enabled(false), dialogues_enabled(false), settings_need_save(false),
 	tracking_need_save(false), progression_need_save(false), user_need_creation(false), 
-	user_need_save(false), waiting_answer(false), 
-	tracking_filename("temp_tracking.json"), c_tracking_index(0){
+	user_need_save(false), waiting_answer(false), tracking_filename("temp_tracking.json"), c_tracking_index(0), 
+	level_tracking_filename("temp_level_tracking.json"), c_level_tracking(-1) {
 
 	network_controller = new NetworkController("http://127.0.0.1");
 	scheduler = Director::getInstance()->getScheduler();
 	scheduler->retain();
 	scheduler->schedule(CC_SCHEDULE_SELECTOR(Config::serverUpdate), this , 5.f, false);
-
 }
 
 const Json::Value& Config::getConfigValues() const{
@@ -42,7 +42,6 @@ Json::Value const Config::findSkill(int id) const {
 	}
 	return rootSav;
 }
-
 
 bool Config::isSaveFile() const{
 	return save_file;
@@ -80,24 +79,95 @@ void Config::saveTracking() {
 	}
 }
 
+void Config::saveLevelTracking() {
+	Json::StyledWriter writer;
+	std::string outputSave = writer.write(level_tracking);
+	std::string path = FileUtils::getInstance()->getWritablePath() + level_tracking_filename;
+
+	bool succeed = FileUtils::getInstance()->writeStringToFile(outputSave, path);
+	if (succeed) {
+		log("Saved File in %s", path.c_str());
+	}
+	else {
+		log("error saving file %s", path.c_str());
+	}
+}
+
 void Config::init(){
 	auto fileUtils =  FileUtils::getInstance();
 
 	std::string configFile = fileUtils->getStringFromFile(config_filename);
 	std::string saveFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + save_filename);
 	std::string trackingFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + tracking_filename);
+	std::string levelTrackingFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + level_tracking_filename);
 
 	Json::Reader reader;
 	Json::Reader readerSav;
 	Json::Reader readerTracking;
+	Json::Reader readerLevelTracking;
 	bool parsingConfigSuccessful(false);
 	bool parsingSaveSuccessful(false);
 	bool parsingTrackingSuccessful(false);
+	bool parsingLevelTrackingSuccessful(false);
 
 	parsingConfigSuccessful = reader.parse(configFile, root, false);
 	parsingSaveSuccessful = readerSav.parse(saveFile, rootSav, false);
 	parsingTrackingSuccessful = readerTracking.parse(trackingFile, tracking, false);
+	parsingLevelTrackingSuccessful = readerTracking.parse(levelTrackingFile, level_tracking, false);
 
+	if (parsingLevelTrackingSuccessful) {
+		progression_need_save = true;
+		Json::Value tracking_to_remove;
+		std::vector<int> index_to_remove;
+		for (unsigned int i(0); i < level_tracking.size(); ++i) {
+			if (level_tracking[i]["saved"].asBool()) {
+				index_to_remove.push_back(i);
+			}
+		}
+		for (unsigned int i(0); i < index_to_remove.size(); ++i) {
+			level_tracking.removeIndex(index_to_remove[i], &tracking_to_remove);
+			for (unsigned int j(0); j < index_to_remove.size(); ++j) {
+				--index_to_remove[j];
+			}
+		}
+		c_level_tracking = level_tracking.size() - 1;
+		for (unsigned int i(0); i < level_tracking.size(); ++i) {
+			saveLevelTrackingIntoDB(level_tracking[i], [&, this, i](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
+				waiting_answer = false;
+				if (response->isSucceed()) {
+					std::vector<char> *buffer = response->getResponseData();
+					std::string str(buffer->begin(), buffer->end());
+
+					if (this->level_tracking[i].isMember("tracking_id")) {
+						if (str != "") {
+							log("error while updating level tracking");
+						}
+						else {
+							this->level_tracking[i]["saved"] = true;
+							saveLevelTracking();
+							this->tracking_need_save = false;
+							log("Updating Level Tracking ok");
+						}
+					}
+					else {
+						if (Value(str).asInt() > 0) {
+							this->level_tracking[i]["tracking_id"] = Value(str).asInt();
+							this->level_tracking[i]["saved"] = true;
+							saveLevelTracking();
+							this->tracking_need_save = false;
+							log("Creating Level Tracking ok");
+						}
+						else {
+							log("error while creating level tracking");
+						}
+					}
+				}
+				else {
+					log("request handlingLevelTracking error");
+				}
+			});
+		}
+	}
 	if (parsingTrackingSuccessful) {
 		tracking_need_save = true;
 		Json::Value tracking_to_remove;
@@ -126,7 +196,6 @@ void Config::init(){
 				}
 			});
 		}
-
 	}
 
 	if (!parsingConfigSuccessful){
@@ -142,6 +211,7 @@ void Config::init(){
 		rootSav["settings"]["never_grid"] = false;
 		rootSav["settings"]["auto_limit"] = false;
 		rootSav["settings"]["dialogues"] = true;
+		rootSav["settings"]["language"] = Application::getInstance()->getCurrentLanguageCode();
 		rootSav["holy_sugar"] = 0;
 		rootSav["c_level"] = 0;
 		rootSav["c_world"] = 0;
@@ -187,7 +257,7 @@ void Config::init(){
 	limit_enabled = rootSav["settings"]["auto_limit"].asBool();
 	dialogues_enabled = rootSav["settings"]["dialogues"].asBool();
 
-	language = Application::getInstance()->getCurrentLanguageCode();
+	language = rootSav["settings"]["language"].asString();
 }
 
 void Config::addGridButton(cocos2d::ui::CheckBox* box) {
@@ -398,13 +468,54 @@ void Config::serverUpdate(float dt) {
 	}
 	if (progression_need_save) {
 		updateUserInfo();
+		for (unsigned int i(0); i < level_tracking.size(); ++i) {
+			if (!level_tracking[i]["saved"].asBool()) {
+				saveLevelTrackingIntoDB(level_tracking[i], [&, this, i](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
+					waiting_answer = false;
+					if (response->isSucceed()) {
+						std::vector<char> *buffer = response->getResponseData();
+						std::string str(buffer->begin(), buffer->end());
+						
+						if (this->level_tracking[i].isMember("tracking_id")) {
+							if (str != "") {
+								log("error while updating level tracking");
+							}
+							else {
+								this->level_tracking[i]["saved"] = true;
+								saveLevelTracking();
+								this->tracking_need_save = false;
+								log("Updating Level Tracking ok");
+							}
+						}
+						else {
+							if (Value(str).asInt() > 0) {
+								this->level_tracking[i]["tracking_id"] = Value(str).asInt();
+								this->level_tracking[i]["saved"] = true;
+								saveLevelTracking();
+								this->tracking_need_save = false;
+								log("Creating Level Tracking ok");
+							}
+							else {
+								log("error while creating level tracking");
+							}
+						}
+					}
+					else {
+						log("request handlingLevelTracking error");
+					}
+				});
+				waiting_answer = true;
+			}
+		}
 	}
 }
 
 void Config::addTrackingEvent(TrackingEvent n_event) {
+	// create a new tracking entry
 	Json::Value c_event;
-	c_event["from_scene"] = getStringFromSceneType(n_event.from_scene);
-	c_event["to_scene"] = getStringFromSceneType(n_event.to_scene);
+	c_event["from_scene"] = n_event.from_scene;
+	c_event["to_scene"] = n_event.to_scene;
+	// write the current time following the SQL format date.
 	tm *ltm = gmtime(&n_event.time);
 	c_event["time"] = Json::Value(1900 + ltm->tm_year).asString() +
 		"-" + Json::Value(ltm->tm_mon + 1).asString() +
@@ -414,11 +525,62 @@ void Config::addTrackingEvent(TrackingEvent n_event) {
 		":" + Json::Value(ltm->tm_sec).asString();
 	tracking[c_tracking_index]["path"].append(c_event);
 	tracking[c_tracking_index]["saved"] = false;
+	// save into the local text file.
 	saveTracking();
+	// since the value changed, we have to save it online
 	tracking_need_save = true;
 }
 
-std::string getStringFromSceneType(SceneManager::SceneType type) {
+void Config::addLevelTrackingEvent(LevelTrackingEvent n_event) {
+	// create a new level tracking with the new progression of the user
+	Json::Value c_event;
+	c_event["level_id"] = n_event.level_id;
+	c_event["world_id"] = n_event.world_id;
+	c_event["state"] = n_event.state;
+	c_event["holy_sugar"] = n_event.holy_sugar;
+	c_event["duration"] = n_event.duration;
+	// write the current time following the SQL date.
+	tm *ltm = gmtime(&n_event.time);
+	c_event["time"] = Json::Value(1900 + ltm->tm_year).asString() +
+		"-" + Json::Value(ltm->tm_mon + 1).asString() +
+		"-" + Json::Value(ltm->tm_mday).asString() +
+		" " + Json::Value(ltm->tm_hour).asString() +
+		":" + Json::Value(ltm->tm_min).asString() +
+		":" + Json::Value(ltm->tm_sec).asString();
+	c_event["saved"] = false;
+	c_event["actions"] = n_event.actions;
+	++c_level_tracking;
+	level_tracking.append(c_event);
+	// save into the local text file.
+	saveLevelTracking();
+	// since the value changed, we have to save it online
+	progression_need_save = true;
+}
+
+void Config::updateCurrentLevelTrackingEvent(LevelTrackingEvent n_event) {
+	// update the level tracking file with the new progression of the user
+	level_tracking[c_level_tracking]["level_id"] = n_event.level_id;
+	level_tracking[c_level_tracking]["world_id"] = n_event.world_id;
+	level_tracking[c_level_tracking]["state"] = n_event.state;
+	level_tracking[c_level_tracking]["holy_sugar"] = n_event.holy_sugar;
+	level_tracking[c_level_tracking]["duration"] = n_event.duration;
+	// write the current time following the SQL date.
+	tm *ltm = gmtime(&n_event.time);
+	level_tracking[c_level_tracking]["time"] = Json::Value(1900 + ltm->tm_year).asString() +
+		"-" + Json::Value(ltm->tm_mon + 1).asString() +
+		"-" + Json::Value(ltm->tm_mday).asString() +
+		" " + Json::Value(ltm->tm_hour).asString() +
+		":" + Json::Value(ltm->tm_min).asString() +
+		":" + Json::Value(ltm->tm_sec).asString();
+	level_tracking[c_level_tracking]["saved"] = false;
+	level_tracking[c_level_tracking]["actions"] = n_event.actions;
+	// save into the local text file.
+	saveLevelTracking();
+	// since the value changed, we have to save it online
+	progression_need_save = true;
+}
+
+std::string Config::getStringFromSceneType(SceneManager::SceneType type) {
 	switch (type) {
 	case SceneManager::SceneType::CREDIT:
 		return "credit";
@@ -441,7 +603,30 @@ std::string getStringFromSceneType(SceneManager::SceneType type) {
 	}
 }
 
+std::string Config::getStringFromGameState(InterfaceGame::GameState state) {
+	switch (state) {
+	case InterfaceGame::GameState::INTRO:
+		return "intro";
+	case InterfaceGame::GameState::TITLE:
+		return "title";
+	case InterfaceGame::GameState::STARTING:
+		return "starting";
+	case InterfaceGame::GameState::RUNNING:
+		return "running";
+	case InterfaceGame::GameState::ENDING:
+		return "ending";
+	case InterfaceGame::GameState::DONE:
+		return "done";
+	case InterfaceGame::GameState::NEXT_LEVEL:
+		return "next_level";
+	default:
+		return "error";
+	}
+}
+
 void Config::saveTrackingIntoDB(Json::Value tracking_conf, const cocos2d::network::ccHttpRequestCallback& callback) {
+	// Save the tracking information into the DB. It creates a new one 
+	// or update the current
 	std::string request = "action=";
 	Json::StyledWriter writer;
 	std::string outputSave = writer.write(tracking_conf["path"]);
@@ -459,7 +644,35 @@ void Config::saveTrackingIntoDB(Json::Value tracking_conf, const cocos2d::networ
 	}
 }
 
+void Config::saveLevelTrackingIntoDB(Json::Value tracking_conf, const cocos2d::network::ccHttpRequestCallback& callback) {
+	// Save the level tracking information into the DB. It creates a new one 
+	// or update the current
+	std::string request = "action=";
+	Json::StyledWriter writer;
+	std::string actions = writer.write(tracking_conf["actions"]);
+	if (tracking_conf.isMember("tracking_id")) {
+		request += "update_level_tracking&id_trial=" + tracking_conf["tracking_id"].asString() +
+			"&state=" + tracking_conf["state"].asString() + "&holy_sugar=" + tracking_conf["holy_sugar"].asString() +
+			"&duration=" + tracking_conf["duration"].asString() + "&actions=" + actions;
+		network_controller->sendNewRequest(NetworkController::Request::LEVEL_TRACKING, request, callback,
+			"POST update tracking");
+	}
+	else {
+		request += "create_level_tracking&id_user=" + rootSav["id_player"].asString() +
+			"&level_id=" + tracking_conf["level_id"].asString() + "&world_id=" + tracking_conf["world_id"].asString() + 
+			"&state=" + tracking_conf["state"].asString() + "&holy_sugar=" + tracking_conf["holy_sugar"].asString() + 
+			"&duration=" + tracking_conf["duration"].asString() + "&date_time=" + tracking_conf["time"].asString() + 
+			"&actions=" + actions;
+		network_controller->sendNewRequest(NetworkController::Request::LEVEL_TRACKING, request, callback,
+			"POST createTracking");
+	}
+}
+
 void Config::createUserIntoDB() {
+	/* There are two ids, one for the game, one for the database.
+	Since the database starts from 1 to +infinite, it would be too easy to
+	find the id of the player. It allows also to generate a new profile without
+	having an internet connection.*/
 	network_controller->sendNewRequest(NetworkController::Request::USER_AND_SETTINGS, "action=create_user&name=ruijan&id_game=" + rootSav["id_player"].asString(),
 		[&, this](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
 		waiting_answer = false;
@@ -484,6 +697,11 @@ void Config::createUserIntoDB() {
 }
 
 void Config::updateUserInfo() {
+	/* There are two ids, one for the game, one for the database.
+	Since the database starts from 1 to +infinite, it would be too easy to 
+	find the id of the player. It allows also to generate a new profile without
+	having an internet connection.*/
+	// save the main user infos
 	std::string postData = "action=updateUser&id_game=" + rootSav["id_player"].asString() +
 		"&time=" + Value((int)time(NULL)).asString() + "&level=" + rootSav["c_level"].asString() +
 		"&world=" + rootSav["c_world"].asString() + "&holy_sugar=" + rootSav["holy_sugar"].asString();
@@ -494,6 +712,8 @@ void Config::updateUserInfo() {
 			std::vector<char> *buffer = response->getResponseData();
 			std::string str(buffer->begin(), buffer->end());
 			log("Updating user %s", str == "" ? "ok" : str.c_str());
+
+			// If everything went well, we set that we don't need to save again.
 			if (str == "") {
 				this->setProgressionNeedSave(false);
 			}
@@ -503,6 +723,7 @@ void Config::updateUserInfo() {
 		}
 	}, "POST updateUser");
 
+	// save the user's towers infos
 	Json::StyledWriter writer;
 	std::string towers = writer.write(rootSav["towers"]);
 	postData = "action=updateUserTowers&id_game=" + rootSav["id_player"].asString() +
@@ -514,6 +735,8 @@ void Config::updateUserInfo() {
 			std::vector<char> *buffer = response->getResponseData();
 			std::string str(buffer->begin(), buffer->end());
 			log("Updating towers %s", str == "" ? "ok" : str.c_str());
+
+			// If everything went well, we set that we don't need to save again.
 			if (str == "") {
 				this->setProgressionNeedSave(false);
 			}
@@ -522,4 +745,17 @@ void Config::updateUserInfo() {
 			log("request updateTowers error");
 		}
 	}, "POST updateTowers");
+}
+
+std::string Config::getLanguage() {
+	return language;
+}
+
+void Config::setLanguage(std::string lang) {
+	if (lang == "en" || lang == "fr") {
+		language = lang;
+		rootSav["settings"]["language"] = language;
+		save();
+		setSettingsNeedSave(true);
+	}
 }

@@ -47,6 +47,7 @@ public:
 	virtual void resume();
 	void addTurret(Tower* turret);
 	Cell* getNearestCell(cocos2d::Vec2 position);
+	cocos2d::Vec2 getNearestPositionInGrid(cocos2d::Vec2 position);
 	Tower* touchingTower(cocos2d::Vec2 position);
 	Dango* touchingDango(cocos2d::Vec2 position);
 

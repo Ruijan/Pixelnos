@@ -400,6 +400,7 @@ void InterfaceGame::update(float dt){
 
 void InterfaceGame::menuTurretTouchCallback(Tower::TowerType turret){
 	if(selected_turret == nullptr && !game->isPaused()){
+		Json::Value action;
 		if (turret == Tower::TowerType::BOMBER){
 			Bomber* createdTurret = Bomber::create();
 			game->getLevel()->addTurret(createdTurret);
@@ -523,21 +524,22 @@ void InterfaceGame::initParametersMenu(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	ui::Layout* menu_pause = ui::Layout::create();
 	menu_pause->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 
 	ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel2.png");
 	panel->setZoomScale(0);
 	menu_pause->addChild(panel, 1, "panel");
 	panel->setScale(0.45*visibleSize.width / panel->getContentSize().width);
-	//panel->setScaleY(0.8*visibleSize.width / panel->getContentSize().width);
 
-	Label* title = Label::createWithTTF("Settings", "fonts/LICABOLD.ttf", 45.0f * visibleSize.width / 1280);
+	Label* title = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["settings"][language].asString(), "fonts/LICABOLD.ttf", 45.0f * visibleSize.width / 1280);
 	title->setColor(Color3B::BLACK);
 	title->setPosition(0, panel->getContentSize().height*panel->getScaleY() / 2 - title->getContentSize().height);
 	menu_pause->addChild(title, 2, "title");
 
-	//ui::Button* resume = ui::Button::create("res/buttons/buttonResume.png");
 	ui::Button* resume = ui::Button::create("res/buttons/yellow_button.png");
-	resume->setTitleText("Resume");
+	resume->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["resume"][language].asString());
 	resume->setTitleFontName("fonts/LICABOLD.ttf");
 	resume->setTitleFontSize(60.f * visibleSize.width / 1280);
 	Label* resume_label = resume->getTitleRenderer();
@@ -566,7 +568,8 @@ void InterfaceGame::initParametersMenu(){
 
 	//ui::Button* main_menu_back = ui::Button::create("res/buttons/buttonMainMenu.png");
 	ui::Button* main_menu_back = ui::Button::create("res/buttons/red_button.png");
-	main_menu_back->setTitleText("Main Menu");
+	main_menu_back->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["main_menu"][language].asString());
 	main_menu_back->setTitleFontName("fonts/LICABOLD.ttf");
 	main_menu_back->setTitleFontSize(60.f * visibleSize.width / 1280);
 	Label* main_menu_back_label = main_menu_back->getTitleRenderer();
@@ -575,6 +578,7 @@ void InterfaceGame::initParametersMenu(){
 	main_menu_back_label->setPosition(main_menu_back->getContentSize() / 2);
 	main_menu_back->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
+			game->updateTracker(game->getLevel()->getHolySugar(), "left", time(0));
 			mainMenuCallBack("menu_pause");
 		}
 	});
@@ -588,9 +592,12 @@ void InterfaceGame::initParametersMenu(){
 	menu_pause->addChild(main_menu_back_shadow, -1);
 	menu_pause->addChild(main_menu_back, 1, "main_menu_back");
 
-	Label* music = Label::createWithTTF("Music", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* effects = Label::createWithTTF("Effects", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* loop = Label::createWithTTF("Loop Music", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* music = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["music"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* effects = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["effects"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* loop = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["loop_music"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	music->setColor(Color3B::BLACK);
 	effects->setColor(Color3B::BLACK);
 	loop->setColor(Color3B::BLACK);
@@ -680,13 +687,19 @@ void InterfaceGame::initParametersMenu(){
 	menu_pause->addChild(checkbox_loop, 6, "LoopEnable");
 
 	// GLOBAL SETTINGS
-	Label* always_show_grid = Label::createWithTTF("Always", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* moving_show_grid = Label::createWithTTF("On Move", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* never_show_grid = Label::createWithTTF("Never", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* always_show_grid = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["grid_always"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* moving_show_grid = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["grid_move"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* never_show_grid = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["grid_never"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 
-	Label* show_grid = Label::createWithTTF("Show Grid", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* auto_limit = Label::createWithTTF("Auto Limit", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* skip_dialogues = Label::createWithTTF("Play Dialogues", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* show_grid = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["show_grid"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* auto_limit = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["auto_limit"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* skip_dialogues = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["play_dialogues"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	always_show_grid->setColor(Color3B::BLACK);
 	moving_show_grid->setColor(Color3B::BLACK);
 	never_show_grid->setColor(Color3B::BLACK);
@@ -809,14 +822,19 @@ void InterfaceGame::initParametersMenu(){
 }
 void InterfaceGame::initStartMenu() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 
-	Label* title = Label::createWithTTF("Level " + Value((int)(game->getLevel()->getLevelId() + 1)).asString(), "fonts/LICABOLD.ttf", round(visibleSize.width / 12.0));
+	Label* title = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["level"][language].asString() + " " +
+		Value((int)(game->getLevel()->getLevelId() + 1)).asString(), 
+		"fonts/LICABOLD.ttf", round(visibleSize.width / 12.0));
 	title->setColor(Color3B::YELLOW);
 	title->enableOutline(Color4B::BLACK, 3);
 	title->setPosition(round(visibleSize.width * 3 / 8.0), visibleSize.height + title->getContentSize().height/2);
 	addChild(title, 2, "title");
 
-	Label* advice = Label::createWithTTF("Drag and drop towers to defend your base.",
+	Label* advice = Label::createWithTTF(
+		((AppDelegate*)Application::getInstance())->getConfig()["buttons"]["advice_game_drag"][language].asString(),
 		"fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	advice->setDimensions(visibleSize.width / 2, visibleSize.height / 10);
 	advice->setPosition(round(visibleSize.width * 3 / 8.0), visibleSize.height - advice->getContentSize().height);
@@ -831,7 +849,8 @@ void InterfaceGame::initStartMenu() {
 
 	ui::Button* start = ui::Button::create("res/buttons/blue_button.png");
 	start->setScale(visibleSize.width / 4 / start->getContentSize().width);
-	start->setTitleText("START");
+	start->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["start_game"][language].asString());
 	start->setTitleFontName("fonts/LICABOLD.ttf");
 	start->setTitleFontSize(45.f * visibleSize.width / 1280);
 	Label* start_label = start->getTitleRenderer();
@@ -920,6 +939,7 @@ void InterfaceGame::initLoseMenu(){
 	Color3B color1 = Color3B(255, 200, 51);
 	Color4F grey(102 / 255.0f, 178 / 255.0f, 255 / 255.0f, 0.66f);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 
 	auto menu_lose = ui::Layout::create();
 	menu_lose->setPosition(Vec2(Point(visibleSize.width / 2, visibleSize.height * 1.5)));
@@ -932,7 +952,8 @@ void InterfaceGame::initLoseMenu(){
 
 	ui::Button* retry = ui::Button::create("res/buttons/yellow_button.png");
 	retry->setScale(visibleSize.width / 5 / retry->getContentSize().width);
-	retry->setTitleText("Retry");
+	retry->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["retry"][language].asString());
 	retry->setTitleFontName("fonts/LICABOLD.ttf");
 	retry->setTitleFontSize(45.f * visibleSize.width / 1280);
 	Label* retry_label = retry->getTitleRenderer();
@@ -956,7 +977,8 @@ void InterfaceGame::initLoseMenu(){
 
 	ui::Button* main_menu_back = ui::Button::create("res/buttons/red_button.png");
 	main_menu_back->setScale(visibleSize.width / 5 / main_menu_back->getContentSize().width);
-	main_menu_back->setTitleText("Main Menu");
+	main_menu_back->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["main_menu"][language].asString());
 	main_menu_back->setTitleFontName("fonts/LICABOLD.ttf");
 	main_menu_back->setTitleFontSize(45.f * visibleSize.width / 1280);
 	Label* menu_back_label = main_menu_back->getTitleRenderer();
@@ -973,13 +995,16 @@ void InterfaceGame::initLoseMenu(){
 		main_menu_back->getContentSize().height*main_menu_back->getScaleY() * 0.41));
 	menu_lose->addChild(main_menu_back, 1, "main_menu_back");
 
-	Label* you_lose = Label::createWithTTF("Nice Try !", "fonts/LICABOLD.ttf", 50.f * visibleSize.width / 1280);
+	Label* you_lose = Label::createWithTTF(
+		((AppDelegate*)Application::getInstance())->getConfig()["buttons"]["lose_info"][language].asString(), 
+		"fonts/LICABOLD.ttf", 50.f * visibleSize.width / 1280);
 	you_lose->enableOutline(Color4B::BLACK, 2);
 	you_lose->setPosition(0, panel->getContentSize().height*panel->getScaleY() * 0.35);
 	you_lose->setColor(Color3B::YELLOW);
 	menu_lose->addChild(you_lose, 2, "text");
 
-	auto conf = ((AppDelegate*)Application::getInstance())->getConfig()["advice"];
+	auto conf = ((AppDelegate*)Application::getInstance())->getConfig()["advice"][
+		((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()];
 	std::string advice_text = conf[rand() % conf.size()].asString();
 
 	Label* advice = Label::createWithTTF(advice_text, "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
@@ -999,6 +1024,7 @@ void InterfaceGame::initWinMenu(){
 	Color3B color1 = Color3B(255, 200, 51);
 	Color4F grey(102 / 255.0f, 178 / 255.0f, 255 / 255.0f, 0.66f);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 
 	auto menu_win = ui::Layout::create();
 	menu_win->setPosition(Vec2(Point(visibleSize.width / 2, visibleSize.height * 1.5)));
@@ -1012,7 +1038,8 @@ void InterfaceGame::initWinMenu(){
 
 	ui::Button* next_level = ui::Button::create("res/buttons/yellow_button.png");
 	next_level->setScale(visibleSize.width / 5 / next_level->getContentSize().width);
-	next_level->setTitleText("Next Level");
+	next_level->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["next_level"][language].asString());
 	next_level->setTitleFontName("fonts/LICABOLD.ttf");
 	next_level->setTitleFontSize(45.f * visibleSize.width / 1280);
 	Label* next_level_label = next_level->getTitleRenderer();
@@ -1038,7 +1065,8 @@ void InterfaceGame::initWinMenu(){
 
 	ui::Button* main_menu_back = ui::Button::create("res/buttons/red_button.png");
 	main_menu_back->setScale(visibleSize.width / 5 / main_menu_back->getContentSize().width);
-	main_menu_back->setTitleText("Main Menu");
+	main_menu_back->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["main_menu"][language].asString());
 	main_menu_back->setTitleFontName("fonts/LICABOLD.ttf");
 	main_menu_back->setTitleFontSize(45.f * visibleSize.width / 1280);
 	Label* menu_back_label = main_menu_back->getTitleRenderer();
@@ -1055,13 +1083,17 @@ void InterfaceGame::initWinMenu(){
 		main_menu_back->getContentSize().height*main_menu_back->getScaleY() * 0.41));
 	menu_win->addChild(main_menu_back, 1, "main_menu_back");
 
-	Label* you_win = Label::createWithTTF("Level Cleared !", "fonts/LICABOLD.ttf", 60.f * visibleSize.width / 1280);
+	Label* you_win = Label::createWithTTF(
+		((AppDelegate*)Application::getInstance())->getConfig()["buttons"]["level_cleared"][language].asString(),
+		"fonts/LICABOLD.ttf", 60.f * visibleSize.width / 1280);
 	you_win->enableOutline(Color4B::BLACK, 2);
 	you_win->setPosition(0, panel->getContentSize().height*panel->getScaleY() * 0.35);
 	you_win->setColor(Color3B::YELLOW);
 	menu_win->addChild(you_win, 2, "text");
 
-	Label* reward_sugar = Label::createWithTTF("Holy Sugar", "fonts/LICABOLD.ttf", 40.f * visibleSize.width / 1280);
+	Label* reward_sugar = Label::createWithTTF(
+		((AppDelegate*)Application::getInstance())->getConfig()["buttons"]["holy_sugar"][language].asString(),
+		"fonts/LICABOLD.ttf", 40.f * visibleSize.width / 1280);
 	reward_sugar->enableOutline(Color4B::BLACK, 2);
 	reward_sugar->setPosition(-panel->getContentSize().width * panel->getScaleX() * 2 / 5, you_win->getPosition().y - 
 		reward_sugar->getContentSize().height / 2 - you_win->getContentSize().height);
@@ -1181,6 +1213,7 @@ void InterfaceGame::initRightPanel(){
 	auto reload = ui::Button::create("res/buttons/restart_button.png"); 
 	reload->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
+			game->updateTracker(game->getLevel()->getHolySugar(), "reloaded", time(0));
 			game->setReloading(true);
 		}
 	});
@@ -1298,7 +1331,7 @@ void InterfaceGame::initRightPanel(){
 
 	Sprite* sugar = Sprite::create("res/buttons/sugar.png");
 	sugar->setScale(sizeButton / 2 / sugar->getContentSize().width);
-	sugar->setPosition(Vec2(0, description_tower->getPosition().y));
+	sugar->setPosition(Vec2(0, description_tower->getPosition().y - sugar->getContentSize().height * sugar->getScaleY() / 2));
 	sugar->setAnchorPoint(Vec2(1.f, 0.5f));
 	informations->addChild(sugar, 1, "sugar");
 	Label* sugar_label = Label::createWithTTF("30", "fonts/LICABOLD.ttf", 35 * visibleSize.width / 1280);
@@ -1330,7 +1363,8 @@ void InterfaceGame::displayTowerInfos(std::string item_name){
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("range_label"))->setString(
 			s);
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("description_tower"))->setString(
-			Tower::getConfig()[item_name]["description_en"].asString());
+			Tower::getConfig()[item_name]["description_" +
+			((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()].asString());
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("sugar_label"))->setString(
 			Tower::getConfig()[item_name]["cost"][0].asString());
 		required_quantity = Tower::getConfig()[item_name]["cost"][0].asDouble();
@@ -1375,13 +1409,20 @@ void InterfaceGame::destroyCallback(Ref* sender){
 }
 
 void InterfaceGame::builtCallback(Ref* sender){
+	Json::Value action;
+	action["tower_name"] = selected_turret->getName();
+	action["time"] = time(0);
+	Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(selected_turret->getPosition());
+	action["position"]["x"] = turret_position.x;
+	action["position"]["y"] = turret_position.y;
+	action["action"] = "create_tower";
+	game->addActionToTracker(action);
+
 	selected_turret->builtCallback(sender);
 	selected_turret->setFixed(true);
 	game->getLevel()->decreaseQuantity(selected_turret->getCost());
 	displayTowerInfos("");
 }
-
-
 
 void InterfaceGame::showDangoInfo() {
 	if (getChildByName("information_dango") != nullptr) {
@@ -1568,6 +1609,7 @@ void InterfaceGame::generateHolySugar(Vec2 pos) {
 
 void InterfaceGame::startRewarding(Vec2 pos){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 
 	auto reward_layout = ui::Layout::create();
 
@@ -1642,7 +1684,9 @@ void InterfaceGame::startRewarding(Vec2 pos){
 			Spawn::createWithTwoActions(scale, movetocenter), nullptr));
 
 		// Add a Tap to continue to inform the user what to do.
-		auto tapToContinue = Label::createWithSystemFont("Tap to continue", "Arial", 25.f);
+		auto tapToContinue = Label::createWithSystemFont(
+			((AppDelegate*)Application::getInstance())->getConfig()
+			["buttons"]["level_cleared"][language].asString(), "Arial", 25.f);
 		tapToContinue->setPosition(Vec2(visibleSize.width * 3 / 8, 50));
 
 		tapToContinue->setColor(Color3B::WHITE);

@@ -19,6 +19,9 @@ void NetworkController::sendNewRequest(Request type_request, std::string data,
 	case TRACKING:
 		page += "tracking_handle.php";
 		break;
+	case LEVEL_TRACKING:
+		page += "level_tracking_handle.php";
+		break;
 	}
 
 	cocos2d::network::HttpRequest* request = new cocos2d::network::HttpRequest();

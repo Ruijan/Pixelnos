@@ -10,11 +10,17 @@
       ],
       "side": "LEFT",
       "speaker": "res/turret/general.png",
-      "text": [
+      "text_en": [
         "We don't know what this small group wanted to do here.",
         "Maybe they were lost.",
         "Wait, an another group have been seen near your area.",
         "Stop them all ! General Mallow strawberry perfume is counting on you!"
+      ],
+      "text_fr": [
+        "Nous ne savons ce que faisait ce petit groupe de dango a la frontiere.",
+        "Ils etaient peut-etre perdus.",
+        "Attendez, un autre groupe vient d'aparaitre pres d'ici.",
+        "Arretez les tous ! General Mallow, parfum fraise compte sur vous !"
       ]
     }
   ]

@@ -1,5 +1,6 @@
 #include "Dialogue.h"
 #include "../Scenes/MyGame.h"
+#include "../AppDelegate.h"
 
 USING_NS_CC;
 using namespace std::chrono;
@@ -33,11 +34,12 @@ Dialogue* Dialogue::createFromConfig(Json::Value config){
 	std::vector<std::string> heads;
 	std::vector<Direction> direction;
 	std::vector<Emotion> emotions;
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 
 	for(unsigned int i(0); i < config.size(); ++i){
-		for(unsigned int j(0); j < config[i]["text"].size(); ++j){
+		for(unsigned int j(0); j < config[i]["text_" + language].size(); ++j){
 			heads.push_back(config[i]["speaker"].asString());
-			text.push_back(config[i]["text"][j].asString());
+			text.push_back(config[i]["text_" + language][j].asString());
 			Emotion emotion;
 			if(config[i]["emotion"][j].asString() == "NORMAL"){
 				emotion = Emotion::NORMAL;
@@ -70,6 +72,7 @@ void Dialogue::launch(){
 	start = std::chrono::system_clock::now();
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 
 	// The speech bubble is just a node. We add two sprites to this node. It becomes easier to switch
 	// from one image to another.
@@ -108,7 +111,8 @@ void Dialogue::launch(){
 
 	auto skip = ui::Button::create("res/buttons/red_button.png");
 	skip->setScale(visibleSize.width / 5 / skip->getContentSize().width);
-	skip->setTitleText("Skip Dialogue");
+	skip->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["skip_dialogues"][language].asString());
 	skip->setTitleFontName("fonts/LICABOLD.ttf");
 	skip->setTitleFontSize(45.f * visibleSize.width / 1280);
 	Label* skip_label = skip->getTitleRenderer();

@@ -9,12 +9,18 @@
         "ANGRY"
       ],
       "side": "LEFT",
-      "speaker": "res/turret/general.png",
-      "text": [
+      "speaker": "res/turret/GeneralMashmalow.png",
+      "text_en": [
         "WE ARE AT WAR !",
         "Our spies told me a small group of dangos have been seen near the border.",
         "General Mallow strawberry perfume commands you to protect our nation!",
         "The Mallow Nation won't fall !"
+      ],
+      "text_fr": [
+        "NOUS SOMMES EN GUERRE !",
+        "Nos espions ont apercu un groupe de dangos pres de la frontiere.",
+        "General Mallow parfum fraise vous ordonne de proteger notre nation!",
+        "Le grand empire sucre des marshmallows ne faillira pas !"
       ]
     },
     {
@@ -26,11 +32,17 @@
       ],
       "side": "RIGHT",
       "speaker": "res/turret/general.png",
-      "text": [
+      "text_en": [
         "CAPTAIN !",
         "I am here to assist you during this invasion.",
         "I am also new at this job don't be too harsh on me.",
         "The General told us to defend the road, why not using a water tower near it?"
+      ],
+      "text_fr": [
+        "CAPITAINE !",
+        "Je suis ici pour vous assister durant cette invasion",
+        "Je suis tout aussi nouveau que vous a ce poste, soyez indulgent avec moi.",
+        "Le General nous a demande de defendre la route, pourquoi ne pas utiliser une tour dans les environs ?"
       ]
     }
   ]

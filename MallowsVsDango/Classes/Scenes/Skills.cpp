@@ -8,6 +8,8 @@ USING_NS_CC;
 bool Skills::init(){
 
 	if (!Scene::init()){ return false; }
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	config = ((AppDelegate*)Application::getInstance())->getConfig()["skills"]; //load data file
 	root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
@@ -107,7 +109,8 @@ bool Skills::init(){
 		sugar_sprite1->getContentSize().height * sugar_sprite1->getScaleY() / 2 -
 		shop->getContentSize().height * shop->getScaleY() / 2
 	));
-	shop->setTitleText("SHOP");
+	shop->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["shop"][language].asString());
 	shop->setTitleFontName("fonts/LICABOLD.ttf");
 	shop->setTitleFontSize(visibleSize.width / 30);
 	Label* shop_label = shop->getTitleRenderer();
@@ -123,7 +126,9 @@ bool Skills::init(){
 	shop->addChild(shop_drawing);
 
 	//label for setting skill_name
-	Label* skill_name = Label::createWithTTF(config[0][0]["name_en"].asString(), "fonts/LICABOLD.ttf", round(visibleSize.width / 40));
+	Label* skill_name = Label::createWithTTF(config[0][0]["name_" + 
+		((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()].asString(), 
+		"fonts/LICABOLD.ttf", round(visibleSize.width / 40));
 	skill_name->setColor(Color3B::ORANGE);
 	skill_name->enableOutline(Color4B::BLACK, 2);
 	skill_name->setWidth(visibleSize.width / 5);
@@ -138,7 +143,9 @@ bool Skills::init(){
 	addChild(skill_name, 3, "skill_name");
 
 	//label for setting skill_description
-	Label* skill_description = Label::createWithTTF(config[0][0]["description_en"].asString(), "fonts/LICABOLD.ttf", round(visibleSize.width / 45));
+	Label* skill_description = Label::createWithTTF(config[0][0]["description_" + 
+		((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()].asString(), 
+		"fonts/LICABOLD.ttf", round(visibleSize.width / 45));
 	skill_description->setColor(Color3B::BLACK);
 	skill_description->setDimensions(visibleSize.width / 5, visibleSize.height / 4);
 	skill_description->setPosition(Vec2(visibleSize.width / 8, visibleSize.height * 0.45));
@@ -157,7 +164,8 @@ bool Skills::init(){
 		buy_button->setEnabled(false);
 	}
 	//add label buy
-	Label* buy_label = Label::createWithTTF("Buy", "fonts/LICABOLD.ttf", round(visibleSize.width / 35));
+	Label* buy_label = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["buy"][language].asString(), "fonts/LICABOLD.ttf", round(visibleSize.width / 35));
 	buy_label->setColor(Color3B::ORANGE);
 	buy_label->enableOutline(Color4B::BLACK, 2);
 	buy_label->setAlignment(TextHAlignment::CENTER);
@@ -386,8 +394,10 @@ void Skills::set_skill(int tier_id, int skill_id){ //create skill button
 			Size visibleSize = Director::getInstance()->getVisibleSize();
 			//update skill info and the selection rectangular		
 			((Label*)getChildByName("skill_cost"))->setString("X " + config[tier_id][skill_id]["cost"].asString());
-			((Label*)getChildByName("skill_name"))->setString(config[tier_id][skill_id]["name_en"].asString());
-			((Label*)getChildByName("skill_description"))->setString(config[tier_id][skill_id]["description_en"].asString());
+			((Label*)getChildByName("skill_name"))->setString(config[tier_id][skill_id]["name_" +
+				((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()].asString());
+			((Label*)getChildByName("skill_description"))->setString(config[tier_id][skill_id]["description_" +
+				((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()].asString());
 			((Label*)getChildByName("skill_description"))->setPosition(getChildByName("skill_description")->getPosition().x,
 				getChildByName("skill_name")->getPosition().y - getChildByName("skill_name")->getContentSize().height - 
 				visibleSize.height / 25);

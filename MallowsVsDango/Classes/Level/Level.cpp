@@ -424,6 +424,21 @@ Cell* Level::getNearestCell(cocos2d::Vec2 position){
 	return nearestCell;
 }
 
+Vec2 Level::getNearestPositionInGrid(cocos2d::Vec2 position) {
+	Vec2 nearestCell = Vec2();
+	double lowestDistance = -5;
+	for (unsigned int i(0); i < cells.size(); ++i) {
+		for (unsigned int j(0); j < cells[i].size(); j++) {
+			double dist = position.distanceSquared(cells[i][j]->getPosition());
+			if (lowestDistance < 0 || dist < lowestDistance) {
+				nearestCell = Vec2(i,j);
+				lowestDistance = dist;
+			}
+		}
+	}
+	return nearestCell;
+}
+
 std::vector<Cell*> Level::getPath(int path){
 	if (path < (int)paths.size()) {
 		return paths[path];

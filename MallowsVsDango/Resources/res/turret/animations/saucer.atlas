@@ -1,0 +1,153 @@
+
+saucer.png
+size: 512,64
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+blue_body
+  rotate: true
+  xy: 2, 2
+  size: 60, 65
+  orig: 60, 65
+  offset: 0, 0
+  index: -1
+cap_saucer
+  rotate: false
+  xy: 131, 28
+  size: 60, 34
+  orig: 60, 34
+  offset: 0, 0
+  index: -1
+choco
+  rotate: false
+  xy: 225, 31
+  size: 7, 6
+  orig: 7, 6
+  offset: 0, 0
+  index: -1
+choco_mouth
+  rotate: false
+  xy: 406, 48
+  size: 30, 14
+  orig: 30, 14
+  offset: 0, 0
+  index: -1
+choco_spit
+  rotate: false
+  xy: 102, 14
+  size: 25, 10
+  orig: 25, 10
+  offset: 0, 0
+  index: -1
+left_arm_saucer
+  rotate: true
+  xy: 193, 39
+  size: 23, 37
+  orig: 23, 37
+  offset: 0, 0
+  index: -1
+left_arm_saucer_choco
+  rotate: true
+  xy: 271, 34
+  size: 28, 32
+  orig: 28, 32
+  offset: 0, 0
+  index: -1
+left_eye_bomber
+  rotate: false
+  xy: 69, 9
+  size: 31, 15
+  orig: 31, 15
+  offset: 0, 0
+  index: -1
+left_eye_saucer
+  rotate: false
+  xy: 305, 48
+  size: 32, 14
+  orig: 32, 14
+  offset: 0, 0
+  index: -1
+mout_choco_2
+  rotate: false
+  xy: 327, 38
+  size: 19, 8
+  orig: 19, 8
+  offset: 0, 0
+  index: -1
+mouth_saucer
+  rotate: true
+  xy: 438, 51
+  size: 11, 17
+  orig: 11, 17
+  offset: 0, 0
+  index: -1
+mouth_saucer_spit2
+  rotate: false
+  xy: 457, 51
+  size: 12, 11
+  orig: 12, 11
+  offset: 0, 0
+  index: -1
+mouth_spit
+  rotate: false
+  xy: 471, 53
+  size: 11, 9
+  orig: 11, 9
+  offset: 0, 0
+  index: -1
+pupil_eye_bomber
+  rotate: false
+  xy: 484, 53
+  size: 11, 9
+  orig: 11, 9
+  offset: 0, 0
+  index: -1
+right_arm_saucer
+  rotate: true
+  xy: 232, 39
+  size: 23, 37
+  orig: 23, 37
+  offset: 0, 0
+  index: -1
+right_eye_bomber
+  rotate: false
+  xy: 373, 47
+  size: 31, 15
+  orig: 31, 15
+  offset: 0, 0
+  index: -1
+right_eye_saucer
+  rotate: false
+  xy: 339, 48
+  size: 32, 14
+  orig: 32, 14
+  offset: 0, 0
+  index: -1
+shadow
+  rotate: false
+  xy: 69, 26
+  size: 60, 36
+  orig: 60, 36
+  offset: 0, 0
+  index: -1
+smile_bomber
+  rotate: false
+  xy: 102, 2
+  size: 25, 10
+  orig: 25, 10
+  offset: 0, 0
+  index: -1
+spit
+  rotate: true
+  xy: 305, 36
+  size: 10, 20
+  orig: 10, 20
+  offset: 0, 0
+  index: -1
+underline_eye_saucer
+  rotate: false
+  xy: 193, 30
+  size: 30, 7
+  orig: 30, 7
+  offset: 0, 0
+  index: -1

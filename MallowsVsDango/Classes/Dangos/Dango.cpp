@@ -55,7 +55,7 @@ void Dango::initFromConfig() {
 	skeleton->setStartListener([this](int trackIndex) {
 		spTrackEntry* entry = spAnimationState_getCurrent(skeleton->getState(), trackIndex);
 		const char* animationName = (entry && entry->animation) ? entry->animation->name : 0;
-		log("%d start: %s", trackIndex, animationName);
+		//log("%d start: %s", trackIndex, animationName);
 	});
 	skeleton->setEndListener([this](int trackIndex) {
 
@@ -79,7 +79,7 @@ void Dango::initFromConfig() {
 		else if (Value(event->data->name).asString() == "down") {
 			on_ground = true;
 		}*/
-		log("%d event: %s, %d, %f, %s", trackIndex, event->data->name, event->intValue, event->floatValue, event->stringValue);
+		//log("%d event: %s, %d, %f, %s", trackIndex, event->data->name, event->intValue, event->floatValue, event->stringValue);
 	});
 	skeleton->setSkin(config["level"][level]["skin"].asString());
 	updateAnimation();
@@ -314,7 +314,7 @@ int Dango::takePDamages(double damages, double delay){
 	}
 	double final_damages = damages + damages * total_dmg;
 	prospective_damages[id_damages] = final_damages;
-	log("add prospective damages id : %i, size: %i", id_damages, prospective_damages.size());
+	//log("add prospective damages id : %i, size: %i", id_damages, prospective_damages.size());
 	++id_damages;
 	return id_damages - 1;
 }

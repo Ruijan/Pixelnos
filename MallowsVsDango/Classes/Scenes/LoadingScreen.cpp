@@ -1,5 +1,7 @@
 #include "LoadingScreen.h"
 #include "ui/CocosGUI.h"
+#include "../AppDelegate.h"
+
 
 USING_NS_CC;
 
@@ -23,6 +25,8 @@ LoadingScreen::~LoadingScreen(){
 // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
 bool LoadingScreen::init(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+
 	//////////////////////////////
 	// 1. super init first
 	if (!LayerColor::initWithColor(Color4B(0,0,0,255)))
@@ -44,7 +48,9 @@ bool LoadingScreen::init(){
 	image->setPosition(visibleSize.width/2,visibleSize.height/2);
 	image->setScale(visibleSize.width / 5 / image->getContentSize().width);
 
-	Label* loading_label = Label::createWithTTF("Loading", "fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 10.0));
+	Label* loading_label = Label::createWithTTF(
+		((AppDelegate*)Application::getInstance())->getConfig()["buttons"]["loading"][language].asString(), 
+		"fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 10.0));
 	loading_label->setColor(Color3B::YELLOW);
 	loading_label->setPosition(visibleSize.width/2,visibleSize.height/2 + 
 		image->getContentSize().height * image->getScale() * 3/4);

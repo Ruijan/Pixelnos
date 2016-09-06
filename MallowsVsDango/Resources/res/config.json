@@ -1,8 +1,152 @@
 {
-  "advice": [
-    "Towers are more efficient placed near a turn of the path. Try to place towers near path!",
-    "The bomber is a basic tower that does not deal a lot of damages. Try to upgrade it!"
+  "buttons": {
+    "start": {
+      "en": "Start",
+      "fr": "Jouer"
+    },
+    "credits": {
+      "en": "Credits",
+      "fr": "Crédits"
+    },
+    "title_menu": {
+      "en": "Title Screen",
+      "fr": "Ecran Titre"
+    },
+    "skip_dialogues": {
+      "en": "Skip Dialogues",
+      "fr": "Passer Dialogues"
+    },
+    "main_menu": {
+      "en": "Main Menu",
+      "fr": "Menu Princip."
+    },
+    "resume": {
+      "en": "Resume",
+      "fr": "Continuer"
+    },
+    "start_game": {
+      "en": "START",
+      "fr": "JOUER"
+    },
+    "sell": {
+      "en": "Sell",
+      "fr": "Vendre"
+    },
+    "upgrade": {
+      "en": "Upgrade",
+      "fr": "Améliorer"
+    },
+    "buy": {
+      "en": "Buy",
+      "fr": "Acheter"
+    },
+    "shop": {
+      "en": "Shop",
+      "fr": "Magasin"
+    },
+    "soon": {
+      "en": "Coming Soon...",
+      "fr": "A venir..."
+    },
+    "language": {
+      "en": "Language",
+      "fr": "Langue"
+    },
+    "settings": {
+      "en": "Settings",
+      "fr": "Paramètres"
+    },
+    "music": {
+      "en": "Music",
+      "fr": "Musique"
+    },
+    "effects": {
+      "en": "Effects",
+      "fr": "Effets"
+    },
+    "loop_music": {
+      "en": "Loop Music",
+      "fr": "Musique en boucle"
+    },
+    "show_grid": {
+      "en": "Show Grid",
+      "fr": "Aff. la Grille"
+    },
+    "grid_always": {
+      "en": "Always",
+      "fr": "Toujours"
+    },
+    "grid_move": {
+      "en": "On Move",
+      "fr": "Mvt"
+    },
+    "grid_never": {
+      "en": "Never",
+      "fr": "Jamais"
+    },
+    "auto_limit": {
+      "en": "Auto Limit",
+      "fr": "Auto Limit"
+    },
+    "play_dialogues": {
+      "en": "Play Dialogues",
+      "fr": "Aff. Dialogues"
+    },
+    "level": {
+      "en": "Level",
+      "fr": "Niveau"
+    },
+    "locked": {
+      "en": "Locked",
+      "fr": "Bloqué"
+    },
+    "advice_game_drag": {
+      "en": "Drag and drop towers to defend your base.",
+      "fr": "Glisse et dépose les tours pour défendre la base."
+    },
+    "lose_info": {
+      "en": "Nice Try !",
+      "fr": "Bien essayé"
+    },
+    "holy_sugar": {
+      "en": "Holy Sugar",
+      "fr": "Sucre Sacré"
+    },
+    "level_cleared": {
+      "en": "Level Cleared!",
+      "fr": "Niveau Complété !"
+    },
+    "next_level": {
+      "en": "Next Level",
+      "fr": "Niveau Suivant"
+    },
+    "tap_continue": {
+      "en": "Tap to Continue",
+      "fr": "Appuye pour Continuer"
+    },
+    "retry": {
+      "en": "Retry",
+      "fr": "Réessayer"
+    },
+    "loading": {
+      "en": "Loading",
+      "fr": "Chargement"
+    }
+  },
+  "languages": [
+    "en",
+    "fr"
   ],
+  "advice": {
+    "en": [
+      "Towers are more efficient placed near a turn of the path. Try to place towers near path!",
+      "The bomber is a basic tower that does not deal a lot of damages. Try to upgrade it!"
+    ],
+    "fr": [
+      "Les tours sont plus efficaces lorsqu'elles sont placées près d'un virage. Essaye de les placer près du chemin.",
+      "Le Bombeur est une tour basique qui ne fait pas beaucoup de dégats. Essaye de l'améliorer !"
+    ]
+  },
   "dangos": {
     "dangosimple": {
       "cellperanim": 1.1,
@@ -24,7 +168,7 @@
           "skin": "normal",
           "holy_sugar": {
             "mean": 0,
-            "std": 0.5
+            "std": 0.15
           }
         },
         {
@@ -39,7 +183,7 @@
           "skin": "soy",
           "holy_sugar": {
             "mean": 0,
-            "std": 0.25
+            "std": 0.15
           }
         },
         {
@@ -54,7 +198,7 @@
           "skin": "soy",
           "holy_sugar": {
             "mean": 0,
-            "std": 0.25
+            "std": 0.15
           }
         }
       ]
@@ -98,7 +242,7 @@
     {
       "id": 1,
       "name_en": "Forest Frontier",
-      "name_fr": "Forest Frontier",
+      "name_fr": "Frontière forestière",
       "levels": [
         {
           "id": 1,
@@ -183,13 +327,13 @@
     }
   ],
 
-    
+
   "play_dialogue": true,
   "play_sound": true,
   "sound_transition": [
     [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "none", "none", "none" ],
     [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3" ],
-    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "none", "none", "none","none" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "none", "none", "none", "none" ],
     [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3" ],
     [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "music/On-Tiptoe.mp3.mp3", "none", "none" ],
     [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "none", "music/On-Tiptoe.mp3.mp3", "none" ],
@@ -206,11 +350,12 @@
       "sell": [ 15, 25, 35, 60 ],
       "range": [ 120, 135, 150, 150 ],
       "damages": [ 1, 1.5, 2, 2 ],
-      "xp_level": [0, 100, 1000, 10000],
+      "xp_level": [ 0, 100, 1000, 10000 ],
       "image": "res/turret/bombeur.png",
       "description_en": "Bomber: This mallow is a long distance attacker.",
       "description_fr": "Bomber : ce mallow bombarde ses ennemis d'eau jusqu'à les dissoudre totalement",
       "last_level_description_en": "The water bombs are getting bigger and are doing damages in area.",
+      "last_level_description_fr": "Les bombes grossissent et font des dégats en zone",
       "name": "bomber",
       "unlock_level": -1,
       "unlock_skill": -1,
@@ -230,22 +375,24 @@
       "sell": [ 25, 40, 65, 95 ],
       "damages": [ 1, 1.5, 2, 2 ],
       "range": [ 80, 90, 100, 100 ],
-      "xp_level": [0,0,2000,1000],
+      "xp_level": [ 0, 0, 2000, 1000 ],
       "image": "res/turret/cutter2.png",
       "description_en": "Sword Master: Attack all the dangos around him",
+      "description_fr": "Maitre des Epées: attaque tous les dangos autour de lui",
       "last_level_description_en": "Increase damages done by other towers on the target by 25%.",
+      "last_level_description_fr": "Augmente les dégats des autres tours sur l'ennemi de 25%",
       "name": "cutter",
       "limit": 3,
       "limit_skill_id": 2,
-      "unlock_level": 2, 
+      "unlock_level": 2,
       "unlock_skill": -1,
       "deep_wound_duration": 3,
       "deep_wound_percent": 0.5,
       "sound_bullet": "music/slash.mp3"
     },
     "saucer": {
-      "skeleton": "res/turret/animations/bomber.json",
-      "atlas": "res/turret/animations/bomber.atlas",
+      "skeleton": "res/turret/animations/saucer.json",
+      "atlas": "res/turret/animations/saucer.atlas",
       "animation_bullet": "res/turret/animations/splash.png",
       "animation_bullet_size": 14,
       "attack_speed": [ 1.5, 1.25, 1, 1 ],
@@ -255,11 +402,12 @@
       "damages": [ 0, 0, 0, 0 ],
       "slow": [ -0.3, -0.4, -0.5, -0.5 ],
       "slow_duration": [ 2, 2.5, 3, 3 ],
-      "xp_level": [0, 250, 1000, 10000],
+      "xp_level": [ 0, 250, 1000, 10000 ],
       "image": "res/turret/saucer3.png",
       "description_en": "Saucer: Slow down the enemies by spitting digested chocolate on them",
-      "description_fr": "Saucer : ralentit les ennemis en leur crachant du chocolat digere",
+      "description_fr": "Saucer : ralentit les ennemis en leur crachant du chocolat digère",
       "last_level_description_en": "The chocolat becomes so acid it dissolve the enemies over time",
+      "last_level_description_fr": "Le chocolat devient tellement acide qu'il dissout les ennemis sur la durée",
       "name": "saucer",
       "unlock_level": -1,
       "unlock_skill": -1,
@@ -275,8 +423,6 @@
       "res/levels/wall_wood_1.png"
     ]
   },
-
-
   "skills": [
     [
       {
@@ -293,7 +439,6 @@
         "id": 1
       }
     ],
-
     [
       {
         "name_en": "And one free ride",
@@ -303,7 +448,7 @@
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
         "description_en": "Every 20 attacks, the Cutter, performs a free attack.",
-        "description_fr": "Tous les 20 attaques, le Cutter, effectue un tour supplementaire",
+        "description_fr": "Tous les 20 attaques, le Cutter, effectue un tour supplémentaire",
         "dependance": [ 0 ],
         "level_unlocked": 0,
         "id": 2
@@ -316,7 +461,7 @@
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
         "description_en": "Every 20 shots, the Bomber throws 2 additional bombs during its next attack.",
-        "description_fr": "Tous les 20 tirs, une deuxieme bombe est lancee par le Bombeur",
+        "description_fr": "Tous les 20 tirs, une deuxieme bombe est lancée par le Bombeur",
         "dependance": [ 0 ],
         "level_unlocked": 0,
         "id": 3
@@ -332,7 +477,7 @@
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
         "description_en": "The Cutter needs 1 less attack to charge its limit's gauge.",
-        "description_fr": "Reduit de 1 le nombre d'attaques necessaires pour activer la limite du Cutter.",
+        "description_fr": "Reduit de 1 le nombre d'attaques nécessaires pour activer la limite du Cutter.",
         "dependance": [ 0 ],
         "level_unlocked": 0,
         "id": 4
@@ -345,7 +490,7 @@
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
         "description_en": "The Bomber needs 1 less attack to charge its limit's gauge.",
-        "description_fr": "Reduit de 1 le nombre de tirs necessaires pour activer la limite du Bombeur.",
+        "description_fr": "Reduit de 1 le nombre de tirs nécessaires pour activer la limite du Bombeur.",
         "dependance": [ 0, 1 ],
         "level_unlocked": 0,
         "id": 5
@@ -374,7 +519,7 @@
         "sprite_enabled": "res/buttons/centralMenuPanel.png",
         "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
         "description_en": "Icing sugar age. The wall's HP is increased by 1.",
-        "description_fr": "La décourvete du sucre glace fait entrer dans une nouvelle ère. Augmente le mur de 1 PdV",
+        "description_fr": "La découverte du sucre glace fait entrer dans une nouvelle ère. Augmente le mur de 1 PdV",
         "dependance": [ -1 ],
         "level_unlocked": 4,
         "id": 7

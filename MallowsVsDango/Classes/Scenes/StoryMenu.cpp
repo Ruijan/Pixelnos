@@ -16,6 +16,16 @@ bool StoryMenu::init(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+
+	addChild(ui::Layout::create(), 2, "black_mask");
+	ui::Button* mask = ui::Button::create("res/buttons/mask.png");
+	mask->setScaleX(visibleSize.width / mask->getContentSize().width);
+	mask->setScaleY(visibleSize.height / mask->getContentSize().height);
+	mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	getChildByName("black_mask")->addChild(mask);
+	getChildByName("black_mask")->setVisible(false);
+
 	// Background
 	addChild(Sprite::create("res/background/space.png"),0,"background");
 	getChildByName("background")->setPosition(visibleSize.width / 2, visibleSize.height / 2);
@@ -47,8 +57,7 @@ bool StoryMenu::init(){
 
 	int worlds_count = ((AppDelegate*)Application::getInstance())->getConfig()["worlds"].size();
 
-	for (int i = 0; i < worlds_count; ++i)
-	{
+	for (int i = 0; i < worlds_count; ++i){
 		ui::Layout* page = ui::Layout::create();
 		ui::Layout* layout = ui::Layout::create();
 		page->setContentSize(Size(worlds->getContentSize().width*0.6, worlds->getContentSize().height));
@@ -69,15 +78,17 @@ bool StoryMenu::init(){
 		});
 		if (((AppDelegate*)Application::getInstance())->getConfig()["worlds"][i]["levels"].size() == 0) {
 			world->setEnabled(false);
-			ui::Text* label = ui::Text::create("Coming soon...", "fonts/Marker Felt.ttf", visibleSize.width / 20);
+			ui::Text* label = ui::Text::create(
+				((AppDelegate*)Application::getInstance())->getConfig()["buttons"]["soon"][language].asString(),
+				"fonts/Marker Felt.ttf", visibleSize.width / 20);
 			label->setColor(Color3B(192, 192, 192));
 			label->enableOutline(Color4B::BLACK, 5);
 			label->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 			page->addChild(label, 2);
 		}
 		else {
-			ui::Text* label = ui::Text::create(((AppDelegate*)Application::getInstance())->getConfig()["worlds"][i]["name_en"].asString(), 
-				"fonts/Marker Felt.ttf", visibleSize.width / 20);
+			ui::Text* label = ui::Text::create(((AppDelegate*)Application::getInstance())->getConfig()["worlds"][i]["name_" + language].asString(), 
+				"fonts/LICABOLD.ttf", visibleSize.width / 20);
 			label->setColor(Color3B::YELLOW);
 			label->enableOutline(Color4B::BLACK, 5);
 			label->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 0.90));
@@ -203,6 +214,7 @@ bool StoryMenu::init(){
 				getChildByName("interface")->getChildByName("settings")->getChildByName("panel")->getContentSize().width *
 				getChildByName("interface")->getChildByName("settings")->getChildByName("panel")->getScaleY() * 0.6)));
 			getChildByName("interface")->getChildByName("settings")->runAction(showAction);
+			getChildByName("black_mask")->setVisible(false);
 		}
 	});
 	close->setScale(panel->getContentSize().width*panel->getScaleX() / 8 / close->getContentSize().width);
@@ -214,16 +226,20 @@ bool StoryMenu::init(){
 	settings->addChild(close_shadow, -1);
 	settings->addChild(close, 5, "close");
 
-	Label* title = Label::createWithTTF("Settings", "fonts/LICABOLD.ttf", 45.0f * visibleSize.width / 1280);
+	Label* title = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["settings"][language].asString(), "fonts/LICABOLD.ttf", 45.0f * visibleSize.width / 1280);
 	title->setColor(Color3B::WHITE);
 	title->enableOutline(Color4B::BLACK, 2);
 	title->setPosition(0, panel->getContentSize().height*panel->getScaleY() / 2 - title->getContentSize().height);
 	settings->addChild(title, 2, "title");
 
 
-	Label* music = Label::createWithTTF("Music", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* effects = Label::createWithTTF("Effects", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* loop = Label::createWithTTF("Loop Music", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* music = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["music"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* effects = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["effects"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* loop = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["loop_music"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	music->setColor(Color3B::BLACK);
 	effects->setColor(Color3B::BLACK);
 	loop->setColor(Color3B::BLACK);
@@ -312,13 +328,19 @@ bool StoryMenu::init(){
 	settings->addChild(checkbox_loop, 6, "LoopEnable");
 
 	// GLOBAL SETTINGS
-	Label* always_show_grid = Label::createWithTTF("Always", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* moving_show_grid = Label::createWithTTF("On Move", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* never_show_grid = Label::createWithTTF("Never", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* always_show_grid = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["grid_always"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* moving_show_grid = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["grid_move"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* never_show_grid = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["grid_never"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 
-	Label* show_grid = Label::createWithTTF("Show Grid", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* auto_limit = Label::createWithTTF("Auto Limit", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* skip_dialogues = Label::createWithTTF("Play Dialogues", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* show_grid = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["show_grid"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* auto_limit = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["auto_limit"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* skip_dialogues = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["play_dialogues"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	always_show_grid->setColor(Color3B::BLACK);
 	moving_show_grid->setColor(Color3B::BLACK);
 	never_show_grid->setColor(Color3B::BLACK);
@@ -436,7 +458,8 @@ bool StoryMenu::init(){
 	
 	//auto credits = ui::Button::create("res/buttons/buttonCredits.png");
 	auto credits = ui::Button::create("res/buttons/yellow_button.png");
-	credits->setTitleText("Credits");
+	credits->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["credits"][language].asString());
 	credits->setTitleFontName("fonts/LICABOLD.ttf");
 	credits->setTitleFontSize(60.f * visibleSize.width / 1280);
 	Label* credits_label = credits->getTitleRenderer();
@@ -446,24 +469,65 @@ bool StoryMenu::init(){
 
 	credits->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::CREDIT);
+			Size visibleSize = Director::getInstance()->getVisibleSize();
+			auto* hideAction = TargetedAction::create(getChildByName("interface")->getChildByName("settings"),
+				EaseBackIn::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height * 1.5))));
+			auto callbackmainmenu = CallFunc::create([&]() {
+				getChildByName("black_mask")->setVisible(false);
+				SceneManager::getInstance()->setScene(SceneManager::CREDIT);
+			});
+			getChildByName("interface")->getChildByName("settings")->runAction(Sequence::create(hideAction, callbackmainmenu, nullptr));
+
 		}
 	});
 	credits->setScale(panel->getContentSize().width*panel->getScaleX() / 2 / credits->getContentSize().width);
-	credits->setPosition(Vec2(0,
-		-panel->getContentSize().height*panel->getScaleY() / 2 - 
-		credits->getContentSize().height*credits->getScaleY() * 0.42));
+	credits->setPosition(Vec2(-panel->getContentSize().width*panel->getScaleX() / 4,
+		-panel->getContentSize().height*panel->getScaleY() / 2 -
+		credits->getContentSize().height*credits->getScaleY() * 0.41));
 	Sprite* credits_shadow = Sprite::create("res/buttons/shadow_button.png");
 	credits_shadow->setScale(credits->getScale());
 	credits_shadow->setPosition(credits->getPosition());
 	settings->addChild(credits_shadow, -1);
 	settings->addChild(credits, 5, "credits");
 
+	auto title_menu = ui::Button::create("res/buttons/red_button.png");
+	title_menu->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["title_menu"][language].asString());
+	title_menu->setTitleFontName("fonts/LICABOLD.ttf");
+	title_menu->setTitleFontSize(60.f * visibleSize.width / 1280);
+	Label* title_menu_label = credits->getTitleRenderer();
+	title_menu_label->setColor(Color3B::WHITE);
+	title_menu_label->enableOutline(Color4B::BLACK, 2);
+	title_menu_label->setPosition(title_menu->getContentSize() / 2);
+
+	title_menu->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			Size visibleSize = Director::getInstance()->getVisibleSize();
+			auto* hideAction = TargetedAction::create(getChildByName("interface")->getChildByName("settings"),
+				EaseBackIn::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height * 1.5))));
+			auto callbackmainmenu = CallFunc::create([&]() {
+				getChildByName("black_mask")->setVisible(false);
+				SceneManager::getInstance()->setScene(SceneManager::MENU);
+			});
+			getChildByName("interface")->getChildByName("settings")->runAction(Sequence::create(hideAction, callbackmainmenu, nullptr));
+		}
+	});
+	title_menu->setScale(panel->getContentSize().width*panel->getScaleX() / 2 / title_menu->getContentSize().width);
+	title_menu->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() / 4,
+		-panel->getContentSize().height*panel->getScaleY() / 2 -
+		title_menu->getContentSize().height*title_menu->getScaleY() * 0.41));
+	Sprite* title_menu_shadow = Sprite::create("res/buttons/shadow_button.png");
+	title_menu_shadow->setScale(title_menu->getScale());
+	title_menu_shadow->setPosition(title_menu->getPosition());
+	settings->addChild(title_menu_shadow, -1);
+	settings->addChild(title_menu, 5, "title_menu");
+
 	ui::Button* show_setting = ui::Button::create("res/buttons/settings2.png");
 	show_setting->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			Size visibleSize = Director::getInstance()->getVisibleSize();
 			auto* showAction = EaseBackOut::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2)));
+			getChildByName("black_mask")->setVisible(true);
 			getChildByName("interface")->getChildByName("settings")->runAction(showAction);
 		}
 	});
@@ -500,11 +564,17 @@ void StoryMenu::selectLevelCallBack(Ref* sender, ui::Widget::TouchEventType type
 
 void StoryMenu::onEnterTransitionDidFinish(){
 	Scene::onEnterTransitionDidFinish();
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
 	for (unsigned int i(0); i < ((AppDelegate*)Application::getInstance())->getConfig()["worlds"].size(); ++i) {
 		((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->
 			getChildByName("levels")->removeAllChildren();
 		initLevels((ui::Layout*)((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->
 			getChildByName("levels"),i);
+		((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->setPosition(Vec2(0, 0));
+		((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->
+			runAction(RepeatForever::create(Sequence::create(MoveBy::create(5.f, Vec2(0, -visibleSize.height / 40)),
+			MoveBy::create(5.f, Vec2(0, visibleSize.height / 40)), nullptr)));
 	}
 }
 

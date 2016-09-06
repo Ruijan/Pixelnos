@@ -19,7 +19,7 @@ public:
 protected:
 	virtual void onEnter();
 	virtual void onEnterTransitionDidFinish();
-
+	void initLanguageList();
 };
 
 #endif
