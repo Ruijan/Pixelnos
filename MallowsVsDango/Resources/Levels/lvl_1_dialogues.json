@@ -3,29 +3,31 @@
   "introDialogue": [
     {
       "emotion": [
+        "NORMAL",
+        "NORMAL",
+        "NORMAL",
         "ANGRY",
-        "NORMAL",
-        "NORMAL",
         "ANGRY"
       ],
       "side": "LEFT",
       "speaker": "res/turret/GeneralMashmalow.png",
       "text_en": [
-        "WE ARE AT WAR !",
-        "Our spies told me a small group of dangos have been seen near the border.",
-        "General Mallow strawberry perfume commands you to protect our nation!",
-        "The Mallow Nation won't fall !"
+        "General Fraise, sweet to meet you captain.",
+        "To reward your ineptitude, you have been assigned to the guard of the border between the Dango's Empire and ours.",
+        "More than 150 years of peace and... Wait... A mail from the scouts... Mnnnniumnaemn ... ... ",
+        "By the Holy Sugar! We are invaded by the Dangos!",
+        "Protect the border, Captain! I am relying on you!"
       ],
       "text_fr": [
-        "NOUS SOMMES EN GUERRE !",
-        "Nos espions ont apercu un groupe de dangos pres de la frontiere.",
-        "General Mallow parfum fraise vous ordonne de proteger notre nation!",
-        "Le grand empire sucre des marshmallows ne faillira pas !"
+        "Grand Général Strawberry, ensucré de faire votre connaissance, capitaine.",
+        "Pour récompenser votre incompétence, vous avez été assigné à la surveillance de la frontière entre l’empire Dangos et le nôtre.",
+        "Plus de 150 ans de paix et de... Attendez... Un message de mes éclaireurs... Mnnnniumnaemn... ...",
+        "Par le sucre de tous les saints ! Nous sommes envahis par les Dangos ! ",
+        "Protégez la frontière, Capitaine ! Je compte sur vous !"
       ]
     },
     {
       "emotion": [
-        "ANGRY",
         "NORMAL",
         "NORMAL",
         "NORMAL"
@@ -33,16 +35,13 @@
       "side": "RIGHT",
       "speaker": "res/turret/general.png",
       "text_en": [
-        "CAPTAIN !",
-        "I am here to assist you during this invasion.",
-        "I am also new at this job don't be too harsh on me.",
-        "The General told us to defend the road, why not using a water tower near it?"
-      ],
+        "Vice-captain Jack Bomber, I am here to second you",
+        "From my deduction, the dangos will follow this path.",
+        "Put our troops by draging the image of the Bomber from the right of the screen to an available cell."      ],
       "text_fr": [
-        "CAPITAINE !",
-        "Je suis ici pour vous assister durant cette invasion",
-        "Je suis tout aussi nouveau que vous a ce poste, soyez indulgent avec moi.",
-        "Le General nous a demande de defendre la route, pourquoi ne pas utiliser une tour dans les environs ?"
+        "Vice-capitaine Jean, classe Bombeur, je suis ici pour vous seconder.",
+        "D’après mes plans, les dangos suivront ce chemin-la.",
+        "Placez nos troupes en glissant l’image du Marshmallow Bombeur à droite de l’écran sur l’une des cases disponibles."
       ]
     }
   ]

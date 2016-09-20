@@ -96,8 +96,6 @@ bool StoryMenu::init(){
 		}
 		world->setScale9Enabled(true);
 		world->setScale(page->getContentSize().width / world->getContentSize().width);
-		world->runAction(RepeatForever::create(Sequence::create(MoveBy::create(5.f, Vec2(0, -visibleSize.height / 40)),
-			MoveBy::create(5.f, Vec2(0, visibleSize.height / 40)), nullptr)));
 		layout->addChild(world,0,"world");
 
 		// selection of levels
@@ -571,10 +569,11 @@ void StoryMenu::onEnterTransitionDidFinish(){
 			getChildByName("levels")->removeAllChildren();
 		initLevels((ui::Layout*)((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->
 			getChildByName("levels"),i);
-		((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->setPosition(Vec2(0, 0));
+		((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->stopAllActions();
 		((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->
-			runAction(RepeatForever::create(Sequence::create(MoveBy::create(5.f, Vec2(0, -visibleSize.height / 40)),
-			MoveBy::create(5.f, Vec2(0, visibleSize.height / 40)), nullptr)));
+			runAction(RepeatForever::create(
+				Sequence::create(MoveTo::create(5.f, Vec2(0, -visibleSize.height / 40)),
+			MoveTo::create(5.f, Vec2(0, visibleSize.height / 40)), nullptr)));
 	}
 }
 

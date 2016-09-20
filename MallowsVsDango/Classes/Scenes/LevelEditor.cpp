@@ -1074,13 +1074,10 @@ void LevelEditor::createLevel(Ref* sender) {
 	level_settings["local"] = true;
 	time_t now = time(0);
 	tm *ltm = gmtime(&now);
+	char buffer[22];
+	strftime(buffer, 22, "%F %T", ltm);	
 
-	level_settings["updated"] = Json::Value(1900 + ltm->tm_year).asString() +
-		"-" + Json::Value(ltm->tm_mon + 1).asString() +
-		"-" + Json::Value(ltm->tm_mday).asString() +
-		" " + Json::Value(ltm->tm_hour).asString() +
-		":" + Json::Value(ltm->tm_min).asString() +
-		":" + Json::Value(ltm->tm_sec).asString();
+	level_settings["last_update"] = Value(buffer).asString();
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	DrawNode* resolutions = DrawNode::create();
@@ -1732,12 +1729,10 @@ void LevelEditor::saveLevelInFile(Ref* sender) {
 	time_t now = time(0);
 	tm *ltm = gmtime(&now);
 	level_settings["local"] = true;
-	level_settings["updated"] = Json::Value(1900 + ltm->tm_year).asString() +
-		"-" + Json::Value(ltm->tm_mon).asString() +
-		"-" + Json::Value(ltm->tm_mday).asString() +
-		" " + Json::Value(ltm->tm_hour).asString() +
-		":" + Json::Value(ltm->tm_min).asString() +
-		":" + Json::Value(ltm->tm_sec).asString();
+	char buffer[22];
+	strftime(buffer, 22, "%F %T", ltm);
+
+	level_settings["last_update"] = Value(buffer).asString();
 
 	Json::StyledWriter writer;
 	Json::Value root = generateJsonSave();
@@ -2017,7 +2012,7 @@ void LevelEditor::updateLocalLevelsList() {
 		level_name->setPosition(Vec2(checkbox_level->getContentSize().width / 2, checkbox_level->getContentSize().height / 2.0f + 
 			level_name->getContentSize().height / 2.0f));
 		checkbox_level->addChild(level_name, 1, "level_name");
-		Label* level_update = Label::createWithTTF(in_game_levels[i]["updated"].asString(), "fonts/arial.ttf", 20);
+		Label* level_update = Label::createWithTTF(in_game_levels[i]["last_update"].asString(), "fonts/arial.ttf", 20);
 		level_update->setColor(Color3B(100, 100, 100));
 		level_update->setAlignment(TextHAlignment::CENTER);
 		level_update->setPosition(Vec2(checkbox_level->getContentSize().width / 2, level_name->getPosition().y - 
@@ -2070,7 +2065,7 @@ void LevelEditor::updateServerLevelsList() {
 					level_settings["name"] = root[i]["name"].asString();
 					level_settings["id"] = getLocalLevelIDWithBDDID(root[i]["id"].asInt());
 					level_settings["local"] = false;
-					level_settings["updated"] = root[i]["last_update"].asString();
+					level_settings["last_update"] = root[i]["last_update"].asString();
 					checkbox_level->addTouchEventListener([&, checkbox_level, level_settings](Ref* sender, ui::Widget::TouchEventType type) {
 						setSelectedLevel(sender, type, level_settings);
 						if (type == cocos2d::ui::Widget::TouchEventType::CANCELED) {
@@ -2095,7 +2090,7 @@ void LevelEditor::updateServerLevelsList() {
 					level_name->setPosition(Vec2(checkbox_level->getContentSize().width / 2, checkbox_level->getContentSize().height / 2.0f + 
 						level_name->getContentSize().height / 2.0f));
 					checkbox_level->addChild(level_name, 1, "level_name");
-					Label* level_update = Label::createWithTTF(level_settings["updated"].asString(), "fonts/arial.ttf", 20);
+					Label* level_update = Label::createWithTTF(level_settings["last_update"].asString(), "fonts/arial.ttf", 20);
 					level_update->setColor(Color3B(100,100,100));
 					level_update->setAlignment(TextHAlignment::CENTER);
 					level_update->setPosition(Vec2(checkbox_level->getContentSize().width / 2, level_name->getPosition().y -
@@ -2896,4 +2891,3 @@ void LevelEditor::resetLevelSettings() {
 	level_settings["id"] = -1;
 	level_settings["local"] = true;
 }
-

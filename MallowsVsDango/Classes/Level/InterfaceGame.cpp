@@ -1411,7 +1411,7 @@ void InterfaceGame::destroyCallback(Ref* sender){
 void InterfaceGame::builtCallback(Ref* sender){
 	Json::Value action;
 	action["tower_name"] = selected_turret->getName();
-	action["time"] = time(0);
+	action["time"] = (unsigned int) time(0);
 	Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(selected_turret->getPosition());
 	action["position"]["x"] = turret_position.x;
 	action["position"]["y"] = turret_position.y;
@@ -1686,7 +1686,7 @@ void InterfaceGame::startRewarding(Vec2 pos){
 		// Add a Tap to continue to inform the user what to do.
 		auto tapToContinue = Label::createWithSystemFont(
 			((AppDelegate*)Application::getInstance())->getConfig()
-			["buttons"]["level_cleared"][language].asString(), "Arial", 25.f);
+			["buttons"]["tap_continue"][language].asString(), "Arial", 25.f);
 		tapToContinue->setPosition(Vec2(visibleSize.width * 3 / 8, 50));
 
 		tapToContinue->setColor(Color3B::WHITE);

@@ -84,10 +84,10 @@ protected:
 // CHOCOSPIT
 class ChocoSpit : public Attack, public Suckable {
 public:
-	ChocoSpit(Dango* ntarget, double slow, double slow_duration, double nspeed);
+	ChocoSpit(Dango* ntarget, double damages, double slow, double duration, double nspeed);
 	virtual ~ChocoSpit();
-	static ChocoSpit* create(Dango* ntarget, double slow, double slow_duration, double nspeed);
-	static ChocoSpit* createWithFile(std::string file, Dango* ntarget, double slow, double slow_duration, double nspeed);
+	static ChocoSpit* create(Dango* ntarget, double damages, double slow, double slow_duration, double nspeed);
+	static ChocoSpit* createWithFile(std::string file, Dango* ntarget, double damages, double slow, double slow_duration, double nspeed);
 
 	void update(float dt);
 	virtual bool affectEnemy(Dangobese* enemy);

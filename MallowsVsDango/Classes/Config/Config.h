@@ -334,6 +334,18 @@ public:
 	* AAAAAAAAAAAAAAAAH !!!!!
 	*/
 	void setLanguage(std::string lang);
+
+	/**
+	* @brief Load all the levels from the online database to the computer.
+	*	Save everithin in the writable folder (AppData/local/MvD)
+	*/
+	void loadAllLevels();
+
+	/**
+	* @brief Convert a date in string at format "%Y-%m-%d %H:%M:%S" to time
+	*/
+	static tm getTimeFromString(std::string date1);
+
 };
 
 #endif

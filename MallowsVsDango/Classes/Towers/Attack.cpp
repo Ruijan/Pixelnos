@@ -265,8 +265,8 @@ bool WaterBombBall::affectEnemy(Dangobese* enemy) {
 ChocoSpit
 */
 
-ChocoSpit::ChocoSpit(Dango* ntarget, double slow, double duration, double nspeed):
-	Attack(ntarget, 0, "saucer"), speed(nspeed), Suckable(), slow_percent(slow), 
+ChocoSpit::ChocoSpit(Dango* ntarget, double damages, double slow, double duration, double nspeed):
+	Attack(ntarget, damages, "saucer"), speed(nspeed), Suckable(), slow_percent(slow),
 	slow_duration(duration){
 }
 
@@ -274,8 +274,8 @@ ChocoSpit::~ChocoSpit() {
 
 }
 
-ChocoSpit* ChocoSpit::create(Dango* ntarget, double slow, double slow_duration, double nspeed) {
-	ChocoSpit* pSprite = new ChocoSpit(ntarget, slow, slow_duration, nspeed);
+ChocoSpit* ChocoSpit::create(Dango* ntarget, double damages, double slow, double slow_duration, double nspeed) {
+	ChocoSpit* pSprite = new ChocoSpit(ntarget, damages, slow, slow_duration, nspeed);
 
 	if (pSprite->initWithFile("res/turret/yellow_bomb.png"))
 	{
@@ -287,8 +287,8 @@ ChocoSpit* ChocoSpit::create(Dango* ntarget, double slow, double slow_duration, 
 	return NULL;
 }
 
-ChocoSpit* ChocoSpit::createWithFile(std::string file, Dango* ntarget, double slow, double slow_duration, double nspeed) {
-	ChocoSpit* pSprite = new ChocoSpit(ntarget, slow, slow_duration, nspeed);
+ChocoSpit* ChocoSpit::createWithFile(std::string file, Dango* ntarget, double damages, double slow, double slow_duration, double nspeed) {
+	ChocoSpit* pSprite = new ChocoSpit(ntarget, damages, slow, slow_duration, nspeed);
 
 	if (pSprite->initWithFile(file))
 	{

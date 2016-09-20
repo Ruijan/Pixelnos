@@ -46,10 +46,10 @@ void Saucer::attack(){
 		ChocoSpit* spit = nullptr;
 		if (level >= (int)getConfig()["cost"].size() - 1) {
 			//spit = AcidChocoSpit::create(target, damage, 500 * visibleSize.width / 960);
-			spit = ChocoSpit::create(target, slow_percent, slow_duration, 500 * visibleSize.width / 960);
+			spit = ChocoSpit::create(target, damage, slow_percent, slow_duration, 500 * visibleSize.width / 960);
 		}
 		else {
-			spit = ChocoSpit::create(target, slow_percent, slow_duration, 500 * visibleSize.width / 960);
+			spit = ChocoSpit::create(target, damage, slow_percent, slow_duration, 500 * visibleSize.width / 960);
 		}
 		spit->setDamagesId(attacked_enemies[target]);
 		attacked_enemies.erase(attacked_enemies.find(target));
@@ -108,4 +108,33 @@ void Saucer::handleEndEnrageAnimation() {
 
 bool Saucer::isSameType(std::string type) {
 	return Tower::getTowerTypeFromString(type) == Tower::TowerType::SAUCER;
+}
+
+void Saucer::chooseTarget(std::vector<Dango*> targets) {
+	double bestScore(1000);
+	bool chosen = false;
+
+	for (auto& cTarget : targets) {
+		if (cTarget != nullptr) {
+			int first = cTarget->getNbCellsToPath();
+			double dist = cTarget->getPosition().distanceSquared(this->getPosition());
+			double minDist = pow(getRange(), 2);
+			if (first < bestScore && dist <= minDist && cTarget->willBeAlive() && 
+				abs(cTarget->getSpeedRedtuctionRatio()) < abs(slow_percent)) {
+				bestScore = first;
+				if (target != nullptr) {
+					target->removeTargetingTower(this);
+				}
+				target = cTarget;
+				target->addTargetingTower(this);
+				chosen = true;
+			}
+		}
+	}
+	if (!chosen) {
+		if (target != nullptr) {
+			target->removeTargetingTower(this);
+		}
+		target = nullptr;
+	}
 }

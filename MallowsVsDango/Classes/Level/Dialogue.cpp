@@ -60,10 +60,12 @@ void Dialogue::updateEmotionBubble() {
 	case NORMAL:
 		speechBubble->getChildByName("NORMAL")->setVisible(true);
 		speechBubble->getChildByName("ANGRY")->setVisible(false);
+		currentSpeechBubble = speechBubble->getChildByName("NORMAL");
 		break;
 	case ANGRY:
 		speechBubble->getChildByName("NORMAL")->setVisible(false);
 		speechBubble->getChildByName("ANGRY")->setVisible(true);
+		currentSpeechBubble = speechBubble->getChildByName("ANGRY");
 		break;
 	}
 }
@@ -80,8 +82,8 @@ void Dialogue::launch(){
 	speechBubble->addChild(Sprite::create("res/buttons/speech.png"), 1, "NORMAL");
 	speechBubble->addChild(Sprite::create("res/buttons/speech_fury.png"), 1, "ANGRY");
 
-	speechBubble->getChildByName("NORMAL")->setScale(visibleSize.width / 3 / speechBubble->getChildByName("NORMAL")->getContentSize().width);
-	speechBubble->getChildByName("ANGRY")->setScale(visibleSize.width / 3 / speechBubble->getChildByName("NORMAL")->getContentSize().width);
+	speechBubble->getChildByName("NORMAL")->setScale(visibleSize.width * 0.4 / speechBubble->getChildByName("NORMAL")->getContentSize().width);
+	speechBubble->getChildByName("ANGRY")->setScale(visibleSize.width * 0.4 / speechBubble->getChildByName("NORMAL")->getContentSize().width);
 
 	double offset = speechBubble->getChildByName("NORMAL")->getContentSize().width * speechBubble->getChildByName("NORMAL")->getScale();
 
@@ -102,11 +104,11 @@ void Dialogue::launch(){
 	
 	speechBubble->setPosition(Vec2(round(currentHead->getTextureRect().size.width*currentHead->getScale()),
 		visibleSize.height / 2 + currentHead->getTextureRect().size.height*currentHead->getScale() / 2));
-	speech = Label::createWithTTF("", "fonts/Love Is Complicated Again.ttf", 30.f * visibleSize.width / 1280);
+	speech = Label::createWithTTF("é", "fonts/Love Is Complicated Again.ttf", 30.f * visibleSize.width / 1280);
 	speech->setColor(Color3B::BLACK);
 	speech->setWidth(offset * 3 / 4);
-	speech->setPosition(Point(round(speechBubble->getPosition().x - offset ), speechBubble->getPosition().y + 
-		speechBubble->getChildByName("NORMAL")->getContentSize().height * speechBubble->getChildByName("NORMAL")->getScale() / 10));
+	speech->setPosition(Point(round(speechBubble->getPosition().x - offset * 4 / 5 ), speechBubble->getPosition().y + 
+		currentSpeechBubble->getContentSize().height * currentSpeechBubble->getScale() / 10));
 	speech->setAlignment(TextHAlignment::CENTER);
 
 	auto skip = ui::Button::create("res/buttons/red_button.png");
@@ -129,7 +131,7 @@ void Dialogue::launch(){
 
 	tapToContinue = Label::createWithSystemFont("Tap to continue", "Arial", 25.f * visibleSize.width / 1280);
 	tapToContinue->setPosition(Point(speech->getPosition().x, speechBubble->getPosition().y - 
-		speechBubble->getChildByName("NORMAL")->getContentSize().height*speechBubble->getScale() / 4));
+		currentSpeechBubble->getContentSize().height*speechBubble->getScale() / 4));
 
 	tapToContinue->setColor(Color3B::BLACK);
 	tapToContinue->setVisible(false);
@@ -162,6 +164,8 @@ void Dialogue::addEvents(){
 		// If it waits to tap, we start to close the bubble.
 		if (state == DISPLAYING){
 			if ((unsigned int)posCurrentCaract < textes[currentSpeech].first.length() - 1){
+				Size visibleSize = Director::getInstance()->getVisibleSize();
+
 				posCurrentCaract = textes[currentSpeech].first.length();
 				std::string text = textes[currentSpeech].first;
 				speech->setString(text);
@@ -244,7 +248,7 @@ void Dialogue::update(){
 				else{
 					speechBubble->setPosition(Point(round(visibleSize.width * 3 / 4 -
 						currentHead->getTextureRect().size.width * currentHead->getScale()) - 
-						speechBubble->getChildByName("NORMAL")->getContentSize().width * speechBubble->getChildByName("NORMAL")->getScale(),
+						currentSpeechBubble->getContentSize().width * currentSpeechBubble->getScale(),
 						visibleSize.height / 2 + currentHead->getTextureRect().size.height * currentHead->getScale() / 2));
 				}
 				scaleSpeechBubble();
@@ -252,12 +256,20 @@ void Dialogue::update(){
 			break;
 		case BUBBLE_APPEAR:
 			if (cAction->isDone()){
-				speech->setPosition(Point(round(speechBubble->getPosition().x + 
-					speechBubble->getChildByName("NORMAL")->getContentSize().width * speechBubble->getChildByName("NORMAL")->getScale() / 2), 
-					speechBubble->getPosition().y +	speechBubble->getChildByName("NORMAL")->getContentSize().height * 
-					speechBubble->getChildByName("NORMAL")->getScale() / 10));
+				if (directions[currentSpeech] == LEFT) {
+					speech->setPosition(Point(round(speechBubble->getPosition().x +
+						currentSpeechBubble->getContentSize().width * currentSpeechBubble->getScale() * 0.54),
+						speechBubble->getPosition().y + currentSpeechBubble->getContentSize().height *
+						currentSpeechBubble->getScale() / 10));
+				}
+				else {
+					speech->setPosition(Point(round(speechBubble->getPosition().x +
+						currentSpeechBubble->getContentSize().width * currentSpeechBubble->getScale() * 0.45),
+						speechBubble->getPosition().y + currentSpeechBubble->getContentSize().height *
+						currentSpeechBubble->getScale() / 10));
+				}
 				tapToContinue->setPosition(Point(speech->getPosition().x, speechBubble->getPosition().y - 
-					speechBubble->getChildByName("NORMAL")->getContentSize().height * speechBubble->getChildByName("NORMAL")->getScale() / 4));
+					currentSpeechBubble->getContentSize().height * currentSpeechBubble->getScale() / 4));
 				state = DISPLAYING;
 			}
 			break;

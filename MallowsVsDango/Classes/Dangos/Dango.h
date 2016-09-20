@@ -43,9 +43,11 @@ public:
 	bool isDone();
 	bool willBeAlive();
 	virtual bool shouldAttack();
+	double getSpeedRedtuctionRatio();
 	double getHitPoints();
 	double getGain();
 	int getTargetedCell();
+	int getNbCellsToPath();
 	double getSpeed();
 	int getXP();
 	int getHolySugar();

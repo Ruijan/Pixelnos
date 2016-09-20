@@ -8,7 +8,7 @@ NetworkController::NetworkController(std::string address_server): server(address
 }
 void NetworkController::sendNewRequest(Request type_request, std::string data,
 	const cocos2d::network::ccHttpRequestCallback& callback, std::string tag = "POST") {
-	std::string page("/mvd/");
+	std::string page("");
 	switch (type_request) {
 	case USER_AND_SETTINGS:
 		page += "user_handle.php";

@@ -69,6 +69,7 @@ class Dialogue: public cocos2d::Layer{
 
 		// Display variables
 		cocos2d::Node* speechBubble;
+		cocos2d::Node* currentSpeechBubble;
 		cocos2d::Label* speech;
 		cocos2d::Label* tapToContinue;
 		cocos2d::Sprite* currentHead;

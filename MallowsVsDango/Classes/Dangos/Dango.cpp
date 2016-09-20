@@ -381,14 +381,7 @@ int Dango::getTargetedCell(){
 
 double Dango::getSpeed(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	double total_speed(0);
-	for (auto modifier : m_speed) {
-		total_speed += modifier.second.first;
-	}
-	if (total_speed < -1) {
-		total_speed = -1;
-	}
-	return speed + total_speed * speed;
+	return speed + getSpeedRedtuctionRatio() * speed;
 }
 
 void Dango::runAnimation(Animation* anim) {
@@ -575,4 +568,21 @@ void Dango::pauseAnimation() {
 
 void Dango::resumeAnimation() {
 	skeleton->resume();
+}
+
+int Dango::getNbCellsToPath() {
+	return path.size() - targetedCell;
+}
+
+double Dango::getSpeedRedtuctionRatio() {
+	double speed_ratio(0);
+	for (auto modifier : m_speed) {
+		if(modifier.second.first < speed_ratio){
+			speed_ratio = modifier.second.first;
+		}
+	}
+	if (speed_ratio < -0.9) {
+		speed_ratio = -0.9;
+	}
+	return speed_ratio;
 }

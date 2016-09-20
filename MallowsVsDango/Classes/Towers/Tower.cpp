@@ -233,15 +233,15 @@ void Tower::removeTarget(Dango* dango) {
 }
 
 void Tower::chooseTarget(std::vector<Dango*> targets){
-	double bestScore(0);
+	double bestScore(1000);
 	bool chosen = false;
 
 	for(auto& cTarget : targets){
 		if(cTarget != nullptr){
-			int first = cTarget->getTargetedCell();
+			int first = cTarget->getNbCellsToPath();
 			double dist = cTarget->getPosition().distanceSquared(this->getPosition());
 			double minDist = pow(getRange(), 2);
-			if (first > bestScore && dist <= minDist && cTarget->willBeAlive()){
+			if (first < bestScore && dist <= minDist && cTarget->willBeAlive()){
 				bestScore = first;
 				if (target != nullptr) {
 					target->removeTargetingTower(this);
