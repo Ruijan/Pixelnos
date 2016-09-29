@@ -23,7 +23,8 @@ public:
 		RELOADING,
 		LIMIT_BURSTING,
 		BLINKING_UP,
-		BLINKING_DOWN 
+		BLINKING_DOWN,
+		BLOCKED
 	};
 	enum TowerType{
 		BOMBER,
@@ -72,6 +73,8 @@ public:
 	static cocos2d::Vector<cocos2d::SpriteFrame*> getAnimationFromName(std::string name, Tower::State animState);
 	virtual void removeTarget(Dango* dango);
 	void incrementXP(int amount);
+	void blockTower(bool block);
+	bool isTowerBlocked();
 	
 	// Updates
 	virtual void update(float dt);
@@ -101,6 +104,7 @@ protected:
 	bool selected;
 	bool destroy;
 	bool limit_enabled;
+	bool blocked;
 	
 	Dango* target;
 	std::map<Dango*, int> attacked_enemies;

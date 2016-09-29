@@ -35,6 +35,7 @@ public:
 	void removeElements();
 
 	bool isPaused();
+	std::vector<Tower*>& getTowers();
 	Quantity getQuantity();
 	Quantity getLife();
 	int getTotalExperience();

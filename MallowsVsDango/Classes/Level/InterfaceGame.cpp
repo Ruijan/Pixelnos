@@ -16,7 +16,7 @@
 USING_NS_CC;
 
 InterfaceGame::InterfaceGame() : sizeButton(cocos2d::Director::getInstance()->getVisibleSize().width / 15),
-	sizeTower(cocos2d::Director::getInstance()->getVisibleSize().width / 10)
+	sizeTower(cocos2d::Director::getInstance()->getVisibleSize().width / 10), tutorial_running(false)
 {}
 InterfaceGame::~InterfaceGame() {
 	if (dialogues != nullptr) {
@@ -49,6 +49,7 @@ bool InterfaceGame::init(){
 	getChildByName("black_mask")->addChild(mask);
 	getChildByName("black_mask")->setVisible(false);
 
+	
 	selected_turret = nullptr;
 
 	addEvents();
@@ -376,6 +377,7 @@ void InterfaceGame::update(float dt){
 			Size visibleSize = Director::getInstance()->getVisibleSize();
 
 			removeChild(dialogues);
+			dialogues = nullptr;
 			game_state = TITLE;
 			getChildByName("start")->setVisible(true);
 			getChildByName("title")->setVisible(true);
@@ -390,10 +392,12 @@ void InterfaceGame::update(float dt){
 	case TITLE:
 		updateButtonDisplay();
 		updateObjectDisplay(dt);
+		updateTutorial(dt);
 		break;
 	case RUNNING:
 		updateButtonDisplay();
 		updateObjectDisplay(dt);
+		updateTutorial(dt);
 		break;
 	}
 }
@@ -493,6 +497,7 @@ void InterfaceGame::reset(){
 	game_state = TITLE;
 	selected_turret = nullptr;
 	selected_dango = nullptr;
+	tutorial_running = false;
 
 	getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
 	getChildByName("menu_lose")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
@@ -1422,6 +1427,31 @@ void InterfaceGame::builtCallback(Ref* sender){
 	selected_turret->setFixed(true);
 	game->getLevel()->decreaseQuantity(selected_turret->getCost());
 	displayTowerInfos("");
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("tower_positioning")) {
+		((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("tower_positioning");
+		removeChildByName("hand");
+		towers_menu["bomber"].first->stopAllActions();
+		towers_menu["bomber"].first->setRotation(0);
+		tutorial_running = false;
+		if (game_state == TITLE) {
+			getChildByName("start")->setVisible(true);
+			getChildByName("title")->setVisible(true);
+			getChildByName("advice")->setVisible(true);
+		}
+	}
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("saucer") &&
+		game->getLevel()->getLevelId() == 2 && game->getLevel()->getWorldId() == 1) {
+		((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("saucer");
+		removeChildByName("hand");
+		towers_menu["saucer"].first->stopAllActions();
+		towers_menu["saucer"].first->setRotation(0);
+		tutorial_running = false;
+		if (game_state == TITLE) {
+			getChildByName("start")->setVisible(true);
+			getChildByName("title")->setVisible(true);
+			getChildByName("advice")->setVisible(true);
+		}
+	}
 }
 
 void InterfaceGame::showDangoInfo() {
@@ -1795,4 +1825,241 @@ void InterfaceGame::updateIncrementXP(Label* exp_label, ui::LoadingBar* loading_
 		exp_label->runAction(Sequence::create(ScaleTo::create(0.25f, 1.5f), 
 			ScaleTo::create(0.25f, 1.f), DelayTime::create(0.04f), incrementExp, nullptr));
 	}
+}
+
+void InterfaceGame::updateTutorial(float dt) {
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("tower_positioning") && 
+		!tutorial_running) {
+		Size visibleSize = Director::getInstance()->getVisibleSize();
+		tutorial_running = true;
+		shakeElement(towers_menu["bomber"].first);
+		if (game_state == TITLE) {
+			getChildByName("start")->setVisible(false);
+			getChildByName("title")->setVisible(false);
+			getChildByName("advice")->setVisible(false);
+		}
+		Sprite* hand = Sprite::create("res/buttons/hand.png");
+		hand->setAnchorPoint(Vec2(0.15f, 0.5f));
+		hand->setScale(visibleSize.width / 10 / hand->getContentSize().width);
+		hand->setPosition(Vec2(towers_menu["bomber"].first->getPosition() - Vec2(0, sizeTower) + getChildByName("menu_panel")->getChildByName("towers")->getPosition() + getChildByName("menu_panel")->getPosition()));
+		addChild(hand, 3, "hand");
+		hand->runAction(FadeOut::create(0.f));
+		hand->runAction(RepeatForever::create(Sequence::create(
+			DelayTime::create(1.f),
+			FadeIn::create(0.5f),
+			DelayTime::create(0.5f),
+			Spawn::createWithTwoActions(
+				MoveBy::create(1.5f, Vec2(-visibleSize.width / 2, 0)),
+				EaseBackOut::create(MoveBy::create(1.5f, Vec2(0, -visibleSize.height / 3) + Vec2(0, sizeTower / 2)))),
+			DelayTime::create(0.5f),
+			FadeOut::create(0.5f),
+			MoveTo::create(0.f, Vec2(towers_menu["bomber"].first->getPosition() - Vec2(0, sizeTower) + getChildByName("menu_panel")->getChildByName("towers")->getPosition() + getChildByName("menu_panel")->getPosition())),
+			nullptr))
+		);
+	}
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("sugar") && 
+		game->getLevel()->getQuantity() == 0) {
+		if (dialogues == nullptr) {
+			game->getLevel()->pause();
+			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
+			dialogues = Dialogue::createFromConfig(save["tutorials"]["sugar"]["dialogue"]);
+			addChild(dialogues, 1, "dialogue");
+			dialogues->launch();
+			if (game_state == TITLE) {
+				getChildByName("start")->setVisible(false);
+				getChildByName("title")->setVisible(false);
+				getChildByName("advice")->setVisible(false);
+			}
+			shakeScaleElement(getChildByName("label_information")->getChildByName("sugar"));
+		}
+		else {
+			dialogues->update();
+			if (dialogues->hasFinished()) {
+				removeChild(dialogues);
+				dialogues = nullptr;
+				game->getLevel()->resume();
+				((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("sugar");
+				getChildByName("label_information")->getChildByName("sugar")->stopAllActions();
+				getChildByName("label_information")->getChildByName("sugar")->setRotation(0);
+				getChildByName("label_information")->getChildByName("sugar")->setScale(1.f);
+				if (game_state == TITLE) {
+					getChildByName("start")->setVisible(true);
+					getChildByName("title")->setVisible(true);
+					getChildByName("advice")->setVisible(true);
+				}
+			}
+		}
+	}
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("life") && 
+		game->getLevel()->getLife() < 3) {
+		if (dialogues == nullptr) {
+			game->getLevel()->pause();
+			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
+			dialogues = Dialogue::createFromConfig(save["tutorials"]["life"]["dialogue"]);
+			addChild(dialogues, 1, "dialogue");
+			dialogues->launch();
+			shakeScaleElement(getChildByName("label_information")->getChildByName("life"));
+		}
+		else {
+			dialogues->update();
+			if (dialogues->hasFinished()) {
+				removeChild(dialogues);
+				dialogues = nullptr;
+				game->getLevel()->resume();
+				((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("life");
+				getChildByName("label_information")->getChildByName("life")->stopAllActions();
+				getChildByName("label_information")->getChildByName("life")->setRotation(0);
+				getChildByName("label_information")->getChildByName("life")->setScale(1.f);
+			}
+		}
+	}
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("saucer") &&
+		game->getLevel()->getLevelId() == 1 && game->getLevel()->getWorldId() == 0) {
+		if (dialogues == nullptr && !tutorial_running) {
+			Size visibleSize = Director::getInstance()->getVisibleSize();
+			tutorial_running = true;
+			game->getLevel()->pause();
+			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
+			dialogues = Dialogue::createFromConfig(save["tutorials"]["saucer"]["dialogue"]);
+			addChild(dialogues, 1, "dialogue");
+			dialogues->launch();
+			if (game_state == TITLE) {
+				getChildByName("start")->setVisible(false);
+				getChildByName("title")->setVisible(false);
+				getChildByName("advice")->setVisible(false);
+			}
+			shakeElement(towers_menu["saucer"].first);
+			Sprite* hand = Sprite::create("res/buttons/hand.png");
+			hand->setAnchorPoint(Vec2(0.15f, 0.5f));
+			hand->setScale(visibleSize.width / 10 / hand->getContentSize().width);
+			hand->setPosition(Vec2(towers_menu["saucer"].first->getPosition() - Vec2(0, sizeTower) + getChildByName("menu_panel")->getChildByName("towers")->getPosition() + getChildByName("menu_panel")->getPosition()));
+			addChild(hand, 3, "hand");
+			hand->runAction(FadeOut::create(0.f));
+			hand->runAction(RepeatForever::create(Sequence::create(
+				DelayTime::create(1.f),
+				FadeIn::create(0.5f),
+				DelayTime::create(0.5f),
+				Spawn::createWithTwoActions(
+					MoveBy::create(1.5f, Vec2(-visibleSize.width / 2, 0)),
+					EaseBackOut::create(MoveBy::create(1.5f, Vec2(0, -visibleSize.height / 3) + Vec2(0, sizeTower / 2)))),
+				DelayTime::create(0.5f),
+				FadeOut::create(0.5f),
+				MoveTo::create(0.f, Vec2(towers_menu["saucer"].first->getPosition() - Vec2(0, sizeTower) + getChildByName("menu_panel")->getChildByName("towers")->getPosition() + getChildByName("menu_panel")->getPosition())),
+				nullptr))
+			);
+		}
+		else if(dialogues != nullptr) {
+			dialogues->update();
+			if (dialogues->hasFinished()) {
+				removeChild(dialogues);
+				dialogues = nullptr;
+			}
+		}
+	}
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("upgrade") &&
+		game->getLevel()->getTowers().size() > 0 && game->getLevel()->getLevelId() == 2 && game->getLevel()->getWorldId() == 0) {
+		
+		if (dialogues == nullptr && !tutorial_running) {
+			std::vector<Tower*> towers = game->getLevel()->getTowers();
+			Tower* targeted_tower = nullptr;
+			for (unsigned int i(0); i < towers.size(); ++i) {
+				if (towers[i]->isSameType("bomber") && towers[i]->isFixed()) {
+					targeted_tower = towers[i];
+					break;
+				}
+			}
+			if (targeted_tower != nullptr) {
+				selected_turret = targeted_tower;
+				tutorial_running = true;
+				game->getLevel()->pause();
+				Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
+				dialogues = Dialogue::createFromConfig(save["tutorials"]["upgrade"]["dialogue"]);
+				addChild(dialogues, 1, "dialogue");
+				dialogues->launch();
+				if (game_state == TITLE) {
+					getChildByName("start")->setVisible(false);
+					getChildByName("title")->setVisible(false);
+					getChildByName("advice")->setVisible(false);
+				}
+			}
+		}
+		else if(dialogues != nullptr) {
+			dialogues->update();
+			if (dialogues->hasFinished()) {
+				removeChild(dialogues);
+				dialogues = nullptr;
+				Size visibleSize = Director::getInstance()->getVisibleSize();
+				Sprite* hand = Sprite::create("res/buttons/hand.png");
+				hand->setAnchorPoint(Vec2(0.15f, 0.85f));
+				hand->setScale(visibleSize.width / 10 / hand->getContentSize().width);
+				hand->setPosition(Vec2(visibleSize.width / 2, 0));
+				addChild(hand, 3, "hand");
+				
+				auto display_menu = CallFunc::create([this]() {
+					showTowerInfo();
+				});
+				auto validate_tutorial = CallFunc::create([this]() {
+					game->getLevel()->resume();
+					((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("upgrade");
+					hideTowerInfo();
+					selected_turret = nullptr;
+					if (game_state == TITLE) {
+						getChildByName("start")->setVisible(true);
+						getChildByName("title")->setVisible(true);
+						getChildByName("advice")->setVisible(true);
+					}
+				});
+
+				hand->runAction(Sequence::create(
+					MoveTo::create(0.75f, selected_turret->getPosition()),
+					DelayTime::create(0.75f),
+					display_menu,
+					DelayTime::create(0.75f),
+					MoveTo::create(0.75f, selected_turret->getPosition() + Vec2(Cell::getCellWidth() / 2, Cell::getCellHeight())),
+					DelayTime::create(0.75f),
+					FadeOut::create(0.75f),
+					validate_tutorial,
+					nullptr)
+				);
+			}
+		}
+	}
+}
+
+void InterfaceGame::shakeElement(Node* element) {
+	RotateTo* left = RotateTo::create(0.1f, 15);
+	RotateTo* right = RotateTo::create(0.1f, -15);
+	RotateTo* center = RotateTo::create(0.2f, 0);
+	element->runAction(
+		RepeatForever::create(
+			Sequence::create(
+				left, right,
+				left->clone(), right->clone(),
+				left->clone(), right->clone(),
+				center, DelayTime::create(1.f),
+				nullptr)
+		)
+	);
+}
+
+void InterfaceGame::shakeScaleElement(Node* element) {
+	RotateTo* left = RotateTo::create(0.1f, 15);
+	RotateTo* right = RotateTo::create(0.1f, -15);
+	RotateTo* center = RotateTo::create(0.2f, 0);
+	element->runAction(
+		RepeatForever::create(
+			Spawn::createWithTwoActions(
+				Sequence::create(
+					left, right,
+					left->clone(), right->clone(),
+					left->clone(), right->clone(),
+					center, DelayTime::create(1.f),
+					nullptr),
+				Sequence::create(
+					ScaleTo::create(0.4f, 1.5f),
+					ScaleTo::create(0.4f, 1.f),
+					nullptr)
+			)
+		)
+	);
 }

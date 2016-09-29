@@ -90,15 +90,7 @@ void Dango::initFromConfig() {
 }
 
 void Dango::update(float dt) {
-	for (auto& effect : effects){
-		effect->update(dt);
-		if (effect->isDone()) {
-			removeChild(effect, 1);
-			//delete effect;
-			effect = nullptr;
-		}
-	}
-	effects.erase(std::remove(effects.begin(), effects.end(), nullptr), effects.end());
+	updateEffects(dt);
 
 	switch (state) {
 		case IDLE:
@@ -585,4 +577,16 @@ double Dango::getSpeedRedtuctionRatio() {
 		speed_ratio = -0.9;
 	}
 	return speed_ratio;
+}
+
+void Dango::updateEffects(float dt) {
+	for (auto& effect : effects) {
+		effect->update(dt);
+		if (effect->isDone()) {
+			removeChild(effect, 1);
+			//delete effect;
+			effect = nullptr;
+		}
+	}
+	effects.erase(std::remove(effects.begin(), effects.end(), nullptr), effects.end());
 }

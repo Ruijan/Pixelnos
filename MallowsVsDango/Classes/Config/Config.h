@@ -342,6 +342,17 @@ public:
 	void loadAllLevels();
 
 	/**
+	* @brief Set the completion value of a tutorial to true
+	*	Save everithin in the writable folder (AppData/local/MvD)
+	*/
+	void completeTutorial(std::string name);
+
+	/**
+	* @brief Check if a tutorial has been completed
+	*/
+	bool isTutorialComplete(std::string name);
+
+	/**
 	* @brief Convert a date in string at format "%Y-%m-%d %H:%M:%S" to time
 	*/
 	static tm getTimeFromString(std::string date1);

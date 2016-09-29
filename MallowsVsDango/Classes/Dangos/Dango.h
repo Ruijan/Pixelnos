@@ -25,6 +25,7 @@ public:
 	enum STATE {
 		IDLE,
 		ATTACK,
+		ATTACK_SPE,
 		RELOAD,
 		MOVE,
 		DYING,
@@ -53,10 +54,11 @@ public:
 	int getHolySugar();
 
 	virtual void update(float dt);
-	void updateAnimation();
+	virtual void updateAnimation();
 	void pauseAnimation();
 	void resumeAnimation();
 	void updateDirection(cocos2d::Vec2 direction);
+	void updateEffects(float dt);
 
 	void takeDamages(double damages);
 	void applyProspectiveDamages(int id_damage);

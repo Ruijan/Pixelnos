@@ -12,7 +12,7 @@
       "speaker": "res/turret/GeneralMashmalow.png",
       "text_en": [
         "Sometimes, Dangos troop get lost and end up in our territory.",
-        "Ir's quite boring here so we use this opportunity to have some fun.",
+        "It's quite boring here so we use this opportunity to have some fun.",
         "However, I don't think this group was lost.",
         "Continue to patrol along the border. Maybe other groups will appear."
       ],
@@ -21,28 +21,6 @@
         "Il n’y a pas grand chose à faire ici donc on en profite un peu pour s’amuser.",
         "Toutefois, quelque chose me dit que cette troupe n'était pas perdue.",
         "Continuez votre tour de garde le long de la frontière. Peut-être que d’autres troupes apparaîtront."
-      ]
-    },
-     {
-      "emotion": [
-        "ANGRY",
-        "NORMAL",
-        "NORMAL",
-        "NORMAL"
-      ],
-      "side": "RIGHT",
-      "speaker": "res/turret/general.png",
-      "text_en": [
-        "Our scouts discovered a new group of Dangos!",
-        "Thanks to your commands, our Bombers are now able to improve during a fight.",
-        "Once the marshmallow is placed, access to its caracteristics by taping on it.",
-        "If you have enough sugar, you can improve to level 2. It will deal more damage, faster and its range will increase."
-      ],
-      "text_fr": [
-        "Nos éclaireurs ont découvert une nouvelle troupe en approche !",
-        "Grâce à votre commandement, nos Bombeurs sont maintenant capables de s'améliorer durant un combat.",
-        "Une fois le marshmallow placé, accédez à ses caracteristique en tapotant dessus.",
-        "Si vous avez assez de sucre, vous pouvez l’améliorer au niveau 2. Il fera plus de dégats, attaquera plus vite et aura une plus grande portée."
       ]
     }
   ]

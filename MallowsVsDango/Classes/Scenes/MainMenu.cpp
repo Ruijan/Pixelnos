@@ -187,7 +187,7 @@ void MainMenu::initLanguageList() {
 	ui::Layout* list_languages_levels = (ui::Layout*)getChildByName("interface")->getChildByName("list_language");
 
 	int nb_displayed_languages = 0;
-	for (unsigned int i(0); i < nb_languages; ++i) {
+	for (int i(0); i < nb_languages; ++i) {
 		std::string n_language = ((AppDelegate*)Application::getInstance())->getConfig()["languages"][i].asString();
 		std::string l;
 		if (n_language == "en") {

@@ -1,6 +1,9 @@
 #include "DangoGenerator.h"
 #include "Level.h"
 #include "../Config/json.h"
+#include "../Dangos/Dangosimple.h"
+#include "../Dangos/Dangobese.h"
+#include "../Dangos/Dangorille.h"
 
 USING_NS_CC;
 
@@ -63,6 +66,9 @@ void DangoGenerator::update(double dt, Level* level){
 				}
 				else if(dango_type == "dangobese"){
 					dango = Dangobese::create(level->getPath(sequencePath[cWave][step]),levelDango);
+				}
+				else if (dango_type == "dangorille") {
+					dango = Dangorille::create(level->getPath(sequencePath[cWave][step]), levelDango);
 				}
 				dango->setPosition(level->getPath(sequencePath[cWave][step])[0]->getPosition());
 				level->addDango(dango);
@@ -219,7 +225,6 @@ void DangoGenerator::saveInRoot(Json::Value& root) {
 			root["dangosChain"][i][j] = sequenceDango[i][j];
 			root["dangosTime"][i][j] = sequenceTimer[i][j];
 			root["dangosPath"][i][j] = sequencePath[i][j];
-
 		}
 	}
 }

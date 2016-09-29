@@ -8,9 +8,15 @@
         "NORMAL",
         "ANGRY"
       ],
-      "speaker": "res/turret/general.png",
+      "speaker": "res/turret/GeneralMashmalow.png",
       "side": "LEFT",
-      "text": [
+      "text_en": [
+        "Apparently they are looking for one of our great treasure but which one.",
+        "Our nation is wide and ancient, our vaults are full of precious items.",
+        "We will think about it late. Another group is willing to invade our territory.",
+        "Make a syrupshed ! General Mallow strawberry perfume is counting on you!"
+      ],
+      "text_fr": [
         "Apparently they are looking for one of our great treasure but which one.",
         "Our nation is wide and ancient, our vaults are full of precious items.",
         "We will think about it late. Another group is willing to invade our territory.",

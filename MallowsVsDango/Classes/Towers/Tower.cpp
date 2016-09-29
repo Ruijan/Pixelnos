@@ -10,10 +10,14 @@ USING_NS_CC;
 
 Tower::Tower() :
 	state(State::IDLE), fixed(false), destroy(false), target(nullptr), timer(0), timerIDLE(0), level(0),
-	nb_attacks(0), spritesheet(false), direction(DOWN)
+	nb_attacks(0), spritesheet(false), direction(DOWN), blocked(false)
 {}
 
-Tower::~Tower() {}
+Tower::~Tower() {
+	if (target != nullptr) {
+		target->removeTargetingTower(this);
+	}
+}
 
 void Tower::initFromConfig() {
 	auto config = getSpecConfig();
@@ -421,40 +425,55 @@ void Tower::update(float dt) {
 	if(fixed){
 		timer += dt;
 		switch(state){
+			case State::BLOCKED:
+				if (!blocked) {
+					state = IDLE;
+				}
+				break;
 			case State::IDLE:
-				chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
-				if (target != nullptr){
-					state = State::AWARE;
-					//((Label*)getChildByName("label_state"))->setString("AWARE");
-					handleEnrageMode();
+				if (blocked) {
+					state = BLOCKED;
+				}
+				else {
+					chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
+					if (target != nullptr) {
+						state = State::AWARE;
+						//((Label*)getChildByName("label_state"))->setString("AWARE");
+						handleEnrageMode();
+					}
 				}
 				break;
 			case State::AWARE:
-				timerIDLE += dt;
-				chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
-				if (target != nullptr){
-					handleEnrageMode();
-					/*cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(state);
-					double delay = animation_duration / nb_frames_anim;
-					auto callbackAttack = CallFunc::create([&]() {
-						state = State::RELOADING;
-						//((Label*)getChildByName("label_state"))->setString("RELOADING");
-						/*std::string frameName = name + "_attack_movement_000.png";
-						SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-						setSpriteFrame(cache->getSpriteFrameByName(frameName.c_str()));
-						timer = 0;
-						timerIDLE = 0;
-						if (target != nullptr) {
-							attack();
+				if (blocked) {
+					state = BLOCKED;
+				}
+				else {
+					timerIDLE += dt;
+					chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
+					if (target != nullptr) {
+						handleEnrageMode();
+						/*cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(state);
+						double delay = animation_duration / nb_frames_anim;
+						auto callbackAttack = CallFunc::create([&]() {
+							state = State::RELOADING;
+							//((Label*)getChildByName("label_state"))->setString("RELOADING");
+							/*std::string frameName = name + "_attack_movement_000.png";
+							SpriteFrameCache* cache = SpriteFrameCache::getInstance();
+							setSpriteFrame(cache->getSpriteFrameByName(frameName.c_str()));
+							timer = 0;
+							timerIDLE = 0;
+							if (target != nullptr) {
+								attack();
+							}
+						});*/
+						//runAction(Sequence::create(Animate::create(Animation::createWithSpriteFrames(animFrames, delay)), callbackAttack, nullptr));
+						//((Label*)getChildByName("label_state"))->setString("ATTACKING");
+						if (state != LIMIT_BURSTING) {
+							state = State::ATTACKING;
+							givePDamages(damage);
+							startAnimation();
+							timerIDLE = 0;
 						}
-					});*/
-					//runAction(Sequence::create(Animate::create(Animation::createWithSpriteFrames(animFrames, delay)), callbackAttack, nullptr));
-					//((Label*)getChildByName("label_state"))->setString("ATTACKING");
-					if (state != LIMIT_BURSTING) {
-						state = State::ATTACKING;
-						givePDamages(damage);
-						startAnimation();
-						timerIDLE = 0;
 					}
 				}
 				if(timerIDLE > 2){
@@ -1166,4 +1185,12 @@ void Tower::resumeAnimation() {
 
 std::string Tower::getName() {
 	return name;
+}
+
+void Tower::blockTower(bool block) {
+	blocked = block;
+}
+
+bool Tower::isTowerBlocked() {
+	return blocked;
 }

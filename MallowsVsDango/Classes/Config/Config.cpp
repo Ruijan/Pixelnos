@@ -26,6 +26,8 @@ Config::Config(std::string configfilename, std::string savename) :
 	scheduler = Director::getInstance()->getScheduler();
 	scheduler->retain();
 	scheduler->schedule(CC_SCHEDULE_SELECTOR(Config::serverUpdate), this , 5.f, false);
+
+	srand(time(NULL));
 }
 
 const Json::Value& Config::getConfigValues() const{
@@ -219,6 +221,10 @@ void Config::init(){
 		rootSav["holy_sugar"] = 0;
 		rootSav["c_level"] = 0;
 		rootSav["c_world"] = 0;
+		rootSav["tutorials"] = root["tutorials"];
+		/*for (int i(0); i < root["tutorials"].size(); ++i) {
+			rootSav["tutorials"][root["tutorials"][i].asString()]["completed"] = false;
+		}*/
 		for (unsigned int i(0); i < root["towers"].size(); ++i) {
 			rootSav["towers"][root["towers"].getMemberNames()[i]]["exp"] = 0;
 
@@ -887,6 +893,15 @@ void Config::loadAllLevels() {
 			}
 		}
 	}, "POST getListLevels");
+}
+
+void Config::completeTutorial(std::string name) {
+	rootSav["tutorials"][name]["completed"] = true;
+	save();
+}
+
+bool Config::isTutorialComplete(std::string name){
+	return rootSav["tutorials"][name]["completed"].asBool();
 }
 
 tm Config::getTimeFromString(std::string date1) {

@@ -6770,6 +6770,19 @@
          stdDeviation="9.8"
          id="feGaussianBlur11004-0" />
     </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter7109"
+       x="-0.144"
+       width="1.288"
+       y="-0.23165217"
+       height="1.4633043">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="8.9701548"
+         id="feGaussianBlur7111" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -6779,8 +6792,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.49497474"
-     inkscape:cx="2282.7605"
-     inkscape:cy="1520.2819"
+     inkscape:cx="1912.0849"
+     inkscape:cy="1474.364"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -21255,6 +21268,16 @@
        ry="130"
        transform="matrix(1.0661595,0,0,1.0661595,129.75236,174.94976)"
        inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\holy_sugar_shining.png"
+       inkscape:export-xdpi="72.982422"
+       inkscape:export-ydpi="72.982422" />
+    <ellipse
+       style="opacity:1;fill:#3c2500;fill-opacity:0.46341464;fill-rule:nonzero;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter7109)"
+       id="path7049"
+       cx="2646.5996"
+       cy="-145.67873"
+       rx="74.751289"
+       ry="46.467018"
+       inkscape:export-filename="C:\Users\MSI-GP60\Documents\Pixelnos\MallowsVsDango\Resources\res\buttons\monkey_shadow.png"
        inkscape:export-xdpi="72.982422"
        inkscape:export-ydpi="72.982422" />
   </g>

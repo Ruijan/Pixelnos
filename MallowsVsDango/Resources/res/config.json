@@ -133,6 +133,116 @@
       "fr": "Chargement"
     }
   },
+  "tutorials": {
+    "tower_positioning": {
+      "completed": false
+    },
+    "sugar": {
+      "completed": false,
+      "dialogue": [
+        {
+          "emotion": [
+            "NORMAL",
+            "NORMAL"
+          ],
+          "side": "LEFT",
+          "speaker": "res/turret/general.png",
+          "text_en": [
+            "Be careful, everytime you place a tower, it consumes sugar.",
+            "Everytime you destroy a dango, you get some sugar!"
+          ],
+          "text_fr": [
+            "Attention, à chaque fois aue vous posez une tourelle, vous utilisez du sucre.",
+            "Pour gagner plus de sucre, détruisez des dangos !"
+          ]
+        }
+      ]
+    },
+    "life": {
+      "completed": false,
+      "dialogue": [
+        {
+          "emotion": [
+            "NORMAL",
+            "NORMAL",
+            "NORMAL"
+          ],
+          "side": "LEFT",
+          "speaker": "res/turret/general.png",
+          "text_en": [
+            "Be careful, an enemy is close to the end of the path. Our rear guard can handle few enemies but not that much.",
+            "You can check on top right how many enemies they can still handle.",
+            "Place more towers or upgrade them to prevent that to happen."
+          ],
+          "text_fr": [
+            "Attention, un ennemi s'est éloigné sur le chemin. Notre arrière-garde peut s'occuper de plusieurs ennemis mais pas plus.",
+            "Vous pouvez vérifier dans le coin haut à gauche de l'écran combien ils peuvent encore combattre.",
+            "Placez plus de tourelles pour empêcher que cela arrive."
+          ]
+        }
+      ]
+    },
+    "saucer": {
+      "completed": false,
+      "dialogue": [
+        {
+          "emotion": [
+            "ANGRY",
+            "ANGRY",
+            "NORMAL"
+          ],
+          "side": "LEFT",
+          "speaker": "res/turret/general.png",
+          "text_en": [
+            "Stronger enemies are coming!",
+            "Give more time to the Bomber to attack the enemies by slowing them down! \nPlace Saucer towers!",
+            "Their CHOCOSPIT deals low damages but the enemy will be disgusted and slowed down !"
+          ],
+          "text_fr": [
+            "Des ennemis plus puissants arrivent !",
+            "Donnez plus de temps aux Bombeurs pour les attaquer en les ralentissant! \n Placez des Sauceurs !",
+            "Leur CHOCOCRACHAT fait peu de dégats mais les ennemis seront écoeurés et ralentiront !"
+          ]
+        }
+      ]
+    },
+    "upgrade": {
+      "completed": false,
+      "dialogue": [
+        {
+          "emotion": [
+            "NORMAL",
+            "NORMAL",
+            "NORMAL"
+          ],
+          "side": "LEFT",
+          "speaker": "res/turret/general.png",
+          "text_en": [
+            "Thanks to your commands, our Bombers are now able to improve during a fight.",
+            "Once the marshmallow is placed, access to its caracteristics by taping on it.",
+            "If you have enough sugar, you can improve to level 2. It will deal more damage, faster and its range will increase."
+          ],
+          "text_fr": [
+            "Grâce à votre commandement, nos Bombeurs sont maintenant capables de s'améliorer durant un combat.",
+            "Une fois le marshmallow placé, accédez à ses caracteristique en tapotant dessus.",
+            "Si vous avez assez de sucre, vous pouvez l’améliorer au niveau 2. Il fera plus de dégats, attaquera plus vite et aura une plus grande portée."
+          ]
+        }
+      ]
+    },
+    "multi_paths": {
+      "completed": false
+    },
+    "boss": {
+      "completed": false
+    },
+    "skills": {
+      "completed": false
+    },
+    "dangobese": {
+      "completed": false
+    }
+  },
   "languages": [
     "en",
     "fr"
@@ -163,7 +273,7 @@
           "image": "res/dango/dango1.png",
           "name": "dango1",
           "reload": 1.5,
-          "speed": 1,
+          "speed": 0.75,
           "xp": 3,
           "skin": "normal",
           "holy_sugar": {
@@ -178,7 +288,7 @@
           "image": "res/dango/dango2.png",
           "name": "dango2",
           "reload": 1.5,
-          "speed": 1,
+          "speed": 0.75,
           "xp": 7,
           "skin": "soy",
           "holy_sugar": {
@@ -193,7 +303,7 @@
           "image": "res/dango/dango2.png",
           "name": "dango3",
           "reload": 1.5,
-          "speed": 1,
+          "speed": 0.75,
           "xp": 15,
           "skin": "soy",
           "holy_sugar": {
@@ -234,6 +344,47 @@
           "name": "dangobese2",
           "reload": 3,
           "speed": 0.5
+        }
+      ]
+    },
+    "dangorille": {
+      "skeleton": "res/dango/animations/dango.json",
+      "atlas": "res/dango/animations/dango.atlas",
+      "cellperanim": 0.55,
+      "name": "Dangorille",
+      "description_en": "",
+      "description_fr": "Toute la surface du dango est couverte de poils! Toute ? Non, une zone resiste encore et toujours a l'envahisseur!",
+      "level": [
+        {
+          "attack": 3,
+          "gain": 15,
+          "hitpoints": 20,
+          "image": "res/dango/dangorille1.png",
+          "name": "dangorille1",
+          "reload": 3,
+          "reload_spe": 5,
+
+          "attack_spe": {
+            "nb_monkeys": 2,
+            "text_en": [
+              "Four",
+              "Monkeys",
+              "Army"
+            ],
+            "text_fr": [
+              "L'Armée",
+              "des",
+              "Quatres",
+              "Singes"
+            ]
+          },
+          "speed": 1,
+          "xp": 15,
+          "skin": "soy",
+          "holy_sugar": {
+            "mean": 0,
+            "std": 0.15
+          }
         }
       ]
     }
@@ -291,7 +442,7 @@
           "exp": 25,
           "holy_sugar": 2,
           "finalized": false,
-          "path_level": "Level_3.json",
+          "path_level": "Level_5.json",
           "musics": [ "music/On-Tiptoe.mp3.mp3" ],
           "reward": "res/levels/plan1.png",
           "sugar": 90,
@@ -302,23 +453,23 @@
           "y": 0.115
         },
         {
-          "animations": [ "res/turret/animations/archer.plist", "res/turret/animations/cutter.plist", "res/turret/animations/splash.plist", "res/turret/animations/cut.plist", "res/dango/animations/dango1.plist", "res/dango/animations/dango2.plist", "res/dango/animations/dangobese1.plist" ],
+          "id": 4,
+          "dialogues_file": "Levels/lvl_4_dialogues.json",
+          "animations": [ "res/turret/animations/splash.plist", "res/turret/animations/cut.plist" ],
           "background": "res/levels/background2.png",
           "effects": [ "music/splash.mp3", "music/slash.mp3" ],
-          "exp": 150,
-          "generator": "res/level4_generator.json",
-          "height": 12,
-          "map": "res/levels/level1_map.csv",
+          "exp": 25,
+          "holy_sugar": 2,
+          "finalized": false,
+          "path_level": "Level_3.json",
           "musics": [ "music/On-Tiptoe.mp3.mp3" ],
-          "path": "res/levels/level1_path.csv",
           "reward": "res/levels/plan1.png",
-          "sugar": 80,
+          "sugar": 90,
           "tilemaptable": "res/tiles/ground.json",
           "tileset": "res/tiles/ground.plist",
           "tilesetpng": "res/tiles/ground.png",
-          "width": 14,
-          "x": 560,
-          "y": 240
+          "x": -0.13,
+          "y": 0.060
         }
       ]
     },
@@ -401,7 +552,7 @@
       "range": [ 100, 115, 135, 135 ],
       "damages": [ 0.5, 0.5, 0.5, 0.5 ],
       "slow": [ -0.5, -0.70, -0.9, -0.9 ],
-      "slow_duration": [ 3.5, 4.5, 5.5, 5.5],
+      "slow_duration": [ 3.5, 4.5, 5.5, 5.5 ],
       "xp_level": [ 0, 250, 1000, 10000 ],
       "image": "res/turret/saucer3.png",
       "description_en": "Saucer: Slow down the enemies by spitting digested chocolate on them",

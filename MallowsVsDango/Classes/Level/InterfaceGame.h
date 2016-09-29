@@ -45,6 +45,7 @@ public:
 	void showLose();
 	
 	void update(float dt);
+	void updateTutorial(float dt);
 	void updateButtonDisplay();
 	void updateObjectDisplay(float dt);
 	void updateIncrementXP(cocos2d::Label* exp_label, cocos2d::ui::LoadingBar* loading_bar, 
@@ -64,6 +65,9 @@ public:
 	void showTowerInfo();
 	void hideTowerInfo();
 
+	static void shakeElement(cocos2d::Node* element);
+	static void shakeScaleElement(Node* element);
+
 private:
 	std::unordered_map<std::string, std::pair<cocos2d::Sprite*, double>> towers_menu;
 	cocos2d::EventListenerTouchOneByOne* listener;
@@ -77,6 +81,7 @@ private:
 	const double sizeButton;
 	const double sizeTower;
 	Dialogue* dialogues;
+	bool tutorial_running;
 	
 protected:
 	void moveSelectedTurret(cocos2d::Vec2 pos);

@@ -585,3 +585,7 @@ void Level::showGrid(bool show) {
 		}
 	}
 }
+
+std::vector<Tower*>& Level::getTowers() {
+	return towers;
+}

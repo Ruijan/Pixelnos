@@ -2,8 +2,7 @@
 #define DANGOGENERATOR_HPP
 
 #include "cocos2d.h"
-#include "../Dangos/Dangosimple.h"
-#include "../Dangos/Dangobese.h"
+#include "../Config/json.h"
 
 class Level;
 
