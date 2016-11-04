@@ -104,3 +104,7 @@ void CreditScreen::onExitTransitionDidStart() {
 	getChildByName("layout")->stopAllActions();
 	getChildByName("layout")->setPosition(Vec2(0, 0));
 }
+
+void CreditScreen::switchLanguage() {
+
+}

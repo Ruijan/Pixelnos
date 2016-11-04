@@ -6,6 +6,7 @@
 #include "../Towers/Tower.h"
 #include "ui/CocosGUI.h"
 #include "Dialogue.h"
+#include "ChallengeHandler.h"
 
 class MyGame;
 
@@ -34,7 +35,6 @@ public:
 	virtual bool init();
 	void addEvents();
 	static InterfaceGame* create(MyGame* ngame);
-	void initDialoguesFromLevel();
 	
 	void setGame(MyGame* ngame);
 	void menuTurretTouchCallback(Tower::TowerType turret);
@@ -81,6 +81,7 @@ private:
 	const double sizeButton;
 	const double sizeTower;
 	Dialogue* dialogues;
+	ChallengeHandler* challenges;
 	bool tutorial_running;
 	
 protected:
@@ -88,15 +89,16 @@ protected:
 	bool isOnTower(cocos2d::Vec2 pos);
 	void mainMenuCallBack(std::string id_menu);
 	
-	void initParametersMenu();
-	void initLoseMenu();
-	void initWinMenu();
-	void initRightPanel();
-	void initLabels();
-	void initStartMenu();
+	void initParametersMenu(const Json::Value& config);
+	void initLoseMenu(const Json::Value& config);
+	void initWinMenu(const Json::Value& config);
+	void initRightPanel(const Json::Value& config);
+	void initLabels(const Json::Value& config);
+	void initStartMenu(const Json::Value& config);
+	void initDialoguesFromLevel(const Json::Value& config);
 
 	void displayTowerInfos(std::string itemName);
-	void resetTowerMenu();
+	void createTowersLayout();
 
 	void destroyCallback(Ref* sender);
 	void builtCallback(Ref* sender);

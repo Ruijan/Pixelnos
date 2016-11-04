@@ -1,0 +1,18 @@
+{
+  "level_id": 6,
+  "introDialogue": [
+    {
+      "emotion": [
+        "NORMAL"
+      ],
+      "speaker": "res/turret/GeneralMashmalow.png",
+      "side": "LEFT",
+      "text_en": [
+        "What a strong enemy! Hopefully, there won't be any more powerful one..."
+      ],
+      "text_fr": [
+        "Quel ennemi coriace ! Heureusement qu’il n’y en aura pas de plus puissant…"
+      ]
+    }
+  ]
+}

@@ -23,11 +23,11 @@ Bomber* Bomber::create()
 	return NULL;
 }
 
-Json::Value Bomber::getConfig(){
+const Json::Value& Bomber::getConfig(){
 	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["bomber"];
 }
 
-const Json::Value Bomber::getSpecConfig(){
+const Json::Value& Bomber::getSpecConfig(){
 	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["bomber"];
 }
 
@@ -60,7 +60,7 @@ void Bomber::attack(){
 			file = "res/turret/red_bomb.png";
 			break;
 		}
-		log("--> bullet thrown with id %i", attacked_enemies[target]);
+		//log("--> bullet thrown with id %i", attacked_enemies[target]);
 		if (level >= (int)getConfig()["cost"].size() - 1) {
 			ball = WaterBombBall::create(target, damage, 500 * visibleSize.width / 960, 100);
 		}

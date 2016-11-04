@@ -6,6 +6,8 @@
 #include "../Level/InterfaceGame.h"
 #include "Lib/Loader.h"
 #include "LoadingScreen.h"
+#include "../Lib/Translationable.h"
+
 
 struct LevelTrackingEvent {
 	int level_id;
@@ -22,7 +24,7 @@ struct LevelTrackingEvent {
  * Cocos2d Scene that handle a level, the interface and the different possible
  * actions from a game: load images, save progress, add experience and so on.
  */
-class MyGame : public cocos2d::Scene, public Loader
+class MyGame : public cocos2d::Scene, public Loader, public Translationable
 {
 
 private:
@@ -143,6 +145,8 @@ public:
 	void addActionToTracker(Json::Value action);
 	void createNewTracker();
 	void updateTracker(int holy_sugar, std::string state, int duration);
+	virtual void switchLanguage();
+	void unlockTowers();
 
 	// implement the "static node()" method manually
 	CREATE_FUNC(MyGame);

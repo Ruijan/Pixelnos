@@ -4,6 +4,14 @@
       "en": "Start",
       "fr": "Jouer"
     },
+    "quit": {
+      "en": "Exit Game",
+      "fr": "Quitter le jeu"
+    },
+    "quit_info": {
+      "en": "You have to restart the game in order to make the language switch work.",
+      "fr": "Vous devez relancer le jeu afin que le changement de langue fonctionne."
+    },
     "credits": {
       "en": "Credits",
       "fr": "Crédits"
@@ -131,14 +139,98 @@
     "loading": {
       "en": "Loading",
       "fr": "Chargement"
+    },
+    "progress_running": {
+      "en": "State: On going",
+      "fr": "État :En cours"
+    },
+    "progress_failed": {
+      "en": "State: Failed",
+      "fr": "État : Échoué"
+    },
+    "progress_succeed": {
+      "en": "State: Success",
+      "fr": "État : Réussi"
+    }
+  },
+  "challenges": {
+    "Untouchable": {
+      "name_fr": "Intouchable",
+      "name_en": "Untouchable",
+      "description_fr": "Ne pas perdre de point de vie",
+      "description_en": "Do not lose hit points",
+      "image": "res/buttons/Challenges/untouchable.png"
+    },
+    "Perfectionist": {
+      "name_fr": "Perfectioniste",
+      "name_en": "Perfectionist",
+      "description_fr": "Aucun mur ne doit perdre de point de vie",
+      "description_en": "Walls must not lose hit point",
+      "image": "res/buttons/Challenges/perfectionist.png"
+    },
+    "Misanthrope": {
+      "name_fr": "Misanthrope",
+      "name_en": "Misanthrope",
+      "description_fr": "Ne pas placer de tourelle côte à côte",
+      "description_en": "Towers must not be placed side by side",
+      "image": "res/buttons/Challenges/misanthrope.png"
+    },
+    "Philanthrope": {
+      "name_fr": "Philanthrope",
+      "name_en": "Philanthrope",
+      "description_fr": "Placer les tours côte à côte",
+      "description_en": "Place towers side by side",
+      "image": "res/buttons/Challenges/philanthrope.png"
+    },
+    "Stingy": {
+      "name_fr": "Avare",
+      "name_en": "Stingy",
+      "description_fr": "Ne pas utiliser plus de %i sucres",
+      "description_en": "Do not use more than %i sugars",
+      "image": "res/buttons/Challenges/stingy.png"
+    },
+    "Believer": {
+      "name_fr": "Confiant",
+      "name_en": "Believer",
+      "description_fr": "Ne pas placer plus de %i tourelles",
+      "description_en": "Do not place more than %i towers",
+      "image": "res/buttons/Challenges/believer.png"
+    },
+    "Discriminant": {
+      "name_fr": "Discriminant",
+      "name_en": "Discriminant",
+      "description_fr": "Ne pas utiliser de tourelles %s",
+      "description_en": "Do not place towers %s",
+      "image": "res/buttons/Challenges/discriminant.png"
+    },
+    "Narrow": {
+      "name_fr": "Borné",
+      "name_en": "Narrow",
+      "description_fr": "Utiliser uniquement des tourelles %s",
+      "description_en": "Only use towers %s",
+      "image": "res/buttons/Challenges/narrow.png"
+    },
+    "Reckless": {
+      "name_fr": "Téméraire",
+      "name_en": "Reckless",
+      "description_fr": "Ne pas placer de tourelles à plus d'une case du chemin",
+      "description_en": "Do not place towers farther than one cell away from path",
+      "image": "res/buttons/Challenges/reckless.png"
+    },
+    "Barbarian": {
+      "name_fr": "Barbare",
+      "name_en": "Barbarian",
+      "description_fr": "Ne pas améliorer les tourelles",
+      "description_en": "Do not upgrade towers",
+      "image": "res/buttons/Challenges/barbarian.png"
     }
   },
   "tutorials": {
     "tower_positioning": {
-      "completed": false
+      "state": "uncompleted"
     },
     "sugar": {
-      "completed": false,
+      "state": "uncompleted",
       "dialogue": [
         {
           "emotion": [
@@ -159,7 +251,7 @@
       ]
     },
     "life": {
-      "completed": false,
+      "state": "uncompleted",
       "dialogue": [
         {
           "emotion": [
@@ -183,7 +275,7 @@
       ]
     },
     "saucer": {
-      "completed": false,
+      "state": "uncompleted",
       "dialogue": [
         {
           "emotion": [
@@ -204,10 +296,12 @@
             "Leur CHOCOCRACHAT fait peu de dégats mais les ennemis seront écoeurés et ralentiront !"
           ]
         }
-      ]
+      ],
+      "level": 1,
+      "world": 0
     },
     "upgrade": {
-      "completed": false,
+      "state": "uncompleted",
       "dialogue": [
         {
           "emotion": [
@@ -228,19 +322,144 @@
             "Si vous avez assez de sucre, vous pouvez l’améliorer au niveau 2. Il fera plus de dégats, attaquera plus vite et aura une plus grande portée."
           ]
         }
-      ]
+      ],
+      "level": 2,
+      "world": 0
     },
     "multi_paths": {
-      "completed": false
+      "state": "uncompleted",
+      "dialogue": [
+        {
+          "emotion": [
+            "NORMAL",
+            "NORMAL"
+          ],
+          "side": "LEFT",
+          "speaker": "res/turret/general.png",
+          "text_en": [
+            "Be careful! the roads of the Mighty Sweety Mallows' Empire are tortuous and manifold.",
+            "Enemies can come from multiple paths at the same time. Don't forget to protect all the exits!"
+          ],
+          "text_fr": [
+            "Attention ! Les routes du Grand Empire Sucré des Mallows sont sinueuses multiples.",
+            "Les ennemis peuvent venir de plusieurs chemins en même temps. N'oublier pas de protéger toutes les sorties !"
+          ]
+        }
+      ],
+      "level": 3,
+      "world": 0
     },
-    "boss": {
-      "completed": false
+    "dangorilla": {
+      "state": "uncompleted",
+      "dialogue": [
+        {
+          "emotion": [
+            "ANGRY",
+            "ANGRY",
+            "ANGRY"
+          ],
+          "side": "LEFT",
+          "speaker": "res/dango/dangorille.png",
+          "text_en": [
+            "I AM DANGORILLA THE HAIRY!",
+            "I am one of the most powerful captain of the Dangos' Empire !",
+            "Me and my Four Monkeys Army (I asked for 12 but we didn't have enough budget) will beat your ass !"
+          ],
+          "text_fr": [
+            "JE SUIS DANGORILLE LE POILU !",
+            "Je suis l'un des plus puissants capitaine de l'Empire des Dangos!",
+            "Moi et mon Armée des Quatre Singes (j'avais demandé 12 mais ils n'avaient pas assez de budget), on va vous botter les fesses !"
+          ]
+        },
+        {
+          "emotion": [
+            "ANGRY",
+            "ANGRY",
+            "ANGRY"
+          ],
+          "side": "RIGHT",
+          "speaker": "res/turret/general.png",
+          "text_en": [
+            "By the holiness of all sugars ! A terrifying enemy just appeared !",
+            "He has a thick dough and a four blocking monkeys army with him!",
+            "Tap on the monkeys that will try to block our marshmallows!"
+          ],
+          "text_fr": [
+            "Par le saint de tous les sucres ! Un terrible ennemi vient d’apparaitre !",
+            "Il a la pate epaisse et son armee des 4 singes bloqueurs ! ",
+            "Tapez sur les singes qui essaieront de bloquer nos marshmallows !"
+          ]
+        }
+      ],
+      "level": 4,
+      "world": 0
     },
     "skills": {
-      "completed": false
+      "state": "uncompleted",
+      "dialogue": [
+        {
+          "emotion": [
+            "NORMAL"
+          ],
+          "side": "LEFT",
+          "speaker": "res/turret/general.png",
+          "text_en": [
+            "We accumulated a lot of Holy Sugar!\n Let's see what we can do with it..."
+          ],
+          "text_fr": [
+            "Nous avons accumulé beaucoup de Sucre Sacré!\n Voyons ce qu'on peut faire avec..."
+          ]
+        }
+      ],
+      "dialogue_skills": [
+        {
+          "emotion": [
+            "NORMAL",
+            "NORMAL"
+          ],
+          "side": "LEFT",
+          "speaker": "res/turret/general.png",
+          "text_en": [
+            "I have an idea! We could place a Mallow on the path to block our enemies. Like a wall!",
+            "I am a genius! Let's develop this new technology!"
+          ],
+          "text_fr": [
+            "Je sais ! Nous pourrions placer un Mallow sur le chemin afin de bloquer nos ennemis. Un peu comme un mur !",
+            "Je suis un géni ! Allons développer cette nouvelle technologie!"
+          ]
+        }
+      ],
+      "level": 5,
+      "world": 0
     },
     "dangobese": {
-      "completed": false
+      "state": "uncompleted",
+      "dialogue": [
+        {
+          "emotion": [
+            "ANGRY",
+            "ANGRY",
+            "NORMAL",
+            "NORMAL"
+          ],
+          "side": "LEFT",
+          "speaker": "res/turret/general.png",
+          "text_en": [
+            "It's gigantic ! \n It's not a dango! It's a peak! It's a cape, what do I say... It's... It's...",
+            "It's a Dangobese!!!",
+            "Dangose are so fat that they can aspirate projectiles. Use our new troop: the Cutter.",
+            "It doesn't reach far but can touch all the enemies around it. Impossible for the Dangobese to dodge!"
+          ],
+          "text_fr": [
+            "C'est énorme ! \n Ce n'est pas un dango ! C'est un pic ! C'est un cap, que dis-je... c'est, c'est...",
+            "C'est un Dangobèse !!!",
+            "Les Dangobèses sont tellement gros qu’ils peuvent aspirer les projectiles. Utilisez notre nouvelle troupe: le Cutteur.",
+            "Il n’attaque pas de loin mais peut toucher tous les ennemis autour de lui. Impossible que le Dangobèse puisse esquiver !"
+          ]
+        }
+      ],
+      "level": 5,
+      "world": 0
     }
   },
   "languages": [
@@ -250,11 +469,13 @@
   "advice": {
     "en": [
       "Towers are more efficient placed near a turn of the path. Try to place towers near path!",
-      "The bomber is a basic tower that does not deal a lot of damages. Try to upgrade it!"
+      "The Bomber is a basic tower that does not deal a lot of damages. Try to upgrade it!",
+      "The Saucer slows down enemies. Place it before the other towers to give them more time to attack."
     ],
     "fr": [
       "Les tours sont plus efficaces lorsqu'elles sont placées près d'un virage. Essaye de les placer près du chemin.",
-      "Le Bombeur est une tour basique qui ne fait pas beaucoup de dégats. Essaye de l'améliorer !"
+      "Le Bombeur est une tour basique qui ne fait pas beaucoup de dégats. Essaye de l'améliorer !",
+      "Le Sauceur permet de ralentir les ennemis. Placez-le avant les autres tourelles pour leur donner plus de temps d'attaquer."
     ]
   },
   "dangos": {
@@ -277,8 +498,9 @@
           "xp": 3,
           "skin": "normal",
           "holy_sugar": {
-            "mean": 0,
-            "std": 0.15
+            "prob": 0.05,
+            "number": 1,
+            "type": "full"
           }
         },
         {
@@ -292,8 +514,9 @@
           "xp": 7,
           "skin": "soy",
           "holy_sugar": {
-            "mean": 0,
-            "std": 0.15
+            "prob": 0.05,
+            "number": 1,
+            "type": "full"
           }
         },
         {
@@ -307,8 +530,9 @@
           "xp": 15,
           "skin": "soy",
           "holy_sugar": {
-            "mean": 0,
-            "std": 0.15
+            "prob": 0.05,
+            "number": 1,
+            "type": "full"
           }
         }
       ]
@@ -330,7 +554,12 @@
           "image": "res/dango/dangobese1.png",
           "name": "dangobese1",
           "reload": 5,
-          "speed": 0.5
+          "speed": 0.5,
+          "holy_sugar": {
+            "prob": 0.075,
+            "number": 1,
+            "type": "full"
+          }
         },
         {
           "animation": "res/dango/animations/dangobese2.png",
@@ -343,7 +572,12 @@
           "image": "res/dango/dangobese2.png",
           "name": "dangobese2",
           "reload": 3,
-          "speed": 0.5
+          "speed": 0.5,
+          "holy_sugar": {
+            "prob": 0.075,
+            "number": 1,
+            "type": "full"
+          }
         }
       ]
     },
@@ -362,10 +596,9 @@
           "image": "res/dango/dangorille1.png",
           "name": "dangorille1",
           "reload": 3,
-          "reload_spe": 5,
-
+          "reload_spe": 10,
           "attack_spe": {
-            "nb_monkeys": 2,
+            "nb_monkeys": 4,
             "text_en": [
               "Four",
               "Monkeys",
@@ -382,8 +615,9 @@
           "xp": 15,
           "skin": "soy",
           "holy_sugar": {
-            "mean": 0,
-            "std": 0.15
+            "prob": 1,
+            "number": 1,
+            "type": "full"
           }
         }
       ]
@@ -406,13 +640,39 @@
           "finalized": false,
           "path_level": "Level_1.json",
           "musics": [ "music/On-Tiptoe.mp3.mp3" ],
-          "reward": "res/levels/plan1.png",
+          "reward": "res/levels/rewards/saucer.png",
           "sugar": 90,
-          "tilemaptable": "res/tiles/ground.json",
-          "tileset": "res/tiles/ground.plist",
-          "tilesetpng": "res/tiles/ground.png",
+          "type":  "normal",
+          "tileset": [
+            "res/levels/objects/ground.plist",
+            "res/levels/objects/trees.plist",
+            "res/levels/objects/forest.plist"
+          ],
+          "tilesetpng": [
+            "res/levels/objects/ground.png",
+            "res/levels/objects/trees.png",
+            "res/levels/objects/forest.png"
+          ],
           "x": -0.45,
-          "y": 0.085
+          "y": 0.085,
+          "challenges": [
+            {
+              "name": "Untouchable",
+              "int_value": 3,
+              "str_value": ""
+            },
+            {
+              "name": "Misanthrope",
+              "int_value": -1,
+              "str_value": ""
+
+            },
+            {
+              "name": "Stingy",
+              "int_value": 90,
+              "str_value": ""
+            }
+          ]
         },
         {
           "id": 2,
@@ -427,11 +687,37 @@
           "musics": [ "music/On-Tiptoe.mp3.mp3" ],
           "reward": "res/levels/plan1.png",
           "sugar": 90,
-          "tilemaptable": "res/tiles/ground.json",
-          "tileset": "res/tiles/ground.plist",
-          "tilesetpng": "res/tiles/ground.png",
+          "type":  "normal",
+          "tileset": [
+            "res/levels/objects/ground.plist",
+            "res/levels/objects/trees.plist",
+            "res/levels/objects/forest.plist"
+          ],
+          "tilesetpng": [
+            "res/levels/objects/ground.png",
+            "res/levels/objects/trees.png",
+            "res/levels/objects/forest.png"
+          ],
           "x": -0.35,
-          "y": 0.11
+          "y": 0.11,
+          "challenges": [
+            {
+              "name": "Untouchable",
+              "int_value": 3,
+              "str_value": ""
+            },
+            {
+              "name": "Philanthrope",
+              "int_value": -1,
+              "str_value": ""
+
+            },
+            {
+              "name": "Reckless",
+              "int_value": -1,
+              "str_value": ""
+            }
+          ]
         },
         {
           "id": 3,
@@ -442,15 +728,41 @@
           "exp": 25,
           "holy_sugar": 2,
           "finalized": false,
-          "path_level": "Level_5.json",
+          "path_level": "Level_3.json",
           "musics": [ "music/On-Tiptoe.mp3.mp3" ],
           "reward": "res/levels/plan1.png",
           "sugar": 90,
-          "tilemaptable": "res/tiles/ground.json",
-          "tileset": "res/tiles/ground.plist",
-          "tilesetpng": "res/tiles/ground.png",
+          "type":  "normal",
+          "tileset": [
+            "res/levels/objects/ground.plist",
+            "res/levels/objects/trees.plist",
+            "res/levels/objects/forest.plist"
+          ],
+          "tilesetpng": [
+            "res/levels/objects/ground.png",
+            "res/levels/objects/trees.png",
+            "res/levels/objects/forest.png"
+          ],
           "x": -0.23,
-          "y": 0.115
+          "y": 0.115,
+          "challenges": [
+            {
+              "name": "Untouchable",
+              "int_value": 3,
+              "str_value": ""
+            },
+            {
+              "name": "Philanthrope",
+              "int_value": -1,
+              "str_value": ""
+
+            },
+            {
+              "name": "Reckless",
+              "int_value": -1,
+              "str_value": ""
+            }
+          ]
         },
         {
           "id": 4,
@@ -461,15 +773,77 @@
           "exp": 25,
           "holy_sugar": 2,
           "finalized": false,
-          "path_level": "Level_3.json",
+          "path_level": "Level_4.json",
           "musics": [ "music/On-Tiptoe.mp3.mp3" ],
           "reward": "res/levels/plan1.png",
           "sugar": 90,
-          "tilemaptable": "res/tiles/ground.json",
-          "tileset": "res/tiles/ground.plist",
-          "tilesetpng": "res/tiles/ground.png",
+          "type":  "normal",
+          "tileset": [
+            "res/levels/objects/ground.plist",
+            "res/levels/objects/trees.plist",
+            "res/levels/objects/forest.plist"
+          ],
+          "tilesetpng": [
+            "res/levels/objects/ground.png",
+            "res/levels/objects/trees.png",
+            "res/levels/objects/forest.png"
+          ],
           "x": -0.13,
           "y": 0.060
+        },
+        {
+          "id": 5,
+          "dialogues_file": "Levels/lvl_5_dialogues.json",
+          "animations": [ "res/turret/animations/splash.plist", "res/turret/animations/cut.plist" ],
+          "background": "res/levels/background2.png",
+          "effects": [ "music/splash.mp3", "music/slash.mp3" ],
+          "exp": 25,
+          "holy_sugar": 2,
+          "finalized": false,
+          "path_level": "Level_5.json",
+          "musics": [ "music/On-Tiptoe.mp3.mp3" ],
+          "reward": "res/levels/plan1.png",
+          "sugar": 90,
+          "type": "boss",
+          "tileset": [
+            "res/levels/objects/ground.plist",
+            "res/levels/objects/trees.plist",
+            "res/levels/objects/forest.plist"
+          ],
+          "tilesetpng": [
+            "res/levels/objects/ground.png",
+            "res/levels/objects/trees.png",
+            "res/levels/objects/forest.png"
+          ],
+          "x": -0.03,
+          "y": 0
+        },
+        {
+          "id": 6,
+          "dialogues_file": "Levels/lvl_6_dialogues.json",
+          "animations": [ "res/turret/animations/splash.plist", "res/turret/animations/cut.plist" ],
+          "background": "res/levels/background2.png",
+          "effects": [ "music/splash.mp3", "music/slash.mp3" ],
+          "exp": 25,
+          "holy_sugar": 2,
+          "finalized": false,
+          "path_level": "Level_6.json",
+          "musics": [ "music/On-Tiptoe.mp3.mp3" ],
+          "reward": "res/levels/plan1.png",
+          "sugar": 90,
+          "type":  "normal",
+          "tileset": [
+            "res/levels/objects/ground.plist",
+            "res/levels/objects/trees.plist",
+            "res/levels/objects/forest.plist"
+          ],
+          "tilesetpng": [
+            "res/levels/objects/ground.png",
+            "res/levels/objects/trees.png",
+            "res/levels/objects/forest.png"
+          ],
+          "x": 0.07,
+          "y": 0.03
         }
       ]
     },
@@ -482,13 +856,14 @@
   "play_dialogue": true,
   "play_sound": true,
   "sound_transition": [
-    [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "none", "none", "none" ],
-    [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3" ],
-    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "none", "none", "none", "none" ],
-    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3" ],
-    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "music/On-Tiptoe.mp3.mp3", "none", "none" ],
-    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "none", "music/On-Tiptoe.mp3.mp3", "none" ],
-    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "none", "none", "music/On-Tiptoe.mp3.mp3" ]
+    [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "none", "none", "none", "none" ],
+    [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "none", "none", "none", "none", "none" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "music/On-Tiptoe.mp3.mp3", "none", "none", "none" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "none", "music/On-Tiptoe.mp3.mp3", "none", "none" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "none", "none", "music/On-Tiptoe.mp3.mp3", "none" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "none", "none", "none", "music/On-Tiptoe.mp3.mp3" ]
   ],
   "towers": {
     "bomber": {
@@ -501,7 +876,11 @@
       "sell": [ 15, 25, 35, 60 ],
       "range": [ 120, 135, 150, 150 ],
       "damages": [ 1, 1.5, 2, 2 ],
-      "xp_level": [ 0, 100, 1000, 10000 ],
+      "xp_level": [ 0, 200, 1000, 10000 ],
+      "animation_size": {
+        "width": 400,
+        "height": 450
+      },
       "image": "res/turret/bombeur.png",
       "description_en": "Bomber: This mallow is a long distance attacker.",
       "description_fr": "Bomber : ce mallow bombarde ses ennemis d'eau jusqu'à les dissoudre totalement",
@@ -515,19 +894,21 @@
       "sound_bullet": "music/splash.mp3"
     },
     "cutter": {
-      "animation": "res/turret/animations/cutter.png",
-      "animation_attack_size": 9,
-      "animation_attack_time": 0.5,
+      "skeleton": "res/turret/animations/cutter.json",
+      "atlas": "res/turret/animations/cutter.atlas",
       "animation_bullet": "res/turret/animations/cut.png",
       "animation_bullet_size": 14,
-      "animation_steady_size": 49,
-      "attack_speed": [ 2.5, 2.25, 2, 2 ],
-      "cost": [ 50, 30, 45, 60 ],
-      "sell": [ 25, 40, 65, 95 ],
-      "damages": [ 1, 1.5, 2, 2 ],
-      "range": [ 100, 120, 135, 135 ],
-      "xp_level": [ 0, 0, 2000, 1000 ],
-      "image": "res/turret/cutter2.png",
+      "attack_speed": [ 1.25, 1.15, 1, 1 ],
+      "cost": [ 50, 25, 50, 75 ],
+      "sell": [ 25, 35, 50, 65 ],
+      "range": [ 75, 85, 90, 110 ],
+      "damages": [ 0.5, 0.75, 1, 1.25 ],
+      "xp_level": [ 0, 500, 2000, 10000 ],
+      "animation_size": {
+        "width": 198,
+        "height": 225
+      },
+      "image": "res/turret/cutter3.png",
       "description_en": "Sword Master: Attack all the dangos around him",
       "description_fr": "Maitre des Epées: attaque tous les dangos autour de lui",
       "last_level_description_en": "Increase damages done by other towers on the target by 25%.",
@@ -535,7 +916,8 @@
       "name": "cutter",
       "limit": 3,
       "limit_skill_id": 2,
-      "unlock_level": 2,
+      "unlock_level": 4,
+      "unlock_world": 1,
       "unlock_skill": -1,
       "deep_wound_duration": 3,
       "deep_wound_percent": 0.5,
@@ -554,13 +936,18 @@
       "slow": [ -0.5, -0.70, -0.9, -0.9 ],
       "slow_duration": [ 3.5, 4.5, 5.5, 5.5 ],
       "xp_level": [ 0, 250, 1000, 10000 ],
+      "animation_size": {
+        "width": 400,
+        "height": 450
+      },
       "image": "res/turret/saucer3.png",
       "description_en": "Saucer: Slow down the enemies by spitting digested chocolate on them",
       "description_fr": "Saucer : ralentit les ennemis en leur crachant du chocolat digèré",
       "last_level_description_en": "The chocolat becomes so acid it dissolve the enemies over time",
       "last_level_description_fr": "Le chocolat devient tellement acide qu'il dissout les ennemis sur la durée",
       "name": "saucer",
-      "unlock_level": -1,
+      "unlock_level": 0,
+      "unlock_world": 0,
       "unlock_skill": -1,
       "limit": 2,
       "limit_skill_id": 3,
@@ -735,5 +1122,4 @@
       }
     ]
   ]
-
 }

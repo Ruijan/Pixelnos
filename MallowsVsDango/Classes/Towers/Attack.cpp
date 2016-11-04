@@ -375,7 +375,7 @@ void Slash::update(float dt) {
 
 				touched = true;
 				target->removeTargetingAttack(this);
-				target->applyProspectiveDamages(damages);
+				target->applyProspectiveDamages(damages_id);
 				if (target->isDying() && !is_enemy_alive) {
 					SceneManager::getInstance()->getGame()->getLevel()->incrementXPTower(jsontype,
 						target->getXP());

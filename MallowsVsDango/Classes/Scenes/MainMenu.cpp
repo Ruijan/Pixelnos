@@ -51,12 +51,14 @@ bool MainMenu::init()
 	addChild(mallowstxt, 2, "mallowstxt");
 	mallowstxt->setPosition(visibleSize.width / 2, visibleSize.height / 1.15);
 	mallowstxt->setOpacity(0.0);
+	mallowstxt->setScale(visibleSize.width * 0.75 / mallowstxt->getContentSize().width);
 	float coeff1 = visibleSize.width*0.5 / mallowstxt->getContentSize().width;
 
 	Sprite* dangotxt = Sprite::create("res/background/dangotext2.png");
 	addChild(dangotxt, 2, "dangotxt");
 	dangotxt->setPosition(visibleSize.width / 2, visibleSize.height / 1.55);
 	dangotxt->setOpacity(0.0);
+	dangotxt->setScale(visibleSize.width * 0.75 / dangotxt->getContentSize().width);
 	float coeff2 = visibleSize.width*0.35 / dangotxt->getContentSize().width;
 
 	cocos2d::ui::Button* button = ui::Button::create();
@@ -67,6 +69,8 @@ bool MainMenu::init()
 	button->setTitleFontSize(75.f* visibleSize.width / 960);
 	button->setPosition(Vec2(visibleSize.width/2, visibleSize.height/4));
 	button->setOpacity(0.0);
+	Label* start_label = button->getTitleRenderer();
+	start_label->enableOutline(Color4B::BLACK, 2.f * visibleSize.width / 1280);
 	button->addTouchEventListener(CC_CALLBACK_2(MainMenu::menuContinueCallback, this));
 
 	cocos2d::ui::Button* language_button = ui::Button::create("res/buttons/yellow_button.png");
@@ -84,7 +88,7 @@ bool MainMenu::init()
 	language_button->setTitleText(language);
 	language_button->setTitleColor(Color3B::BLACK);
 	language_button->setTitleFontName("fonts/LICABOLD.ttf");
-	language_button->setTitleFontSize(60.f* visibleSize.width / 960);
+	language_button->setTitleFontSize(60.f);
 	language_button->setPosition(Vec2(visibleSize.width - 
 		language_button->getContentSize().width * language_button->getScaleX() * 2 / 3, 
 		visibleSize.height * 9 / 10));
@@ -209,6 +213,7 @@ void MainMenu::initLanguageList() {
 					((ui::Button*)getChildByName("interface")->getChildByName("language"))->setTitleText(l);
 					list_languages_levels->removeAllChildren();
 					initLanguageList();
+					((AppDelegate*)Application::getInstance())->switchLanguage();
 				}
 			});
 			Label* language_name = Label::createWithTTF(l, "fonts/arial.ttf", 35);
@@ -221,4 +226,72 @@ void MainMenu::initLanguageList() {
 			++nb_displayed_languages;
 		}
 	}
+}
+
+void MainMenu::switchLanguage() {
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+
+	((ui::Button*)getChildByName("interface")->getChildByName("start"))->setTitleText(
+		((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["start"][language].asString());
+
+	auto menu_restart = ui::Layout::create();
+	menu_restart->setPosition(Vec2(Point(visibleSize.width / 2, visibleSize.height * 1.5)));
+
+	ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel2.png");
+	panel->setZoomScale(0);
+	menu_restart->addChild(panel, 1, "panel");
+	panel->setScaleX(0.45*visibleSize.width / panel->getContentSize().width);
+	panel->setScaleY(0.45*visibleSize.width / panel->getContentSize().width);
+
+	ui::Button* quit = ui::Button::create("res/buttons/yellow_button.png");
+	quit->setScale(visibleSize.width / 5 / quit->getContentSize().width);
+	quit->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+		["buttons"]["quit"][language].asString());
+	quit->setTitleFontName("fonts/LICABOLD.ttf");
+	quit->setTitleFontSize(45.f * visibleSize.width / 1280);
+	Label* quit_label = quit->getTitleRenderer();
+	quit_label->enableOutline(Color4B::BLACK, 2);
+	quit->setTitleColor(Color3B::WHITE);
+	quit->setTitleAlignment(cocos2d::TextHAlignment::CENTER);
+	quit->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) || (CC_TARGET_PLATFORM == CC_PLATFORM_WP8)
+						CCMessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
+			#else
+						Director::getInstance()->end();
+			#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+						exit(0);
+			#endif
+			#endif
+		}
+	});
+	quit->setPosition(Vec2(0,
+		-panel->getContentSize().height*panel->getScaleY() / 2 -
+		quit->getContentSize().height*quit->getScaleY() * 0.41));
+	menu_restart->addChild(quit, 1, "quit");
+
+	Label* advice = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()["buttons"]["quit_info"][
+		language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	advice->setDimensions(panel->getContentSize().width * panel->getScaleX() * 0.75,
+		panel->getContentSize().height * panel->getScaleY() * 0.4);
+	advice->setPosition(0, 0);
+	advice->setColor(Color3B::BLACK);
+	advice->setHorizontalAlignment(TextHAlignment::CENTER);
+	advice->setVerticalAlignment(TextVAlignment::CENTER);
+	menu_restart->addChild(advice, 2, "advice_text");
+
+	addChild(menu_restart, 4);
+
+	auto* showAction = EaseBackOut::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2)));
+	menu_restart->runAction(showAction);
+
+	addChild(ui::Layout::create(), 3, "black_mask");
+	ui::Button* mask = ui::Button::create("res/buttons/mask.png");
+	mask->setScaleX(visibleSize.width / mask->getContentSize().width);
+	mask->setScaleY(visibleSize.height / mask->getContentSize().height);
+	mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	getChildByName("black_mask")->addChild(mask);
 }

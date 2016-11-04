@@ -75,6 +75,7 @@ public:
 	void incrementXP(int amount);
 	void blockTower(bool block);
 	bool isTowerBlocked();
+	virtual void stopAttacking();
 	
 	// Updates
 	virtual void update(float dt);
@@ -94,8 +95,8 @@ public:
 	virtual void startLimit() = 0;
 
 	// Config
-	static Json::Value getConfig();
-	virtual const Json::Value getSpecConfig() = 0;
+	static const Json::Value& getConfig();
+	virtual const Json::Value& getSpecConfig() = 0;
 
 protected:
 	//State attribute
@@ -120,6 +121,12 @@ protected:
 	int level;
 	int level_max;
 	int xp;
+	std::vector<int> sells;
+	std::vector<int> costs;
+	std::vector<double> damages;
+	std::vector<double> attack_speeds;
+	std::vector<double> ranges;
+	std::vector<double> xp_levels;
 
 	int nb_attacks;
 	int nb_max_attacks_limit;

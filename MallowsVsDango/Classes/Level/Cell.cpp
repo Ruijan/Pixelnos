@@ -10,7 +10,24 @@ Cell::~Cell() {}
 Cell* Cell::create(){
 	Cell* cell = new Cell();
 	if (cell->init()) {
-		DrawNode* node = DrawNode::create();
+
+		Sprite* white_cell = Sprite::create("res/levels/cell.png");
+		white_cell->setScale(Cell::getCellWidth() / white_cell->getContentSize().width);
+		cell->addChild(white_cell, 1, "on");
+
+		Sprite* red_cell = Sprite::create("res/levels/cell.png");
+		red_cell->runAction(TintTo::create(0, Color3B::RED));
+		red_cell->setScale(Cell::getCellWidth() / red_cell->getContentSize().width);
+		cell->addChild(red_cell, 1, "off");
+		red_cell->setVisible(false);
+
+		Sprite* grey_cell = Sprite::create("res/levels/cell.png");
+		grey_cell->runAction(TintTo::create(0, Color3B(0.5,0.5,0.5)));
+		grey_cell->setScale(Cell::getCellWidth() / grey_cell->getContentSize().width);
+		cell->addChild(grey_cell, 1, "path");
+		grey_cell->setVisible(false);
+
+		/*DrawNode* node = DrawNode::create();
 		Vec2 rectangle[4];
 		rectangle[0] = Vec2(-Cell::getCellWidth()/2, -Cell::getCellWidth()/2);
 		rectangle[1] = Vec2(Cell::getCellWidth()/2, -Cell::getCellWidth() / 2);
@@ -31,7 +48,7 @@ Cell* Cell::create(){
 		Color4F red(1, 0, 0, 0.3);
 		node_off->drawPolygon(rectangle, 4, red, 1, red);
 		cell->addChild(node_off,1,"off");
-		node_off->setVisible(false);
+		node_off->setVisible(false);*/
 		
 		return cell;
 	}

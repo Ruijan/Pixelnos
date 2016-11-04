@@ -9,8 +9,8 @@ class Bomber : public Tower{
 public:
 	Bomber();
 	static Bomber* create();
-	static Json::Value getConfig();
-	virtual const Json::Value getSpecConfig();
+	static const Json::Value& getConfig();
+	virtual const Json::Value& getSpecConfig();
 	virtual bool isSameType(std::string type);
 	
 	virtual void attack();

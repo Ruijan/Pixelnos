@@ -1,0 +1,24 @@
+{
+  "level_id": 4,
+  "introDialogue": [
+    {
+      "emotion": [
+        "NORMAL",
+        "NORMAL",
+        "ANGRY"
+      ],
+      "speaker": "res/turret/GeneralMashmalow.png",
+      "side": "LEFT",
+      "text_en": [
+        "Why did the Dangos'Empire decide to go to war? It doesn't make any sens!",
+        "We have certainly not always been the best of friends but now the two empires are at peace.",
+        "INCOMING !!! New troops are coming !"
+      ],
+      "text_fr": [
+        "Pourquoi l’Empire des Dangos nous déclare-t-il la guerre ? Ça n’a pas de sens...",
+        "Nous n’avons certes pas toujours été les meilleurs amis du monde mais cela fait maintenant plusieurs décennies que les deux empires sont en paix.",
+        "Attention, de nouvelles troupes sont en approche !"
+      ]
+    }
+  ]
+}

@@ -11,10 +11,11 @@
 #include "Scenes/Shop.h"
 #include "Lib/Loader.h"
 #include <array>
+#include "Lib/Translationable.h"
 
 class MyGame;
 
-class SceneManager
+class SceneManager: public Translationable
 {
 public:
 	// Define type of scene
@@ -27,7 +28,10 @@ public:
 		CREDIT = 4,
 		EDITOR = 5,
 		SKILLS = 6,
-		SHOP = 7
+		SHOP = 7,
+		PAUSE = 8,
+		STOP = 9,
+		START = 10
 	};
 
 	//Constructor & destructor
@@ -37,6 +41,8 @@ public:
 	//Add a scene
 	void setScene(SceneManager::SceneType type);
 	MyGame* getGame();
+	void switchLanguage();
+	SceneManager::SceneType getCurrentSceneIndex();
 
 	// Create a new Instance of SceneManager*
 	static SceneManager* getInstance()

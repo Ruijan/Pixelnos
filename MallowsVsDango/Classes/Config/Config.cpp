@@ -34,7 +34,7 @@ const Json::Value& Config::getConfigValues() const{
 	return root;
 }
 
-Json::Value const Config::getSaveValues() const{
+const Json::Value& Config::getSaveValues() const{
 	return rootSav;
 }
 
@@ -221,10 +221,11 @@ void Config::init(){
 		rootSav["holy_sugar"] = 0;
 		rootSav["c_level"] = 0;
 		rootSav["c_world"] = 0;
-		rootSav["tutorials"] = root["tutorials"];
-		/*for (int i(0); i < root["tutorials"].size(); ++i) {
-			rootSav["tutorials"][root["tutorials"][i].asString()]["completed"] = false;
-		}*/
+		//rootSav["tutorials"] = root["tutorials"];
+		std::vector<std::string> tuto_names = root["tutorials"].getMemberNames();
+		for (unsigned int i(0); i < tuto_names.size(); ++i) {
+			rootSav["tutorials"][tuto_names[i]]["state"] = root["tutorials"][tuto_names[i]]["state"];
+		}
 		for (unsigned int i(0); i < root["towers"].size(); ++i) {
 			rootSav["towers"][root["towers"].getMemberNames()[i]]["exp"] = 0;
 
@@ -246,6 +247,13 @@ void Config::init(){
 	}
 	else{
 		save_file = true;
+		auto tutos = rootSav["tutorials"].getMemberNames();
+		for (unsigned int j(0); j < rootSav["tutorials"].getMemberNames().size(); ++j) {
+			if (rootSav["tutorials"][tutos[j]]["state"].asString() == "running") {
+				rootSav["tutorials"][tutos[j]]["state"] = "uncompleted";
+			}
+		}
+		save();
 		if (!rootSav.isMember("id_player") || !rootSav.isMember("exist_in_db")) {
 			user_need_creation = true;
 			int time_now = (int)time(NULL);
@@ -609,6 +617,12 @@ std::string Config::getStringFromSceneType(SceneManager::SceneType type) {
 		return "editor";
 	case SceneManager::SceneType::LOADING:
 		return "loading";
+	case SceneManager::SceneType::PAUSE:
+		return "pause";
+	case SceneManager::SceneType::STOP:
+		return "stop";
+	case SceneManager::SceneType::START:
+		return "start";
 	default:
 		return "error";
 	}
@@ -896,12 +910,25 @@ void Config::loadAllLevels() {
 }
 
 void Config::completeTutorial(std::string name) {
-	rootSav["tutorials"][name]["completed"] = true;
+	rootSav["tutorials"][name]["state"] = "complete";
+	save();
+}
+
+void Config::startTutorial(std::string name) {
+	rootSav["tutorials"][name]["state"] = "running";
 	save();
 }
 
 bool Config::isTutorialComplete(std::string name){
-	return rootSav["tutorials"][name]["completed"].asBool();
+	return rootSav["tutorials"][name]["state"].asString() == "complete";
+}
+
+bool Config::isTutorialUncompleted(std::string name) {
+	return rootSav["tutorials"][name]["state"].asString() == "uncompleted";
+}
+
+bool Config::isTutorialRunning(std::string name) {
+	return rootSav["tutorials"][name]["state"].asString() == "running";
 }
 
 tm Config::getTimeFromString(std::string date1) {
@@ -913,4 +940,17 @@ tm Config::getTimeFromString(std::string date1) {
 	t1.tm_min = Value(date1.substr(14, 2)).asInt();
 	t1.tm_sec = Value(date1.substr(17, 2)).asInt();
 	return t1;
+}
+
+void Config::activateTower(std::string name) {
+	rootSav["towers"][name]["unlocked"] = true;
+	save();
+}
+
+int Config::getNbLevelChallenges(int world_id, int level_id) const {
+	Json::Value level_challenge = rootSav["levels"][world_id][level_id]["challenges"];
+	if (!level_challenge.isNull()) {
+		return level_challenge.asInt();
+	}
+	return 0;
 }

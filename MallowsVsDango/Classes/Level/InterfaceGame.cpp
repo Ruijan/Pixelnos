@@ -32,14 +32,18 @@ bool InterfaceGame::init(){
 
 	state = State::IDLE;
 	game_state = INTRO;
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues();
 
-	initParametersMenu();
-	initLoseMenu();
-	initWinMenu();
-	initRightPanel();
-	initLabels();
-	initStartMenu();
-	initDialoguesFromLevel();
+	initParametersMenu(config);
+	initLoseMenu(config);
+	initWinMenu(config);
+	initRightPanel(config);
+	initLabels(config);
+	initStartMenu(config);
+	initDialoguesFromLevel(config);
+
+	auto reward_layout = ui::Layout::create();
+	addChild(reward_layout, 1, "reward_layout");
 
 	addChild(ui::Layout::create(), 3, "black_mask");
 	ui::Button* mask = ui::Button::create("res/buttons/mask.png");
@@ -86,7 +90,7 @@ void InterfaceGame::addEvents()
         cocos2d::Rect rect = this->getBoundingBox();
         cocos2d::Rect rectrightpanel = getChildByName("menu_panel")->getChildByName("panel")->getBoundingBox();
         rectrightpanel.origin += getChildByName("menu_panel")->getBoundingBox().origin;
-
+		challenges->hideDescription();
         if(rect.containsPoint(p)){
 			if(rectrightpanel.containsPoint(p)){
 				if (state == TURRET_CHOSEN) {
@@ -208,6 +212,7 @@ void InterfaceGame::addEvents()
 		if (state == TURRET_SELECTED){
 			Tower* tower = game->getLevel()->touchingTower(p);
 			if (tower != nullptr){
+				selected_turret = tower;
 				std::string name = tower->getSpecConfig()["name"].asString();
 				displayTowerInfos(tower->getSpecConfig()["name"].asString());
 				selected_turret->displayRange(true);
@@ -459,7 +464,7 @@ void InterfaceGame::showWin(){
 	auto* showAction = TargetedAction::create(getChildByName("menu_win"),
 		EaseBackOut::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2))));
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave();
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig();
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues();
 
 	((Label*)getChildByName("menu_win")->getChildByName("reward_sugar_n"))->setString("+" + Value(game->getLevel()->getHolySugar()).asString());
 	getChildByName("menu_win")->getChildByName("reward_sugar_n")->runAction(
@@ -493,6 +498,10 @@ void InterfaceGame::showWin(){
 
 void InterfaceGame::reset(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues();
+
+
 	state = IDLE;
 	game_state = TITLE;
 	selected_turret = nullptr;
@@ -504,49 +513,59 @@ void InterfaceGame::reset(){
 	getChildByName("menu_win")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	getChildByName("menu_pause")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	getChildByName("black_mask")->setVisible(false);
+
 	getChildByName("start")->setPosition(Vec2(getChildByName("start")->getPosition().x, 
 		-getChildByName("start")->getContentSize().height * getChildByName("start")->getScaleY()));
 	getChildByName("title")->setPosition(Vec2(getChildByName("title")->getPosition().x,
 		visibleSize.height + getChildByName("title")->getContentSize().height * getChildByName("title")->getScaleY()));
 	((Label*)getChildByName("title"))->runAction(FadeIn::create(0.5f));
+	((Label*)getChildByName("title"))->setString(config["buttons"]["level"][language].asString() + " " +
+		Value((int)(game->getLevel()->getLevelId() + 1)).asString());
 	getChildByName("advice")->setVisible(false);
 	getChildByName("advice")->runAction(RepeatForever::create(Sequence::create(
 		FadeIn::create(1.f), FadeOut::create(0.5f), DelayTime::create(1.f), NULL)));
 	getChildByName("label_information")->getChildByName("dango_head")->setVisible(false);
 	getChildByName("label_information")->getChildByName("loading_bar_background")->setVisible(false);
 	getChildByName("label_information")->getChildByName("loading_bar")->setVisible(false);
-	removeChildByName("reward_layout");
+	getChildByName("reward_layout")->removeAllChildren();
 	removeChildByName("information_tower");
 	removeChildByName("information_dango");
 	if (dialogues != nullptr) {
 		removeChild(dialogues,1);
 		delete dialogues;
 	}
-	initDialoguesFromLevel();
+	initDialoguesFromLevel(config);
+	towers_menu.empty();
+	getChildByName("menu_panel")->getChildByName("towers")->removeAllChildren();
+	createTowersLayout();
+	removeChildByName("win_menu");
+	initWinMenu(config);
+	removeChild(challenges);
+	removeChildByName("label_information");
+	initLabels(config);
 }
 
-void InterfaceGame::initParametersMenu(){
+void InterfaceGame::initParametersMenu(const Json::Value& config){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	ui::Layout* menu_pause = ui::Layout::create();
 	menu_pause->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	Json::Value buttons = config["buttons"];
 
 	ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel2.png");
 	panel->setZoomScale(0);
 	menu_pause->addChild(panel, 1, "panel");
 	panel->setScale(0.45*visibleSize.width / panel->getContentSize().width);
 
-	Label* title = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["settings"][language].asString(), "fonts/LICABOLD.ttf", 45.0f * visibleSize.width / 1280);
+	Label* title = Label::createWithTTF(buttons["settings"][language].asString(), "fonts/LICABOLD.ttf", 45.0f * visibleSize.width / 1280);
 	title->setColor(Color3B::BLACK);
 	title->setPosition(0, panel->getContentSize().height*panel->getScaleY() / 2 - title->getContentSize().height);
 	menu_pause->addChild(title, 2, "title");
 
 	ui::Button* resume = ui::Button::create("res/buttons/yellow_button.png");
-	resume->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["resume"][language].asString());
+	resume->setTitleText(buttons["resume"][language].asString());
 	resume->setTitleFontName("fonts/LICABOLD.ttf");
-	resume->setTitleFontSize(60.f * visibleSize.width / 1280);
+	resume->setTitleFontSize(60.f);
 	Label* resume_label = resume->getTitleRenderer();
 	resume_label->setColor(Color3B::WHITE);
 	resume_label->enableOutline(Color4B::BLACK, 2);
@@ -573,10 +592,9 @@ void InterfaceGame::initParametersMenu(){
 
 	//ui::Button* main_menu_back = ui::Button::create("res/buttons/buttonMainMenu.png");
 	ui::Button* main_menu_back = ui::Button::create("res/buttons/red_button.png");
-	main_menu_back->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["main_menu"][language].asString());
+	main_menu_back->setTitleText(buttons["main_menu"][language].asString());
 	main_menu_back->setTitleFontName("fonts/LICABOLD.ttf");
-	main_menu_back->setTitleFontSize(60.f * visibleSize.width / 1280);
+	main_menu_back->setTitleFontSize(60.f);
 	Label* main_menu_back_label = main_menu_back->getTitleRenderer();
 	main_menu_back_label->setColor(Color3B::WHITE);
 	main_menu_back_label->enableOutline(Color4B::BLACK, 2);
@@ -597,12 +615,9 @@ void InterfaceGame::initParametersMenu(){
 	menu_pause->addChild(main_menu_back_shadow, -1);
 	menu_pause->addChild(main_menu_back, 1, "main_menu_back");
 
-	Label* music = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["music"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* effects = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["effects"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* loop = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["loop_music"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* music = Label::createWithTTF(buttons["music"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* effects = Label::createWithTTF(buttons["effects"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* loop = Label::createWithTTF(buttons["loop_music"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	music->setColor(Color3B::BLACK);
 	effects->setColor(Color3B::BLACK);
 	loop->setColor(Color3B::BLACK);
@@ -692,19 +707,19 @@ void InterfaceGame::initParametersMenu(){
 	menu_pause->addChild(checkbox_loop, 6, "LoopEnable");
 
 	// GLOBAL SETTINGS
-	Label* always_show_grid = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["grid_always"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* moving_show_grid = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["grid_move"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* never_show_grid = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["grid_never"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* always_show_grid = Label::createWithTTF(buttons["grid_always"][language].asString(), 
+		"fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* moving_show_grid = Label::createWithTTF(buttons["grid_move"][language].asString(), 
+		"fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* never_show_grid = Label::createWithTTF(buttons["grid_never"][language].asString(), 
+		"fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 
-	Label* show_grid = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["show_grid"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* auto_limit = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["auto_limit"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	Label* skip_dialogues = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["play_dialogues"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* show_grid = Label::createWithTTF(buttons["show_grid"][language].asString(), 
+		"fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* auto_limit = Label::createWithTTF(buttons["auto_limit"][language].asString(), 
+		"fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* skip_dialogues = Label::createWithTTF(buttons["play_dialogues"][language].asString(), 
+		"fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	always_show_grid->setColor(Color3B::BLACK);
 	moving_show_grid->setColor(Color3B::BLACK);
 	never_show_grid->setColor(Color3B::BLACK);
@@ -825,12 +840,12 @@ void InterfaceGame::initParametersMenu(){
 
 	addChild(menu_pause, 4, "menu_pause");
 }
-void InterfaceGame::initStartMenu() {
+void InterfaceGame::initStartMenu(const Json::Value& config) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	Json::Value buttons = config["buttons"];
 
-	Label* title = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["level"][language].asString() + " " +
+	Label* title = Label::createWithTTF(buttons["level"][language].asString() + " " +
 		Value((int)(game->getLevel()->getLevelId() + 1)).asString(), 
 		"fonts/LICABOLD.ttf", round(visibleSize.width / 12.0));
 	title->setColor(Color3B::YELLOW);
@@ -838,8 +853,7 @@ void InterfaceGame::initStartMenu() {
 	title->setPosition(round(visibleSize.width * 3 / 8.0), visibleSize.height + title->getContentSize().height/2);
 	addChild(title, 2, "title");
 
-	Label* advice = Label::createWithTTF(
-		((AppDelegate*)Application::getInstance())->getConfig()["buttons"]["advice_game_drag"][language].asString(),
+	Label* advice = Label::createWithTTF(buttons["advice_game_drag"][language].asString(),
 		"fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	advice->setDimensions(visibleSize.width / 2, visibleSize.height / 10);
 	advice->setPosition(round(visibleSize.width * 3 / 8.0), visibleSize.height - advice->getContentSize().height);
@@ -854,10 +868,9 @@ void InterfaceGame::initStartMenu() {
 
 	ui::Button* start = ui::Button::create("res/buttons/blue_button.png");
 	start->setScale(visibleSize.width / 4 / start->getContentSize().width);
-	start->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["start_game"][language].asString());
+	start->setTitleText(buttons["start_game"][language].asString());
 	start->setTitleFontName("fonts/LICABOLD.ttf");
-	start->setTitleFontSize(45.f * visibleSize.width / 1280);
+	start->setTitleFontSize(45.f);
 	Label* start_label = start->getTitleRenderer();
 	start_label->enableOutline(Color4B::BLACK, 2);
 	start->setTitleColor(Color3B::YELLOW);
@@ -881,7 +894,7 @@ void InterfaceGame::initStartMenu() {
 	addChild(start, 2, "start");
 }
 
-void InterfaceGame::initLabels(){
+void InterfaceGame::initLabels(const Json::Value& config){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	
 	ui::Layout* node_top = ui::Layout::create();
@@ -935,16 +948,21 @@ void InterfaceGame::initLabels(){
 	loadingBarBackground->setScale(loadingBar->getScale());
 	loadingBarBackground->setVisible(false);
 	node_top->addChild(loadingBarBackground, 3, "loading_bar_background");
-
+	challenges = ChallengeHandler::create(config["worlds"]
+		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["challenges"]);
+	challenges->setPosition(Vec2(sugar->getPosition().x + sugar->getContentSize().width * sugar->getScale() / 2,
+		node_top->getPosition().y + sugar->getPosition().y - sugar->getContentSize().height * sugar->getScale()));
+	addChild(challenges, 1, "challenges");
 
 	addChild(node_top, 2, "label_information");
 }
 
-void InterfaceGame::initLoseMenu(){
+void InterfaceGame::initLoseMenu(const Json::Value& config){
 	Color3B color1 = Color3B(255, 200, 51);
 	Color4F grey(102 / 255.0f, 178 / 255.0f, 255 / 255.0f, 0.66f);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	Json::Value buttons = config["buttons"];
 
 	auto menu_lose = ui::Layout::create();
 	menu_lose->setPosition(Vec2(Point(visibleSize.width / 2, visibleSize.height * 1.5)));
@@ -957,10 +975,9 @@ void InterfaceGame::initLoseMenu(){
 
 	ui::Button* retry = ui::Button::create("res/buttons/yellow_button.png");
 	retry->setScale(visibleSize.width / 5 / retry->getContentSize().width);
-	retry->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["retry"][language].asString());
+	retry->setTitleText(buttons["retry"][language].asString());
 	retry->setTitleFontName("fonts/LICABOLD.ttf");
-	retry->setTitleFontSize(45.f * visibleSize.width / 1280);
+	retry->setTitleFontSize(45.f);
 	Label* retry_label = retry->getTitleRenderer();
 	retry_label->enableOutline(Color4B::BLACK, 2);
 	retry->setTitleColor(Color3B::WHITE);
@@ -982,10 +999,9 @@ void InterfaceGame::initLoseMenu(){
 
 	ui::Button* main_menu_back = ui::Button::create("res/buttons/red_button.png");
 	main_menu_back->setScale(visibleSize.width / 5 / main_menu_back->getContentSize().width);
-	main_menu_back->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["main_menu"][language].asString());
+	main_menu_back->setTitleText(buttons["main_menu"][language].asString());
 	main_menu_back->setTitleFontName("fonts/LICABOLD.ttf");
-	main_menu_back->setTitleFontSize(45.f * visibleSize.width / 1280);
+	main_menu_back->setTitleFontSize(45.f);
 	Label* menu_back_label = main_menu_back->getTitleRenderer();
 	menu_back_label->enableOutline(Color4B::BLACK, 2);
 	main_menu_back->setTitleColor(Color3B::WHITE);
@@ -1001,15 +1017,14 @@ void InterfaceGame::initLoseMenu(){
 	menu_lose->addChild(main_menu_back, 1, "main_menu_back");
 
 	Label* you_lose = Label::createWithTTF(
-		((AppDelegate*)Application::getInstance())->getConfig()["buttons"]["lose_info"][language].asString(), 
+		buttons["lose_info"][language].asString(),
 		"fonts/LICABOLD.ttf", 50.f * visibleSize.width / 1280);
 	you_lose->enableOutline(Color4B::BLACK, 2);
 	you_lose->setPosition(0, panel->getContentSize().height*panel->getScaleY() * 0.35);
 	you_lose->setColor(Color3B::YELLOW);
 	menu_lose->addChild(you_lose, 2, "text");
 
-	auto conf = ((AppDelegate*)Application::getInstance())->getConfig()["advice"][
-		((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()];
+	auto conf = config["advice"][language];
 	std::string advice_text = conf[rand() % conf.size()].asString();
 
 	Label* advice = Label::createWithTTF(advice_text, "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
@@ -1025,11 +1040,12 @@ void InterfaceGame::initLoseMenu(){
 	addChild(menu_lose, 4, "menu_lose");
 }
 
-void InterfaceGame::initWinMenu(){
+void InterfaceGame::initWinMenu(const Json::Value& config){
 	Color3B color1 = Color3B(255, 200, 51);
 	Color4F grey(102 / 255.0f, 178 / 255.0f, 255 / 255.0f, 0.66f);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	Json::Value buttons = config["buttons"];
 
 	auto menu_win = ui::Layout::create();
 	menu_win->setPosition(Vec2(Point(visibleSize.width / 2, visibleSize.height * 1.5)));
@@ -1038,15 +1054,14 @@ void InterfaceGame::initWinMenu(){
 	ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel2.png");
 	panel->setZoomScale(0);
 	menu_win->addChild(panel, 1, "panel");
-	panel->setScaleX(0.45*visibleSize.width / panel->getContentSize().width);
-	panel->setScaleY(0.45*visibleSize.width / panel->getContentSize().width);
+	panel->setScaleX(0.55*visibleSize.width / panel->getContentSize().width);
+	panel->setScaleY(0.55*visibleSize.width / panel->getContentSize().width);
 
 	ui::Button* next_level = ui::Button::create("res/buttons/yellow_button.png");
 	next_level->setScale(visibleSize.width / 5 / next_level->getContentSize().width);
-	next_level->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["next_level"][language].asString());
+	next_level->setTitleText(buttons["next_level"][language].asString());
 	next_level->setTitleFontName("fonts/LICABOLD.ttf");
-	next_level->setTitleFontSize(45.f * visibleSize.width / 1280);
+	next_level->setTitleFontSize(45.f);
 	Label* next_level_label = next_level->getTitleRenderer();
 	next_level_label->enableOutline(Color4B::BLACK, 2);
 	next_level->setTitleColor(Color3B::WHITE);
@@ -1070,10 +1085,9 @@ void InterfaceGame::initWinMenu(){
 
 	ui::Button* main_menu_back = ui::Button::create("res/buttons/red_button.png");
 	main_menu_back->setScale(visibleSize.width / 5 / main_menu_back->getContentSize().width);
-	main_menu_back->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["main_menu"][language].asString());
+	main_menu_back->setTitleText(buttons["main_menu"][language].asString());
 	main_menu_back->setTitleFontName("fonts/LICABOLD.ttf");
-	main_menu_back->setTitleFontSize(45.f * visibleSize.width / 1280);
+	main_menu_back->setTitleFontSize(45.f);
 	Label* menu_back_label = main_menu_back->getTitleRenderer();
 	menu_back_label->enableOutline(Color4B::BLACK, 2);
 	main_menu_back->setTitleColor(Color3B::WHITE);
@@ -1088,20 +1102,36 @@ void InterfaceGame::initWinMenu(){
 		main_menu_back->getContentSize().height*main_menu_back->getScaleY() * 0.41));
 	menu_win->addChild(main_menu_back, 1, "main_menu_back");
 
-	Label* you_win = Label::createWithTTF(
-		((AppDelegate*)Application::getInstance())->getConfig()["buttons"]["level_cleared"][language].asString(),
+	Label* you_win = Label::createWithTTF(buttons["level_cleared"][language].asString(),
 		"fonts/LICABOLD.ttf", 60.f * visibleSize.width / 1280);
 	you_win->enableOutline(Color4B::BLACK, 2);
 	you_win->setPosition(0, panel->getContentSize().height*panel->getScaleY() * 0.35);
 	you_win->setColor(Color3B::YELLOW);
-	menu_win->addChild(you_win, 2, "text");
+	menu_win->addChild(you_win, 2, "you_win");
 
-	Label* reward_sugar = Label::createWithTTF(
-		((AppDelegate*)Application::getInstance())->getConfig()["buttons"]["holy_sugar"][language].asString(),
+	Sprite* star_left = Sprite::create("res/levels/rewards/star_empty.png");
+	star_left->setScale(panel->getContentSize().width * panel->getScaleX() / 8 / star_left->getContentSize().width);
+	star_left->setPosition(Vec2(-panel->getContentSize().width * panel->getScaleX() * 1 / 5, 
+		you_win->getPosition().y -
+		star_left->getContentSize().height / 2 - you_win->getContentSize().height));
+	star_left->setRotation(-35);
+	Sprite* star_middle = Sprite::create("res/levels/rewards/star_empty.png");
+	star_middle->setScale(panel->getContentSize().width * panel->getScaleX() / 7 / star_middle->getContentSize().width);
+	star_middle->setPosition(Vec2(0, star_left->getPosition().y + sizeButton / 3));
+	Sprite* star_right = Sprite::create("res/levels/rewards/star_empty.png");
+	star_right->setScale(panel->getContentSize().width * panel->getScaleX() / 8 / star_right->getContentSize().width);
+	star_right->setRotation(35);
+	star_right->setPosition(Vec2(panel->getContentSize().width * panel->getScaleX() * 1 / 5, star_left->getPosition().y));
+	menu_win->addChild(star_left, 2, "star_left");
+	menu_win->addChild(star_middle, 2, "star_middle");
+	menu_win->addChild(star_right, 2, "star_right");
+
+
+	Label* reward_sugar = Label::createWithTTF(buttons["holy_sugar"][language].asString(),
 		"fonts/LICABOLD.ttf", 40.f * visibleSize.width / 1280);
 	reward_sugar->enableOutline(Color4B::BLACK, 2);
-	reward_sugar->setPosition(-panel->getContentSize().width * panel->getScaleX() * 2 / 5, you_win->getPosition().y - 
-		reward_sugar->getContentSize().height / 2 - you_win->getContentSize().height);
+	reward_sugar->setPosition(-panel->getContentSize().width * panel->getScaleX() * 2 / 5, star_left->getPosition().y -
+		reward_sugar->getContentSize().height / 2 - star_middle->getContentSize().height * star_middle->getScale() * 3 / 4);
 	reward_sugar->setAnchorPoint(Vec2(0.f, 0.5f));
 	reward_sugar->setColor(Color3B::WHITE);
 	menu_win->addChild(reward_sugar, 2, "reward_sugar_label");
@@ -1119,11 +1149,11 @@ void InterfaceGame::initWinMenu(){
 	holy_sugar->setPosition(panel->getContentSize().width * panel->getScaleX() * 0.125, reward_sugar->getPosition().y);
 	menu_win->addChild(holy_sugar, 2, "holy_sugar");
 
-	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave();
+	Json::Value root = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues()["towers"];
 	Vec2 ini_pos = reward_sugar->getPosition() - Vec2(0,reward_sugar->getContentSize().height);
-	for (unsigned int i(0); i < root["towers"].getMemberNames().size(); ++i) {
-		std::string tower_name = root["towers"].getMemberNames()[i];
-		if (root["towers"][tower_name]["unlocked"].asBool()) {
+	std::vector<std::string> tower_names = root.getMemberNames();
+	for (auto tower_name : tower_names) {
+		if (root[tower_name]["unlocked"].asBool()) {
 			Label* exp_tower = Label::createWithTTF("Exp " + tower_name, "fonts/LICABOLD.ttf", 40.f * visibleSize.width / 1280);
 			exp_tower->enableOutline(Color4B::BLACK, 2);
 			exp_tower->setPosition(-panel->getContentSize().width * panel->getScaleX() * 2 / 5, ini_pos.y - exp_tower->getContentSize().height / 2);
@@ -1139,8 +1169,8 @@ void InterfaceGame::initWinMenu(){
 			menu_win->addChild(exp_tower_n, 2, tower_name + "_exp");
 
 			ui::LoadingBar* loading_bar = ui::LoadingBar::create("res/buttons/loaderProgress.png");
-			loading_bar->setPercent(100 * root["towers"][tower_name]["exp"].asDouble() /
-				Tower::getConfig()[tower_name]["xp_level"][root["towers"][tower_name]["max_level"].asInt() + 1].asDouble());
+			loading_bar->setPercent(100 * root[tower_name]["exp"].asDouble() /
+				Tower::getConfig()[tower_name]["xp_level"][root[tower_name]["max_level"].asInt() + 1].asDouble());
 			loading_bar->setScaleX(panel->getContentSize().width * panel->getScaleX() * 0.25 / loading_bar->getContentSize().width);
 			loading_bar->setScaleY(exp_tower->getContentSize().height * 0.35f / loading_bar->getContentSize().height);
 			loading_bar->setDirection(ui::LoadingBar::Direction::LEFT);
@@ -1160,37 +1190,37 @@ void InterfaceGame::initWinMenu(){
 			level_up->setPosition(loading_bar->getPosition().x, loading_bar->getPosition().y +
 				loading_bar->getContentSize().height * loading_bar ->getScaleY() / 2 +
 				level_up->getContentSize().height / 2);
-			
 			menu_win->addChild(level_up, 2, tower_name + "_levelup");
-
-
 			ini_pos.y = exp_tower->getPosition().y - exp_tower->getContentSize().height / 2;
 		}
 	}
 
 	Sprite* win_mallow = Sprite::create("res/buttons/win.png");
-	win_mallow->setPosition(0, -panel->getContentSize().height * panel->getScaleY() / 3);
-	win_mallow->setScale(panel->getContentSize().width * panel->getScaleX() / 5 / win_mallow->getContentSize().width);
-	menu_win->addChild(win_mallow, 2, "image");
-	Sprite* win_mallow2 = Sprite::create("res/buttons/win.png");
-	win_mallow2->setScale(panel->getContentSize().width * panel->getScaleX() / 5 / win_mallow2->getContentSize().width);
-	win_mallow2->setPosition(win_mallow2->getContentSize().width*win_mallow2->getScale(), 
-		-panel->getContentSize().height * panel->getScaleY() / 3);
-	menu_win->addChild(win_mallow2, 2, "image");
+	win_mallow->setScale(panel->getContentSize().width * panel->getScaleX() / 7 / win_mallow->getContentSize().width);
+	win_mallow->setPosition(you_win->getPosition().x - you_win->getContentSize().width / 2 -win_mallow->getContentSize().width*win_mallow->getScale() * 3 / 4,
+		you_win->getPosition().y);
+	menu_win->addChild(win_mallow, 2, "win_mallow");
+	/*Sprite* win_mallow2 = Sprite::create("res/buttons/win.png");
+	win_mallow2->setScale(panel->getContentSize().width * panel->getScaleX() / 6 / win_mallow2->getContentSize().width);
+	win_mallow2->setPosition(0,
+		-panel->getContentSize().height * panel->getScaleY() * 2 / 5);
+	menu_win->addChild(win_mallow2, 2, "win_mallow2");*/
 	Sprite* win_mallow3 = Sprite::create("res/buttons/win.png");
-	win_mallow3->setScale(panel->getContentSize().width * panel->getScaleX() / 5 / win_mallow3->getContentSize().width);
-	win_mallow3->setPosition(-win_mallow3->getContentSize().width*win_mallow3->getScale(),
-		-panel->getContentSize().height * panel->getScaleY() / 3);
-	menu_win->addChild(win_mallow3, 2, "image");
+	win_mallow3->setScale(panel->getContentSize().width * panel->getScaleX() / 7 / win_mallow3->getContentSize().width);
+	win_mallow3->setPosition(you_win->getPosition().x + you_win->getContentSize().width / 2 + win_mallow3->getContentSize().width*win_mallow3->getScale() * 3 /4,
+		you_win->getPosition().y);
+	menu_win->addChild(win_mallow3, 2, "win_mallow3");
 	
 	addChild(menu_win, 4, "menu_win");
 }
 
-void InterfaceGame::initRightPanel(){
+void InterfaceGame::initRightPanel(const Json::Value& config){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+	
 
 	Layer* menu_panel = Layer::create();
 	menu_panel->setPosition(Vec2(visibleSize.width * (3 / 4.0 + 1 / 8.0), visibleSize.height / 2));
+	addChild(menu_panel, 2, "menu_panel");
 
 	// PANEL FOR TOWERS, PARAMETERS AND INFOS
 	auto panel = Sprite::create("res/buttons/menupanel5.png");
@@ -1228,54 +1258,14 @@ void InterfaceGame::initRightPanel(){
 		reload->getContentSize().height*reload->getScaleY() / 2));
 	menu_panel->addChild(reload, 2, "reload");
 	
+	// PANEL FOR TOWERS
 	auto towers = Layer::create();
 	towers->setContentSize(Size(visibleSize.width / 4 * 0.9, visibleSize.height * 3 / 5));
-	towers->setPosition(Vec2(-visibleSize.width / 8 * 0.9, reload->getPosition().y - 
+	towers->setPosition(Vec2(-visibleSize.width / 8 * 0.9, reload->getPosition().y -
 		reload->getContentSize().height * reload->getScaleY() * 2 / 3));
 	towers->setAnchorPoint(Vec2(0.5, 0.5));
-	int j(0);
-	for (unsigned int i(0); i < Tower::getConfig().size(); ++i) {
-		auto save = ((AppDelegate*)Application::getInstance())->getSave();
-		if (save["towers"][save["towers"].getMemberNames()[i]]["unlocked"].asBool()) {
-			std::string sprite3_filename = Tower::getConfig()[Tower::getConfig().getMemberNames()[i]]["image"].asString();
-			//std::string sprite3_background_filename = "res/buttons/tower_button.png";
-			std::string sprite3_background_filename = "res/buttons/tower_button2.png";
-			//std::string sprite3_disable_filename = "res/buttons/tower_inactive.png";
-			std::string sprite3_disable_filename = "res/buttons/tower_button2_inactive.png";
-			std::string sprite3_clip_filename = "res/buttons/tower_button_clip.png";
-			std::string sprite7_active_filename = "res/buttons/tower_active.png";
-
-			auto tower = Sprite::create(sprite3_background_filename);
-			tower->addChild(Sprite::create(sprite3_filename), 5, "sprite");
-			towers->addChild(tower, 1, Value(Tower::getConfig().getMemberNames()[i]).asString());
-			tower->setScale(sizeTower / tower->getContentSize().width);
-			//tower->setScaleY(sizeTower / tower->getContentSize().height);
-			tower->getChildByName("sprite")->setScale(tower->getContentSize().width * 0.75 /
-				tower->getChildByName("sprite")->getContentSize().width);
-			tower->setPosition(Vec2(sizeTower / 2 + j % 2 * (sizeTower + towers->getContentSize().width / 20) +
-				towers->getContentSize().width / 40,
-				-tower->getContentSize().height * tower->getScale() / 2 - (j / 2) *
-				(tower->getContentSize().height * tower->getScale() + towers->getContentSize().width / 20) -
-				towers->getContentSize().width / 20));
-			tower->getChildByName("sprite")->setPosition(Vec2(tower->getContentSize().width / 2,
-				tower->getContentSize().height * 0.55));
-			Label* cost = Label::createWithTTF(Tower::getConfig()[Tower::getConfig().getMemberNames()[i]]["cost"][0].asString(),
-				"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-			cost->setColor(Color3B::RED);
-			cost->setPosition(Vec2(tower->getContentSize().width / 2 + cost->getContentSize().width / 2,
-				cost->getContentSize().height));
-			tower->addChild(cost, 6, "cost");
-			Sprite* sugar = Sprite::create("res/buttons/sugar.png");
-			sugar->setScale(tower->getContentSize().width / 5 / sugar->getContentSize().width);
-			sugar->setPosition(Vec2(cost->getPosition().x - cost->getContentSize().width / 2 - sugar->getContentSize().width * sugar->getScale() / 2,
-				cost->getPosition().y));
-			tower->addChild(sugar, 6, "sugar");
-
-			towers_menu[Tower::getConfig().getMemberNames()[i]] = std::make_pair(tower, Tower::getConfig()[Tower::getConfig().getMemberNames()[i]]["cost"][0].asDouble());
-			++j;
-		}
-	}
 	menu_panel->addChild(towers, 2, "towers");
+	createTowersLayout();
 
 	// PANEL INFOS
 	auto informations = ui::Layout::create();
@@ -1347,7 +1337,7 @@ void InterfaceGame::initRightPanel(){
 	informations->addChild(sugar_label, 1, "sugar_label");
 
 	menu_panel->addChild(informations, 2, "informations");
-	addChild(menu_panel, 2, "menu_panel");
+	
 }
 
 void InterfaceGame::displayTowerInfos(std::string item_name){
@@ -1357,22 +1347,23 @@ void InterfaceGame::displayTowerInfos(std::string item_name){
 		batch->removeAllChildren();
 
 		Size visibleSize = Director::getInstance()->getVisibleSize();
+		Json::Value tower_config = Tower::getConfig()[item_name];
 		unsigned int required_quantity(0);
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("attack_label"))->setString(
-			Tower::getConfig()[item_name]["damages"][0].asString());
+			tower_config["damages"][0].asString());
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("speed_label"))->setString(
-			Tower::getConfig()[item_name]["attack_speed"][0].asString());
-		double range = round(Tower::getConfig()[item_name]["range"][0].asDouble() / Cell::getCellWidth() * 100) / 100;
+			tower_config["attack_speed"][0].asString());
+		double range = round(tower_config["range"][0].asDouble() / Cell::getCellWidth() * 100) / 100;
 		std::string s = Value(range).asString();
 		s.resize(4);
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("range_label"))->setString(
 			s);
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("description_tower"))->setString(
-			Tower::getConfig()[item_name]["description_" +
+			tower_config["description_" +
 			((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()].asString());
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("sugar_label"))->setString(
-			Tower::getConfig()[item_name]["cost"][0].asString());
-		required_quantity = Tower::getConfig()[item_name]["cost"][0].asDouble();
+			tower_config["cost"][0].asString());
+		required_quantity = tower_config["cost"][0].asDouble();
 		if (game->getLevel()->getQuantity() < required_quantity) {
 			((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("sugar_label"))->setColor(Color3B::RED);
 		}
@@ -1422,6 +1413,7 @@ void InterfaceGame::builtCallback(Ref* sender){
 	action["position"]["y"] = turret_position.y;
 	action["action"] = "create_tower";
 	game->addActionToTracker(action);
+	challenges->addTower(Tower::getTowerTypeFromString(selected_turret->getName()), selected_turret->getPosition());
 
 	selected_turret->builtCallback(sender);
 	selected_turret->setFixed(true);
@@ -1440,7 +1432,7 @@ void InterfaceGame::builtCallback(Ref* sender){
 		}
 	}
 	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("saucer") &&
-		game->getLevel()->getLevelId() == 2 && game->getLevel()->getWorldId() == 1) {
+		game->getLevel()->getLevelId() == 1 && game->getLevel()->getWorldId() == 0) {
 		((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("saucer");
 		removeChildByName("hand");
 		towers_menu["saucer"].first->stopAllActions();
@@ -1496,11 +1488,13 @@ void InterfaceGame::showTowerInfo() {
 		auto scale_to = ScaleTo::create(0.125f, 0.f);
 		auto removeAndCreateLayout = CallFunc::create([&]() {
 			removeChildByName("information_tower");
-			auto layout = selected_turret->getInformationLayout(this);
-			addChild(layout, 1, "information_tower");
-			layout->setScale(0);
-			auto scale_to = ScaleTo::create(0.125f, 1.f);
-			layout->runAction(scale_to);
+			if (selected_turret != nullptr) {
+				auto layout = selected_turret->getInformationLayout(this);
+				addChild(layout, 1, "information_tower");
+				layout->setScale(0);
+				auto scale_to = ScaleTo::create(0.125f, 1.f);
+				layout->runAction(scale_to);
+			}
 		});
 		getChildByName("information_tower")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
 	}
@@ -1546,6 +1540,7 @@ void InterfaceGame::updateButtonDisplay(){
 			}
 		}
 	}
+	challenges->update();
 }
 
 void InterfaceGame::updateObjectDisplay(float dt){
@@ -1641,7 +1636,24 @@ void InterfaceGame::startRewarding(Vec2 pos){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 
-	auto reward_layout = ui::Layout::create();
+	challenges->endChallengeHandler();
+	int successfull_challenges = challenges->countSucceedChallenges();
+	if (successfull_challenges > 0) {
+		Sprite* star_left = Sprite::create("res/levels/rewards/star_full.png");
+		star_left->setPosition(Vec2(star_left->getContentSize().width / 2, star_left->getContentSize().height / 2));
+		((Sprite*)getChildByName("menu_win")->getChildByName("star_left"))->addChild(star_left);
+		if (successfull_challenges > 1) {
+			Sprite* star_middle = Sprite::create("res/levels/rewards/star_full.png");
+			star_middle->setPosition(Vec2(star_middle->getContentSize().width / 2, star_middle->getContentSize().height / 2));
+			((Sprite*)getChildByName("menu_win")->getChildByName("star_middle"))->addChild(star_middle);
+			if (successfull_challenges > 2) {
+				Sprite* star_right = Sprite::create("res/levels/rewards/star_full.png");
+				star_right->setPosition(Vec2(star_right->getContentSize().width / 2, star_right->getContentSize().height / 2));
+				((Sprite*)getChildByName("menu_win")->getChildByName("star_right"))->addChild(star_right);
+			}
+		}
+	}
+	ui::Layout* reward_layout = (ui::Layout*)getChildByName("reward_layout");
 
 	Node* node = Node::create();
 	Sprite* sugar = Sprite::create("res/buttons/holy_sugar.png");
@@ -1652,7 +1664,7 @@ void InterfaceGame::startRewarding(Vec2 pos){
 	node->addChild(shining);
 	node->addChild(sugar);
 
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["worlds"]
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["worlds"]
 		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()];
 	auto* move1 = EaseOut::create(MoveBy::create(0.25f, Vec2(0, 75)), 2);
 	auto* move2 = EaseBounceOut::create(MoveBy::create(1.0f, Vec2(0, -75)));
@@ -1683,6 +1695,18 @@ void InterfaceGame::startRewarding(Vec2 pos){
 		Spawn::createWithTwoActions(move, scale), nullptr));
 
 	if (config["reward"].asString() != "none") {
+		auto black_mask = ui::Button::create("res/buttons/mask.png");
+		black_mask->setScaleX(visibleSize.width / black_mask->getContentSize().width);
+		black_mask->setScaleY(visibleSize.height / black_mask->getContentSize().height);
+		black_mask->setPosition(visibleSize / 2);
+		black_mask->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
+			if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+				setGameState(DONE);
+				setListening(false);
+			}
+		});
+		reward_layout->addChild(black_mask, 1, "black_mask");
+
 		auto reward = ui::Button::create(config["reward"].asString());
 		reward->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
 			if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
@@ -1715,7 +1739,7 @@ void InterfaceGame::startRewarding(Vec2 pos){
 
 		// Add a Tap to continue to inform the user what to do.
 		auto tapToContinue = Label::createWithSystemFont(
-			((AppDelegate*)Application::getInstance())->getConfig()
+			((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()
 			["buttons"]["tap_continue"][language].asString(), "Arial", 25.f);
 		tapToContinue->setPosition(Vec2(visibleSize.width * 3 / 8, 50));
 
@@ -1731,18 +1755,17 @@ void InterfaceGame::startRewarding(Vec2 pos){
 	else {
 		game_state = DONE;
 	}
-	addChild(reward_layout, 1, "reward_layout");
+	
 }
 
-void InterfaceGame::initDialoguesFromLevel() {
+void InterfaceGame::initDialoguesFromLevel(const Json::Value& config) {
 	Size visibleSize = Director::getInstance()->getVisibleSize(); 
 	auto fileUtils = FileUtils::getInstance();
 
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["worlds"]
-		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()];
 	Json::Reader reader;
 	Json::Value dialogue_json;
-	bool parsingConfigSuccessful = reader.parse(fileUtils->getStringFromFile(config["dialogues_file"].asString()), dialogue_json, false);
+	bool parsingConfigSuccessful = reader.parse(fileUtils->getStringFromFile(config["worlds"]
+		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["dialogues_file"].asString()), dialogue_json, false);
 
 	bool play_dialogue = ((AppDelegate*)Application::getInstance())->getConfigClass()->isDialoguesEnabled();
 	if (dialogue_json["introDialogue"].size() != 0 && play_dialogue) {
@@ -1776,7 +1799,7 @@ void InterfaceGame::handleDeadDango() {
 void InterfaceGame::updateIncrementXP(Label* exp_label, ui::LoadingBar* loading_bar, std::string tower_name, 
 	float* increment, int initial_value, int diff_exp, int loop, int max_level) {
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave();
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig();
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues();
 	
 	int c_exp = initial_value;
 	float duration = 4.0 / ((float)loop + 1.0);
@@ -1828,6 +1851,9 @@ void InterfaceGame::updateIncrementXP(Label* exp_label, ui::LoadingBar* loading_
 }
 
 void InterfaceGame::updateTutorial(float dt) {
+	Json::Value save = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
+	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["tutorials"];
+
 	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("tower_positioning") && 
 		!tutorial_running) {
 		Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -1843,7 +1869,7 @@ void InterfaceGame::updateTutorial(float dt) {
 		hand->setScale(visibleSize.width / 10 / hand->getContentSize().width);
 		hand->setPosition(Vec2(towers_menu["bomber"].first->getPosition() - Vec2(0, sizeTower) + getChildByName("menu_panel")->getChildByName("towers")->getPosition() + getChildByName("menu_panel")->getPosition()));
 		addChild(hand, 3, "hand");
-		hand->runAction(FadeOut::create(0.f));
+		hand->setOpacity(0.0f);
 		hand->runAction(RepeatForever::create(Sequence::create(
 			DelayTime::create(1.f),
 			FadeIn::create(0.5f),
@@ -1858,11 +1884,10 @@ void InterfaceGame::updateTutorial(float dt) {
 		);
 	}
 	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("sugar") && 
-		game->getLevel()->getQuantity() == 0) {
+		game->getLevel()->getQuantity() < 90) {
 		if (dialogues == nullptr) {
 			game->getLevel()->pause();
-			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
-			dialogues = Dialogue::createFromConfig(save["tutorials"]["sugar"]["dialogue"]);
+			dialogues = Dialogue::createFromConfig(config["sugar"]["dialogue"]);
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			if (game_state == TITLE) {
@@ -1894,8 +1919,7 @@ void InterfaceGame::updateTutorial(float dt) {
 		game->getLevel()->getLife() < 3) {
 		if (dialogues == nullptr) {
 			game->getLevel()->pause();
-			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
-			dialogues = Dialogue::createFromConfig(save["tutorials"]["life"]["dialogue"]);
+			dialogues = Dialogue::createFromConfig(config["life"]["dialogue"]);
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			shakeScaleElement(getChildByName("label_information")->getChildByName("life"));
@@ -1914,13 +1938,12 @@ void InterfaceGame::updateTutorial(float dt) {
 		}
 	}
 	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("saucer") &&
-		game->getLevel()->getLevelId() == 1 && game->getLevel()->getWorldId() == 0) {
+		game->getLevel()->getLevelId() == config["saucer"]["level"].asInt() &&
+		game->getLevel()->getWorldId() == config["saucer"]["world"].asInt()) {
 		if (dialogues == nullptr && !tutorial_running) {
-			Size visibleSize = Director::getInstance()->getVisibleSize();
 			tutorial_running = true;
 			game->getLevel()->pause();
-			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
-			dialogues = Dialogue::createFromConfig(save["tutorials"]["saucer"]["dialogue"]);
+			dialogues = Dialogue::createFromConfig(config["saucer"]["dialogue"]);
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			if (game_state == TITLE) {
@@ -1928,36 +1951,40 @@ void InterfaceGame::updateTutorial(float dt) {
 				getChildByName("title")->setVisible(false);
 				getChildByName("advice")->setVisible(false);
 			}
-			shakeElement(towers_menu["saucer"].first);
-			Sprite* hand = Sprite::create("res/buttons/hand.png");
-			hand->setAnchorPoint(Vec2(0.15f, 0.5f));
-			hand->setScale(visibleSize.width / 10 / hand->getContentSize().width);
-			hand->setPosition(Vec2(towers_menu["saucer"].first->getPosition() - Vec2(0, sizeTower) + getChildByName("menu_panel")->getChildByName("towers")->getPosition() + getChildByName("menu_panel")->getPosition()));
-			addChild(hand, 3, "hand");
-			hand->runAction(FadeOut::create(0.f));
-			hand->runAction(RepeatForever::create(Sequence::create(
-				DelayTime::create(1.f),
-				FadeIn::create(0.5f),
-				DelayTime::create(0.5f),
-				Spawn::createWithTwoActions(
-					MoveBy::create(1.5f, Vec2(-visibleSize.width / 2, 0)),
-					EaseBackOut::create(MoveBy::create(1.5f, Vec2(0, -visibleSize.height / 3) + Vec2(0, sizeTower / 2)))),
-				DelayTime::create(0.5f),
-				FadeOut::create(0.5f),
-				MoveTo::create(0.f, Vec2(towers_menu["saucer"].first->getPosition() - Vec2(0, sizeTower) + getChildByName("menu_panel")->getChildByName("towers")->getPosition() + getChildByName("menu_panel")->getPosition())),
-				nullptr))
-			);
 		}
 		else if(dialogues != nullptr) {
 			dialogues->update();
 			if (dialogues->hasFinished()) {
 				removeChild(dialogues);
 				dialogues = nullptr;
+
+				Size visibleSize = Director::getInstance()->getVisibleSize();
+
+				shakeElement(towers_menu["saucer"].first);
+				Sprite* hand = Sprite::create("res/buttons/hand.png");
+				hand->setAnchorPoint(Vec2(0.15f, 0.5f));
+				hand->setScale(visibleSize.width / 10 / hand->getContentSize().width);
+				hand->setPosition(Vec2(towers_menu["saucer"].first->getPosition() - Vec2(0, sizeTower) + getChildByName("menu_panel")->getChildByName("towers")->getPosition() + getChildByName("menu_panel")->getPosition()));
+				addChild(hand, 3, "hand");
+				hand->setOpacity(0.f);
+				hand->runAction(RepeatForever::create(Sequence::create(
+					DelayTime::create(1.f),
+					FadeIn::create(0.5f),
+					DelayTime::create(0.5f),
+					Spawn::createWithTwoActions(
+						MoveBy::create(1.5f, Vec2(-visibleSize.width / 2, 0)),
+						EaseBackOut::create(MoveBy::create(1.5f, Vec2(0, -visibleSize.height / 3) + Vec2(0, sizeTower / 2)))),
+					DelayTime::create(0.5f),
+					FadeOut::create(0.5f),
+					MoveTo::create(0.f, Vec2(towers_menu["saucer"].first->getPosition() - Vec2(0, sizeTower) + getChildByName("menu_panel")->getChildByName("towers")->getPosition() + getChildByName("menu_panel")->getPosition())),
+					nullptr))
+				);
 			}
 		}
 	}
 	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("upgrade") &&
-		game->getLevel()->getTowers().size() > 0 && game->getLevel()->getLevelId() == 2 && game->getLevel()->getWorldId() == 0) {
+		game->getLevel()->getLevelId() == config["upgrade"]["level"].asInt() &&
+		game->getLevel()->getWorldId() == config["upgrade"]["world"].asInt()) {
 		
 		if (dialogues == nullptr && !tutorial_running) {
 			std::vector<Tower*> towers = game->getLevel()->getTowers();
@@ -1972,8 +1999,7 @@ void InterfaceGame::updateTutorial(float dt) {
 				selected_turret = targeted_tower;
 				tutorial_running = true;
 				game->getLevel()->pause();
-				Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
-				dialogues = Dialogue::createFromConfig(save["tutorials"]["upgrade"]["dialogue"]);
+				dialogues = Dialogue::createFromConfig(config["upgrade"]["dialogue"]);
 				addChild(dialogues, 1, "dialogue");
 				dialogues->launch();
 				if (game_state == TITLE) {
@@ -1983,12 +2009,18 @@ void InterfaceGame::updateTutorial(float dt) {
 				}
 			}
 		}
-		else if(dialogues != nullptr) {
+		else if(dialogues != nullptr && tutorial_running) {
 			dialogues->update();
 			if (dialogues->hasFinished()) {
 				removeChild(dialogues);
 				dialogues = nullptr;
 				Size visibleSize = Director::getInstance()->getVisibleSize();
+				addChild(ui::Layout::create(), 2, "invisble_mask");
+				ui::Button* mask = ui::Button::create("res/buttons/tranparent_mask.png");
+				mask->setScaleX(visibleSize.width / mask->getContentSize().width);
+				mask->setScaleY(visibleSize.height / mask->getContentSize().height);
+				mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+				getChildByName("invisble_mask")->addChild(mask);
 				Sprite* hand = Sprite::create("res/buttons/hand.png");
 				hand->setAnchorPoint(Vec2(0.15f, 0.85f));
 				hand->setScale(visibleSize.width / 10 / hand->getContentSize().width);
@@ -2003,6 +2035,7 @@ void InterfaceGame::updateTutorial(float dt) {
 					((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("upgrade");
 					hideTowerInfo();
 					selected_turret = nullptr;
+					removeChildByName("invisble_mask");
 					if (game_state == TITLE) {
 						getChildByName("start")->setVisible(true);
 						getChildByName("title")->setVisible(true);
@@ -2021,6 +2054,96 @@ void InterfaceGame::updateTutorial(float dt) {
 					validate_tutorial,
 					nullptr)
 				);
+			}
+		}
+	}
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("multi_paths") &&
+		game->getLevel()->getLevelId() == config["multi_paths"]["level"].asInt() &&
+		game->getLevel()->getWorldId() == config["multi_paths"]["world"].asInt()) {
+		if (dialogues == nullptr) {
+			game->getLevel()->pause();
+			dialogues = Dialogue::createFromConfig(config["multi_paths"]["dialogue"]);
+			addChild(dialogues, 1, "dialogue");
+			dialogues->launch();
+			if (game_state == TITLE) {
+				getChildByName("start")->setVisible(false);
+				getChildByName("title")->setVisible(false);
+				getChildByName("advice")->setVisible(false);
+			}
+		}
+		else {
+			dialogues->update();
+			if (dialogues->hasFinished()) {
+				removeChild(dialogues);
+				dialogues = nullptr;
+				game->getLevel()->resume();
+				((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("multi_paths");
+				if (game_state == TITLE) {
+					getChildByName("start")->setVisible(true);
+					getChildByName("title")->setVisible(true);
+					getChildByName("advice")->setVisible(true);
+				}
+			}
+		}
+	}
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("dangorilla") &&
+		game->getLevel()->getLevelId() == config["dangorilla"]["level"].asInt() &&
+		game->getLevel()->getWorldId() == config["dangorilla"]["world"].asInt() &&
+		game->getLevel()->getLastEnemy() != nullptr &&
+		game->getLevel()->getLastEnemy()->getSpecConfig()["name"].asString() == "Dangorille"
+		) {
+		if (dialogues == nullptr) {
+			game->getLevel()->pause();
+			dialogues = Dialogue::createFromConfig(config["dangorilla"]["dialogue"]);
+			addChild(dialogues, 1, "dialogue");
+			dialogues->launch();
+			if (game_state == TITLE) {
+				getChildByName("start")->setVisible(false);
+				getChildByName("title")->setVisible(false);
+				getChildByName("advice")->setVisible(false);
+			}
+		}
+		else {
+			dialogues->update();
+			if (dialogues->hasFinished()) {
+				removeChild(dialogues);
+				dialogues = nullptr;
+				game->getLevel()->resume();
+				((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("dangorilla");
+				if (game_state == TITLE) {
+					getChildByName("start")->setVisible(true);
+					getChildByName("title")->setVisible(true);
+					getChildByName("advice")->setVisible(true);
+				}
+			}
+		}
+	}
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("dangobese") &&
+		game->getLevel()->getLevelId() == config["dangobese"]["level"].asInt() &&
+		game->getLevel()->getWorldId() == config["dangobese"]["world"].asInt()) {
+		if (dialogues == nullptr) {
+			game->getLevel()->pause();
+			dialogues = Dialogue::createFromConfig(config["dangobese"]["dialogue"]);
+			addChild(dialogues, 1, "dialogue");
+			dialogues->launch();
+			if (game_state == TITLE) {
+				getChildByName("start")->setVisible(false);
+				getChildByName("title")->setVisible(false);
+				getChildByName("advice")->setVisible(false);
+			}
+		}
+		else {
+			dialogues->update();
+			if (dialogues->hasFinished()) {
+				removeChild(dialogues);
+				dialogues = nullptr;
+				game->getLevel()->resume();
+				((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("dangobese");
+				if (game_state == TITLE) {
+					getChildByName("start")->setVisible(true);
+					getChildByName("title")->setVisible(true);
+					getChildByName("advice")->setVisible(true);
+				}
 			}
 		}
 	}
@@ -2062,4 +2185,56 @@ void InterfaceGame::shakeScaleElement(Node* element) {
 			)
 		)
 	);
+}
+
+void InterfaceGame::createTowersLayout() {
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	ui::Layout* towers = (ui::Layout*)getChildByName("menu_panel")->getChildByName("towers");
+	auto save = ((AppDelegate*)Application::getInstance())->getSave()["towers"];
+
+	int j(0);
+	std::vector<std::string> tower_names = Tower::getConfig().getMemberNames();
+
+	for (unsigned int i(0); i < tower_names.size(); ++i) {
+		if (save[save.getMemberNames()[i]]["unlocked"].asBool()) {
+			Json::Value tower_config = Tower::getConfig();
+			std::string sprite3_filename = tower_config[tower_names[i]]["image"].asString();
+			//std::string sprite3_background_filename = "res/buttons/tower_button.png";
+			std::string sprite3_background_filename = "res/buttons/tower_button2.png";
+			//std::string sprite3_disable_filename = "res/buttons/tower_inactive.png";
+			std::string sprite3_disable_filename = "res/buttons/tower_button2_inactive.png";
+			std::string sprite3_clip_filename = "res/buttons/tower_button_clip.png";
+			std::string sprite7_active_filename = "res/buttons/tower_active.png";
+
+			auto tower = Sprite::create(sprite3_background_filename);
+			tower->addChild(Sprite::create(sprite3_filename), 5, "sprite");
+			towers->addChild(tower, 1, Value(tower_names[i]).asString());
+			tower->setScale(sizeTower / tower->getContentSize().width);
+			//tower->setScaleY(sizeTower / tower->getContentSize().height);
+			tower->getChildByName("sprite")->setScale(tower->getContentSize().width * 0.75 /
+				tower->getChildByName("sprite")->getContentSize().width);
+			tower->setPosition(Vec2(sizeTower / 2 + j % 2 * (sizeTower + towers->getContentSize().width / 20) +
+				towers->getContentSize().width / 40,
+				-tower->getContentSize().height * tower->getScale() / 2 - (j / 2) *
+				(tower->getContentSize().height * tower->getScale() + towers->getContentSize().width / 20) -
+				towers->getContentSize().width / 20));
+			tower->getChildByName("sprite")->setPosition(Vec2(tower->getContentSize().width / 2,
+				tower->getContentSize().height * 0.55));
+			Label* cost = Label::createWithTTF(tower_config[tower_names[i]]["cost"][0].asString(),
+				"fonts/LICABOLD.ttf", 25);
+			cost->setColor(Color3B::RED);
+			cost->setPosition(Vec2(tower->getContentSize().width / 2 + cost->getContentSize().width / 2,
+				cost->getContentSize().height));
+			tower->addChild(cost, 6, "cost");
+			Sprite* sugar = Sprite::create("res/buttons/sugar.png");
+			sugar->setScale(tower->getContentSize().width / 5 / sugar->getContentSize().width);
+			sugar->setPosition(Vec2(cost->getPosition().x - cost->getContentSize().width / 2 - sugar->getContentSize().width * sugar->getScale() / 2,
+				cost->getPosition().y));
+			tower->addChild(sugar, 6, "sugar");
+
+			towers_menu[tower_names[i]] = std::make_pair(tower, tower_config[tower_names[i]]["cost"][0].asDouble());
+			++j;
+		}
+	}
 }

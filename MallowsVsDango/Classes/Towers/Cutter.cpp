@@ -26,11 +26,11 @@ Cutter* Cutter::create()
 	return NULL;
 }
 
-Json::Value Cutter::getConfig(){
+const Json::Value& Cutter::getConfig(){
 	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["cutter"];
 }
 
-const Json::Value Cutter::getSpecConfig(){
+const Json::Value& Cutter::getSpecConfig(){
 	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["cutter"];
 }
 
@@ -99,7 +99,7 @@ void Cutter::attack(){
 			}
 			slash->setDamagesId(attacked_enemies[cTarget]);
 			attacked_enemies.erase(attacked_enemies.find(cTarget));
-			target->addTargetingAttack(slash);
+			cTarget->addTargetingAttack(slash);
 			slash->setPosition(cTarget->getPosition());
 			slash->setScale(visibleSize.width/960);
 			slash->setVisible(false);
@@ -154,4 +154,17 @@ void Cutter::handleEndEnrageAnimation() {
 
 bool Cutter::isSameType(std::string type) {
 	return Tower::getTowerTypeFromString(type) == Tower::TowerType::CUTTER;
+}
+
+void Cutter::stopAttacking() {
+	std::vector<Dango*> targets = otherTargets;
+	for (auto& cTarget : targets) {
+		if (cTarget != nullptr) {
+			if (attacked_enemies.find(cTarget) != attacked_enemies.end()) {
+				cTarget->removePDamages(attacked_enemies[cTarget]);
+			}
+			cTarget->removeTargetingTower(this);
+		}
+		removeTarget(cTarget);
+	}
 }

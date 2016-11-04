@@ -96,3 +96,7 @@ void LoadingScreen::stop(){
 void LoadingScreen::setLoadingPercent(double percent){
 	((ui::LoadingBar*)getChildByName("loadingBar"))->setPercent(percent);
 }
+
+void LoadingScreen::switchLanguage() {
+
+}

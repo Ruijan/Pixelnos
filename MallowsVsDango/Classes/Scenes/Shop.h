@@ -4,13 +4,15 @@
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 #include "../Config/json.h"
+#include "../Lib/Translationable.h"
 
-class Shop : public cocos2d::Scene
+
+class Shop : public cocos2d::Scene, public Translationable
 {
 public:
 	virtual bool init();
 	CREATE_FUNC(Shop);
-
+	virtual void switchLanguage();
 
 
 private:

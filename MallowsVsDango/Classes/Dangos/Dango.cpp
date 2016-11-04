@@ -40,17 +40,30 @@ void Dango::initFromConfig() {
 	nb_frames_anim = config["level"][level]["animation_attack_size"].asInt();
 	name = config["level"][level]["name"].asString();
 	xp = config["level"][level]["xp"].asInt();
-	double a = config["level"][level]["holy_sugar"]["mean"].asDouble();
-	double b = config["level"][level]["holy_sugar"]["std"].asDouble();
-	std::default_random_engine generator(time(NULL));
-	std::normal_distribution<double> distribution(config["level"][level]["holy_sugar"]["mean"].asDouble(),
-		config["level"][level]["holy_sugar"]["std"].asDouble());
-	holy_sugar = round(abs(distribution(generator)));
+	double proba = config["level"][level]["holy_sugar"]["proba"].asDouble();
+	double number = config["level"][level]["holy_sugar"]["number"].asDouble();
+	std::string type_proba = config["level"][level]["holy_sugar"]["type"].asString();
+	holy_sugar = 0;
+	if (type_proba == "full") {
+		double proba = rand() % 1000 / 1000;
+		if (proba > proba) {
+			holy_sugar = number;
+		}
+	}
+	if (type_proba == "range") {
+		for (int i(0); i < number; ++i) {
+			double proba = rand() % 1000 / 1000;
+			if (proba > proba) {
+				++holy_sugar;
+			}
+		}
+	}
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	skeleton = SkeletonAnimation::createWithFile(config["skeleton"].asString(),
 		config["atlas"].asString(), 0.12f * visibleSize.width / 1280);
+	//skeleton->setScale(Cell::getCellWidth() / skeleton->getContentSize().width);
 
 	skeleton->setStartListener([this](int trackIndex) {
 		spTrackEntry* entry = spAnimationState_getCurrent(skeleton->getState(), trackIndex);
@@ -335,15 +348,16 @@ void Dango::die() {
 	auto star = Sprite::create("res/levels/star.png");
 	star->setScale(Cell::getCellWidth() / 5 / star->getContentSize().width);
 	star->setPosition(_position);
-	SceneManager::getInstance()->getGame()->getLevel()->addChild(star,2,"star");
+	SceneManager::getInstance()->getGame()->getMenu()->getChildByName("reward_layout")->addChild(star,2,"star");
 	auto element = SceneManager::getInstance()->getGame()->getMenu()->getChildByName("label_information")->getChildByName("sugar");
 	int posx = element->getPosition().x + element->getContentSize().width * (0.5 - element->getAnchorPoint().x);
 	int posy = element->getPosition().y + element->getContentSize().height * (0.5 - element->getAnchorPoint().y);
 	posx += SceneManager::getInstance()->getGame()->getMenu()->getChildByName("label_information")->getPosition().x;
 	posy += SceneManager::getInstance()->getGame()->getMenu()->getChildByName("label_information")->getPosition().y;
-
-	auto autoRemove = CallFunc::create([star]() {
-		SceneManager::getInstance()->getGame()->getLevel()->removeChild(star);
+	int gain = getGain();
+	auto autoRemove = CallFunc::create([star, gain, this]() {
+		SceneManager::getInstance()->getGame()->getLevel()->increaseQuantity(gain);
+		SceneManager::getInstance()->getGame()->getMenu()->getChildByName("reward_layout")->removeChild(star);
 	});
 	star->runAction(Sequence::create(Spawn::createWithTwoActions(
 		EaseBackOut::create(MoveBy::create(1.f, Vec2(0, posy - _position.y))),
@@ -507,12 +521,12 @@ ui::Layout* Dango::getInformationLayout(InterfaceGame* interface_game) {
 	ui::LoadingBar* loading_bar = ui::LoadingBar::create("res/buttons/sliderProgress.png");
 	loading_bar->setPercent((double)hitPoints / getSpecConfig()["level"][level]["hitpoints"].asDouble() * 100);
 	loading_bar->setScaleX(Cell::getCellWidth() / 2 / loading_bar->getContentSize().width);
-	loading_bar->setScaleY(Cell::getCellWidth() / 5 / loading_bar->getContentSize().width);
+	loading_bar->setScaleY(Cell::getCellWidth() / 10 / loading_bar->getContentSize().height);
 	layout->addChild(loading_bar, 2, "loading_bar");
 
 	Sprite* loading_background = Sprite::create("res/buttons/loaderBackground.png");
 	loading_background->setScaleX(Cell::getCellWidth() / 2 / loading_background->getContentSize().width);
-	loading_background->setScaleY(Cell::getCellWidth() / 5 / loading_background->getContentSize().width);
+	loading_background->setScaleY(Cell::getCellWidth() / 10 / loading_background->getContentSize().height);
 	layout->addChild(loading_background, 1, "loading_background");
 
 	double position_x = getPosition().x;

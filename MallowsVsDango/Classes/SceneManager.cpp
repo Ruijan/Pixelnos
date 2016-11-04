@@ -35,6 +35,12 @@ SceneManager::SceneManager(){
 
 	currentscene = cacheScene[MENU];
 	c_index = 0;
+	TrackingEvent c_event;
+	c_event.from_scene = Config::getStringFromSceneType(SceneManager::SceneType::START);
+	c_event.to_scene = Config::getStringFromSceneType(getCurrentSceneIndex());
+	c_event.time = time(0);
+
+	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
 	Director::getInstance()->runWithScene(currentscene);
 	if(((AppDelegate*)Application::getInstance())->getConfig()["play_sound"].asBool()){
 		std::string music = ((AppDelegate*)Application::getInstance())->getConfig()["sound_transition"][c_index][c_index].asString();
@@ -73,4 +79,12 @@ void SceneManager::setScene(SceneManager::SceneType type){
 
 MyGame* SceneManager::getGame(){
 	return  ((MyGame*)cacheScene[GAME]);
+}
+
+void SceneManager::switchLanguage() {
+	((MainMenu*)cacheScene[MENU])->switchLanguage();
+}
+
+SceneManager::SceneType SceneManager::getCurrentSceneIndex() {
+	return (SceneManager::SceneType)c_index;
 }

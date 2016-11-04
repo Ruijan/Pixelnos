@@ -32,11 +32,11 @@ void Saucer::initSpecial() {
 	slow_duration = config["slow_duration"][level].asDouble();
 }
 
-Json::Value Saucer::getConfig(){
+const Json::Value& Saucer::getConfig(){
 	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["saucer"];
 }
 
-const Json::Value Saucer::getSpecConfig(){
+const Json::Value& Saucer::getSpecConfig(){
 	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["saucer"];
 }
 

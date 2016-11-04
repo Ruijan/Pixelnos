@@ -1,7 +1,8 @@
 {
 	"files" : [
 		"forest.png",
-    "ground.png",
-    "trees.png"
+		"ground.png",
+		"mushroom.png",
+		"trees.png"
 	]
 }

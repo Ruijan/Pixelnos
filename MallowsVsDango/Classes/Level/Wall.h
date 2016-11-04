@@ -45,6 +45,11 @@ public:
 	bool isDestroyed();
 
 	/**
+	* @return If the HP are lower than full life, return true. Else return false
+	*/
+	bool isDamaged();
+
+	/**
 	* @brief Update the image of the wall depending its state. For now only 2 images are available.
 	*/
 	void updateDisplay();

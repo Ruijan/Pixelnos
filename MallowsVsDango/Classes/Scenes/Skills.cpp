@@ -10,6 +10,8 @@ bool Skills::init(){
 	if (!Scene::init()){ return false; }
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 
+	tutorial_running = false;
+
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	config = ((AppDelegate*)Application::getInstance())->getConfig()["skills"]; //load data file
 	root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
@@ -104,7 +106,7 @@ bool Skills::init(){
 			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::SHOP);
 		}
 	});
-	shop->setScale(visibleSize.width / shop->getContentSize().width * 0.18);
+	shop->setScale(visibleSize.width / shop->getContentSize().width * 0.20);
 	shop->setPosition(Vec2(visibleSize.width / 8, sugar_sprite1->getPosition().y -
 		sugar_sprite1->getContentSize().height * sugar_sprite1->getScaleY() / 2 -
 		shop->getContentSize().height * shop->getScaleY() / 2
@@ -112,7 +114,7 @@ bool Skills::init(){
 	shop->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
 		["buttons"]["shop"][language].asString());
 	shop->setTitleFontName("fonts/LICABOLD.ttf");
-	shop->setTitleFontSize(visibleSize.width / 30);
+	shop->setTitleFontSize(60.f);
 	Label* shop_label = shop->getTitleRenderer();
 	shop_label->setColor(Color3B::RED);
 	shop_label->enableOutline(Color4B::BLACK, 2);
@@ -121,7 +123,7 @@ bool Skills::init(){
 	addChild(shop, 3, "shop");
 
 	Sprite* shop_drawing = Sprite::create("res/buttons/shop_drawing.png");
-	shop_drawing->setScale(shop->getContentSize().width / 3 / shop_drawing->getContentSize().width);
+	shop_drawing->setScale(shop->getContentSize().width / 4 / shop_drawing->getContentSize().width);
 	shop_drawing->setPosition(shop->getContentSize().width / 4, shop->getContentSize().height / 2);
 	shop->addChild(shop_drawing);
 
@@ -180,7 +182,7 @@ bool Skills::init(){
 	
 	Label* skill_cost = Label::createWithTTF("X " + config[0][0]["cost"].asString(), "fonts/LICABOLD.ttf", round(visibleSize.width / 45));
 	skill_cost->setColor(Color3B::BLACK);
-	skill_cost->enableOutline(Color4B::BLACK, 2);
+	skill_cost->enableOutline(Color4B::BLACK, 1);
 	skill_cost->setPosition(Vec2(visibleSize.width / 8 + visibleSize.width / 50, sugar_sprite2->getPosition().y - visibleSize.height * 0.005));
 	if (config[0][0]["cost"].asInt() > root["holy_sugar"].asInt()) {
 		skill_cost->setColor(Color3B::RED);
@@ -215,8 +217,8 @@ bool Skills::init(){
 	//generating skills' button
 	for (unsigned int i(0); i < config.size(); ++i) {
 		for (unsigned int j(0); j < config[i].size(); ++j){
-			set_skill(i, j);
-			set_dependancy(i, j);
+			setSkill(i, j);
+			setDependency(i, j);
 			auto a = config[i][j];
 		};
 	};
@@ -232,129 +234,10 @@ bool Skills::init(){
 		selected_skill->getContentSize().height * 1.15);
 	scrollView->addChild(selected_skill, 1, "selected_skill");
 
-
-
-
-
 	//buy_skill + confirmation message
 	buy_button->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			Size visibleSize = Director::getInstance()->getVisibleSize();
-			cocos2d::ui::Layout* buy_layout = ui::Layout::create();
-			addChild(buy_layout, 3, "buy_layout");
-
-			//buy confirmation 
-			cocos2d::ui::Button* buy_info = ui::Button::create("res/buttons/centralMenuPanel2.png");
-			buy_info->setScaleX(visibleSize.width / buy_info->getContentSize().width * 0.4);
-			buy_info->setScaleY(visibleSize.height / buy_info->getContentSize().height * 0.5);
-			buy_info->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-			buy_info->setZoomScale(0.f);
-			buy_layout->addChild(buy_info, 3, "buy_info");
-
-			Label* buy_confirmation = Label::createWithTTF("Do you want to buy the skill ?", "fonts/LICABOLD.ttf", 
-				round(buy_info->getContentSize().width * buy_info->getScaleX() / 11));
-			buy_confirmation->setColor(Color3B::BLACK);
-			buy_confirmation->setDimensions(buy_info->getContentSize().width * buy_info->getScaleX() * 0.8,
-				buy_info->getContentSize().height * buy_info->getScaleY() * 0.3);
-			buy_confirmation->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + buy_info->getContentSize().height * buy_info->getScaleY() * 0.25));
-			buy_layout->addChild(buy_confirmation, 3, "buy_confirmation");
-
-			Label* buy_confirmation_skill_name = Label::createWithTTF("", "fonts/LICABOLD.ttf", 
-				round(buy_info->getContentSize().width * buy_info->getScaleX() / 11));
-			buy_confirmation_skill_name->setColor(Color3B::ORANGE);
-			buy_confirmation_skill_name->enableOutline(Color4B::BLACK, 2);
-			buy_confirmation_skill_name->setAlignment(TextHAlignment::CENTER);
-			buy_confirmation_skill_name->setDimensions(buy_info->getContentSize().width * buy_info->getScaleX() * 0.6, 
-				buy_info->getContentSize().height * buy_info->getScaleY() * 0.3);
-			buy_confirmation_skill_name->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 
-				buy_info->getContentSize().height * buy_info->getScaleY() * 0.1));
-			((Label*)buy_confirmation_skill_name)->setString(((Label*)getChildByName("skill_name"))->getString());
-			buy_layout->addChild(buy_confirmation_skill_name, 3, "buy_confirmation_skill_name");
-
-			cocos2d::ui::Button* yes = ui::Button::create("res/buttons/yellow_button.png");
-			yes->setTitleText("BUY");
-			yes->setTitleFontName("fonts/LICABOLD.ttf");
-			yes->setTitleFontSize(70.f * visibleSize.width / 1280);
-			Label* yes_label = yes->getTitleRenderer();
-			yes_label->setColor(Color3B::WHITE);
-			yes_label->enableOutline(Color4B::BLACK, 2);
-			yes_label->setPosition(yes->getContentSize() / 2);
-			yes->setScale(buy_info->getContentSize().width*buy_info->getScaleX() * 0.4 / yes->getContentSize().width);
-			yes->setPosition(Vec2(visibleSize.width / 2 - buy_info->getContentSize().width*buy_info->getScaleX() / 4,
-				visibleSize.height / 2 - buy_info->getContentSize().height*buy_info->getScaleY() / 2 -
-				yes->getContentSize().height*yes->getScaleY() * 0.41));
-			Sprite* yes_shadow = Sprite::create("res/buttons/shadow_button.png");
-			yes_shadow->setScale(yes->getScale());
-			yes_shadow->setPosition(yes->getPosition());
-			buy_layout->addChild(yes_shadow, -1);
-			buy_layout->addChild(yes, 3, "yes");
-
-			cocos2d::ui::Button* cancel = ui::Button::create("res/buttons/red_button.png");
-			cancel->setTitleText("Cancel");
-			cancel->setTitleFontName("fonts/LICABOLD.ttf");
-			cancel->setTitleFontSize(70.f * visibleSize.width / 1280);
-			Label* cancel_label = cancel->getTitleRenderer();
-			cancel_label->setColor(Color3B::WHITE);
-			cancel_label->enableOutline(Color4B::BLACK, 2);
-			cancel_label->setPosition(cancel->getContentSize() / 2);
-			cancel->setScale(buy_info->getContentSize().width*buy_info->getScaleX() * 0.4 / cancel->getContentSize().width);
-			cancel->setPosition(Vec2(visibleSize.width / 2 + buy_info->getContentSize().width*buy_info->getScaleX() / 4,
-				visibleSize.height / 2 - buy_info->getContentSize().height*buy_info->getScaleY() / 2 -
-				cancel->getContentSize().height*cancel->getScaleY() * 0.41));
-			Sprite* cancel_shadow = Sprite::create("res/buttons/shadow_button.png");
-			cancel_shadow->setScale(cancel->getScale());
-			cancel_shadow->setPosition(cancel->getPosition());
-			buy_layout->addChild(cancel_shadow, -1);
-			buy_layout->addChild(cancel, 3, "cancel");
-
-			getChildByName("mask")->setVisible(!getChildByName("mask")->isVisible());
-
-			cancel->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
-				if (type == ui::Widget::TouchEventType::ENDED) {
-					removeChildByName("buy_layout");
-					getChildByName("mask")->setVisible(false);
-				}
-			});
-			
-			yes->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
-				if (type == ui::Widget::TouchEventType::ENDED) {
-					root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
-
-					int is_skill_bought = root["skill"][selected_tier_id][selected_skill_id]["bought"].asBool();
-
-					//have enough holy_sugar ???
-					if (root["holy_sugar"].asInt() >= config[selected_tier_id][selected_skill_id]["cost"].asInt()){
-						//is skill already bought
-						if (is_skill_bought == 1){
-							return;
-						}
-						if (is_skill_bought == 0){
-							root["skill"][selected_tier_id][selected_skill_id]["bought"] = true;
-
-							((cocos2d::ui::Button*)getChildByName("buy_button"))->setEnabled(false);
-							removeChildByName("buy_layout");
-							getChildByName("mask")->setVisible(false);
-
-							//update total amount holy_sugar
-							root["holy_sugar"] = root["holy_sugar"].asInt() - config[selected_tier_id][selected_skill_id]["cost"].asInt();
-							((Label*)getChildByName("sugar_amount"))->setString("X " + root["holy_sugar"].asString());
-							((AppDelegate*)Application::getInstance())->getConfigClass()->setSave(root);
-							((AppDelegate*)Application::getInstance())->getConfigClass()->save();
-
-							//update skill panels, check box
-							getChildByName("scrollView")->getChildByName(Value(selected_tier_id).asString() + "_" + Value(selected_skill_id).asString())->getChildByName("skill")->getChildByName("skill_bought")->setVisible(true);
-							skill_update(selected_tier_id, selected_skill_id, (ui::Button*) getChildByName("scrollView")->getChildByName(Value(selected_tier_id).asString() + "_" + Value(selected_skill_id).asString())->getChildByName("skill"));
-							
-							for (unsigned int i(0); i < config[selected_tier_id + 1].size(); ++i){
-							skill_update(selected_tier_id + 1, i, (ui::Button*) getChildByName("scrollView")->getChildByName(Value(selected_tier_id +1).asString() + "_" + Value((int)i).asString())->getChildByName("skill"));
-							}
-						}
-					}
-					else {
-						return;
-					}
-				}
-			});
+			showSkillValidationBuy();
 		}
 	});
 
@@ -364,9 +247,10 @@ bool Skills::init(){
 void Skills::onEnterTransitionDidFinish() {
 	root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 	((Label*)getChildByName("sugar_amount"))->setString("x " + root["holy_sugar"].asString());
+	scheduleUpdate();
 }
 
-void Skills::set_skill(int tier_id, int skill_id){ //create skill button
+void Skills::setSkill(int tier_id, int skill_id){ //create skill button
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	//create a layout which contains sprites (skill, text)
@@ -385,65 +269,13 @@ void Skills::set_skill(int tier_id, int skill_id){ //create skill button
 	if (root["skill"][tier_id][skill_id]["bought"].asBool()){
 		skill_bought->setVisible(true);
 	}
-	skill_update(tier_id, skill_id, skill);
+	skillUpdate(tier_id, skill_id, skill);
 
 	layout->addChild(skill, 2, "skill");
 
 	skill->addTouchEventListener([&, tier_id, skill_id, skill](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			Size visibleSize = Director::getInstance()->getVisibleSize();
-			//update skill info and the selection rectangular		
-			((Label*)getChildByName("skill_cost"))->setString("X " + config[tier_id][skill_id]["cost"].asString());
-			((Label*)getChildByName("skill_name"))->setString(config[tier_id][skill_id]["name_" +
-				((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()].asString());
-			((Label*)getChildByName("skill_description"))->setString(config[tier_id][skill_id]["description_" +
-				((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()].asString());
-			((Label*)getChildByName("skill_description"))->setPosition(getChildByName("skill_description")->getPosition().x,
-				getChildByName("skill_name")->getPosition().y - getChildByName("skill_name")->getContentSize().height - 
-				visibleSize.height / 25);
-
-			getChildByName("scrollView")->getChildByName("selected_skill")->setScaleX(skill->getContentSize().width * skill->getScaleX() /
-				getChildByName("scrollView")->getChildByName("selected_skill")->getContentSize().width * 1.15);
-			getChildByName("scrollView")->getChildByName("selected_skill")->setScaleY(skill->getContentSize().height * skill->getScaleY() /
-				getChildByName("scrollView")->getChildByName("selected_skill")->getContentSize().height * 1.15);
-			getChildByName("scrollView")->getChildByName("selected_skill")->setPosition(
-				getChildByName("scrollView")->getChildByName(Value(tier_id).asString() + "_" + Value(skill_id).asString())->getPosition());
-			selected_tier_id = tier_id;
-			selected_skill_id = skill_id;
-
-			//reset buy_button to enable
-			((ui::Button*)getChildByName("buy_button"))->setEnabled(true);
-			//test if skill can be bought (enough sugar, unlocked, prerequisite...)
-			if (root["holy_sugar"].asInt() < config[tier_id][skill_id]["cost"].asInt()){
-				((Label*)getChildByName("skill_cost"))->setColor(Color3B::RED);
-				((ui::Button*)getChildByName("buy_button"))->setEnabled(false);
-			}
-			else{
-				((Label*)getChildByName("skill_cost"))->setColor(Color3B::BLACK);
-				if (root["level"].asInt() < config[tier_id][skill_id]["level_unlocked"].asInt()){
-					((ui::Button*)getChildByName("buy_button"))->setEnabled(false);
-				}
-				else{
-					if (root["skill"][tier_id][skill_id]["bought"].asBool()){
-						((ui::Button*)getChildByName("buy_button"))->setEnabled(false);
-					}
-					else{
-						bool enable1(true);
-						for (unsigned i(0); i < config[tier_id][skill_id]["dependance"].size(); ++i){
-							int j = config[tier_id][skill_id]["dependance"][i].asInt();
-							if (j != -1) {
-								if (!root["skill"][tier_id - 1][j]["bought"].asBool()) {
-									enable1 = false;
-								}
-
-								if (enable1 == false) {
-									((ui::Button*)getChildByName("buy_button"))->setEnabled(false);
-								}
-							}
-						}
-					}
-				}
-			}
+			selectSkill(tier_id, skill_id, skill);
 		}
 	});
 	
@@ -473,10 +305,8 @@ void Skills::set_skill(int tier_id, int skill_id){ //create skill button
 	}
 }
 
-void Skills::set_dependancy(int tier_id, int skill_id){ // create link between skills
+void Skills::setDependency(int tier_id, int skill_id){ // create link between skills
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-
-	
 
 	if (config[tier_id][skill_id]["dependance"][0].asInt() == -1) {
 		return;
@@ -495,21 +325,11 @@ void Skills::set_dependancy(int tier_id, int skill_id){ // create link between s
 			link->setPosition((getChildByName("scrollView")->getChildByName(Value(tier_id - 1).asString() + "_" + Value(b).asString())->getPosition() + 
 				getChildByName("scrollView")->getChildByName(Value(tier_id).asString() + "_" + Value(skill_id).asString())->getPosition()) / 2);
 			getChildByName("scrollView")->addChild(link, 1);
-			/*DrawNode* arrow = DrawNode::create();
-			Vec2 pos[4];
-
-			//get scrollView then skill's layout "tier_id_skill_id"
-			pos[0] = getChildByName("scrollView")->getChildByName(Value(tier_id).asString() + "_" + Value(skill_id).asString())->getPosition();
-			pos[1] = getChildByName("scrollView")->getChildByName(Value(tier_id - 1).asString() + "_" + Value(b).asString())->getPosition();
-			pos[2] = getChildByName("scrollView")->getChildByName(Value(tier_id - 1).asString() + "_" + Value(b).asString())->getPosition();
-			pos[3] = getChildByName("scrollView")->getChildByName(Value(tier_id).asString() + "_" + Value(skill_id).asString())->getPosition();
-			arrow->drawPolygon(pos, 4, Color4F::BLUE, 4, Color4F::BLUE);
-			getChildByName("scrollView")->addChild(arrow, 1);*/
 		};
 	};
 }
 
-void Skills::skill_update(int tier_id, int skill_id, ui::Button* skill){ //create skill button
+void Skills::skillUpdate(int tier_id, int skill_id, ui::Button* skill){ //create skill button
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	if (tier_id == 0){ // skill n° 0_0
@@ -541,4 +361,272 @@ void Skills::skill_update(int tier_id, int skill_id, ui::Button* skill){ //creat
 	skill->setScale(visibleSize.width / skill->getContentSize().width * 0.1);
 	skill->setPosition(Vec2(0.f, 0.f));
 	skill->getChildByName("skill_bought")->setPosition(Vec2(skill->getContentSize().width / 1.05, skill->getContentSize().height / 1.05));
+}
+
+void Skills::switchLanguage() {
+
+}
+
+void Skills::update(float dt) {
+	updateTutorial(dt);
+}
+
+void Skills::updateTutorial(float dt) {
+	auto save = ((AppDelegate*)Application::getInstance())->getSave();
+	auto config = ((AppDelegate*)Application::getInstance())->getConfig()["tutorials"];
+	if (((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialRunning("skills") &&
+		save["c_level"].asInt() >= config["skills"]["level"].asInt() &&
+		save["c_world"].asInt() >= config["skills"]["world"].asInt()) {
+
+		if (getChildByName("dialogue") == nullptr && !tutorial_running) {
+			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
+			addChild(Dialogue::createFromConfig(config["skills"]["dialogue_skills"]), 3, "dialogue");
+			((Dialogue*)getChildByName("dialogue"))->launch();
+			tutorial_running = true;
+			Size visibleSize = Director::getInstance()->getVisibleSize();
+
+			// mask to prevent any action from the player
+			addChild(ui::Layout::create(), 2, "invisble_mask");
+			ui::Button* mask = ui::Button::create("res/buttons/tranparent_mask.png");
+			mask->setScaleX(visibleSize.width / mask->getContentSize().width);
+			mask->setScaleY(visibleSize.height / mask->getContentSize().height);
+			mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+			getChildByName("invisble_mask")->addChild(mask);
+		}
+		else if(getChildByName("dialogue") != nullptr){
+			((Dialogue*)getChildByName("dialogue"))->update();
+			if (((Dialogue*)getChildByName("dialogue"))->hasFinished()) {
+				removeChildByName("dialogue");
+				Size visibleSize = Director::getInstance()->getVisibleSize();
+
+				// hand showing what to do
+				Sprite* hand = Sprite::create("res/buttons/hand.png");
+				hand->setAnchorPoint(Vec2(0.15f, 0.90f));
+				hand->setScale(visibleSize.width / 10 / hand->getContentSize().width);
+				hand->setPosition(visibleSize / 2);
+				addChild(hand, 4, "hand");
+				hand->setOpacity(0.f);
+				auto select_skill = CallFunc::create([this]() {
+					selectSkill(0, 0, (ui::Button*)getChildByName("scrollView")->getChildByName("0_0")->getChildByName("skill"));
+				});
+				auto show_skill_buy = CallFunc::create([this, hand]() {
+					showSkillValidationBuy();
+					auto end_tutorial = CallFunc::create([this]() {
+						this->removeChildByName("invisble_mask");
+						this->removeChildByName("hand");
+						removeChildByName("buy_layout");
+						getChildByName("mask")->setVisible(false);
+						((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("skills");
+						tutorial_running = false;
+					});
+					hand->runAction(Sequence::create(
+						DelayTime::create(0.25f),
+						MoveTo::create(1.f, getChildByName("buy_layout")->getPosition() + getChildByName("buy_layout")->getChildByName("yes")->getPosition()),
+						DelayTime::create(0.25f), 
+						FadeOut::create(0.5f),
+						end_tutorial,
+						nullptr
+					));
+				});
+				
+				hand->runAction(Sequence::create(
+					FadeIn::create(0.5f),
+					DelayTime::create(0.5f),
+					Spawn::createWithTwoActions(
+						MoveBy::create(1.5f, Vec2(getChildByName("scrollView")->getPosition().x + 
+							getChildByName("scrollView")->getChildByName("0_0")->getPosition().x -
+							visibleSize.width / 2, 0)),
+						EaseBackOut::create(MoveBy::create(1.5f, 
+							Vec2(0, getChildByName("scrollView")->getPosition().y + 
+								getChildByName("scrollView")->getChildByName("0_0")->getPosition().y -
+								getChildByName("scrollView")->getChildByName("0_0")->getChildByName("skill")->getContentSize().height *
+								getChildByName("scrollView")->getChildByName("0_0")->getChildByName("skill")->getScaleY() / 2 -
+								visibleSize.height / 2)))),
+					DelayTime::create(0.25f),
+					select_skill,
+					DelayTime::create(0.25f),
+					MoveTo::create(1.f, getChildByName("buy_button")->getPosition()),
+					DelayTime::create(0.25f),
+					show_skill_buy,
+					nullptr)
+				);
+			}
+		}
+	}
+}
+
+void Skills::selectSkill(int tier_id, int skill_id, ui::Button * skill) {
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	//update skill info and the selection rectangular		
+	((Label*)getChildByName("skill_cost"))->setString("X " + config[tier_id][skill_id]["cost"].asString());
+	((Label*)getChildByName("skill_name"))->setString(config[tier_id][skill_id]["name_" +
+		((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()].asString());
+	((Label*)getChildByName("skill_description"))->setString(config[tier_id][skill_id]["description_" +
+		((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()].asString());
+	((Label*)getChildByName("skill_description"))->setPosition(getChildByName("skill_description")->getPosition().x,
+		getChildByName("skill_name")->getPosition().y - getChildByName("skill_name")->getContentSize().height -
+		visibleSize.height / 25);
+
+	getChildByName("scrollView")->getChildByName("selected_skill")->setScaleX(skill->getContentSize().width * skill->getScaleX() /
+		getChildByName("scrollView")->getChildByName("selected_skill")->getContentSize().width * 1.15);
+	getChildByName("scrollView")->getChildByName("selected_skill")->setScaleY(skill->getContentSize().height * skill->getScaleY() /
+		getChildByName("scrollView")->getChildByName("selected_skill")->getContentSize().height * 1.15);
+	getChildByName("scrollView")->getChildByName("selected_skill")->setPosition(
+		getChildByName("scrollView")->getChildByName(Value(tier_id).asString() + "_" + Value(skill_id).asString())->getPosition());
+	selected_tier_id = tier_id;
+	selected_skill_id = skill_id;
+
+	//reset buy_button to enable
+	((ui::Button*)getChildByName("buy_button"))->setEnabled(true);
+	//test if skill can be bought (enough sugar, unlocked, prerequisite...)
+	if (root["holy_sugar"].asInt() < config[tier_id][skill_id]["cost"].asInt()) {
+		((Label*)getChildByName("skill_cost"))->setColor(Color3B::RED);
+		((ui::Button*)getChildByName("buy_button"))->setEnabled(false);
+	}
+	else {
+		((Label*)getChildByName("skill_cost"))->setColor(Color3B::BLACK);
+		if (root["level"].asInt() < config[tier_id][skill_id]["level_unlocked"].asInt()) {
+			((ui::Button*)getChildByName("buy_button"))->setEnabled(false);
+		}
+		else {
+			if (root["skill"][tier_id][skill_id]["bought"].asBool()) {
+				((ui::Button*)getChildByName("buy_button"))->setEnabled(false);
+			}
+			else {
+				bool enable1(true);
+				for (unsigned i(0); i < config[tier_id][skill_id]["dependance"].size(); ++i) {
+					int j = config[tier_id][skill_id]["dependance"][i].asInt();
+					if (j != -1) {
+						if (!root["skill"][tier_id - 1][j]["bought"].asBool()) {
+							enable1 = false;
+						}
+
+						if (enable1 == false) {
+							((ui::Button*)getChildByName("buy_button"))->setEnabled(false);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void Skills::showSkillValidationBuy() {
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	cocos2d::ui::Layout* buy_layout = ui::Layout::create();
+	addChild(buy_layout, 3, "buy_layout");
+
+	//buy confirmation 
+	cocos2d::ui::Button* buy_info = ui::Button::create("res/buttons/centralMenuPanel2.png");
+	buy_info->setScaleX(visibleSize.width / buy_info->getContentSize().width * 0.4);
+	buy_info->setScaleY(visibleSize.height / buy_info->getContentSize().height * 0.5);
+	buy_info->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	buy_info->setZoomScale(0.f);
+	buy_layout->addChild(buy_info, 3, "buy_info");
+
+	Label* buy_confirmation = Label::createWithTTF("Do you want to buy the skill ?", "fonts/LICABOLD.ttf",
+		round(buy_info->getContentSize().width * buy_info->getScaleX() / 11));
+	buy_confirmation->setColor(Color3B::BLACK);
+	buy_confirmation->setDimensions(buy_info->getContentSize().width * buy_info->getScaleX() * 0.8,
+		buy_info->getContentSize().height * buy_info->getScaleY() * 0.3);
+	buy_confirmation->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + buy_info->getContentSize().height * buy_info->getScaleY() * 0.25));
+	buy_layout->addChild(buy_confirmation, 3, "buy_confirmation");
+
+	Label* buy_confirmation_skill_name = Label::createWithTTF("", "fonts/LICABOLD.ttf",
+		round(buy_info->getContentSize().width * buy_info->getScaleX() / 11));
+	buy_confirmation_skill_name->setColor(Color3B::ORANGE);
+	buy_confirmation_skill_name->enableOutline(Color4B::BLACK, 2);
+	buy_confirmation_skill_name->setAlignment(TextHAlignment::CENTER);
+	buy_confirmation_skill_name->setDimensions(buy_info->getContentSize().width * buy_info->getScaleX() * 0.6,
+		buy_info->getContentSize().height * buy_info->getScaleY() * 0.3);
+	buy_confirmation_skill_name->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 -
+		buy_info->getContentSize().height * buy_info->getScaleY() * 0.1));
+	((Label*)buy_confirmation_skill_name)->setString(((Label*)getChildByName("skill_name"))->getString());
+	buy_layout->addChild(buy_confirmation_skill_name, 3, "buy_confirmation_skill_name");
+
+	cocos2d::ui::Button* yes = ui::Button::create("res/buttons/yellow_button.png");
+	yes->setTitleText("BUY");
+	yes->setTitleFontName("fonts/LICABOLD.ttf");
+	yes->setTitleFontSize(70.f * visibleSize.width / 1280);
+	Label* yes_label = yes->getTitleRenderer();
+	yes_label->setColor(Color3B::WHITE);
+	yes_label->enableOutline(Color4B::BLACK, 2);
+	yes_label->setPosition(yes->getContentSize() / 2);
+	yes->setScale(buy_info->getContentSize().width*buy_info->getScaleX() * 0.4 / yes->getContentSize().width);
+	yes->setPosition(Vec2(visibleSize.width / 2 - buy_info->getContentSize().width*buy_info->getScaleX() / 4,
+		visibleSize.height / 2 - buy_info->getContentSize().height*buy_info->getScaleY() / 2 -
+		yes->getContentSize().height*yes->getScaleY() * 0.41));
+	Sprite* yes_shadow = Sprite::create("res/buttons/shadow_button.png");
+	yes_shadow->setScale(yes->getScale());
+	yes_shadow->setPosition(yes->getPosition());
+	buy_layout->addChild(yes_shadow, -1);
+	buy_layout->addChild(yes, 3, "yes");
+
+	cocos2d::ui::Button* cancel = ui::Button::create("res/buttons/red_button.png");
+	cancel->setTitleText("Cancel");
+	cancel->setTitleFontName("fonts/LICABOLD.ttf");
+	cancel->setTitleFontSize(70.f * visibleSize.width / 1280);
+	Label* cancel_label = cancel->getTitleRenderer();
+	cancel_label->setColor(Color3B::WHITE);
+	cancel_label->enableOutline(Color4B::BLACK, 2);
+	cancel_label->setPosition(cancel->getContentSize() / 2);
+	cancel->setScale(buy_info->getContentSize().width*buy_info->getScaleX() * 0.4 / cancel->getContentSize().width);
+	cancel->setPosition(Vec2(visibleSize.width / 2 + buy_info->getContentSize().width*buy_info->getScaleX() / 4,
+		visibleSize.height / 2 - buy_info->getContentSize().height*buy_info->getScaleY() / 2 -
+		cancel->getContentSize().height*cancel->getScaleY() * 0.41));
+	Sprite* cancel_shadow = Sprite::create("res/buttons/shadow_button.png");
+	cancel_shadow->setScale(cancel->getScale());
+	cancel_shadow->setPosition(cancel->getPosition());
+	buy_layout->addChild(cancel_shadow, -1);
+	buy_layout->addChild(cancel, 3, "cancel");
+
+	getChildByName("mask")->setVisible(!getChildByName("mask")->isVisible());
+
+	cancel->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			removeChildByName("buy_layout");
+			getChildByName("mask")->setVisible(false);
+		}
+	});
+
+	yes->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
+
+			int is_skill_bought = root["skill"][selected_tier_id][selected_skill_id]["bought"].asBool();
+
+			//have enough holy_sugar ???
+			if (root["holy_sugar"].asInt() >= config[selected_tier_id][selected_skill_id]["cost"].asInt()) {
+				//is skill already bought
+				if (is_skill_bought == 1) {
+					return;
+				}
+				if (is_skill_bought == 0) {
+					root["skill"][selected_tier_id][selected_skill_id]["bought"] = true;
+
+					((cocos2d::ui::Button*)getChildByName("buy_button"))->setEnabled(false);
+					removeChildByName("buy_layout");
+					getChildByName("mask")->setVisible(false);
+
+					//update total amount holy_sugar
+					root["holy_sugar"] = root["holy_sugar"].asInt() - config[selected_tier_id][selected_skill_id]["cost"].asInt();
+					((Label*)getChildByName("sugar_amount"))->setString("X " + root["holy_sugar"].asString());
+					((AppDelegate*)Application::getInstance())->getConfigClass()->setSave(root);
+					((AppDelegate*)Application::getInstance())->getConfigClass()->save();
+
+					//update skill panels, check box
+					getChildByName("scrollView")->getChildByName(Value(selected_tier_id).asString() + "_" + Value(selected_skill_id).asString())->getChildByName("skill")->getChildByName("skill_bought")->setVisible(true);
+					skillUpdate(selected_tier_id, selected_skill_id, (ui::Button*) getChildByName("scrollView")->getChildByName(Value(selected_tier_id).asString() + "_" + Value(selected_skill_id).asString())->getChildByName("skill"));
+
+					for (unsigned int i(0); i < config[selected_tier_id + 1].size(); ++i) {
+						skillUpdate(selected_tier_id + 1, i, (ui::Button*) getChildByName("scrollView")->getChildByName(Value(selected_tier_id + 1).asString() + "_" + Value((int)i).asString())->getChildByName("skill"));
+					}
+				}
+			}
+			else {
+				return;
+			}
+		}
+	});
 }

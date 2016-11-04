@@ -9,8 +9,8 @@ class Saucer : public Tower{
 public:
 	Saucer();
 	static Saucer* create();
-	static Json::Value getConfig();
-	virtual const Json::Value getSpecConfig();
+	static const Json::Value& getConfig();
+	virtual const Json::Value& getSpecConfig();
 	void initSpecial();
 	
 	virtual void attack();

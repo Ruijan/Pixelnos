@@ -63,7 +63,7 @@ public:
 	/**
 	* @brief Return the current configuration json value.
 	*/
-	const Json::Value&  getConfigValues() const;
+	const Json::Value& getConfigValues() const;
 
 	/**
 	* @brief Return the current save json value.
@@ -73,7 +73,7 @@ public:
 	/**
 	* @brief Return the current save json value.
 	*/
-	Json::Value const getSaveValues() const;
+	const Json::Value&  getSaveValues() const;
 
 	/**
 	* @brief Find a skill and return its Json entry.
@@ -342,10 +342,16 @@ public:
 	void loadAllLevels();
 
 	/**
-	* @brief Set the completion value of a tutorial to true
+	* @brief Set the state value of a tutorial to complete
 	*	Save everithin in the writable folder (AppData/local/MvD)
 	*/
 	void completeTutorial(std::string name);
+
+	/**
+	* @brief Set the state value of a tutorial to running
+	*	Save everithin in the writable folder (AppData/local/MvD)
+	*/
+	void startTutorial(std::string name);
 
 	/**
 	* @brief Check if a tutorial has been completed
@@ -353,9 +359,29 @@ public:
 	bool isTutorialComplete(std::string name);
 
 	/**
+	* @brief Check if a tutorial has not been completed
+	*/
+	bool isTutorialUncompleted(std::string name);
+
+	/**
+	* @brief Check if a tutorial is running
+	*/
+	bool isTutorialRunning(std::string name);
+
+	/**
 	* @brief Convert a date in string at format "%Y-%m-%d %H:%M:%S" to time
 	*/
 	static tm getTimeFromString(std::string date1);
+
+	/**
+	* @brief Change save file for tower so it's now available
+	*/
+	void activateTower(std::string name);
+
+	/**
+	* @brief Return the number of challenges done for the specific level
+	*/
+	int getNbLevelChallenges(int world_id, int level_id) const;
 
 };
 

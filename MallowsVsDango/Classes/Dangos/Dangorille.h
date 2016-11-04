@@ -28,7 +28,7 @@ public:
 
 private:
 	double nb_monkeys;
-	std::vector<cocos2d::ui::Button*> monkeys;
+	std::vector<cocos2d::ui::Layout*> monkeys;
 	double attack_spe_reload_timer;
 	double attack_spe_reload_time;
 	Json::Value attack_spe_text;

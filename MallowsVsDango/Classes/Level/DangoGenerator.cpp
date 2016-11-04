@@ -202,6 +202,39 @@ void DangoGenerator::removeWave(unsigned int wave) {
 double DangoGenerator::getTime(unsigned int step, unsigned int wave) {
 	return  sequenceTimer[wave][step];
 }
+
+double DangoGenerator::getWaveTime(unsigned int wave) {
+	double tot_time(0);
+	if ((int)wave < getNbWaves()) {
+		for (auto time : sequenceTimer[wave]) {
+			tot_time += time;
+		}
+		return tot_time;
+	}
+	else {
+		log("DangoGenerator: Wave does not exits (out of bound).");
+		return 0;
+	}
+}
+
+double DangoGenerator::getTotTime() {
+	double tot_time(0);
+	for (auto wave : sequenceTimer) {
+		for (auto enemy : wave) {
+			tot_time += enemy;
+		}
+	}
+	return tot_time;
+}
+
+int DangoGenerator::getTotEnemies() {
+	double tot_enemies(0);
+	for (auto wave : sequenceDango) {
+		tot_enemies += wave.size();
+	}
+	return tot_enemies;
+}
+
 int DangoGenerator::getPath(unsigned int step, unsigned int wave) {
 	return  sequencePath[wave][step];
 }

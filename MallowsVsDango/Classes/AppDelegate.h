@@ -7,6 +7,7 @@
 #include "Config/Config.h"
 #include "Config/AudioController.h"
 #include "Lib/AudioSlider.h"
+#include "Lib/Translationable.h"
 #include "Config/json.h"
 
 /**
@@ -14,7 +15,7 @@
 
 The reason for implement as private inheritance is to hide some interface call by Director.
 */
-class  AppDelegate : private cocos2d::Application
+class  AppDelegate : private cocos2d::Application, public Translationable
 {
 public:
     AppDelegate();
@@ -49,6 +50,7 @@ public:
 	AudioController* getAudioController();
 	void addAudioSlider(AudioSlider* slider, AudioController::SOUNDTYPE type);
 	void setVolumeMusic(double volume);
+	virtual void switchLanguage();
 
 	/*static AppDelegate* getInstance(){
 		if (!appDelegate)

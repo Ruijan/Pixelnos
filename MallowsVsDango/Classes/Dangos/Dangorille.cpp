@@ -47,10 +47,10 @@ void Dangorille::attack_spe(float dt) {
 }
 
 Json::Value Dangorille::getConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfig()["dangos"]["dangorille"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["dangos"]["dangorille"];
 }
 Json::Value Dangorille::getSpecConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfig()["dangos"]["dangorille"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["dangos"]["dangorille"];
 }
 
 void Dangorille::update(float dt) {
@@ -150,40 +150,13 @@ void Dangorille::generateMonkeys() {
 
 		auto* showAction = EaseBackIn::create(MoveTo::create(0.5f, target_tower->getPosition()));
 
-		/*Node* liane_ensemble = Node::create();
-		std::vector<Sprite*> liane;
-		double liane_height(0);
-		double random_size(0);
-		double random_xpos(0);
-		double last_y_pos(0);
-		double height = visibleSize.height - target_tower->getPosition().y;
-
-		while (liane_height < height) {
-			Sprite* liane_part = Sprite::create("res/dango/leaf.png");
-			random_size += (double)((rand() % 100 - 50.0) / 50.0 * Cell::getCellWidth()) / 20.0;
-			if (abs(random_size) > Cell::getCellWidth() / 4) {
-				random_size = (random_size > 0 ? 1 : -1) * Cell::getCellWidth() / 4;
-			}
-			liane_part->setScale((Cell::getCellWidth() - Cell::getCellWidth() / pow(liane.size() + 1,2) + random_size) / liane_part->getContentSize().width / 4);
-			//liane_part->runAction(TintTo::create(0, Color3B(255,10,10)));
-			last_y_pos += liane_part->getContentSize().height * liane_part->getScaleY() * 0.25;
-			liane_part->setPosition(Vec2(sin(last_y_pos / 50) * Cell::getCellWidth() / 4, last_y_pos));
-			liane_part->setRotation((cos(last_y_pos / 50) * 45));
-			//liane_part->setRotation(90 / MATH_PIOVER2*sin(liane_part->getContentSize().height * liane_part->getScaleY() / (random_xpos - prev_random_pos) - 90));
-			last_y_pos += liane_part->getContentSize().height * liane_part->getScaleY() * 0.25;
-			liane_ensemble->addChild(liane_part);
-			liane.push_back(liane_part);
-			liane_height += liane_part->getContentSize().height * liane_part->getScaleY() * 0.7;
-		}
-		liane_ensemble->setPosition(Vec2(target_tower->getPosition().x, visibleSize.height/2 + liane_height));
-		liane_ensemble->runAction(Sequence::createWithTwoActions(DelayTime::create(0.25f), showAction->clone()));*/
 		Sprite* liane = Sprite::create("res/dango/liane.png");
 		liane->setScale(Cell::getCellWidth() * 0.8 / liane->getContentSize().width);
 		liane->setPosition(Vec2(target_tower->getPosition().x, visibleSize.height / 2 + liane->getContentSize().height / 2));
 		liane->setAnchorPoint(Vec2(0.5, 0));
 		liane->runAction(Sequence::createWithTwoActions(DelayTime::create(0.25f), showAction->clone()));
 
-
+		auto monkey_layout = ui::Layout::create();
 		Sprite* shadow = Sprite::create("res/buttons/monkey_shadow.png");
 		shadow->setPosition(target_tower->getPosition());
 		shadow->setScale(Cell::getCellWidth() / shadow->getContentSize().width * 0.01f);
@@ -195,16 +168,14 @@ void Dangorille::generateMonkeys() {
 			visibleSize.height + monkey->getContentSize().height * monkey->getScaleY() * 0.6));
 		
 		monkey->runAction(Sequence::createWithTwoActions(DelayTime::create(0.25f),showAction));
-		monkey->addTouchEventListener([&, monkey, target_tower, shadow, liane, this](Ref* sender, ui::Widget::TouchEventType type) {
+		monkey->addTouchEventListener([&, monkey, target_tower, shadow, liane, monkey_layout, this](Ref* sender, ui::Widget::TouchEventType type) {
 			if (type == ui::Widget::TouchEventType::ENDED) {
 				target_tower->blockTower(false);
 				Size visibleSize = Director::getInstance()->getVisibleSize();
 				auto* hideAction = EaseBackIn::create(MoveTo::create(0.5f, Vec2(monkey->getPosition().x, visibleSize.height +
 					monkey->getContentSize().height * monkey->getScaleY() * 0.6)));
-				auto delete_monkey = CallFunc::create([monkey, shadow, liane]() {
-					((SceneManager*)SceneManager::getInstance())->getGame()->getMenu()->removeChild(monkey);
-					((SceneManager*)SceneManager::getInstance())->getGame()->getMenu()->removeChild(shadow);
-					((SceneManager*)SceneManager::getInstance())->getGame()->getMenu()->removeChild(liane);
+				auto delete_monkey = CallFunc::create([monkey_layout]() {
+					((SceneManager*)SceneManager::getInstance())->getGame()->getMenu()->removeChild(monkey_layout);
 				});
 				monkey->runAction(Sequence::createWithTwoActions(hideAction, delete_monkey));
 				liane->runAction(EaseBackIn::create(MoveTo::create(0.5f, Vec2(liane->getPosition().x, visibleSize.height))));
@@ -212,18 +183,18 @@ void Dangorille::generateMonkeys() {
 				monkey->setEnabled(false);
 				int index = 0;
 				for (unsigned int j(0); j < monkeys.size(); ++j) {
-					if (monkey == monkeys[j]) {
+					if (monkey_layout == monkeys[j]) {
 						index = j;
 					}
 				}
 				monkeys.erase(monkeys.begin() + index);
 			}
 		});
-		//((SceneManager*)SceneManager::getInstance())->getGame()->getMenu()->addChild(liane_ensemble);
-		((SceneManager*)SceneManager::getInstance())->getGame()->getMenu()->addChild(liane);
-		((SceneManager*)SceneManager::getInstance())->getGame()->getMenu()->addChild(shadow);
-		((SceneManager*)SceneManager::getInstance())->getGame()->getMenu()->addChild(monkey);
-		monkeys.push_back(monkey);
+		monkey_layout->addChild(liane);
+		monkey_layout->addChild(shadow);
+		monkey_layout->addChild(monkey);
+		((SceneManager*)SceneManager::getInstance())->getGame()->getMenu()->addChild(monkey_layout);
+		monkeys.push_back(monkey_layout);
 	}
 }
 

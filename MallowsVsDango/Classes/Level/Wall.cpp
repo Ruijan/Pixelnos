@@ -51,6 +51,10 @@ bool Wall::isDestroyed() {
 	return hp == 0;
 }
 
+bool Wall::isDamaged() {
+	return hp < max_hp;
+}
+
 void Wall::updateDisplay() {
 	// if there are 3 images and there are 5 hps in maximum, it will try to show a different image every 2 hit points.
 	int c_image = getChildrenCount() - round((double)hp / (double)max_hp * (getChildrenCount() - 1)) - 1;

@@ -1,14 +1,18 @@
 #include "AppDelegate.h"
-#include "audio/include/SimpleAudioEngine.h"
+#include "audio/include/AudioEngine.h"
+
 //#include "PluginIAP/PluginIAP.h"
 
 
 USING_NS_CC;
+using namespace cocos2d;
+using namespace cocos2d::ui;
+using namespace cocos2d::experimental;
 
-
-static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
-static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
+static cocos2d::Size verysmallResolutionSize = cocos2d::Size(480, 320);
+static cocos2d::Size smallResolutionSize = cocos2d::Size(960, 540);
+static cocos2d::Size mediumResolutionSize = cocos2d::Size(1280, 720);
+static cocos2d::Size largeResolutionSize = cocos2d::Size(1920, 1200);
 static cocos2d::Size designResolutionSize = cocos2d::Size(1280,720);
 //static cocos2d::Size designResolutionSize = cocos2d::Size(960, 640);
 
@@ -18,7 +22,15 @@ AppDelegate::AppDelegate() : config(new Config("res/config.json", "MvDSave")), c
 
 AppDelegate::~AppDelegate()
 {
-	CocosDenshion::SimpleAudioEngine::getInstance()->end();
+	TrackingEvent c_event;
+	c_event.from_scene = Config::getStringFromSceneType(manager->getCurrentSceneIndex());
+	c_event.to_scene = Config::getStringFromSceneType(SceneManager::SceneType::STOP);
+	c_event.time = time(0);
+
+	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
+	AudioEngine::end();
+	delete config;
+	config = nullptr;
 }
 
 //if you want a different context,just modify the value of glContextAttrs
@@ -105,7 +117,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
 // This function will be called when the app is inactive. When comes a phone call,it's be invoked too
 void AppDelegate::applicationDidEnterBackground() {
     Director::getInstance()->stopAnimation();
-    CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+    AudioEngine::pauseAll();
+	TrackingEvent c_event;
+	c_event.from_scene = Config::getStringFromSceneType(manager->getCurrentSceneIndex());
+	c_event.to_scene = Config::getStringFromSceneType(SceneManager::SceneType::PAUSE);
+	c_event.time = time(0);
+
+	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
     // if you use SimpleAudioEngine, it must be pause
     // SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
@@ -113,7 +131,13 @@ void AppDelegate::applicationDidEnterBackground() {
 // this function will be called when the app is active again
 void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
-    CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+    AudioEngine::resumeAll();
+	TrackingEvent c_event;
+	c_event.from_scene = Config::getStringFromSceneType(SceneManager::SceneType::PAUSE);
+	c_event.to_scene = Config::getStringFromSceneType(manager->getCurrentSceneIndex());
+	c_event.time = time(0);
+
+	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
     // if you use SimpleAudioEngine, it must resume here
     // SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
@@ -143,4 +167,8 @@ void AppDelegate::setVolumeMusic(double volume){
 
 AudioController* AppDelegate::getAudioController(){
 	return controller;
+}
+
+void AppDelegate::switchLanguage() {
+	manager->switchLanguage();
 }

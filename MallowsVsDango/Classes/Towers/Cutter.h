@@ -14,8 +14,8 @@ public:
 	Cutter();
 	static Cutter* create();
 
-	static Json::Value getConfig();
-	virtual const Json::Value getSpecConfig();
+	static const Json::Value& getConfig();
+	virtual const Json::Value& getSpecConfig();
 
 	virtual void removeTarget(Dango* dango);
 	virtual void chooseTarget(std::vector<Dango*> targets);
@@ -24,6 +24,7 @@ public:
 	virtual void startLimit();
 	virtual void handleEndEnrageAnimation();
 	virtual bool isSameType(std::string type);
+	virtual void stopAttacking();
 
 };
 

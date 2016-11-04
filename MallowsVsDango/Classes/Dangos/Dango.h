@@ -82,8 +82,7 @@ public:
 	void removeTargetingTower(Tower* tower);
 	void removeTargetingAttack(Attack* tower);
 
-	void die();
-	
+	void die();	
 protected:
 	STATE state;
 	DIRECTION cDirection;

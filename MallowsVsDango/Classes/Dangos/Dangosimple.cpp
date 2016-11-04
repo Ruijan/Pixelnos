@@ -33,8 +33,8 @@ Dangosimple* Dangosimple::create(std::vector<Cell*> npath, int nlevel)
 }
 
 Json::Value Dangosimple::getConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfig()["dangos"]["dangosimple"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["dangos"]["dangosimple"];
 }
 Json::Value Dangosimple::getSpecConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfig()["dangos"]["dangosimple"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["dangos"]["dangosimple"];
 }

@@ -21,11 +21,20 @@ Tower::~Tower() {
 
 void Tower::initFromConfig() {
 	auto config = getSpecConfig();
-	auto save = ((AppDelegate*)Application::getInstance())->getSave();
-	cost = config["cost"][0].asInt();
-	attack_speed = config["attack_speed"][level].asDouble();
-	damage = config["damages"][level].asDouble();
-	range = config["range"][level].asDouble();
+	auto save = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
+	for (unsigned int i(0); i < config["cost"].size(); ++i) {
+		costs.push_back(config["cost"][i].asInt());
+		sells.push_back(config["sell"][i].asInt());
+		damages.push_back(config["damages"][i].asDouble());
+		ranges.push_back(config["range"][i].asDouble());
+		attack_speeds.push_back(config["attack_speed"][i].asDouble());
+		xp_levels.push_back(config["xp_level"][i].asDouble());
+	}
+	
+	cost = costs[0];
+	attack_speed = attack_speeds[0];
+	damage = damages[0];
+	range = ranges[0];
 	animation_duration = config["animation_attack_time"].asDouble();
 	nb_frames_anim = config["animation_attack_size"].asInt();
 	name = config["name"].asString();
@@ -39,7 +48,7 @@ void Tower::initFromConfig() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	
 	skeleton = SkeletonAnimation::createWithFile(config["skeleton"].asString(),
-		config["atlas"].asString(), 0.15f * visibleSize.width / 1280);
+		config["atlas"].asString(),  Cell::getCellWidth() * 0.8 / config["animation_size"]["width"].asDouble());
 
 	skeleton->setStartListener([this](int trackIndex) {
 		spTrackEntry* entry = spAnimationState_getCurrent(skeleton->getState(), trackIndex);
@@ -184,10 +193,8 @@ void Tower::initEnragePanel() {
 
 void Tower::incrementXP(int amount) {
 	xp += amount;
-	const auto config = getSpecConfig();
-
-	if (xp >= config["xp_level"][level_max + 1].asInt()) {
-		xp -= config["xp_level"][level_max + 1].asInt();
+	if (xp >= xp_levels[level_max + 1]) {
+		xp -= xp_levels[level_max + 1];
 		++level_max;
 	}
 }
@@ -203,12 +210,14 @@ void Tower::builtCallback(Ref* sender){
 }
 
 void Tower::upgradeCallback(Ref* sender){
-	const auto config = getSpecConfig();
-	if(level < (int)config["cost"].size()){
+	if(level < (int)costs.size()){
 		++level;
-		range = config["range"][level].asDouble();
-		damage = config["damages"][level].asDouble();
-		attack_speed = config["attack_speed"][level].asDouble();
+		range = ranges[level];
+		damage = damages[level];
+		attack_speed = attack_speeds[level];
+		if (target != nullptr) {
+			stopAttacking();
+		}
 		state = IDLE;
 		timerIDLE = 0;
 		skeleton->setSkin("normal_" + Value(level + 1).asString());
@@ -633,7 +642,7 @@ void Tower::startAnimation(float speed){
 	
 }
 
-Json::Value Tower::getConfig(){
+const Json::Value& Tower::getConfig(){
 	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"];
 }
 
@@ -691,7 +700,8 @@ void Tower::setSelected(bool select){
 ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-
+	const auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["buttons"];
+	const auto spec_config = getSpecConfig();
 	auto layout = ui::Layout::create();
 
 	auto panel = ui::Button::create("res/buttons/centralMenuPanel2.png");
@@ -706,8 +716,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	current_level_layout->setPosition(Vec2(-panel->getContentSize().width * panel->getScaleX() * 0.3,
 		current_level_layout->getContentSize().height / 2));
 
-	Label* level_label = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["level"][language].asString() + " " + Value(level + 1).asString(), 
+	Label* level_label = Label::createWithTTF(config["level"][language].asString() + " " + Value(level + 1).asString(), 
 		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	level_label->setColor(Color3B::BLACK);
 	level_label->setPosition(Vec2(0,
@@ -791,23 +800,22 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 			MyGame* game = SceneManager::getInstance()->getGame();
 			std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 
-			const auto config = getSpecConfig();
-			auto cost_size = config["cost"].size();
-			if ((int)game->getLevel()->getQuantity() >= config["cost"][level + 1].asInt() &&
+			auto cost_size = costs.size();
+			if ((int)game->getLevel()->getQuantity() >= costs[level + 1] &&
 				level < (int)cost_size) 
 			{
 				Json::Value action;
 				action["tower_name"] = name;
-				action["time"] = time(0);
+				action["time"] = (int)time(0);
 				Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(getPosition());
 				action["position"]["x"] = turret_position.x;
 				action["position"]["y"] = turret_position.y;
 				action["action"] = "upgrade_tower";
 				game->addActionToTracker(action);
-				game->getLevel()->decreaseQuantity(config["cost"][level + 1].asInt());
+				game->getLevel()->decreaseQuantity(costs[level + 1]);
 				upgradeCallback(sender);
 				
-				if ((int)game->getLevel()->getQuantity() < config["cost"][level + 1].asInt()) {
+				if ((int)game->getLevel()->getQuantity() < costs[level + 1]) {
 					((ui::Button*)layout->getChildByName("next_level_button"))->
 						setEnabled(false);
 					((Label*)layout->getChildByName("next_level_layout")->getChildByName("cost_label"))->
@@ -820,23 +828,28 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 						setColor(Color3B::YELLOW);
 				}
 				((Label*)layout->getChildByName("next_level_layout")->getChildByName("level_label"))->
-					setString(((AppDelegate*)Application::getInstance())->getConfig()
+					setString(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()
 						["buttons"]["level"][language].asString() + " " + Value(level + 2).asString());
 				if (level < (int)cost_size - 2) {
+					std::string s("");
+					s = Value(damages[level + 1]).asString();
+					s.resize(4);
 					((Label*)layout->getChildByName("next_level_layout")->getChildByName("attack_label"))->
-						setString(config["damages"][level + 1].asString());
+						setString(s);
+					s = Value(attack_speeds[level + 1]).asString();
+					s.resize(4);
 					((Label*)layout->getChildByName("next_level_layout")->getChildByName("speed_label"))->
-						setString(config["attack_speed"][level + 1].asString());
-					std::string s = Value(round(config["range"][level + 1].asDouble() / Cell::getCellWidth() * 100) / 100).asString();
+						setString(s);
+					s = Value(round(ranges[level + 1] / Cell::getCellWidth() * 100) / 100).asString();
 					s.resize(4);
 					((Label*)layout->getChildByName("next_level_layout")->getChildByName("range_label"))->
 						setString(s);
 					((Label*)layout->getChildByName("next_level_layout")->getChildByName("cost_label"))->
-						setString(config["cost"][level + 1].asString());
+						setString(Value(costs[level + 1]).asString());
 				}
 				else if (level == (int)cost_size - 2) {
 					((Label*)layout->getChildByName("next_level_layout")->getChildByName("cost_label"))->
-						setString(Value(config["cost"][level + 1].asInt()).asString());
+						setString(Value(costs[level + 1]).asString());
 					layout->getChildByName("next_level_layout")->getChildByName("range")->setVisible(false);
 					layout->getChildByName("next_level_layout")->getChildByName("speed")->setVisible(false);
 					layout->getChildByName("next_level_layout")->getChildByName("attack")->setVisible(false);
@@ -862,18 +875,23 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 					layout->getChildByName("next_level_layout")->getChildByName("locked_label")->setVisible(true);
 					((ui::Button*)layout->getChildByName("next_level_button"))->setEnabled(false);
 				}
+				std::string s("");
 				((Label*)layout->getChildByName("current_level_layout")->getChildByName("level_label"))->
-					setString(((AppDelegate*)Application::getInstance())->getConfig()
+					setString(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()
 						["buttons"]["level"][language].asString()+ " " + Value(level + 1).asString());
+				s = Value(damages[level]).asString();
+				s.resize(4);
 				((Label*)layout->getChildByName("current_level_layout")->getChildByName("attack_label"))->
-					setString(config["damages"][level].asString());
+					setString(s);
+				s = Value(attack_speeds[level]).asString();
+				s.resize(4);
 				((Label*)layout->getChildByName("current_level_layout")->getChildByName("speed_label"))->
-					setString(config["attack_speed"][level].asString());
-				std::string s = Value(round(config["range"][level].asDouble() / Cell::getCellWidth() * 100) / 100).asString();
+					setString(s);
+				s = Value(round(ranges[level] / Cell::getCellWidth() * 100) / 100).asString();
 				s.resize(4);
 				((Label*)layout->getChildByName("current_level_layout")->getChildByName("range_label"))->
 					setString(s);
-				((Label*)layout->getChildByName("sell_label"))->setString(config["sell"][level].asString());
+				((Label*)layout->getChildByName("sell_label"))->setString(Value(sells[level]).asString());
 			}
 		}
 	});
@@ -885,21 +903,23 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 		panel->getContentSize().height * panel->getScaleY() * 3 / 4));
 	nextlevel_layout->setPosition(Vec2(0, nextlevel_layout->getContentSize().height / 2));
 
-	Label* level_n_label = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["level"][language].asString()+ " " + Value(level + 2).asString(),
+	Label* level_n_label = Label::createWithTTF(config["level"][language].asString()+ " " + Value(level + 2).asString(),
 		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	level_n_label->setColor(Color3B::BLACK);
 	level_n_label->setPosition(Vec2(nextlevel_layout->getContentSize().width * nextlevel_layout->getScaleX() / 2, 
 		-level_n_label->getContentSize().height / 2));
 	nextlevel_layout->addChild(level_n_label, 1, "level_label");
 
-	Label* locked_label = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["locked"][language].asString() + "\n"+ Value(xp).asString() + "/" +
-		getSpecConfig()["xp_level"][level + 1].asString(),
+	s = Value(xp_levels[level + 1]).asString();
+	int dot_pos = s.find('.');
+	s = s.substr(0, dot_pos);
+	Label* locked_label = Label::createWithTTF(config["locked"][language].asString() + "\n"+ Value(xp).asString() + "/" +
+		s,
 		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	locked_label->setColor(Color3B::BLACK);
 	locked_label->setPosition(level_n_label->getPosition() + Vec2(0, -level_n_label->getContentSize().width / 2
 		-locked_label->getContentSize().height / 2));
+	locked_label->setDimensions(nextlevel_layout->getContentSize().width, level_n_label->getContentSize().height * 2);
 	locked_label->setHorizontalAlignment(TextHAlignment::CENTER);
 	nextlevel_layout->addChild(locked_label, 1, "locked_label");
 
@@ -923,8 +943,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	speed_n->setPosition(size_sprite, attack_n->getPosition().y - size_sprite / 2 - size_sprite / 2);
 	range_ni->setPosition(size_sprite, speed_n->getPosition().y - size_sprite / 2 - size_sprite / 2);
 
-	const auto config = getSpecConfig();
-	auto description_label = Label::createWithTTF(config["last_level_description_" +
+	auto description_label = Label::createWithTTF(spec_config["last_level_description_" +
 		((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()].asString(),
 		"fonts/LICABOLD.ttf", 20 * visibleSize.width / 1280);
 	description_label->setColor(Color3B::BLACK);
@@ -936,8 +955,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 		description_label->getContentSize().height / 2);
 	nextlevel_layout->addChild(description_label, 1, "description_label");
 
-	auto upgrade_label = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["upgrade"][language].asString(),
+	auto upgrade_label = Label::createWithTTF(config["upgrade"][language].asString(),
 		"fonts/LICABOLD.ttf", 30 * visibleSize.width / 1280);
 	upgrade_label->setColor(Color3B::YELLOW);
 	upgrade_label->enableOutline(Color4B::BLACK, 1);
@@ -949,7 +967,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 
 	cost->setPosition(size_sprite, upgrade_label->getPosition().y - upgrade_label->getContentSize().height / 2 - size_sprite / 2);
 
-	s = config["damages"][level + 1].asString();
+	s = Value(damages[level + 1]).asString();
 	s.resize(4);
 	Label* attack_n_label = Label::createWithTTF(s, "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	attack_n_label->setColor(Color3B::BLACK);
@@ -958,7 +976,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	attack_n_label->setAnchorPoint(Vec2(0.f, 0.5f));
 	nextlevel_layout->addChild(attack_n_label, 1, "attack_label");
 
-	s = Value(round(config["range"][level + 1].asDouble() / Cell::getCellWidth() * 100) / 100).asString();
+	s = Value(round(ranges[level + 1] / Cell::getCellWidth() * 100) / 100).asString();
 	s.resize(4);
 	Label* range_n_label = Label::createWithTTF(s, "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	range_n_label->setColor(Color3B::BLACK);
@@ -967,7 +985,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	range_n_label->setAnchorPoint(Vec2(0.f, 0.5f));
 	nextlevel_layout->addChild(range_n_label, 1, "range_label");
 
-	s = config["attack_speed"][level + 1].asString();
+	s = Value(attack_speeds[level + 1]).asString();
 	s.resize(4);
 	Label* speed_n_label = Label::createWithTTF(s, "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	speed_n_label->setColor(Color3B::BLACK);
@@ -976,7 +994,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	speed_n_label->setAnchorPoint(Vec2(0.f, 0.5f));
 	nextlevel_layout->addChild(speed_n_label, 1, "speed_label");
 
-	s = Value(config["cost"][level + 1].asInt()).asString();
+	s = Value(costs[level + 1]).asString();
 	s.resize(4);
 	Label* cost_n_label = Label::createWithTTF(s, "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	cost_n_label->setColor(Color3B::YELLOW);
@@ -998,7 +1016,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 
 	if (level < level_max) {
 		locked_label->setVisible(false);
-		if (level < (int)config["damages"].size()) {
+		if (level < (int)damages.size()) {
 			max_level_label->setVisible(false);
 			range_ni->setVisible(true);
 			speed_n->setVisible(true);
@@ -1012,7 +1030,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 			nextlevel_layout->setVisible(false);
 			nextlevel_button->setEnabled(false);
 		}
-		if (level == (int)config["damages"].size() - 2) {
+		if (level == damages.size() - 2) {
 			range_ni->setVisible(false);
 			speed_n->setVisible(false);
 			attack_n->setVisible(false);
@@ -1022,7 +1040,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 			description_label->setVisible(true);
 		}
 		MyGame* game = SceneManager::getInstance()->getGame();
-		if ((int)game->getLevel()->getQuantity() < config["cost"][level + 1].asInt()) {
+		if ((int)game->getLevel()->getQuantity() < costs[level + 1]) {
 			nextlevel_button->setEnabled(false);
 		}
 	}
@@ -1047,12 +1065,12 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	sell->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 			MyGame* game = SceneManager::getInstance()->getGame();
-			game->getLevel()->increaseQuantity(getSpecConfig()["sell"][level].asInt());
+			game->getLevel()->increaseQuantity(sells[level]);
 			destroyCallback(sender);
 			SceneManager::getInstance()->getGame()->getMenu()->hideTowerInfo();
 			Json::Value action;
 			action["tower_name"] = name;
-			action["time"] = time(0);
+			action["time"] = (int)time(0);
 			Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(getPosition());
 			action["position"]["x"] = turret_position.x;
 			action["position"]["y"] = turret_position.y;
@@ -1062,15 +1080,14 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	});
 	layout->addChild(sell, 1);
 
-	auto sell_label = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["sell"][language].asString(),
+	auto sell_label = Label::createWithTTF(config["sell"][language].asString(),
 		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	sell_label->enableOutline(Color4B::BLACK, 2);
 	sell_label->setAlignment(cocos2d::TextHAlignment::CENTER);
 	sell_label->setPosition(sell->getPosition().x, sell->getPosition().y + sell_label->getContentSize().height / 2);
 	layout->addChild(sell_label,1);
 
-	auto sell_cost = Label::createWithTTF(config["sell"][level].asString(),
+	auto sell_cost = Label::createWithTTF(Value(sells[level]).asString(),
 		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	sell_cost->enableOutline(Color4B::BLACK, 2);
 	sell_cost->setAlignment(cocos2d::TextHAlignment::CENTER);
@@ -1145,15 +1162,15 @@ void Tower::updateInformationLayout(ui::Layout* layout) {
 			((ui::Button*)layout->getChildByName("next_level_button"))->setEnabled(false);
 		}
 		std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-
+		std::string s = Value(xp_levels[level + 1]).asString();
+		int dot_pos = s.find('.');
+		s = s.substr(0, dot_pos);
 		if (((Label*)layout->getChildByName("next_level_layout")->getChildByName("locked_label"))->getString() !=
 			((AppDelegate*)Application::getInstance())->getConfig()
-			["buttons"]["locked"][language].asString() + "\n" + Value(xp).asString() + "/" +
-			getSpecConfig()["xp_level"][level + 1].asString()) {
+			["buttons"]["locked"][language].asString() + "\n" + Value(xp).asString() + "/" + s) {
 			((Label*)layout->getChildByName("next_level_layout")->getChildByName("locked_label"))->setString(
 				((AppDelegate*)Application::getInstance())->getConfig()
-				["buttons"]["locked"][language].asString() + "\n" + Value(xp).asString() + "/" +
-				getSpecConfig()["xp_level"][level + 1].asString());
+				["buttons"]["locked"][language].asString() + "\n" + Value(xp).asString() + "/" + s);
 		}
 	}
 }
@@ -1193,4 +1210,14 @@ void Tower::blockTower(bool block) {
 
 bool Tower::isTowerBlocked() {
 	return blocked;
+}
+
+void Tower::stopAttacking() {
+	if (target != nullptr) {
+		if (attacked_enemies.find(target) != attacked_enemies.end()) {
+			target->removePDamages(attacked_enemies[target]);
+		}
+		target->removeTargetingTower(this);
+		target = nullptr;
+	}
 }

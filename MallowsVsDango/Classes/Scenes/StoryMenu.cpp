@@ -16,6 +16,8 @@ bool StoryMenu::init(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 
+	tutorial_running = false;
+
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 
 	addChild(ui::Layout::create(), 2, "black_mask");
@@ -84,7 +86,7 @@ bool StoryMenu::init(){
 			label->setColor(Color3B(192, 192, 192));
 			label->enableOutline(Color4B::BLACK, 5);
 			label->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-			page->addChild(label, 2);
+			page->addChild(label, 2, "label");
 		}
 		else {
 			ui::Text* label = ui::Text::create(((AppDelegate*)Application::getInstance())->getConfig()["worlds"][i]["name_" + language].asString(), 
@@ -92,7 +94,7 @@ bool StoryMenu::init(){
 			label->setColor(Color3B::YELLOW);
 			label->enableOutline(Color4B::BLACK, 5);
 			label->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 0.90));
-			page->addChild(label,2);
+			page->addChild(label,2,"label");
 		}
 		world->setScale9Enabled(true);
 		world->setScale(page->getContentSize().width / world->getContentSize().width);
@@ -177,7 +179,7 @@ bool StoryMenu::init(){
 	skill_tree->setPosition(Vec2(achivements->getPosition().x -
 		achivements->getContentSize().width * achivements->getScaleX() - offset_horizontal, offset_vertical));
 	skill_tree->setAnchorPoint(Vec2(1.f, 0.f));
-	getChildByName("interface")->addChild(skill_tree);
+	getChildByName("interface")->addChild(skill_tree,1,"skill_tree");
 
 	ui::Button* shop = ui::Button::create("res/buttons/menu_button_shop.png");
 	shop->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
@@ -250,9 +252,9 @@ bool StoryMenu::init(){
 	loop->setPosition(-panel->getContentSize().width*panel->getScaleX() * 2 / 5 +
 		loop->getContentSize().width / 2, effects->getPosition().y - effects->getContentSize().height -
 		loop->getContentSize().height * 3 / 4);
-	settings->addChild(music, 2);
-	settings->addChild(effects, 2);
-	settings->addChild(loop, 2);
+	settings->addChild(music, 2, "music");
+	settings->addChild(effects, 2, "effects");
+	settings->addChild(loop, 2, "loop");
 
 	auto checkbox_music = cocos2d::ui::CheckBox::create("res/buttons/music.png", "res/buttons/music.png",
 		"res/buttons/disable.png", "res/buttons/music.png", "res/buttons/music.png");
@@ -367,12 +369,12 @@ bool StoryMenu::init(){
 		skip_dialogues->getContentSize().width / 2, auto_limit->getPosition().y - auto_limit->getContentSize().height / 2 -
 		skip_dialogues->getContentSize().height * 3 / 4);
 
-	settings->addChild(always_show_grid, 2);
-	settings->addChild(moving_show_grid, 2);
-	settings->addChild(never_show_grid, 2);
-	settings->addChild(show_grid, 2);
-	settings->addChild(auto_limit, 2);
-	settings->addChild(skip_dialogues, 2);
+	settings->addChild(always_show_grid, 2, "always_show_grid");
+	settings->addChild(moving_show_grid, 2, "moving_show_grid");
+	settings->addChild(never_show_grid, 2, "never_show_grid");
+	settings->addChild(show_grid, 2, "show_grid");
+	settings->addChild(auto_limit, 2, "auto_limit");
+	settings->addChild(skip_dialogues, 2, "skip_dialogues");
 
 	auto checkbox_grid = cocos2d::ui::CheckBox::create("res/buttons/checkbox.png", "res/buttons/checkbox.png",
 		"res/buttons/filled.png", "res/buttons/checkbox.png", "res/buttons/checkbox.png");
@@ -459,7 +461,7 @@ bool StoryMenu::init(){
 	credits->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
 		["buttons"]["credits"][language].asString());
 	credits->setTitleFontName("fonts/LICABOLD.ttf");
-	credits->setTitleFontSize(60.f * visibleSize.width / 1280);
+	credits->setTitleFontSize(60.f);
 	Label* credits_label = credits->getTitleRenderer();
 	credits_label->setColor(Color3B::WHITE);
 	credits_label->enableOutline(Color4B::BLACK,2);
@@ -492,8 +494,8 @@ bool StoryMenu::init(){
 	title_menu->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
 		["buttons"]["title_menu"][language].asString());
 	title_menu->setTitleFontName("fonts/LICABOLD.ttf");
-	title_menu->setTitleFontSize(60.f * visibleSize.width / 1280);
-	Label* title_menu_label = credits->getTitleRenderer();
+	title_menu->setTitleFontSize(60.f);
+	Label* title_menu_label = title_menu->getTitleRenderer();
 	title_menu_label->setColor(Color3B::WHITE);
 	title_menu_label->enableOutline(Color4B::BLACK, 2);
 	title_menu_label->setPosition(title_menu->getContentSize() / 2);
@@ -562,6 +564,7 @@ void StoryMenu::selectLevelCallBack(Ref* sender, ui::Widget::TouchEventType type
 
 void StoryMenu::onEnterTransitionDidFinish(){
 	Scene::onEnterTransitionDidFinish();
+	scheduleUpdate();
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	for (unsigned int i(0); i < ((AppDelegate*)Application::getInstance())->getConfig()["worlds"].size(); ++i) {
@@ -587,8 +590,8 @@ void StoryMenu::initLevels(ui::Layout* page, int id_world) {
 	double ratioX = visibleSize.width / 1280;
 	double ratioY = visibleSize.height / 720;
 	Json::Value levels = ((AppDelegate*)Application::getInstance())->getConfig()["worlds"][id_world]["levels"];
-	int cLevel = ((AppDelegate*)Application::getInstance())->getSave()["c_level"].asInt();
-	int cWorld = ((AppDelegate*)Application::getInstance())->getSave()["c_world"].asInt();
+	int cLevel = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues()["c_level"].asInt();
+	int cWorld = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues()["c_world"].asInt();
 
 	for (unsigned int i(0); i < levels.size(); ++i) {
 		std::string filename;
@@ -608,22 +611,115 @@ void StoryMenu::initLevels(ui::Layout* page, int id_world) {
 			filename = "res/buttons/level_button_done.png";
 			color = Color3B::WHITE;
 		}
-
+		ui::Layout* level_layout = ui::Layout::create();
 		ui::Button* level = ui::Button::create(filename);
 		level->addTouchEventListener(CC_CALLBACK_2(StoryMenu::selectLevelCallBack, this, i, id_world));
 		//level->setPosition(Vec2(levels[i]["x"].asInt() * ratioX, levels[i]["y"].asInt() * ratioY));
 		Vec2 pos_level = Vec2(levels[i]["x"].asFloat() * page->getContentSize().width,
 			levels[i]["y"].asFloat() * page->getContentSize().height);
-		level->setPosition(pos_level);
+		//level->setPosition(pos_level);
 		level->setEnabled(enable);
-		//level->setScale(ratioX);
+		level->setScale(page->getContentSize().width * 0.065 / level->getContentSize().width);
+		level_layout->addChild(level);
+		level_layout->setPosition(pos_level);
 
-		Label* level_label = Label::createWithTTF(to_string(i + 1), "fonts/LICABOLD.ttf", 35.f);
-		level_label->setPosition(Vec2(level->getContentSize().width / 2.0, level->getContentSize().height));
+		int nb_challenges = ((AppDelegate*)Application::getInstance())->getConfigClass()->getNbLevelChallenges(id_world, i);
+		int side = (1 - 2 * (i % 2));
+
+		Sprite* star_left = Sprite::create(nb_challenges >= 1 ? "res/buttons/small_star_full.png" : "res/buttons/small_star_empty.png");
+		star_left->setScale(level->getContentSize().height * level->getScaleY() / 2 / star_left->getContentSize().width);
+		star_left->setPosition(Vec2(-star_left->getContentSize().width * star_left->getScaleX(),
+			side * (level->getContentSize().height * level->getScaleY() * 2 / 3 + star_left->getContentSize().height * star_left->getScaleY() / 2)));
+		star_left->setRotation(-35);
+		Sprite* star_middle = Sprite::create(nb_challenges >= 2 ? "res/buttons/small_star_full.png" : "res/buttons/small_star_empty.png");
+		star_middle->setScale(level->getContentSize().height * level->getScaleY() / 2 / star_middle->getContentSize().width);
+		star_middle->setPosition(Vec2(0, star_left->getPosition().y + side * star_left->getContentSize().width * star_left ->getScale() / 3));
+		Sprite* star_right = Sprite::create(nb_challenges == 3 ? "res/buttons/small_star_full.png" : "res/buttons/small_star_empty.png");
+		star_right->setScale(level->getContentSize().height * level->getScaleY() / 2 / star_right->getContentSize().width);
+		star_right->setRotation(35);
+		star_right->setPosition(Vec2(star_left->getContentSize().width * star_left->getScaleX(), star_left->getPosition().y));
+		level_layout->addChild(star_left, 2, "star_left");
+		level_layout->addChild(star_middle, 2, "star_middle");
+		level_layout->addChild(star_right, 2, "star_right");
+
+		/*Label* level_label = Label::createWithTTF(to_string(i + 1), "fonts/LICABOLD.ttf", 40);
+		level_label->setPosition(Vec2(0, level->getContentSize().height * level->getScaleY() / 2));
 		level_label->setAnchorPoint(Vec2(0.5, 0));
 		level_label->setColor(color);
 		level_label->enableOutline(Color4B::BLACK, 1);
-		level->addChild(level_label);
-		page->addChild(level);
+		level_layout->addChild(level_label);*/
+		page->addChild(level_layout);
 	}
 }
+
+void StoryMenu::switchLanguage() {
+}
+
+void StoryMenu::update(float dt) {
+	updateTutorial(dt);
+}
+
+void StoryMenu::updateTutorial(float dt) {
+	auto save = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
+	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["tutorials"];
+
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("skills") &&
+		save["c_level"].asInt() >= config["skills"]["level"].asInt() &&
+		save["c_world"].asInt() >= config["skills"]["world"].asInt()) {
+		
+		if (getChildByName("dialogue") == nullptr && !tutorial_running && 
+			!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialRunning("skills")) {
+			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
+			addChild(Dialogue::createFromConfig(config["skills"]["dialogue"]), 3, "dialogue");
+			((Dialogue*)getChildByName("dialogue"))->launch();
+			tutorial_running = true;
+			Size visibleSize = Director::getInstance()->getVisibleSize();
+
+			((AppDelegate*)Application::getInstance())->getConfigClass()->startTutorial("skills");
+
+			// mask to prevent any action from the player
+			addChild(ui::Layout::create(), 2, "invisble_mask");
+			ui::Button* mask = ui::Button::create("res/buttons/tranparent_mask.png");
+			mask->setScaleX(visibleSize.width / mask->getContentSize().width);
+			mask->setScaleY(visibleSize.height / mask->getContentSize().height);
+			mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+			getChildByName("invisble_mask")->addChild(mask);
+		}
+		else if (getChildByName("dialogue") != nullptr){
+			((Dialogue*)getChildByName("dialogue"))->update();
+			if (((Dialogue*)getChildByName("dialogue"))->hasFinished()) {
+				removeChildByName("dialogue");
+				Size visibleSize = Director::getInstance()->getVisibleSize();
+
+				// hand showing what to do
+				Sprite* hand = Sprite::create("res/buttons/hand.png");
+				hand->setAnchorPoint(Vec2(0.15f, 0.5f));
+				hand->setScale(visibleSize.width / 10 / hand->getContentSize().width);
+				hand->setPosition(visibleSize / 2);
+				addChild(hand, 3, "hand");
+				hand->setOpacity(0.f);
+				auto switch_to_skills = CallFunc::create([this]() {
+					this->removeChildByName("invisble_mask");
+					this->removeChildByName("hand");
+					tutorial_running = false;
+					((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::SKILLS);
+				});
+				hand->runAction(Sequence::create(
+					FadeIn::create(0.5f),
+					DelayTime::create(0.5f),
+					Spawn::createWithTwoActions(
+						MoveBy::create(1.5f, Vec2(getChildByName("interface")->getChildByName("skill_tree")->getPosition().x -
+							getChildByName("interface")->getChildByName("skill_tree")->getContentSize().width *
+							getChildByName("interface")->getChildByName("skill_tree")->getScaleX() / 2 -
+							visibleSize.width / 2, 0)),
+						EaseBackOut::create(MoveBy::create(1.5f, Vec2(0, getChildByName("interface")->getChildByName("skill_tree")->getPosition().y - visibleSize.height / 2)))),
+					DelayTime::create(0.5f),
+					FadeOut::create(0.5f),
+					switch_to_skills,
+					nullptr)
+				);
+			}
+		}
+	}
+}
+

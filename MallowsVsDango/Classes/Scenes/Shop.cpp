@@ -87,7 +87,7 @@ bool Shop::init(){
 		buy->setTitleText("$ 0.99");
 		buy->setTitleFontName("fonts/LICABOLD.ttf");
 		buy->setTitleColor(Color3B::RED);
-		buy->setTitleFontSize(round(visibleSize.width / 20));
+		buy->setTitleFontSize(60);
 
 		item->addChild(model);
 		item->addChild(buy);
@@ -99,4 +99,8 @@ bool Shop::init(){
 	addChild(list_view);
 
 	return true;
+}
+
+void Shop::switchLanguage() {
+
 }

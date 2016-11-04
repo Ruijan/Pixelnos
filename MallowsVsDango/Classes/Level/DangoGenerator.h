@@ -34,6 +34,9 @@ public:
 
 	// Getters
 	double getTime(unsigned int step, unsigned int wave);
+	double getWaveTime(unsigned int wave);
+	double getTotTime();
+	int getTotEnemies();
 	int getPath(unsigned int step, unsigned int wave);
 	std::string getDango(unsigned int step, unsigned int wave);
 

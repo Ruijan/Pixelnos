@@ -46,7 +46,7 @@ bool MyGame::initLevel(int level_id, int world_id){
 
 	id_level = level_id;
 	id_world = world_id;
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["worlds"][id_world]["levels"][id_level];
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["worlds"][id_world]["levels"][id_level];
 	for(unsigned int i(0); i < config["animations"].size(); ++i){
 		addAnimation(config["animations"][i].asString());
 	}
@@ -57,7 +57,7 @@ bool MyGame::initLevel(int level_id, int world_id){
 		addEffect(config["effects"][i].asString());
 	}
 	for(unsigned int i(0); i < config["tileset"].size(); ++i){
-		addTileset(config["tileset"].asString());
+		addTileset(config["tileset"][i].asString());
 	}
 	unload();
 	schedule(CC_SCHEDULE_SELECTOR(MyGame::updateLoading));
@@ -102,8 +102,9 @@ void MyGame::update(float delta) {
 		cLevel->removeElements();
 	}
 	else if(menu->getGameState() == InterfaceGame::GameState::NEXT_LEVEL){
-		Json::Value worlds = ((AppDelegate*)Application::getInstance())->getConfig()["worlds"][id_world];
+		Json::Value worlds = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["worlds"][id_world];
 		Json::Value levels = worlds["levels"];
+		unlockTowers();
 		if(levels.size() > cLevel->getLevelId() + 1){
 			int new_level_id = cLevel->getLevelId() + 1;
 			removeChild(cLevel,1);
@@ -124,13 +125,13 @@ void MyGame::update(float delta) {
 		if (cLevel->getHolySugar() != l_event.holy_sugar) {
 			updateTracker(cLevel->getHolySugar(), "running", time(0));
 		}
-
 	}
 	else if (menu->getGameState() == InterfaceGame::GameState::DONE && !cLevel->isPaused()) {
 		menu->showWin();
 		cLevel->pause();
 		save();
-		updateTracker(cLevel->getHolySugar(), "completed", time(0) - l_event.time);
+		updateTracker(cLevel->getHolySugar(), "completed", time(0));
+		unlockTowers();
 	}
 }
 
@@ -185,7 +186,7 @@ bool MyGame::isAccelerated(){
 
 bool MyGame::save(){
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave();
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig();
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues();
 
 	if(root["c_level"].asInt() < (int)cLevel->getLevelId()+1){
 		root["c_level"] = cLevel->getLevelId()+1;
@@ -279,4 +280,18 @@ void MyGame::updateTracker(int holy_sugar, std::string state, int c_time) {
 	l_event.duration = c_time - l_event.time;
 	l_event.state = state;
 	((AppDelegate*)Application::getInstance())->getConfigClass()->updateCurrentLevelTrackingEvent(l_event);
+}
+
+void MyGame::switchLanguage() {
+
+}
+
+void MyGame::unlockTowers() {
+	auto towers = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"];
+	for (unsigned int i(0); i < towers.getMemberNames().size(); ++i) {
+		if (towers[towers.getMemberNames()[i]]["unlock_level"].asInt() == id_level &&
+			towers[towers.getMemberNames()[i]]["unlock_world"].asInt() == id_world) {
+			((AppDelegate*)Application::getInstance())->getConfigClass()->activateTower(towers.getMemberNames()[i]);
+		}
+	}
 }

@@ -36,7 +36,10 @@ public:
 
 	bool isPaused();
 	std::vector<Tower*>& getTowers();
+	std::vector<Wall*>& getWalls();
+	std::vector<std::vector<Cell*>>& getPaths();
 	Quantity getQuantity();
+	Quantity getUsedQuantity();
 	Quantity getLife();
 	int getTotalExperience();
 	unsigned int getLevelId();
@@ -59,6 +62,7 @@ public:
 
 	std::vector<Dango*> getEnemiesInRange(cocos2d::Vec2 position, double range);
 	std::vector<Dango*> getEnemies();
+	Dango* getLastEnemy();
 	std::vector<Cell*> getPath(int path);
 	void addDango(Dango* dango);
 	void addAttack(Attack* bullet);
@@ -77,6 +81,7 @@ protected:
 	std::vector<Tower*> towers;
 	std::vector<Attack*> attacks;
 	std::vector<Wall*> walls;
+	std::vector<cocos2d::Sprite*> objects;
 	std::map<std::string, int> tower_xp;
 
 	DangoGenerator* generator;
@@ -87,6 +92,7 @@ protected:
 	bool paused;
 	int zGround;
 	Quantity sugar;
+	Quantity used_sugar;
 	Quantity life;
 	int experience;
 	int holy_sugar;

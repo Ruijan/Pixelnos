@@ -1,0 +1,24 @@
+{
+  "level_id": 5,
+  "introDialogue": [
+    {
+      "emotion": [
+        "ANGRY",
+        "NORMAL",
+        "NORMAL"
+      ],
+      "speaker": "res/turret/GeneralMashmalow.png",
+      "side": "LEFT",
+      "text_en": [
+        "New enemies incoming !\n WE ARE AT WAR !!!",
+        "Be careful, Dangos are not very strong but there are a lot of them. The most dangerous ones are the captains, or as they like to call themselves: boss. ",
+        "The slightliest whisper of their name frighten even our most powerful warriors!"
+      ],
+      "text_fr": [
+        "De nouveaux ennemis sont en approchent ! C'EST LA GUERRE !!!",
+        "Méfiez-vous, les dangos ne sont pas très forts mais ils sont nombreux. Les plus dangereux d’entre eux sont les capitaines ou, comme ils s’appellent eux-même: boss.",
+        "La simple mention de leurs noms font frémir même nos plus puissants guerriers !"
+      ]
+    }
+  ]
+}

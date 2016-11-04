@@ -27,6 +27,11 @@ bool LevelEditor::init(){
 	level_settings = Json::Value();
 	t_level_settings = Json::Value();
 
+	colors_path.push_back(Color3B::BLUE);
+	colors_path.push_back(Color3B::ORANGE);
+	colors_path.push_back(Color3B::RED);
+	colors_path.push_back(Color3B::MAGENTA);
+
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	menuHidden = false;
 	path_selected = -1;
@@ -686,6 +691,11 @@ bool LevelEditor::init(){
 		-middle_panel_dialogue->getContentSize().height * middle_panel_dialogue->getScaleY() / 2));
 	edit_dialogue->setPosition(Vec2(-middle_panel_dialogue->getContentSize().width * middle_panel_dialogue->getScaleX() / 4,
 		-middle_panel_dialogue->getContentSize().height * middle_panel_dialogue->getScaleY() / 2));
+	
+	//Stats of the level
+	ui::Text* stats = ui::Text::create("Tot. Time: 0s\nTot. Enemies: 0\nTot. Paths: 0","fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	stats->setColor(Color3B::BLACK);
+	stats->setAnchorPoint(Vec2(0.5f, 1.f));
 
 	// Add the interface composed by the zoom icons, the panel on the left, the scroll view (sub menus)and the 
 	// main menu which is made of save button, create new level, delete level...
@@ -693,6 +703,7 @@ bool LevelEditor::init(){
 	getChildByName("menu_left")->addChild(scroll_view, 1, "scroll_menu");
 	getChildByName("menu_left")->addChild(main_menu, 1, "main_menu");
 	getChildByName("menu_left")->addChild(general_infos, 2, "general_infos");
+	getChildByName("menu_left")->addChild(stats, 2, "stats");
 	scroll_view->setVisible(false);
 	interface_manager->setVisible(false);
 	general_infos->setVisible(false);
@@ -702,6 +713,8 @@ bool LevelEditor::init(){
 	getChildByName("menu_left")->getChildByName("main_menu")->setPosition(visibleSize.width / 8, visibleSize.height * 0.95);
 	getChildByName("menu_left")->getChildByName("scroll_menu")->setPosition(Vec2(visibleSize.width / 8, visibleSize.height / 2));
 	getChildByName("menu_left")->getChildByName("general_infos")->setPosition(Vec2(visibleSize.width / 8, visibleSize.height * 0.87));
+	getChildByName("menu_left")->getChildByName("stats")->setPosition(Vec2(visibleSize.width / 8, visibleSize.height * 0.15));
+
 
 	// Repositionning of the panels and submenus after adding all the different layouts.
 	// Compute the size of the layout based on its children position, size, scale and anchor points.
@@ -757,6 +770,7 @@ void LevelEditor::addEvents()
 						getChildByName("level")->getChildByName("objects")->removeChild(selected_object);
 						getChildByName("menu_left")->getChildByName("interface_manager")->getChildByName("selected_sprite_interface")->setVisible(false);
 						selected_object = nullptr;
+						updateSelectionBox();
 					}
 				}
 				break;
@@ -778,6 +792,7 @@ void LevelEditor::addEvents()
 			case EventKeyboard::KeyCode::KEY_KP_PLUS:
 				if (selected_object != nullptr) {
 					((Sprite*)selected_object)->setScale(((Sprite*)selected_object)->getScale() + 0.01);
+					updateSelectionBox();
 				}
 				else {
 					zoomIn(nullptr, ui::Widget::TouchEventType::ENDED);
@@ -786,6 +801,7 @@ void LevelEditor::addEvents()
 			case EventKeyboard::KeyCode::KEY_KP_MINUS:
 				if (selected_object != nullptr) {
 					((Sprite*)selected_object)->setScale(((Sprite*)selected_object)->getScale() - 0.01);
+					updateSelectionBox();
 				}
 				else {
 					zoomOut(nullptr, ui::Widget::TouchEventType::ENDED);
@@ -886,7 +902,7 @@ void LevelEditor::addEvents()
 								}
 							}
 						}
-						if (getChildByName("level")->getChildByName("backgrounds")->isVisible()) {
+						/*if (getChildByName("level")->getChildByName("backgrounds")->isVisible()) {
 							for (auto background : backgrounds) {
 								cocos2d::Rect n_rect = background.first->getBoundingBox();
 								if (background.first->getBoundingBox().containsPoint(p)) {
@@ -902,14 +918,21 @@ void LevelEditor::addEvents()
 									}
 								}
 							}
+						}*/
+						if (selected_object == selectedSprite) {
+							selected_object = nullptr;
+							updateSelectionBox();
 						}
-						selected_object = selectedSprite;
-						getChildByName("level")->getChildByName("selection_box")->removeAllChildren();
+						else {
+							selected_object = selectedSprite;
+							getChildByName("level")->getChildByName("selection_box")->removeAllChildren();
+						}
 						updateSelectionBox();
 						if (selected_object == nullptr) {
 							getChildByName("menu_left")->getChildByName("interface_manager")->
 								getChildByName("selected_sprite_interface")->setVisible(false);
 						}
+						
 					}
 				}
 				return true; // to indicate that we have consumed it.
@@ -1177,7 +1200,7 @@ void LevelEditor::createPath(Ref* sender, cocos2d::ui::Widget::TouchEventType ty
 		ui::TextField* path_title = ui::TextField::create("", "Arial", 20);
 		path_title->setString(path_name);
 		path_title->setMaxLength(20);
-		path_title->setColor(Color3B::BLACK);
+		path_title->setColor(colors_path[path_selected]);
 		path_title->setPosition(Vec2(path_title->getContentSize().width / 2.0,
 			path_title->getContentSize().height / 2.0));
 		layout->setAnchorPoint(Vec2(0.5, 0.50));
@@ -1241,6 +1264,7 @@ void LevelEditor::createPath(Ref* sender, cocos2d::ui::Widget::TouchEventType ty
 		cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(eventListener, path_title);
 
 		updateDisplayPathMenu();
+		updateStats();
 	}
 }
 
@@ -1250,11 +1274,14 @@ void LevelEditor::createWave(Ref* sender, cocos2d::ui::Widget::TouchEventType ty
 
 		waves_id[wave_id] = generator->getNbWaves();
 
+
 		ui::Button* wave_button = ui::Button::create("res/buttons/wood_pulldown.png", "res/buttons/wood_pulldown.png");
 		wave_button->setScale(0.90f);
 		wave_button->setTitleText("Wave " + Value((int)wave_id).asString());
 		wave_button->setTitleFontSize(20);
 		wave_button->setTitleFontName("fonts/Love Is Complicated Again.ttf");
+
+		ui::Text* stats = ui::Text::create("Enemies: 0, Time: 0s", "fonts/LICABOLD.ttf", 20);
 
 		ui::Button* delete_wave = ui::Button::create("res/buttons/delete.png", "res/buttons/delete.png");
 		delete_wave->addTouchEventListener(CC_CALLBACK_2(LevelEditor::removeWave, this, wave_id));
@@ -1294,6 +1321,7 @@ void LevelEditor::createWave(Ref* sender, cocos2d::ui::Widget::TouchEventType ty
 		lvl->setColor(Color3B::BLACK);
 		path->setColor(Color3B::BLACK);
 
+		wave_button->getChildByName("layout")->addChild(stats, 0, "stats");
 		wave_button->getChildByName("layout")->addChild(add_enemy, 0, "add_enemy");
 		wave_button->getChildByName("layout")->addChild(delay, 0, "delay_label");
 		wave_button->getChildByName("layout")->addChild(name, 0, "enemy_label");
@@ -1405,6 +1433,7 @@ void LevelEditor::createEnemy(Ref* sender, cocos2d::ui::Widget::TouchEventType t
 		enemies[next_id] = std::make_pair(generator->getNbSteps(current_wave), current_wave);
 		generator->addStep(enemy_name + Value(enemy_level).asString(), enemy_delay, enemy_path, current_wave);
 		createEnemyDisplay(next_id);
+		updateStats();
 		++enemies_id;
 		hideEnemyBox(sender, cocos2d::ui::Widget::TouchEventType::ENDED);
 	}
@@ -1542,7 +1571,11 @@ void LevelEditor::editEnemyValues(Ref* sender, cocos2d::ui::Widget::TouchEventTy
 		((Label*)enemy->getChildByName("name"))->setString(enemy_name);
 		((Label*)enemy->getChildByName("path"))->setString(Value((int)id_paths[enemy_path]).asString());
 		((Label*)enemy->getChildByName("path"))->setColor(Color3B::BLACK);
+		((ui::Text*)waves[current_wave].first->getChildByName("layout")->getChildByName("stats"))->
+			setString("Enemies: " + Json::Value(generator->getNbSteps(current_wave)).asString() +
+				" Time: " + Json::Value(round(generator->getWaveTime(current_wave))).asString() + "s");
 		hideEnemyBox(sender, type);
+		updateStats();
 	}
 }
 
@@ -1592,6 +1625,7 @@ void LevelEditor::removeEnemy(Ref* sender, cocos2d::ui::Widget::TouchEventType t
 		generator->removeStep(enemy_step, enemy_wave);
 		waves[current_wave].first->getChildByName("layout")->removeChildByName(Value((int)enemy_id).asString());
 		updateDisplayWaveMenu(enemy_wave);
+		updateStats();
 	}
 }
 
@@ -1976,6 +2010,7 @@ void LevelEditor::updateLocalLevelsList() {
 	ui::ListView* scroll_view = ((ui::ListView*)getChildByName("select_level")->getChildByName("list_local_levels"));
 	scroll_view->removeAllItems();
 	double innerWidth = scroll_view->getContentSize().width;
+	//std::stable_sort(in_game_levels.begin(), in_game_levels.end(), sortLevelsByName);
 
 	for (unsigned int i(0); i < in_game_levels.size(); ++i) {
 		auto checkbox_level = cocos2d::ui::CheckBox::create("res/buttons/list_level_checkbox.png", "res/buttons/list_level_checkbox.png",
@@ -2043,6 +2078,7 @@ void LevelEditor::updateServerLevelsList() {
 			}
 			else {
 				root = root["levels"];
+				//std::stable_sort(root.begin(), root.end(), sortLevelsByName);
 				ui::ListView* scroll_view = ((ui::ListView*)getChildByName("select_level")->getChildByName("list_server_levels"));
 				scroll_view->removeAllItems();
 				double innerWidth = scroll_view->getContentSize().width;
@@ -2295,6 +2331,7 @@ void LevelEditor::updateDisplayScrollingMenu() {
 }
 
 void LevelEditor::updateDisplayWaveMenu(unsigned int wave_index) {
+	Node* stats = waves[wave_index].first->getChildByName("layout")->getChildByName("stats");
 	Node* add_enemy = waves[wave_index].first->getChildByName("layout")->getChildByName("add_enemy");
 	Node* delay_label = waves[wave_index].first->getChildByName("layout")->getChildByName("delay_label");
 	Node* enemy_label = waves[wave_index].first->getChildByName("layout")->getChildByName("enemy_label");
@@ -2303,7 +2340,7 @@ void LevelEditor::updateDisplayWaveMenu(unsigned int wave_index) {
 
 	double offset = add_enemy->getContentSize().height * add_enemy->getScaleY() / 4;
 	
-	Vec2 lastPos = Vec2(0, -offset);
+	Vec2 lastPos = Vec2(0, -offset - stats->getContentSize().height);
 	for (auto& child : waves[wave_index].first->getChildByName("layout")->getChildren()) {
 		if (child != add_enemy && child != delay_label && child != enemy_label && child && lvl_label && child != path_label) {
 			child->setPosition(lastPos.x, lastPos.y - getNodeHeight(child) / 2 - offset / 10);
@@ -2315,13 +2352,14 @@ void LevelEditor::updateDisplayWaveMenu(unsigned int wave_index) {
 		add_enemy->getContentSize().height * add_enemy->getScaleY() / 2);
 	double total_label_width = delay_label->getContentSize().width / 2 + enemy_label->getContentSize().width +
 		lvl_label->getContentSize().width + path_label->getContentSize().width + 3 * offset;
-	delay_label->setPosition(-total_label_width / 2, 0);
+	stats->setPosition(-offset, 0);
+	delay_label->setPosition(-total_label_width / 2, -stats->getContentSize().height);
 	enemy_label->setPosition(delay_label->getPosition().x + delay_label->getContentSize().width / 2 + 
-		enemy_label->getContentSize().width / 2 + offset, 0);
+		enemy_label->getContentSize().width / 2 + offset, -stats->getContentSize().height);
 	lvl_label->setPosition(enemy_label->getPosition().x + enemy_label->getContentSize().width / 2 +
-		lvl_label->getContentSize().width / 2 + offset, 0);
+		lvl_label->getContentSize().width / 2 + offset, -stats->getContentSize().height);
 	path_label->setPosition(lvl_label->getPosition().x + lvl_label->getContentSize().width / 2 +
-		path_label->getContentSize().width / 2 + offset, 0);
+		path_label->getContentSize().width / 2 + offset, -stats->getContentSize().height);
 
 
 	Node* add_wave = subContents[3].first->getChildByName("layout")->getChildByName("add_wave");
@@ -2353,7 +2391,9 @@ void LevelEditor::updateDisplayWaveMenu(unsigned int wave_index) {
 	}
 	waves[wave_index].first->getChildByName("layout")->setVisible(waves[wave_index].second);
 	add_wave->setPosition(last_pos.x, add_wave->getContentSize().height * add_wave->getScaleY() / 2);
-
+	((ui::Text*)waves[wave_index].first->getChildByName("layout")->getChildByName("stats"))->
+		setString("Enemies: " + Json::Value(generator->getNbSteps(wave_index)).asString() +
+			" Time: " + Json::Value(round(generator->getWaveTime(wave_index))).asString() + "s");
 	updateDisplayScrollingMenu();
 }
 
@@ -2403,6 +2443,7 @@ void LevelEditor::addObject(Ref* sender, cocos2d::ui::Widget::TouchEventType typ
 			getChildByName("level")->getChildByName("objects")->addChild(image);
 			getChildByName("menu_left")->getChildByName("interface_manager")->
 				getChildByName("selected_sprite_interface")->setVisible(true);
+			updateSelectionBox();
 		}
 		break;
 	default:
@@ -2455,8 +2496,8 @@ void LevelEditor::reorder() {
 	}
 	std::stable_sort(elements.begin(), elements.end(), sortZOrder);
 	int i = 0;
-	for (auto& object : objects) {
-		object.first->setLocalZOrder(i);
+	for (auto& object : elements) {
+		object->setLocalZOrder(i);
 		++i;
 	}
 }
@@ -2546,6 +2587,7 @@ void LevelEditor::addPath(Vec2 p) {
 			Sprite* path = Sprite::create("res/buttons/path_arrow.png");
 			path->setScale(size_cell / path->getContentSize().width);
 			path->setPosition(grid_pos);
+			path->runAction(TintTo::create(0.f, colors_path[path_selected]));
 			getChildByName("level")->getChildByName("paths")->addChild(path);
 			paths[path_selected].first.push_back(path);
 			bool turn = false;
@@ -2575,6 +2617,7 @@ void LevelEditor::addPath(Vec2 p) {
 							npath->setFlippedX(true);
 							npath->setFlippedY(true);
 						}
+						npath->runAction(TintTo::create(0.f, colors_path[path_selected]));
 					}
 				}
 				if (paths[path_selected].first.size() > 1) {
@@ -2593,6 +2636,7 @@ void LevelEditor::addPath(Vec2 p) {
 						Sprite* npath = Sprite::create("res/buttons/path_straight.png");
 						npath->setScale(size_cell / npath->getContentSize().width);
 						npath->setPosition(paths[path_selected].first[paths[path_selected].first.size() - 2]->getPosition());
+						npath->runAction(TintTo::create(0.f, colors_path[path_selected]));
 						getChildByName("level")->getChildByName("paths")->removeChild(paths[path_selected].first[paths[path_selected].first.size() - 2]);
 						getChildByName("level")->getChildByName("paths")->addChild(npath);
 						paths[path_selected].first[paths[path_selected].first.size() - 2] = npath;
@@ -2662,6 +2706,7 @@ void LevelEditor::removePath(Ref* sender, cocos2d::ui::Widget::TouchEventType ty
 		path_selected = -1;
 		getChildByName("menu_left")->getChildByName("interface_manager")->
 			getChildByName("selected_path_interface")->setVisible(false);
+		updateStats();
 	}
 }
 void LevelEditor::inversePath(Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
@@ -2890,4 +2935,26 @@ void LevelEditor::resetLevelSettings() {
 	level_settings["name"] = "";
 	level_settings["id"] = -1;
 	level_settings["local"] = true;
+}
+
+void LevelEditor::switchLanguage() {
+
+}
+
+bool LevelEditor::sortLevelsByName(Json::Value root1, Json::Value root2) {
+	if (root1["name"].asString().compare(root2["name"].asString()) <= 0) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void LevelEditor::updateStats() {
+	std::string tot_time = Value(generator->getTotTime()).asString();
+	tot_time = tot_time.substr(0, tot_time.find('.'));
+	int tot_enemies(generator->getTotEnemies());
+	int tot_paths(id_paths.size());
+	((ui::Text*)getChildByName("menu_left")->getChildByName("stats"))->setString(
+		"Tot. Time: "+ Value(tot_time).asString() + "s \n Tot. Enemies: "+ Value(tot_enemies).asString() +" \n Tot. Paths: " + Value(tot_paths).asString());
 }

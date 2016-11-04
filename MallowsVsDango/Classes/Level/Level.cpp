@@ -21,8 +21,7 @@ Level* Level::create(unsigned int nLevel, unsigned int nWorld){
 	return NULL;
 }
 
-Level::Level(unsigned int nLevel, unsigned int nWorld) : id(nLevel), id_world(nWorld), size(14,12), sugar(60), life(3),
-
+Level::Level(unsigned int nLevel, unsigned int nWorld) : id(nLevel), id_world(nWorld), size(14,12), sugar(60), life(3), used_sugar(0),
 paused(false), zGround(0), experience(0){}
 
 bool Level::init()
@@ -32,7 +31,7 @@ bool Level::init()
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["worlds"][id_world]["levels"][id];
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["worlds"][id_world]["levels"][id];
 	Json::Value save_file = ((AppDelegate*)Application::getInstance())->getSave();
 
 	for (unsigned int i(0); i < config["towers"].size(); ++i) {
@@ -89,20 +88,6 @@ bool Level::init()
 			background->setFlippedY(root["backgrounds"][i]["flipped"][1].asBool());
 			getChildByName("backgrounds")->addChild(background);
 		}
-		for (unsigned int i(0); i < root["objects"].size(); ++i) {
-			std::string name = root["objects"][i]["image_name"].asString();
-			Sprite* object = Sprite::createWithSpriteFrameName(root["objects"][i]["image_name"].asString());
-			object->setRotation(root["objects"][i]["rotation"].asDouble());
-			object->setPosition(root["objects"][i]["position"][0].asDouble() * ratio,
-				root["objects"][i]["position"][1].asDouble() * ratio);
-			object->setScaleX(root["objects"][i]["scale"][0].asDouble() * ratio);
-			object->setScaleY(root["objects"][i]["scale"][1].asDouble() * ratio);
-			object->setLocalZOrder(root["objects"][i]["zorder"].asInt());
-			object->setFlippedX(root["objects"][i]["flipped"][0].asBool());
-			object->setFlippedY(root["objects"][i]["flipped"][1].asBool());
-			getChildByName("objects")->addChild(object);
-			elements.push_back(object);
-		}
 		int nb_cells_width = 12;
 		double ratio3 = visibleSize.width / visibleSize.height;
 		double size_cell = (3.0 / 4.0) * visibleSize.width * sqrt(min_width_ratio / ratio3) / nb_cells_width;
@@ -143,21 +128,45 @@ bool Level::init()
 			}
 			paths.push_back(path);
 		}
-		for (unsigned int i(0); i < root["locked_cell"].size(); ++i) {
-			Vec2 cell_pos = Vec2(root["locked_cell"][i]["pos"][0].asFloat() * ratio + visibleSize.width * 3 / 8,
-				root["locked_cell"][i]["pos"][1].asFloat() * ratio + visibleSize.height / 2);
+		Json::Value objects_json = root["objects"];
+		for (auto& object_json : objects_json) {
+			std::string name = object_json["image_name"].asString();
+			
+			Sprite* object = Sprite::createWithSpriteFrameName(object_json["image_name"].asString());
+			object->setRotation(object_json["rotation"].asDouble());
+			object->setPosition(object_json["position"][0].asDouble() * ratio,
+				object_json["position"][1].asDouble() * ratio);
+			object->setScaleX(object_json["scale"][0].asDouble() * ratio);
+			object->setScaleY(object_json["scale"][1].asDouble() * ratio);
+			object->setLocalZOrder(object_json["zorder"].asInt());
+			object->setFlippedX(object_json["flipped"][0].asBool());
+			object->setFlippedY(object_json["flipped"][1].asBool());
+			
+			if (name.find("path") == std::string::npos) {
+				objects.push_back(object);
+				object->setPosition(object->getPosition() + Vec2(visibleSize.width * 3 / 8, visibleSize.height / 2));
+				addChild(object);
+			}
+			else {
+				getChildByName("backgrounds")->addChild(object);
+			}
+			elements.push_back(object);
+		}
+
+		Json::Value locked_cell_json = root["locked_cell"];
+		for (auto& locked_cell : locked_cell_json) {
+			Vec2 cell_pos = Vec2(locked_cell["pos"][0].asFloat() * ratio + visibleSize.width * 3 / 8,
+				locked_cell["pos"][1].asFloat() * ratio + visibleSize.height / 2);
 			Cell* cell = getNearestCell(cell_pos);
 			cell->setOffLimit(true);
 		}
+
 		for (int i(0); i < root["nbwaves"].asInt(); ++i) {
 			generator->addWave();
 			for (unsigned int j(0); j < root["dangosChain"][i].size(); ++j) {
 				int enemy_level = Value(root["dangosChain"][i][j].asString().substr(
 					root["dangosChain"][i][j].asString().size() - 1,
 					root["dangosChain"][i][j].asString().size())).asInt();
-				std::string enemy_name = root["dangosChain"][i][j].asString().substr(0, root["dangosChain"][i][j].asString().size() - 1);
-				double enemy_timer = root["dangosTime"][i][j].asDouble();
-				int current_wave = i;
 				generator->addStep(root["dangosChain"][i][j].asString(), root["dangosTime"][i][j].asDouble(),
 					root["dangosPath"][i][j].asDouble(), i);
 			}
@@ -247,7 +256,6 @@ void Level::update(float dt)
 			}
 			if (!dango->isAlive()) {
 				del = true;
-				sugar += dango->getGain();
 			}
 			if (del) {
 				if (dango->getHolySugar() > 0) {
@@ -334,6 +342,10 @@ Quantity Level::getQuantity(){
 	return sugar;
 }
 
+Quantity Level::getUsedQuantity() {
+	return used_sugar;
+}
+
 Quantity Level::getLife(){
 	return life;
 }
@@ -355,6 +367,7 @@ bool Level::decreaseQuantity(Quantity removed){
 	}
 	else{
 		sugar -= removed;
+		used_sugar += removed;
 		return true;
 	}
 }
@@ -499,14 +512,20 @@ void Level::reorder(){
 			elements.push_back(wall);
 		}
 	}
+	for (auto& object : objects) {
+		if (object != nullptr) {
+			elements.push_back(object);
+		}
+	}
+	for (auto& attack : attacks) {
+		if (attack != nullptr) {
+			elements.push_back(attack);
+		}
+	}
 	std::stable_sort (elements.begin(), elements.end(), sortZOrder);
 	int i = zGround;
 	for(auto& element : elements){
 		element->setLocalZOrder(i);
-		++i;
-	}
-	for(auto& attack : attacks){
-		attack->setLocalZOrder(i);
 		++i;
 	}
 }
@@ -525,7 +544,8 @@ void Level::reset(){
 	}
 	attacks.clear();
 
-	sugar = ((AppDelegate*)Application::getInstance())->getConfig()["worlds"][id_world]["levels"][id]["sugar"].asDouble();
+	sugar = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["worlds"][id_world]["levels"][id]["sugar"].asDouble();
+	used_sugar = 0;
 	life = 3;
 	paused = false;
 	generator->reset();
@@ -588,4 +608,21 @@ void Level::showGrid(bool show) {
 
 std::vector<Tower*>& Level::getTowers() {
 	return towers;
+}
+
+std::vector<std::vector<Cell*>>& Level::getPaths() {
+	return paths;
+}
+
+std::vector<Wall*>& Level::getWalls() {
+	return walls;
+}
+
+Dango* Level::getLastEnemy() {
+	if (dangos.size() != 0) {
+		return dangos.back();
+	}
+	else {
+		return nullptr;
+	}
 }

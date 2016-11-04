@@ -88,8 +88,8 @@ void Dialogue::launch(){
 	double offset = speechBubble->getChildByName("NORMAL")->getContentSize().width * speechBubble->getChildByName("NORMAL")->getScale();
 
 	updateEmotionBubble();
-
-	currentHead = Sprite::create(textes[currentSpeech].second);
+	std::string sprite_name = textes[currentSpeech].second;
+	currentHead = Sprite::create(sprite_name);
 	currentHead->setScale(visibleSize.width / 5 / currentHead->getContentSize().width);
 	currentHead->setPosition(Vec2(-currentHead->getContentSize().width,
 		visibleSize.height / 3));
@@ -113,10 +113,10 @@ void Dialogue::launch(){
 
 	auto skip = ui::Button::create("res/buttons/red_button.png");
 	skip->setScale(visibleSize.width / 5 / skip->getContentSize().width);
-	skip->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+	skip->setTitleText(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()
 		["buttons"]["skip_dialogues"][language].asString());
 	skip->setTitleFontName("fonts/LICABOLD.ttf");
-	skip->setTitleFontSize(45.f * visibleSize.width / 1280);
+	skip->setTitleFontSize(45.f);
 	Label* skip_label = skip->getTitleRenderer();
 	skip_label->enableOutline(Color4B::BLACK, 2);
 	skip->setTitleColor(Color3B::WHITE);
@@ -129,7 +129,8 @@ void Dialogue::launch(){
 	skip->setPosition(Vec2(visibleSize.width * 3 / 4 - skip->getContentSize().width*skip->getScale(),
 		skip->getContentSize().height*skip->getScale()/4));
 
-	tapToContinue = Label::createWithSystemFont("Tap to continue", "Arial", 25.f * visibleSize.width / 1280);
+	tapToContinue = Label::createWithSystemFont(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()
+		["buttons"]["tap_continue"][language].asString(), "Arial", 25.f * visibleSize.width / 1280);
 	tapToContinue->setPosition(Point(speech->getPosition().x, speechBubble->getPosition().y - 
 		currentSpeechBubble->getContentSize().height*speechBubble->getScale() / 4));
 
@@ -185,8 +186,8 @@ void Dialogue::addEvents(){
 		}
 
 	};
-	// we set an arbitrary priority
-	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 29);
+	// we set an arbitrary priority 29
+	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener,this);
 }
 
 bool Dialogue::hasFinished(){
