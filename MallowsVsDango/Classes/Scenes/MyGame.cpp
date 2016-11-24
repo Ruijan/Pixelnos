@@ -81,10 +81,9 @@ void MyGame::update(float delta) {
 	//update the scene, the interface and the level.
 	Scene::update(delta);
 	menu->update(delta);
-	
 	// If the player lost, we show the losing screen
 	if (cLevel->hasLost() && !cLevel->isPaused()){
-		menu->showLose();
+		menu->showLose();	
 		cLevel->pause();
 		updateTracker(cLevel->getHolySugar(), "lost", time(0));
 	}

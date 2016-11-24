@@ -1,0 +1,24 @@
+{
+  "level_id": 6,
+  "introDialogue": [
+    {
+      "emotion": [
+        "NORMAL",
+        "NORMAL",
+        "ANGRY"
+      ],
+      "speaker": "res/turret/GeneralMashmalow.png",
+      "side": "LEFT",
+      "text_en": [
+        "The Dangos's empire was a very powerful country. Since we got this holy sugar, our society thrived byeond reason.",
+        "We even helped countries around us: Loukoums in the South and Dangos in the East",
+        "They attack again?! Let me, at least finish my sentences!"
+      ],
+      "text_fr": [
+        "Les Dangos étaient une nation très puissante. Mais depuis que l’on a obtenu ce sucre glacé, notre société a prospéré plus que raison. ",
+        "Nous sommes même venus en aide aux nations alentours: les Loukoums au sud et les Dangos à l’est.",
+        "Encore une attaque ?! Laissez-moi parlez, nom d'un sucre !"
+      ]
+    }
+  ]
+}

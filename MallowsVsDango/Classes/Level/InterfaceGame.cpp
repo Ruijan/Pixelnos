@@ -1451,15 +1451,17 @@ void InterfaceGame::showDangoInfo() {
 		auto scale_to = ScaleTo::create(0.125f, 0.f);
 		auto removeAndCreateLayout = CallFunc::create([&]() {
 			removeChildByName("information_dango");
-			auto layout = selected_dango->getInformationLayout(this);
-			addChild(layout, 1, "information_dango");
-			layout->setScale(0);
-			auto scale_to = ScaleTo::create(0.125f, 1.f);
-			layout->runAction(scale_to);
+			if (selected_dango != nullptr) {
+				auto layout = selected_dango->getInformationLayout(this);
+				addChild(layout, 1, "information_dango");
+				layout->setScale(0);
+				auto scale_to = ScaleTo::create(0.125f, 1.f);
+				layout->runAction(scale_to);
+			}
 		});
 		getChildByName("information_dango")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
 	}
-	else {
+	else if(selected_dango != nullptr){
 		auto layout = selected_dango->getInformationLayout(this);
 		addChild(layout, 1, "information_dango");
 		layout->setScale(0);

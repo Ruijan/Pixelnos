@@ -67,7 +67,6 @@ public:
 	
 	void move(float dt);
 	virtual void attack(float dt);
-	virtual void runAnimation(cocos2d::Animation* anim);
 	void addEffect(Effect* effect);
 
 	cocos2d::ui::Layout* getInformationLayout(InterfaceGame* interface_game);

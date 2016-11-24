@@ -3,15 +3,21 @@
   "introDialogue": [
     {
       "emotion": [
+        "NORMAL",
+        "NORMAL",
         "NORMAL"
       ],
       "speaker": "res/turret/GeneralMashmalow.png",
       "side": "LEFT",
       "text_en": [
-        "What a strong enemy! Hopefully, there won't be any more powerful one..."
+        "What a strong enemy! It reminds me when we fought for the saint relic that revolutionized our empire.",
+        "Glaze sugar, what a great ingredient.",
+        "Whoops... I talk a lot and I almost forgot our enemies! I am counting on you captain!"
       ],
       "text_fr": [
-        "Quel ennemi coriace ! Heureusement qu’il n’y en aura pas de plus puissant…"
+        "Quel ennemi coriace ! Ca me rappelle l’époque où nous avions combattu  pour obtenir la sainte relique qui a révolutionné notre empire.",
+        "Le sucre glace, quel ingrédient formidable.",
+        "Oups… je parle, je parle mais j’en oublierai presque nos ennemis ! Je compte sur vous capitaine !"
       ]
     }
   ]

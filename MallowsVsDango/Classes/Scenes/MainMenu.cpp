@@ -33,6 +33,8 @@ bool MainMenu::init()
 	Sprite* flash = Sprite::create("res/background/flash.png");
 	addChild(flash, 3);
 	flash->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	flash->setScaleX((visibleSize.width) / flash->getContentSize().width);
+	flash->setScaleY((visibleSize.height) / flash->getContentSize().height);
 	flash->setOpacity(0.0);
 
 	Sprite* bg2 = Sprite::create("res/background/menu_background_battle.png");

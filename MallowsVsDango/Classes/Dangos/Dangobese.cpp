@@ -39,8 +39,7 @@ Json::Value Dangobese::getSpecConfig(){
 	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["dangos"]["dangobese"];
 }
 
-void Dangobese::attack(float dt) {
-	// list all the bullets in the area to suck
+void Dangobese::attackSpe(float dt) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	std::vector<Attack*> attacks = ((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getAttacks();
@@ -49,9 +48,9 @@ void Dangobese::attack(float dt) {
 			double distance = attack->getPosition().distance(getPosition());
 			double speed = 500;
 			double time_to_reach = distance / speed;
-			if (distance < 150*visibleSize.width/960 && 
-				time_to_reach < attack_duration - attack_timer && 
-				!((WaterBall*)attack)->isForceApplied()){
+			if (distance < 150 * visibleSize.width / 960 &&
+				time_to_reach < attack_duration - attack_spe_reload_timer &&
+				!((WaterBall*)attack)->isForceApplied()) {
 				Vec2 direction = Vec2(attack->getPosition().x - getPosition().x,
 					attack->getPosition().y - getPosition().y).getNormalized();
 				Vec2 npos = attack->getPosition() - direction * speed * dt * visibleSize.width / 960;
@@ -66,7 +65,7 @@ void Dangobese::attack(float dt) {
 	}
 }
 
-bool Dangobese::shouldAttack() {
+bool Dangobese::shouldAttackSpe() {
 	std::vector<Attack*> attacks = ((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getAttacks();
 	for (auto& attack : attacks) {
 		if (!isAffectedByAttack(attack)) {
@@ -80,19 +79,17 @@ bool Dangobese::shouldAttack() {
 	return false;
 }
 
-void Dangobese::runAnimation(Animation* anim) {
-	if (state == MOVE) {
-		cAction = runAction(RepeatForever::create(Animate::create(anim)));
-	}
-	else if (state == ATTACK) {
-		cAction = runAction(RepeatForever::create(Animate::create(anim)));
-	}
+void Dangobese::updateAnimation() {
+	Dango::updateAnimation();
+	// Add the case where the state of the system is ATTACK_SPE
 }
 
 void Dangobese::update(float dt) {
+	updateEffects(dt);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	reload_timer += dt;
+	attack_spe_reload_timer += dt;
 	switch (state) {
 	case IDLE:
 		if (shouldAttack() && reload_timer > attack_reloading) {
@@ -100,30 +97,45 @@ void Dangobese::update(float dt) {
 			updateAnimation();
 			reload_timer = 0;
 		}
-		else if(path[targetedCell]->isFree()) {
+		else if (path[targetedCell]->isFree()) {
 			state = MOVE;
 			updateAnimation();
 		}
 		break;
 	case ATTACK:
-		attack_timer += dt;
-		if (attack_timer < attack_duration) {
+		if (shouldAttack()) {
 			attack(dt);
+			state = RELOAD;
 		}
 		else {
-			state = IDLE;
-			attack_timer = 0;
-			reload_timer = 0;
+			state = MOVE;
+			updateAnimation();
+		}
+		break;
+	case ATTACK_SPE:
+		if (shouldAttackSpe()) {
+			attackSpe(dt);
+			state = MOVE;
+			attack_spe_reload_timer = 0;
+		}
+		else {
+			state = MOVE;
+			updateAnimation();
 		}
 		break;
 	case MOVE:
 		if (path[targetedCell]->isFree()) {
 			move(dt);
-			if (shouldAttack() && reload_timer > attack_reloading) {
+			if (shouldAttackSpe()) {
+				state = ATTACK_SPE;
+				updateAnimation();
+			}
+			else if (shouldAttack() && reload_timer > attack_reloading) {
 				state = ATTACK;
 				updateAnimation();
 				reload_timer = 0;
 			}
+
 		}
 		else {
 			state = IDLE;

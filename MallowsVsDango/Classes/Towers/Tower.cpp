@@ -132,9 +132,9 @@ void Tower::initDebug(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	
 
-	/*auto label_state = Label::createWithTTF("IDLE", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	auto label_state = Label::createWithTTF("IDLE", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	label_state->enableOutline(Color4B::BLACK, 2);
-	addChild(label_state,3,"label_state");*/
+	addChild(label_state,3,"label_state");
 }
 
 void Tower::initEnragePanel() {
@@ -249,8 +249,8 @@ void Tower::chooseTarget(std::vector<Dango*> targets){
 	double bestScore(1000);
 	bool chosen = false;
 
-	for(auto& cTarget : targets){
-		if(cTarget != nullptr){
+	for (auto& cTarget : targets) {
+		if (cTarget != nullptr) {
 			int first = cTarget->getNbCellsToPath();
 			double dist = cTarget->getPosition().distanceSquared(this->getPosition());
 			double minDist = pow(getRange(), 2);
@@ -437,17 +437,20 @@ void Tower::update(float dt) {
 			case State::BLOCKED:
 				if (!blocked) {
 					state = IDLE;
+					((Label*)getChildByName("label_state"))->setString("IDLE");
 				}
 				break;
 			case State::IDLE:
 				if (blocked) {
 					state = BLOCKED;
+					((Label*)getChildByName("label_state"))->setString("BLOCKED");
+
 				}
 				else {
 					chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
 					if (target != nullptr) {
 						state = State::AWARE;
-						//((Label*)getChildByName("label_state"))->setString("AWARE");
+						((Label*)getChildByName("label_state"))->setString("AWARE");
 						handleEnrageMode();
 					}
 				}
@@ -455,6 +458,7 @@ void Tower::update(float dt) {
 			case State::AWARE:
 				if (blocked) {
 					state = BLOCKED;
+					((Label*)getChildByName("label_state"))->setString("BLOCKED");
 				}
 				else {
 					timerIDLE += dt;
@@ -479,6 +483,7 @@ void Tower::update(float dt) {
 						//((Label*)getChildByName("label_state"))->setString("ATTACKING");
 						if (state != LIMIT_BURSTING) {
 							state = State::ATTACKING;
+							((Label*)getChildByName("label_state"))->setString("ATTACKING");
 							givePDamages(damage);
 							startAnimation();
 							timerIDLE = 0;
@@ -487,7 +492,7 @@ void Tower::update(float dt) {
 				}
 				if(timerIDLE > 2){
 					state = State::IDLE;
-					//((Label*)getChildByName("label_state"))->setString("IDLE");
+					((Label*)getChildByName("label_state"))->setString("IDLE");
 					timerIDLE = 0;
 					startAnimation();
 				}
@@ -507,7 +512,7 @@ void Tower::update(float dt) {
 				break;
 			default:
 				state = IDLE;
-				//((Label*)getChildByName("label_state"))->setString("IDLE");
+				((Label*)getChildByName("label_state"))->setString("IDLE");
 				break;
 		}
 	}
@@ -573,12 +578,6 @@ void Tower::displayRange(bool disp){
 }
 
 void Tower::startAnimation(float speed){
-	/*
-	cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(state);
-	double delay = animation_duration / nb_frames_anim / speed;
-	Animation* current_animation = Animation::createWithSpriteFrames(animFrames, delay);
-	runAction(Animate::create(current_animation));
-	*/
 	std::string action("");
 	skeleton->clearTracks();
 
@@ -650,7 +649,7 @@ void Tower::reload(){
 	
 	if (timer > attack_speed){
 		state = State::AWARE;
-		//((Label*)getChildByName("label_state"))->setString("AWARE");
+		((Label*)getChildByName("label_state"))->setString("AWARE");
 	}
 	else{
 		double iniAngle = M_PI_2;

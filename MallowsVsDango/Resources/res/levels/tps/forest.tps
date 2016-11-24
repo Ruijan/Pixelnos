@@ -82,13 +82,13 @@
         <key>textureFormat</key>
         <enum type="SettingsBase::TextureFormat">png</enum>
         <key>borderPadding</key>
-        <uint>1</uint>
+        <uint>0</uint>
         <key>maxTextureSize</key>
         <QSize>
             <key>width</key>
-            <int>8192</int>
-            <key>height</key>
             <int>4096</int>
+            <key>height</key>
+            <int>2048</int>
         </QSize>
         <key>fixedTextureSize</key>
         <QSize>
@@ -100,7 +100,7 @@
         <key>algorithmSettings</key>
         <struct type="AlgorithmSettings">
             <key>algorithm</key>
-            <enum type="AlgorithmSettings::AlgorithmId">Polygon</enum>
+            <enum type="AlgorithmSettings::AlgorithmId">MaxRects</enum>
             <key>freeSizeMode</key>
             <enum type="AlgorithmSettings::AlgorithmFreeSizeMode">Best</enum>
             <key>sizeConstraints</key>
@@ -141,7 +141,7 @@
             <key>data</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>../objects/trees.plist</filename>
+                <filename>../objects/forest.plist</filename>
             </struct>
             <key>header</key>
             <key>source</key>
@@ -172,7 +172,7 @@
         <key>globalSpriteSettings</key>
         <struct type="SpriteSettings">
             <key>scale</key>
-            <double>0.5</double>
+            <double>1</double>
             <key>scaleMode</key>
             <enum type="ScaleMode">Smooth</enum>
             <key>extrude</key>
@@ -194,15 +194,17 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">arbre 1.png</key>
-            <key type="filename">arbre 2.png</key>
-            <key type="filename">arbre2.2.png</key>
-            <key type="filename">arbre4.png</key>
-            <key type="filename">arbre5.png</key>
-            <key type="filename">pierre1.png</key>
-            <key type="filename">pierre2.png</key>
-            <key type="filename">pierre3.png</key>
-            <key type="filename">pierre4.png</key>
+            <key type="filename">../../tiles/SVG/plant1.png</key>
+            <key type="filename">../../tiles/SVG/plant2.png</key>
+            <key type="filename">../../tiles/SVG/plant3.png</key>
+            <key type="filename">../../tiles/SVG/plant4.png</key>
+            <key type="filename">../../tiles/SVG/tree_stump1.png</key>
+            <key type="filename">../../tiles/SVG/tree_stump2.png</key>
+            <key type="filename">../../tiles/SVG/tree_stump3.png</key>
+            <key type="filename">../../tiles/SVG/tree_stump4.png</key>
+            <key type="filename">../../tiles/SVG/tree_stump5.png</key>
+            <key type="filename">../../tiles/SVG/tree_stump6.png</key>
+            <key type="filename">../../tiles/SVG/wood_info.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -210,15 +212,17 @@
         </map>
         <key>fileList</key>
         <array>
-            <filename>arbre 1.png</filename>
-            <filename>arbre 2.png</filename>
-            <filename>arbre2.2.png</filename>
-            <filename>arbre5.png</filename>
-            <filename>arbre4.png</filename>
-            <filename>pierre1.png</filename>
-            <filename>pierre2.png</filename>
-            <filename>pierre3.png</filename>
-            <filename>pierre4.png</filename>
+            <filename>../../tiles/SVG/plant1.png</filename>
+            <filename>../../tiles/SVG/plant2.png</filename>
+            <filename>../../tiles/SVG/plant3.png</filename>
+            <filename>../../tiles/SVG/plant4.png</filename>
+            <filename>../../tiles/SVG/tree_stump1.png</filename>
+            <filename>../../tiles/SVG/tree_stump2.png</filename>
+            <filename>../../tiles/SVG/tree_stump3.png</filename>
+            <filename>../../tiles/SVG/tree_stump4.png</filename>
+            <filename>../../tiles/SVG/tree_stump5.png</filename>
+            <filename>../../tiles/SVG/tree_stump6.png</filename>
+            <filename>../../tiles/SVG/wood_info.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

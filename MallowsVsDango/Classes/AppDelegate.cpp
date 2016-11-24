@@ -67,11 +67,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
         director->setOpenGLView(glview);
     }
 
-    if(!glview) {
-        glview = GLViewImpl::create("Mallows Vs Dangos");
-        director->setOpenGLView(glview);
-    }
-
     // turn on display FPS
     director->setDisplayStats(true);
 
@@ -111,6 +106,17 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	//auto scene = HelloWorld::createScene();
 	//director->runWithScene(scene);
 	manager = SceneManager::getInstance();
+	/*if (COCOS2D_DEBUG == 1) {
+		g_screenLog = new ScreenLog();
+		g_screenLog->setLevelMask(LL_DEBUG | LL_INFO | LL_WARNING | LL_ERROR | LL_FATAL);
+		g_screenLog->setFontFile("UbuntuMono-R.ttf");
+		g_screenLog->setTimeoutSeconds(15);
+		g_screenLog->attachToScene(manager->getGame());
+		g_screenLog->log(LL_DEBUG, "A debug message... ");
+		g_screenLog->log(LL_DEBUG, "A debug message...");
+		g_screenLog->log(LL_DEBUG, "A debug message...");
+
+	}*/
     return true;
 }
 

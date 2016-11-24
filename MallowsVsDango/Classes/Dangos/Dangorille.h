@@ -18,7 +18,7 @@ public:
 
 	static Json::Value getConfig();
 	Json::Value getSpecConfig();
-	void attack_spe(float dt);
+	void attackSpe(float dt);
 	virtual void update(float dt);
 	virtual void updateAnimation();
 	bool shouldAttackSpe();

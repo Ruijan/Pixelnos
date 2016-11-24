@@ -264,7 +264,7 @@
           "text_en": [
             "Be careful, an enemy is close to the end of the path. Our rear guard can handle few enemies but not that much.",
             "You can check on top right how many enemies they can still handle.",
-            "Place more towers or upgrade them to prevent that to happen."
+            "Place more towers or upgrade them to prevent that from happening."
           ],
           "text_fr": [
             "Attention, un ennemi s'est éloigné sur le chemin. Notre arrière-garde peut s'occuper de plusieurs ennemis mais pas plus.",
@@ -540,15 +540,15 @@
     "dangobese": {
       "cellperanim": 0.55,
       "name": "Dangobese",
+      "skeleton": "res/dango/animations/dango.json",
+      "atlas": "res/dango/animations/dango.atlas",
       "description_en": "So big ! So fat ! Wait... is that my sock?!",
       "description_fr": "Si grand ! Si gros ! Mais... c'est ma chausette ?!",
       "level": [
         {
-          "animation": "res/dango/animations/dangobese1.png",
-          "nb_images_animation": 24,
-          "animation_duration": 1,
+          "xp": 10,
+          "skin": "normal",
           "attack": 2,
-          "attack_duration": 3,
           "gain": 5,
           "hitpoints": 6,
           "image": "res/dango/dangobese1.png",
@@ -559,24 +559,9 @@
             "prob": 0.075,
             "number": 1,
             "type": "full"
-          }
-        },
-        {
-          "animation": "res/dango/animations/dangobese2.png",
-          "nb_images_animation": 24,
-          "animation_duration": 1,
-          "attack": 2.5,
-          "attack_duration": 4,
-          "gain": 7,
-          "hitpoints": 8,
-          "image": "res/dango/dangobese2.png",
-          "name": "dangobese2",
-          "reload": 3,
-          "speed": 0.5,
-          "holy_sugar": {
-            "prob": 0.075,
-            "number": 1,
-            "type": "full"
+          },
+          "attack_spe": {
+            "attack_duration": 3
           }
         }
       ]
@@ -758,9 +743,9 @@
 
             },
             {
-              "name": "Reckless",
+              "name": "Narrow",
               "int_value": -1,
-              "str_value": ""
+              "str_value": "bomber"
             }
           ]
         },
@@ -789,7 +774,25 @@
             "res/levels/objects/forest.png"
           ],
           "x": -0.13,
-          "y": 0.060
+          "y": 0.060,
+          "challenges": [
+            {
+              "name": "Untouchable",
+              "int_value": 3,
+              "str_value": ""
+            },
+            {
+              "name": "Misanthrope",
+              "int_value": -1,
+              "str_value": ""
+
+            },
+            {
+              "name": "Reckless",
+              "int_value": -1,
+              "str_value": ""
+            }
+          ]
         },
         {
           "id": 5,
@@ -969,7 +972,7 @@
         "cost": 5,
         "effect": [ ],
         "sprite_enabled": "res/buttons/Skills/wall.png",
-        "sprite_disabled": "res/buttons/Skills/wall_disabled.png",
+        "sprite_disabled": "res/buttons/Skills/lock.png",
         "description_en": "Create a sugar wall (2HP) at the end of the path.",
         "description_fr": "Cree un mur en sucre (2 PdV) au bout du chemin.",
         "dependance": [ -1 ],
@@ -983,8 +986,8 @@
         "name_fr": "Et un tour gratuit",
         "cost": 10,
         "effect": [ ],
-        "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
+        "sprite_enabled": "res/buttons/Skills/lock.png",
+        "sprite_disabled": "res/buttons/Skills/lock.png",
         "description_en": "Every 20 attacks, the Cutter, performs a free attack.",
         "description_fr": "Tous les 20 attaques, le Cutter, effectue un tour supplémentaire",
         "dependance": [ 0 ],
@@ -996,8 +999,8 @@
         "name_fr": "Une bombe peut en cacher une autre",
         "cost": 10,
         "effect": [ ],
-        "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
+        "sprite_enabled": "res/buttons/Skills/lock.png",
+        "sprite_disabled": "res/buttons/Skills/lock.png",
         "description_en": "Every 20 shots, the Bomber throws 2 additional bombs during its next attack.",
         "description_fr": "Tous les 20 tirs, une deuxieme bombe est lancée par le Bombeur",
         "dependance": [ 0 ],
@@ -1012,8 +1015,8 @@
         "name_fr": "Et la t’es enerve ? Et la t’es enerve ? ...",
         "cost": 15,
         "effect": [ ],
-        "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
+        "sprite_enabled": "res/buttons/Skills/lock.png",
+        "sprite_disabled": "res/buttons/Skills/lock.png",
         "description_en": "The Cutter needs 1 less attack to charge its limit's gauge.",
         "description_fr": "Reduit de 1 le nombre d'attaques nécessaires pour activer la limite du Cutter.",
         "dependance": [ 0 ],
@@ -1025,8 +1028,8 @@
         "name_fr": "Une balle de moins",
         "cost": 15,
         "effect": [ ],
-        "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
+        "sprite_enabled": "res/buttons/Skills/lock.png",
+        "sprite_disabled": "res/buttons/Skills/lock.png",
         "description_en": "The Bomber needs 1 less attack to charge its limit's gauge.",
         "description_fr": "Reduit de 1 le nombre de tirs nécessaires pour activer la limite du Bombeur.",
         "dependance": [ 0, 1 ],
@@ -1041,8 +1044,8 @@
         "name_fr": "Qui a parle de barbecue ?",
         "cost": 50,
         "effect": [ ],
-        "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
+        "sprite_enabled": "res/buttons/Skills/lock.png",
+        "sprite_disabled": "res/buttons/Skills/lock.png",
         "description_en": "Unlock Pyro, a specialist in fireworks.",
         "description_fr": "Débloque Pyro, l'expert en feux d'artifices. ",
         "dependance": [ -1 ],
@@ -1054,8 +1057,8 @@
         "name_fr": "L'âge de glace",
         "cost": 30,
         "effect": [ ],
-        "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
+        "sprite_enabled": "res/buttons/Skills/lock.png",
+        "sprite_disabled": "res/buttons/Skills/lock.png",
         "description_en": "Icing sugar age. The wall's HP is increased by 1.",
         "description_fr": "La découverte du sucre glace fait entrer dans une nouvelle ère. Augmente le mur de 1 PdV",
         "dependance": [ -1 ],
@@ -1070,8 +1073,8 @@
         "name_fr": "Qui a parle de barbecue ? (2)",
         "cost": 50,
         "effect": [ ],
-        "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
+        "sprite_enabled": "res/buttons/Skills/lock.png",
+        "sprite_disabled": "res/buttons/Skills/lock.png",
         "description_en": "Every 40s of attack, Pyro is overheating. The flame is wider for 2s.",
         "description_fr": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
         "dependance": [ 0 ],
@@ -1083,8 +1086,8 @@
         "name_fr": "C'est les soldes !",
         "cost": 50,
         "effect": [ ],
-        "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
+        "sprite_enabled": "res/buttons/Skills/lock.png",
+        "sprite_disabled": "res/buttons/Skills/lock.png",
         "description_en": "All Mallows' cost is reduced by 5%.",
         "description_fr": "Diminue le cout de creation de toutes les tourelles 5%",
         "dependance": [ -1 ],
@@ -1099,8 +1102,8 @@
         "name_fr": "Qui a parle de barbecue ? (3)",
         "cost": 50,
         "effect": [ ],
-        "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
+        "sprite_enabled": "res/buttons/Skills/lock.png",
+        "sprite_disabled": "res/buttons/Skills/lock.png",
         "description_en": "Every 40s of attack, Pyro is overheating. The flame is wider for 2s.",
         "description_fr": "Tous les 40s d’attaque, augmente l’angle d’attaque du lance-flamme pendant 2s.",
         "dependance": [ 0 ],
@@ -1112,8 +1115,8 @@
         "name_fr": "Jackpot",
         "cost": 50,
         "effect": [ ],
-        "sprite_enabled": "res/buttons/centralMenuPanel.png",
-        "sprite_disabled": "res/buttons/Skills/skill_disabled.png",
+        "sprite_enabled": "res/buttons/Skills/lock.png",
+        "sprite_disabled": "res/buttons/Skills/lock.png",
         "description_en": "Dangos have an 1% chance to drop holy sugar when they died.",
         "description_fr": "Un dango a 1% de chance de genere 1 sucrette lorsqu’il meurt.",
         "dependance": [ 1 ],

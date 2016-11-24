@@ -65,8 +65,8 @@ ChallengeHandler::ChallengeHandler(const Json::Value& value) {
 		std::string image_name = j_challenges[value[i]["name"].asString()]["image"].asString();
 		if (type == Challenge::ChallengeType::Discriminant || type == Challenge::ChallengeType::Narrow) {
 			int dot_pos = image_name.find('.');
-			std::string extension = image_name.substr(dot_pos,image_name.length());
-			image_name = image_name.substr(0, dot_pos - 1) + "_" + value[i]["str_value"].asString() + "." + extension;
+			std::string extension = image_name.substr(dot_pos + 1,image_name.length());
+			image_name = image_name.substr(0, dot_pos) + "_" + value[i]["str_value"].asString() + "." + extension;
 		}
 		Challenge* c_challenge = challenges.back();
 
@@ -119,8 +119,8 @@ ChallengeHandler::ChallengeHandler(const Json::Value& value) {
 						((ui::Text*)text_layout->getChildByName("description_text"))->setString(n_description);
 						((ui::Text*)text_layout->getChildByName("progress_text"))->setString(str_progress);
 						text_layout->setPosition(Vec2(
-							challenge->getPosition().x + challenge->getContentSize().width * challenge->getScale() / 2 + 
-							text_layout->getChildByName("background")->getContentSize().width / 2 + challenge->getContentSize().width * 2 / 3,
+							challenge->getPosition().x + challenge->getContentSize().width * challenge->getScale() * 2 / 3 + 
+							text_layout->getChildByName("background")->getContentSize().width * text_layout->getChildByName("background")->getScale() / 2,
 							challenge->getPosition().y ));
 
 						text_layout->setVisible(true);
@@ -212,8 +212,11 @@ void ChallengeHandler::addTower(Tower::TowerType type, cocos2d::Vec2 position) {
 			}
 			break;
 		case Challenge::ChallengeType::Philanthrope:
+			if (SceneManager::getInstance()->getGame()->getLevel()->getTowers().size() <= 1) {
+				touching = true;
+			}
 			for (auto& tower : SceneManager::getInstance()->getGame()->getLevel()->getTowers()) {
-				if (tower->getPosition().getDistance(position) <= Cell::getCellWidth()) {
+				if (tower->getPosition() != position && tower->getPosition().getDistance(position) <= Cell::getCellWidth()) {
 					touching = true;
 				}
 			}

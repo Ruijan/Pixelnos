@@ -8,6 +8,7 @@
 #include "Config/AudioController.h"
 #include "Lib/AudioSlider.h"
 #include "Lib/Translationable.h"
+//#include "Lib/ScreenLog.h"
 #include "Config/json.h"
 
 /**
@@ -51,6 +52,8 @@ public:
 	void addAudioSlider(AudioSlider* slider, AudioController::SOUNDTYPE type);
 	void setVolumeMusic(double volume);
 	virtual void switchLanguage();
+	//ScreenLog* g_screenLog;
+
 
 	/*static AppDelegate* getInstance(){
 		if (!appDelegate)
@@ -63,7 +66,6 @@ protected:
 	SceneManager* manager;
 	Config* config;
 	AudioController* controller;
-
 };
 
 #endif // _APP_DELEGATE_H_

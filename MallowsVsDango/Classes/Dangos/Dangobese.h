@@ -18,16 +18,16 @@ public:
 
 	static Json::Value getConfig();
 	Json::Value getSpecConfig();
+	void attackSpe(float dt);
 	virtual void update(float dt);
-	virtual bool shouldAttack();
-	virtual void attack(float dt);
-	virtual void runAnimation(cocos2d::Animation* anim);
+	virtual void updateAnimation();
+	virtual bool shouldAttackSpe();
 
 	bool isAffectedByAttack(Attack* attack);
 
 private:
 	double attack_duration;
-	double attack_timer;
+	double attack_spe_reload_timer;
 };
 
 #endif

@@ -390,15 +390,6 @@ double Dango::getSpeed(){
 	return speed + getSpeedRedtuctionRatio() * speed;
 }
 
-void Dango::runAnimation(Animation* anim) {
-	if (state == MOVE) {
-		cAction = runAction(RepeatForever::create(Animate::create(anim)));
-	}
-	else if (state == ATTACK) {
-		cAction = runAction(Animate::create(anim));
-	}
-}
-
 void Dango::addEffect(Effect* effect) {
 	effects.push_back(effect);
 	addChild(effect,3);

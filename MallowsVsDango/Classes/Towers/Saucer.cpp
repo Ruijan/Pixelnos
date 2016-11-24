@@ -2,6 +2,7 @@
 #include "../Towers/Attack.h"
 #include "../AppDelegate.h"
 #include "../Level/Cell.h"
+//#include "../Lib/ScreenLog.h"
 
 USING_NS_CC;
 
@@ -27,9 +28,10 @@ Saucer* Saucer::create()
 
 void Saucer::initSpecial() {
 	auto config = getSpecConfig();
-	auto save = ((AppDelegate*)Application::getInstance())->getSave();
 	slow_percent = config["slow"][level].asDouble();
 	slow_duration = config["slow_duration"][level].asDouble();
+	/*((AppDelegate*)Application::getInstance())->g_screenLog->log(LL_DEBUG, ("Slow fail value: " + Value(slow_percent).asString()).c_str());
+	((AppDelegate*)Application::getInstance())->g_screenLog->log(LL_DEBUG, ("Slow fail abs value: " + Value(abs(slow_percent)).asString()).c_str());*/
 }
 
 const Json::Value& Saucer::getConfig(){
@@ -113,14 +115,17 @@ bool Saucer::isSameType(std::string type) {
 void Saucer::chooseTarget(std::vector<Dango*> targets) {
 	double bestScore(1000);
 	bool chosen = false;
-
 	for (auto& cTarget : targets) {
 		if (cTarget != nullptr) {
 			int first = cTarget->getNbCellsToPath();
 			double dist = cTarget->getPosition().distanceSquared(this->getPosition());
 			double minDist = pow(getRange(), 2);
-			if (first < bestScore && dist <= minDist && cTarget->willBeAlive() && 
-				abs(cTarget->getSpeedRedtuctionRatio()) < abs(slow_percent)) {
+			/*((AppDelegate*)Application::getInstance())->g_screenLog->log(LL_DEBUG, ("first: " + Value(first).asString() + " bestscore: " + Value(bestScore).asString()).c_str());
+			((AppDelegate*)Application::getInstance())->g_screenLog->log(LL_DEBUG, ("speed: " + Value(abs(cTarget->getSpeedRedtuctionRatio())).asString() + " slow: " + Value(abs(slow_percent)).asString()).c_str());
+			((AppDelegate*)Application::getInstance())->g_screenLog->log(LL_DEBUG, ("speed: " + Value(abs(cTarget->getSpeedRedtuctionRatio())).asString() + " slow: " + Value(abs(-0.5)).asString()).c_str());
+			*/
+			if (first < bestScore && dist <= minDist && cTarget->willBeAlive() &&
+				cTarget->getSpeedRedtuctionRatio() > slow_percent) {
 				bestScore = first;
 				if (target != nullptr) {
 					target->removeTargetingTower(this);

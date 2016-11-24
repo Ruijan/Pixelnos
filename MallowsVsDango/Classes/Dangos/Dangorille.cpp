@@ -41,7 +41,7 @@ Dangorille* Dangorille::create(std::vector<Cell*> npath, int nlevel)
 	return NULL;
 }
 
-void Dangorille::attack_spe(float dt) {
+void Dangorille::attackSpe(float dt) {
 	((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->pause();
 	startAttackSpeAnimation();
 }
@@ -83,7 +83,7 @@ void Dangorille::update(float dt) {
 		break; 
 	case ATTACK_SPE:
 		if (shouldAttackSpe()) {
-			attack_spe(dt);
+			attackSpe(dt);
 			state = MOVE;
 			attack_spe_reload_timer = 0;
 		}
@@ -120,6 +120,7 @@ void Dangorille::updateAnimation() {
 	Dango::updateAnimation();
 	// Add the case where the state of the system is ATTACK_SPE
 }
+
 void Dangorille::generateMonkeys() {
 	// generate monkeys
 	Size visibleSize = Director::getInstance()->getVisibleSize();
