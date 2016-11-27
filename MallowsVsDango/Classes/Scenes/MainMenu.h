@@ -8,7 +8,7 @@
 
 
 
-class MainMenu :public cocos2d::Scene, public Loader, public Translationable
+class MainMenu :public cocos2d::Scene, public Loader, public Translationable, public cocos2d::ui::EditBoxDelegate
 {
 public:
 	virtual bool init();
@@ -17,10 +17,15 @@ public:
 	void update(float dt);
 	virtual void switchLanguage();
 
+
 protected:
 	virtual void onEnter();
 	virtual void onEnterTransitionDidFinish();
 	void initLanguageList();
+	virtual void editBoxEditingDidEnd(cocos2d::ui::EditBox *editBox);
+	virtual void editBoxEditingDidBegin(cocos2d::ui::EditBox *editBox);
+	virtual void editBoxTextChanged(cocos2d::ui::EditBox *editBox, std::string &text);
+	virtual void editBoxReturn(cocos2d::ui::EditBox *editBox);
 };
 
 #endif

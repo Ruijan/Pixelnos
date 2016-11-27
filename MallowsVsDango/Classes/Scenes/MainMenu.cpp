@@ -115,8 +115,96 @@ bool MainMenu::init()
 			}
 		}
 	});
-
 	cocos2d::ui::Layout* layout = ui::Layout::create();
+	language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	Action* username_show = DelayTime::create(0.01f);
+	if (((AppDelegate*)Application::getInstance())->getConfigClass()->getUsername() == "") {
+		addChild(ui::Layout::create(), 2, "black_mask");
+		ui::Button* mask = ui::Button::create("res/buttons/mask.png");
+		mask->setScaleX(visibleSize.width / mask->getContentSize().width);
+		mask->setScaleY(visibleSize.height / mask->getContentSize().height);
+		mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+		getChildByName("black_mask")->addChild(mask);
+
+		ui::Layout* layout_username = ui::Layout::create();
+		addChild(layout_username, 3, "layout_username");
+		ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel2.png");
+		panel->setZoomScale(0);
+		layout_username->addChild(panel, 1, "panel");
+		panel->setScale9Enabled(true);
+		panel->setScale(0.30*visibleSize.width / panel->getContentSize().width);
+
+		layout_username->setPosition(Vec2(visibleSize.width / 2, visibleSize.height +
+			layout_username->getChildByName("panel")->getContentSize().height *
+			layout_username->getChildByName("panel")->getScaleY()));
+		//layout_username->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+
+		auto close = ui::Button::create("res/buttons/close2.png");
+		close->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+			if (type == ui::Widget::TouchEventType::ENDED) {
+				Size visibleSize = Director::getInstance()->getVisibleSize();
+				auto* showAction = EaseBackIn::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height +
+					getChildByName("layout_username")->getChildByName("panel")->getContentSize().width *
+					getChildByName("layout_username")->getChildByName("panel")->getScaleY() * 0.6)));
+				getChildByName("layout_username")->runAction(showAction);
+				getChildByName("black_mask")->setVisible(false);
+			}
+		});
+		close->setScale(panel->getContentSize().width*panel->getScaleX() / 8 / close->getContentSize().width);
+		close->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() / 2,
+			panel->getContentSize().height*panel->getScaleY() / 2));
+		Sprite* close_shadow = Sprite::create("res/buttons/close2_shadow.png");
+		close_shadow->setScale(close->getScale() * 1.05);
+		close_shadow->setPosition(close->getPosition());
+		layout_username->addChild(close_shadow, -1);
+		layout_username->addChild(close, 5, "close");
+
+		Label* title = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()
+			["buttons"]["username"][language].asString(), "fonts/LICABOLD.ttf", 40.0f * visibleSize.width / 1280);
+		title->setColor(Color3B::WHITE);
+		title->enableOutline(Color4B::BLACK, 2);
+		title->setPosition(0, panel->getContentSize().height*panel->getScaleY() / 3);
+		layout_username->addChild(title, 2, "title");
+		ui::EditBox* username = ui::EditBox::create(Size(visibleSize.width / 4, visibleSize.height / 15),
+			ui::Scale9Sprite::create("res/buttons/input_username.png"));
+		username->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
+		username->setFontName("fonts/LICABOLD.ttf");
+		username->setFontSize(25);
+		username->setFontColor(Color3B::RED);
+		username->setPlaceHolder("");
+		username->setPlaceholderFontColor(Color3B::WHITE);
+		username->setMaxLength(15);
+		username->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
+		username->setDelegate(this);
+		layout_username->addChild(username, 2, "username_input");
+
+		auto validate_username = ui::Button::create("res/buttons/yellow_button.png");
+		validate_username->addTouchEventListener([&, username](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+			if (type == ui::Widget::TouchEventType::ENDED) {
+				Size visibleSize = Director::getInstance()->getVisibleSize();
+				auto* showAction = EaseBackIn::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height +
+					getChildByName("layout_username")->getChildByName("panel")->getContentSize().width *
+					getChildByName("layout_username")->getChildByName("panel")->getScaleY() * 0.6)));
+				getChildByName("layout_username")->runAction(showAction);
+				getChildByName("black_mask")->setVisible(false);
+				((AppDelegate*)Application::getInstance())->getConfigClass()->setUsername(username->getText());
+			}
+		});
+		validate_username->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
+			["buttons"]["validate"][language].asString());
+		validate_username->setTitleFontName("fonts/LICABOLD.ttf");
+		validate_username->setTitleFontSize(60.f);
+		validate_username->setEnabled(false);
+		Label* validate_username_label = validate_username->getTitleRenderer();
+		validate_username_label->setColor(Color3B::WHITE);
+		validate_username_label->enableOutline(Color4B::BLACK, 2);
+		validate_username->setScale(panel->getContentSize().width*panel->getScaleX() / 2 / validate_username->getContentSize().width);
+		validate_username->setPosition(Vec2(0, -panel->getContentSize().height*panel->getScaleY() / 3));
+		layout_username->addChild(validate_username, 2, "validate_username");
+		username_show = TargetedAction::create(layout_username, EaseBackOut::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2))));
+	}
+	
+
 	addChild(layout,1,"interface");
 	layout->addChild(button,1,"start");
 	layout->addChild(language_button,1,"language");
@@ -145,7 +233,7 @@ bool MainMenu::init()
 	TargetedAction* fadeinbutton = TargetedAction::create(button, FadeIn::create(1.0f));
 
 	/*action sequence*/
-	auto sequence = Sequence::create(fadein, delay, fadeout, fadeinbg1, fadeintxt1, fadeintxt2, fadeinvs, actionvs, fadeinf, fadeoutf1, fadeinf, fadeoutf1, fadeinf, actionbg2, fadeinbutton, nullptr);
+	auto sequence = Sequence::create(fadein, delay, fadeout, fadeinbg1, fadeintxt1, fadeintxt2, fadeinvs, actionvs, fadeinf, fadeoutf1, fadeinf, fadeoutf1, fadeinf, actionbg2, fadeinbutton, username_show, nullptr);
 	bglogo->runAction(sequence);
 
 	return true;
@@ -296,4 +384,20 @@ void MainMenu::switchLanguage() {
 	mask->setScaleY(visibleSize.height / mask->getContentSize().height);
 	mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	getChildByName("black_mask")->addChild(mask);
+}
+
+void MainMenu::editBoxEditingDidEnd(ui::EditBox *editBox) {
+	if (editBox->getText() != "") {
+		((ui::Button*)getChildByName("layout_username")->getChildByName("validate_username"))->setEnabled(true);
+	}
+}
+void MainMenu::editBoxEditingDidBegin(ui::EditBox *editBox) {
+}
+
+
+void MainMenu::editBoxTextChanged(ui::EditBox *editBox, std::string &text) {
+	
+}
+
+void MainMenu::editBoxReturn(ui::EditBox *editBox) {
 }

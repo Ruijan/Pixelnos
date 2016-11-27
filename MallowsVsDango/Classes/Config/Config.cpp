@@ -221,6 +221,7 @@ void Config::init(){
 		rootSav["holy_sugar"] = 0;
 		rootSav["c_level"] = 0;
 		rootSav["c_world"] = 0;
+		rootSav["username"] = "";
 		//rootSav["tutorials"] = root["tutorials"];
 		std::vector<std::string> tuto_names = root["tutorials"].getMemberNames();
 		for (unsigned int i(0); i < tuto_names.size(); ++i) {
@@ -530,24 +531,31 @@ void Config::serverUpdate(float dt) {
 }
 
 void Config::addTrackingEvent(TrackingEvent n_event) {
-	// create a new tracking entry
-	Json::Value c_event;
-	c_event["from_scene"] = n_event.from_scene;
-	c_event["to_scene"] = n_event.to_scene;
-	// write the current time following the SQL format date.
-	tm *ltm = gmtime(&n_event.time);
-	c_event["time"] = Json::Value(1900 + ltm->tm_year).asString() +
-		"-" + Json::Value(ltm->tm_mon + 1).asString() +
-		"-" + Json::Value(ltm->tm_mday).asString() +
-		" " + Json::Value(ltm->tm_hour).asString() +
-		":" + Json::Value(ltm->tm_min).asString() +
-		":" + Json::Value(ltm->tm_sec).asString();
-	tracking[c_tracking_index]["path"].append(c_event);
-	tracking[c_tracking_index]["saved"] = false;
-	// save into the local text file.
-	saveTracking();
-	// since the value changed, we have to save it online
-	tracking_need_save = true;
+	int events = tracking[c_tracking_index]["path"].size(); //tracking[c_tracking_index]["path"][tracking[c_tracking_index]["path"].size() - 1]["from_scene"].asInt();
+	std::string previous_scene = "start";
+	if (events > 0) {
+		previous_scene = tracking[c_tracking_index]["path"][events - 1]["to_scene"].asString();
+	}
+	if (previous_scene == n_event.from_scene) {
+		// create a new tracking entry
+		Json::Value c_event;
+		c_event["from_scene"] = n_event.from_scene;
+		c_event["to_scene"] = n_event.to_scene;
+		// write the current time following the SQL format date.
+		tm *ltm = gmtime(&n_event.time);
+		c_event["time"] = Json::Value(1900 + ltm->tm_year).asString() +
+			"-" + Json::Value(ltm->tm_mon + 1).asString() +
+			"-" + Json::Value(ltm->tm_mday).asString() +
+			" " + Json::Value(ltm->tm_hour).asString() +
+			":" + Json::Value(ltm->tm_min).asString() +
+			":" + Json::Value(ltm->tm_sec).asString();
+		tracking[c_tracking_index]["path"].append(c_event);
+		tracking[c_tracking_index]["saved"] = false;
+		// save into the local text file.
+		saveTracking();
+		// since the value changed, we have to save it online
+		tracking_need_save = true;
+	}
 }
 
 void Config::addLevelTrackingEvent(LevelTrackingEvent n_event) {
@@ -729,11 +737,10 @@ void Config::updateUserInfo() {
 	// save the main user infos
 	time_t rawtime;
 	time(&rawtime);
-	tm *ltm = gmtime(&rawtime);
-	rawtime = mktime(ltm);
 	std::string postData = "action=updateUser&id_game=" + rootSav["id_player"].asString() +
 		"&time=" + Value((int)rawtime).asString() + "&level=" + rootSav["c_level"].asString() +
-		"&world=" + rootSav["c_world"].asString() + "&holy_sugar=" + rootSav["holy_sugar"].asString();
+		"&world=" + rootSav["c_world"].asString() + "&holy_sugar=" + rootSav["holy_sugar"].asString() + 
+		"&username=" + rootSav["username"].asString();
 	network_controller->sendNewRequest(NetworkController::Request::USER_AND_SETTINGS, postData,
 		[&, this](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
 		waiting_answer = false;
@@ -741,10 +748,11 @@ void Config::updateUserInfo() {
 			std::vector<char> *buffer = response->getResponseData();
 			std::string str(buffer->begin(), buffer->end());
 			log("Updating user %s", str == "" ? "ok" : str.c_str());
-
+			user_need_save = false;
 			// If everything went well, we set that we don't need to save again.
 			if (str == "") {
 				this->setProgressionNeedSave(false);
+
 			}
 		}
 		else {
@@ -953,4 +961,14 @@ int Config::getNbLevelChallenges(int world_id, int level_id) const {
 		return level_challenge.asInt();
 	}
 	return 0;
+}
+
+std::string Config::getUsername() const {
+	return rootSav.isMember("username") ? rootSav["username"].asString() : "";
+}
+
+void Config::setUsername(std::string username) {
+	rootSav["username"] = username;
+	save();
+	user_need_save = true;
 }

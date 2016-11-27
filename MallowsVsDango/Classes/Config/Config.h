@@ -383,6 +383,16 @@ public:
 	*/
 	int getNbLevelChallenges(int world_id, int level_id) const;
 
+	/**
+	* @brief Return the username
+	*/
+	std::string getUsername() const;
+
+	/**
+	* @brief Set and save username
+	*/
+	void setUsername(std::string username);
+
 };
 
 #endif

@@ -20,6 +20,14 @@
       "en": "Title Screen",
       "fr": "Ecran Titre"
     },
+    "username": {
+      "en": "Enter a Username",
+      "fr": "Enter un Nom de Joueur"
+    },
+    "validate": {
+      "en": "Validate",
+      "fr": "Valider"
+    },
     "skip_dialogues": {
       "en": "Skip Dialogues",
       "fr": "Passer Dialogues"

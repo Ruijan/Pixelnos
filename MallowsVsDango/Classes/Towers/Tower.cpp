@@ -134,6 +134,7 @@ void Tower::initDebug(){
 
 	auto label_state = Label::createWithTTF("IDLE", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	label_state->enableOutline(Color4B::BLACK, 2);
+	label_state->setVisible(false);
 	addChild(label_state,3,"label_state");
 }
 
