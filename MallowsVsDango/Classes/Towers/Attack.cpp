@@ -277,7 +277,7 @@ ChocoSpit::~ChocoSpit() {
 ChocoSpit* ChocoSpit::create(Dango* ntarget, double damages, double slow, double slow_duration, double nspeed) {
 	ChocoSpit* pSprite = new ChocoSpit(ntarget, damages, slow, slow_duration, nspeed);
 
-	if (pSprite->initWithFile("res/turret/yellow_bomb.png"))
+	if (pSprite->initWithFile("res/turret/choco_spit.png"))
 	{
 		pSprite->autorelease();
 		return pSprite;
@@ -314,7 +314,7 @@ void ChocoSpit::update(float dt) {
 					touched = true;
 					target->applyProspectiveDamages(damages_id);
 					target->removeTargetingAttack(this);
-					Slow* effect = Slow::create(target, slow_duration, slow_percent);
+					Slow* effect = Slow::create(target, slow_duration, slow_percent, "choco");
 					target->addEffect(effect);
 					effect->applyModifierToTarget();
 					startAnimation();
@@ -327,7 +327,8 @@ void ChocoSpit::update(float dt) {
 				else {
 					direction.normalize();
 					setPosition(getPosition() + direction * speed * dt);
-					setRotation(getRotation() + 360 * dt);
+					//float rot_angle = 180 * direction.getAngle() / M_PI;
+					setRotation(-180 * direction.getAngle() / M_PI);
 				}
 			}
 		}

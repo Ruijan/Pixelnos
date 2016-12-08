@@ -29,8 +29,8 @@
       "fr": "Valider"
     },
     "skip_dialogues": {
-      "en": "Skip Dialogues",
-      "fr": "Passer Dialogues"
+      "en": "Skip Dialogue",
+      "fr": "Passer Dialogue"
     },
     "main_menu": {
       "en": "Main Menu",
@@ -270,7 +270,7 @@
           "side": "LEFT",
           "speaker": "res/turret/general.png",
           "text_en": [
-            "Be careful, an enemy is close to the end of the path. Our rear guard can handle few enemies but not that much.",
+            "Be careful, an enemy is close to the end of the path. Our rear guard can handle few enemies but not that many.",
             "You can check on top right how many enemies they can still handle.",
             "Place more towers or upgrade them to prevent that from happening."
           ],
@@ -296,7 +296,7 @@
           "text_en": [
             "Stronger enemies are coming!",
             "Give more time to the Bomber to attack the enemies by slowing them down! \nPlace Saucer towers!",
-            "Their CHOCOSPIT deals low damages but the enemy will be disgusted and slowed down !"
+            "Their CHOCOSPIT deals low damage but the enemy will be disgusted and slowed down !"
           ],
           "text_fr": [
             "Des ennemis plus puissants arrivent !",
@@ -382,19 +382,16 @@
         {
           "emotion": [
             "ANGRY",
-            "ANGRY",
             "ANGRY"
           ],
           "side": "RIGHT",
           "speaker": "res/turret/general.png",
           "text_en": [
-            "By the holiness of all sugars ! A terrifying enemy just appeared !",
-            "He has a thick dough and a four blocking monkeys army with him!",
+            "By the holiness of all sugars ! A terrifying enemy just appeared and he has a thick dough !",
             "Tap on the monkeys that will try to block our marshmallows!"
           ],
           "text_fr": [
-            "Par le saint de tous les sucres ! Un terrible ennemi vient d’apparaitre !",
-            "Il a la pate epaisse et son armee des 4 singes bloqueurs ! ",
+            "Par le saint de tous les sucres ! Un terrible ennemi vient d’apparaitre et il a la pate epaisse! ",
             "Tapez sur les singes qui essaieront de bloquer nos marshmallows !"
           ]
         }
@@ -504,7 +501,6 @@
           "reload": 1.5,
           "speed": 0.75,
           "xp": 3,
-          "skin": "normal",
           "holy_sugar": {
             "prob": 0.05,
             "number": 1,
@@ -520,7 +516,6 @@
           "reload": 1.5,
           "speed": 0.75,
           "xp": 7,
-          "skin": "soy",
           "holy_sugar": {
             "prob": 0.05,
             "number": 1,

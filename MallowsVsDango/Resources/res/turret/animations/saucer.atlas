@@ -1,153 +1,153 @@
 
 saucer.png
-size: 512,64
+size: 1024,1024
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 blue_body
-  rotate: true
-  xy: 2, 2
-  size: 60, 65
-  orig: 60, 65
+  rotate: false
+  xy: 2, 588
+  size: 400, 434
+  orig: 400, 434
   offset: 0, 0
   index: -1
 cap_saucer
   rotate: false
-  xy: 131, 28
-  size: 60, 34
-  orig: 60, 34
+  xy: 404, 798
+  size: 400, 224
+  orig: 400, 224
   offset: 0, 0
   index: -1
 choco
   rotate: false
-  xy: 225, 31
-  size: 7, 6
-  orig: 7, 6
+  xy: 575, 383
+  size: 48, 41
+  orig: 48, 41
   offset: 0, 0
   index: -1
 choco_mouth
   rotate: false
-  xy: 406, 48
-  size: 30, 14
-  orig: 30, 14
+  xy: 806, 829
+  size: 200, 92
+  orig: 200, 92
   offset: 0, 0
   index: -1
 choco_spit
   rotate: false
-  xy: 102, 14
-  size: 25, 10
-  orig: 25, 10
+  xy: 191, 135
+  size: 164, 69
+  orig: 164, 69
   offset: 0, 0
   index: -1
 left_arm_saucer
-  rotate: true
-  xy: 193, 39
-  size: 23, 37
-  orig: 23, 37
+  rotate: false
+  xy: 556, 549
+  size: 150, 247
+  orig: 150, 247
   offset: 0, 0
   index: -1
 left_arm_saucer_choco
-  rotate: true
-  xy: 271, 34
-  size: 28, 32
-  orig: 28, 32
+  rotate: false
+  xy: 2, 134
+  size: 187, 211
+  orig: 187, 211
   offset: 0, 0
   index: -1
 left_eye_bomber
   rotate: false
-  xy: 69, 9
-  size: 31, 15
-  orig: 31, 15
+  xy: 806, 923
+  size: 204, 99
+  orig: 204, 99
   offset: 0, 0
   index: -1
 left_eye_saucer
   rotate: false
-  xy: 305, 48
-  size: 32, 14
-  orig: 32, 14
+  xy: 191, 253
+  size: 211, 92
+  orig: 211, 92
   offset: 0, 0
   index: -1
 mout_choco_2
   rotate: false
-  xy: 327, 38
-  size: 19, 8
-  orig: 19, 8
+  xy: 575, 491
+  size: 126, 56
+  orig: 126, 56
   offset: 0, 0
   index: -1
 mouth_saucer
-  rotate: true
-  xy: 438, 51
-  size: 11, 17
-  orig: 11, 17
+  rotate: false
+  xy: 69, 18
+  size: 75, 114
+  orig: 75, 114
   offset: 0, 0
   index: -1
 mouth_saucer_spit2
   rotate: false
-  xy: 457, 51
-  size: 12, 11
-  orig: 12, 11
+  xy: 404, 267
+  size: 82, 73
+  orig: 82, 73
   offset: 0, 0
   index: -1
 mouth_spit
-  rotate: false
-  xy: 471, 53
-  size: 11, 9
-  orig: 11, 9
+  rotate: true
+  xy: 146, 57
+  size: 75, 60
+  orig: 75, 60
   offset: 0, 0
   index: -1
 pupil_eye_bomber
   rotate: false
-  xy: 484, 53
-  size: 11, 9
-  orig: 11, 9
+  xy: 575, 426
+  size: 74, 63
+  orig: 74, 63
   offset: 0, 0
   index: -1
 right_arm_saucer
-  rotate: true
-  xy: 232, 39
-  size: 23, 37
-  orig: 23, 37
+  rotate: false
+  xy: 404, 548
+  size: 150, 248
+  orig: 150, 248
   offset: 0, 0
   index: -1
 right_eye_bomber
-  rotate: false
-  xy: 373, 47
-  size: 31, 15
-  orig: 31, 15
+  rotate: true
+  xy: 404, 342
+  size: 204, 99
+  orig: 204, 99
   offset: 0, 0
   index: -1
 right_eye_saucer
-  rotate: false
-  xy: 339, 48
-  size: 32, 14
-  orig: 32, 14
+  rotate: true
+  xy: 708, 585
+  size: 211, 92
+  orig: 211, 92
   offset: 0, 0
   index: -1
 shadow
   rotate: false
-  xy: 69, 26
-  size: 60, 36
-  orig: 60, 36
+  xy: 2, 347
+  size: 400, 239
+  orig: 400, 239
   offset: 0, 0
   index: -1
 smile_bomber
-  rotate: false
-  xy: 102, 2
-  size: 25, 10
-  orig: 25, 10
+  rotate: true
+  xy: 505, 382
+  size: 164, 68
+  orig: 164, 68
   offset: 0, 0
   index: -1
 spit
-  rotate: true
-  xy: 305, 36
-  size: 10, 20
-  orig: 10, 20
+  rotate: false
+  xy: 2, 2
+  size: 65, 130
+  orig: 65, 130
   offset: 0, 0
   index: -1
 underline_eye_saucer
   rotate: false
-  xy: 193, 30
-  size: 30, 7
-  orig: 30, 7
+  xy: 191, 206
+  size: 199, 45
+  orig: 199, 45
   offset: 0, 0
   index: -1

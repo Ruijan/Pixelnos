@@ -20,13 +20,14 @@ Dango::Dango(std::vector<Cell*> npath, int nlevel) : path(npath), targetedCell(0
 }
 
 Dango::~Dango() { 
-	removeAllChildren();
 	for (auto& tower : targeting_towers) {
 		tower->removeTarget(this);
 	}
 	for (auto& attack : targeting_attacks) {
 		attack->removeTarget(this);
 	}
+	state = DEAD;
+	removeAllChildren();
 	//std::cerr << "Dango Destroyed ! confirmed !" << std::endl;
 }
 
@@ -94,7 +95,7 @@ void Dango::initFromConfig() {
 		}*/
 		//log("%d event: %s, %d, %f, %s", trackIndex, event->data->name, event->intValue, event->floatValue, event->stringValue);
 	});
-	skeleton->setSkin(config["level"][level]["skin"].asString());
+	skeleton->setSkin("normal_" + Value(level + 1).asString());
 	updateAnimation();
 	/*auto anim = skeleton->setAnimation(0,"jump_side",true);
 	skeleton->setTimeScale(1 / (getSpeed() * anim->animation->duration));*/
@@ -392,7 +393,11 @@ double Dango::getSpeed(){
 
 void Dango::addEffect(Effect* effect) {
 	effects.push_back(effect);
-	addChild(effect,3);
+	if (effect->getAnimationName() != "") {
+		skeleton->setSkin(effect->getAnimationName() + "_" + Value(level + 1).asString());
+		effect->setVisible(false);
+	}
+	addChild(effect, 3);
 }
 
 int Dango::addSpeedModifier(std::pair<double, Effect*> speed_modifier) {
@@ -410,7 +415,19 @@ void Dango::addTargetingAttack(Attack* attack) {
 }
 
 void Dango::removeSpeedModifier(int id) {
+	bool change_anim(true);
+	if (m_speed[id].second->getAnimationName() != "") {
+		for (auto modifier : m_speed) {
+			if (modifier.second.second->getAnimationName() != "" && modifier.first != id) {
+				change_anim = false;
+			}
+		}
+	}
+	if (change_anim && state != DEAD) {
+		skeleton->setSkin("normal_" + Value(level + 1).asString());
+	}
 	m_speed.erase(m_speed.find(id));
+
 	//m_speed.erase(std::remove(m_speed.begin(), m_speed.end(), id), m_speed.end());
 }
 

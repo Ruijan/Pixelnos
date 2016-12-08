@@ -8,8 +8,8 @@
 USING_NS_CC;
 
 // EFFECT CLASS
-Effect::Effect(Dango* ntarget, float nduration): target(ntarget),
-duration(nduration), timer(0){
+Effect::Effect(Dango* ntarget, float nduration, std::string new_name): target(ntarget),
+duration(nduration), timer(0), name(new_name){
 }
 
 bool Effect::initWithFileName(std::string image) {
@@ -18,6 +18,10 @@ bool Effect::initWithFileName(std::string image) {
 
 Effect::~Effect() {
 
+}
+
+std::string Effect::getAnimationName() {
+	return name;
 }
 
 void Effect::update(float dt) {
@@ -34,16 +38,16 @@ bool Effect::willBeDone(double delay) {
 
 
 // DEEPWOUND CLASS
-DeepWound::DeepWound(Dango* ntarget, float nduration, float ndmg_percent):
-Effect(ntarget, nduration), dmg_percent(ndmg_percent){
+DeepWound::DeepWound(Dango* ntarget, float nduration, float ndmg_percent, std::string animation_name):
+Effect(ntarget, nduration, animation_name), dmg_percent(ndmg_percent){
 }
 
 DeepWound::~DeepWound() {
 	target->removeDamageModifier(id);
 }
 
-DeepWound* DeepWound::create(Dango* ntarget, float duration, float dmg_percent) {
-	DeepWound* wound = new DeepWound(ntarget, duration, dmg_percent);
+DeepWound* DeepWound::create(Dango* ntarget, float duration, float dmg_percent, std::string animation_name) {
+	DeepWound* wound = new DeepWound(ntarget, duration, dmg_percent, animation_name);
 	if (wound->Effect::initWithFile("res/turret/deepwound.png")) {
 		wound->autorelease();
 		return wound;
@@ -66,14 +70,14 @@ void DeepWound::applyModifierToTarget() {
 
 
 // BURN CLASS
-Burn::Burn(Dango* ntarget, float nduration, float ndmg) :
-	Effect(ntarget, nduration), dmg(ndmg), timer_dmg(0){
+Burn::Burn(Dango* ntarget, float nduration, float ndmg, std::string animation_name) :
+	Effect(ntarget, nduration, animation_name), dmg(ndmg), timer_dmg(0){
 }
 
 Burn::~Burn() {}
 
-Burn* Burn::create(Dango* ntarget, float duration, float dmg_percent) {
-	Burn* burn = new Burn(ntarget, duration, dmg_percent);
+Burn* Burn::create(Dango* ntarget, float duration, float dmg_percent, std::string animation_name) {
+	Burn* burn = new Burn(ntarget, duration, dmg_percent, animation_name);
 	if (burn->Effect::initWithFile("res/turret/burn.png")) {
 		burn->autorelease();
 
@@ -98,8 +102,8 @@ float Burn::getDamage() {
 
 
 // SLOW CLASS
-Slow::Slow(Dango* ntarget, float nduration, float nslow) :
-	Effect(ntarget, nduration), slow_percent(nslow) {
+Slow::Slow(Dango* ntarget, float nduration, float nslow, std::string animation_name) :
+	Effect(ntarget, nduration, animation_name), slow_percent(nslow) {
 }
 
 Slow::~Slow() {
@@ -108,8 +112,8 @@ Slow::~Slow() {
 	}
 }
 
-Slow* Slow::create(Dango* ntarget, float duration, float slow_percent) {
-	Slow* slow = new Slow(ntarget, duration, slow_percent);
+Slow* Slow::create(Dango* ntarget, float duration, float slow_percent, std::string animation_name) {
+	Slow* slow = new Slow(ntarget, duration, slow_percent, animation_name);
 	if (slow->Effect::initWithFile("res/turret/burn.png")) {
 		Size visibleSize = Director::getInstance()->getVisibleSize();
 

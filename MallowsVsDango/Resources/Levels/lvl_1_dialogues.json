@@ -12,7 +12,7 @@
       "side": "LEFT",
       "speaker": "res/turret/GeneralMashmalow.png",
       "text_en": [
-        "General Fraise, sweet to meet you captain.",
+        "I am General Fraise, sweet to meet you captain.",
         "To reward your ineptitude, you have been assigned to the guard of the border between the Dango's Empire and ours.",
         "More than 150 years of peace and... Wait... A mail from the scouts... Mnnnniumnaemn ... ... ",
         "By the Holy Sugar! We are invaded by the Dangos!",
@@ -21,7 +21,7 @@
       "text_fr": [
         "Grand Général Strawberry, ensucré de faire votre connaissance, capitaine.",
         "Pour récompenser votre incompétence, vous avez été assigné à la surveillance de la frontière entre l’empire Dangos et le nôtre.",
-        "Plus de 150 ans de paix et de... Attendez... Un message de mes éclaireurs... Mnnnniumnaemn... ...",
+        "Plus de 150 ans de paix et de... Attendez... Un message de mes éclaireurs... Mumble mumble... ...",
         "Par le sucre de tous les saints ! Nous sommes envahis par les Dangos ! ",
         "Protégez la frontière, Capitaine ! Je compte sur vous !"
       ]
@@ -35,11 +35,11 @@
       "side": "RIGHT",
       "speaker": "res/turret/general.png",
       "text_en": [
-        "Vice-captain Jack Bomber, I am here to second you",
+        "I am Lieutenant Jack Bomber, I am here to assist you",
         "From my deduction, the dangos will follow this path.",
-        "Put our troops by draging the image of the Bomber from the right of the screen to an available cell."      ],
+        "Place our troops by draging the image of the Bomber from the right of the screen to an available cell."      ],
       "text_fr": [
-        "Vice-capitaine Jean, classe Bombeur, je suis ici pour vous seconder.",
+        "Lieutenant Jean, classe Bombeur, je suis ici pour vous seconder.",
         "D’après mes plans, les dangos suivront ce chemin-la.",
         "Placez nos troupes en glissant l’image du Marshmallow Bombeur à droite de l’écran sur l’une des cases disponibles."
       ]

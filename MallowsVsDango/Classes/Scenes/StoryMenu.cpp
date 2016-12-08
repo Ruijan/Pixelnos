@@ -156,7 +156,7 @@ bool StoryMenu::init(){
 	ui::Button* achivements = ui::Button::create("res/buttons/menu_button_score.png");
 	achivements->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::EDITOR);
+			//((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::EDITOR);
 		}
 	});
 	achivements->setScale(visibleSize.width / 8 / achivements->getContentSize().width);
@@ -165,6 +165,7 @@ bool StoryMenu::init(){
 		level_editor->getContentSize().width * level_editor->getScaleX() - offset_horizontal, offset_vertical));
 #else
 	achivements->setPosition(Vec2(visibleSize.width - offset_horizontal, offset_vertical));
+	level_editor->setVisible(false);
 #endif
 	achivements->setAnchorPoint(Vec2(1.f, 0.f));
 	getChildByName("interface")->addChild(achivements);

@@ -561,6 +561,7 @@ void Config::addTrackingEvent(TrackingEvent n_event) {
 void Config::addLevelTrackingEvent(LevelTrackingEvent n_event) {
 	// create a new level tracking with the new progression of the user
 	Json::Value c_event;
+	c_event["level_id_bdd"] = n_event.level_id_bdd;
 	c_event["level_id"] = n_event.level_id;
 	c_event["world_id"] = n_event.world_id;
 	c_event["state"] = n_event.state;
@@ -691,7 +692,7 @@ void Config::saveLevelTrackingIntoDB(Json::Value tracking_conf, const cocos2d::n
 			"POST update tracking");
 	}
 	else {
-		request += "create_level_tracking&id_user=" + rootSav["id_player"].asString() +
+		request += "create_level_tracking&id_user=" + rootSav["id_player"].asString() + "&level_id_bdd=" + tracking_conf["level_id_bdd"].asString() +
 			"&level_id=" + tracking_conf["level_id"].asString() + "&world_id=" + tracking_conf["world_id"].asString() + 
 			"&state=" + tracking_conf["state"].asString() + "&holy_sugar=" + tracking_conf["holy_sugar"].asString() + 
 			"&duration=" + tracking_conf["duration"].asString() + "&date_time=" + tracking_conf["time"].asString() + 
@@ -971,4 +972,16 @@ void Config::setUsername(std::string username) {
 	rootSav["username"] = username;
 	save();
 	user_need_save = true;
+}
+
+int Config::getLevelBDDID(int world_id, int level_id) {
+	std::string level_name = root["worlds"][world_id]["levels"][level_id]["path_level"].asString();
+	level_name = level_name.substr(0, level_name.find('.'));
+	for (auto& level : rootSav["local_editor_levels"]) {
+		if (level["name"].asString() == level_name) {
+			return level["id_bdd"].asInt();
+		}
+	}
+	log("Couldn't find the level");
+	return 0;
 }

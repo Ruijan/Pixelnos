@@ -56,8 +56,11 @@ void Saucer::attack(){
 		spit->setDamagesId(attacked_enemies[target]);
 		attacked_enemies.erase(attacked_enemies.find(target));
 		target->addTargetingAttack(spit);
-		spit->setPosition(getPosition() - Vec2(0, Cell::getCellWidth() / 2 * getScale()));
-		spit->setScale(0.020 * visibleSize.width / spit->getContentSize().width);
+		spit->setPosition(getPosition() + skeleton->getPosition() + Vec2(skeleton->findBone("spit")->worldX, skeleton->findBone("spit")->worldY));
+		spit->setScale(0.015 * visibleSize.width / spit->getContentSize().width);
+
+		Vec2 direction = target->getPosition() - spit->getPosition();
+		//spit->setRotation(180 * direction.getAngle() / M_PI);
 		SceneManager::getInstance()->getGame()->getLevel()->addAttack(spit);
 		if (target != nullptr) {
 			target->removeTargetingTower(this);

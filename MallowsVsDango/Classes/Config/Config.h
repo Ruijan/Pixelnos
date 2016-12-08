@@ -393,6 +393,11 @@ public:
 	*/
 	void setUsername(std::string username);
 
+	/**
+	* @brief Return the equivalent bdd id of a particular level (useful for keeping track of which level is played)
+	*/
+	int getLevelBDDID(int world_id, int level_id);
+
 };
 
 #endif

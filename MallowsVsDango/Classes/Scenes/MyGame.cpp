@@ -264,6 +264,7 @@ void MyGame::addActionToTracker(Json::Value action) {
 }
 
 void MyGame::createNewTracker() {
+	l_event.level_id_bdd = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLevelBDDID(id_world, id_level);
 	l_event.level_id = id_level;
 	l_event.world_id = id_world;
 	l_event.holy_sugar = cLevel->getHolySugar();

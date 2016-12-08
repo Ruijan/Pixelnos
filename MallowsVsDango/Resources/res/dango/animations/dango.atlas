@@ -1,55 +1,76 @@
 
 dango.png
-size: 256,64
+size: 1024,1024
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-blush
+blue_body
   rotate: false
-  xy: 184, 20
-  size: 45, 42
-  orig: 45, 42
+  xy: 2, 659
+  size: 400, 329
+  orig: 400, 329
+  offset: 0, 0
+  index: -1
+blush
+  rotate: true
+  xy: 583, 288
+  size: 297, 282
+  orig: 297, 282
+  offset: 0, 0
+  index: -1
+choco_body
+  rotate: false
+  xy: 404, 659
+  size: 400, 329
+  orig: 400, 329
   offset: 0, 0
   index: -1
 dango_splash
+  rotate: true
+  xy: 332, 257
+  size: 400, 249
+  orig: 400, 249
+  offset: 0, 0
+  index: -1
+dango_splash_blue
   rotate: false
-  xy: 64, 25
-  size: 60, 37
-  orig: 60, 37
+  xy: 2, 5
+  size: 401, 250
+  orig: 401, 250
   offset: 0, 0
   index: -1
 eyes
-  rotate: true
-  xy: 2, 3
-  size: 8, 28
-  orig: 8, 28
+  rotate: false
+  xy: 951, 803
+  size: 50, 185
+  orig: 50, 185
   offset: 0, 0
   index: -1
 green_tea_cap
-  rotate: false
-  xy: 64, 2
-  size: 60, 21
-  orig: 60, 21
+  rotate: true
+  xy: 806, 587
+  size: 401, 143
+  orig: 401, 143
   offset: 0, 0
   index: -1
 pink_body
-  rotate: false
-  xy: 2, 13
-  size: 60, 49
-  orig: 60, 49
+  rotate: true
+  xy: 2, 257
+  size: 400, 328
+  orig: 400, 328
   offset: 0, 0
   index: -1
 reflect
   rotate: false
-  xy: 126, 9
-  size: 21, 13
-  orig: 21, 13
+  xy: 780, 200
+  size: 139, 86
+  orig: 139, 86
   offset: 0, 0
   index: -1
 soy_cap
   rotate: false
-  xy: 126, 24
-  size: 56, 38
-  orig: 56, 38
+  xy: 405, 2
+  size: 373, 253
+  orig: 373, 253
   offset: 0, 0
   index: -1

@@ -246,7 +246,7 @@ void InterfaceGame::addEvents()
 		}
 		else if(state == TURRET_CHOSEN){
 			if( !rectrightpanel.containsPoint(p)){
-				if(!isOnTower(p)){
+				if (selected_turret->getPosition() != Vec2(0, 0)) {
 					builtCallback(nullptr);
 					state = State::IDLE;
 					selected_turret->displayRange(false);
@@ -256,6 +256,15 @@ void InterfaceGame::addEvents()
 						getChildByName("start")->setVisible(true);
 						getChildByName("title")->setVisible(true);
 						getChildByName("advice")->setVisible(true);
+					}
+				}
+				else {
+					selected_turret->destroyCallback(this);
+					removeTower();
+					if (game_state == TITLE) {
+						getChildByName("start")->setVisible(true);
+						getChildByName("advice")->setVisible(true);
+						getChildByName("title")->setVisible(true);
 					}
 				}
 			}

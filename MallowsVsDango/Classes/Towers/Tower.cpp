@@ -1178,16 +1178,16 @@ void Tower::updateInformationLayout(ui::Layout* layout) {
 void Tower::updateDirection() {
 	Vec2 vec = target->getPosition() - getPosition();
 	float angle = vec.getAngle();
-	if (abs(angle) <= M_PI_4 / 2) {
+	if (abs(angle) <= M_PI_4) {
 		direction = RIGHT;
 	}
-	else if (abs(angle) >= 7 * M_PI_4 / 2) {
+	else if (abs(angle) >= 3 * M_PI_4) {
 		direction = LEFT;
 	}
-	else if (angle < -M_PI_4 / 2 && angle > -7 * M_PI_4 / 2) {
+	else if (angle < -M_PI_4 && angle > -3 * M_PI_4) {
 		direction = DOWN;
 	}
-	else if (angle > M_PI_4 / 2 && angle < 7 * M_PI_4 / 2) {
+	else if (angle > M_PI_4 && angle < 3 * M_PI_4) {
 		direction = UP;
 	}
 }

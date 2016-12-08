@@ -10,6 +10,7 @@
 
 
 struct LevelTrackingEvent {
+	int level_id_bdd;
 	int level_id;
 	int world_id;
 	std::string state;
