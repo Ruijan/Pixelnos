@@ -38,17 +38,6 @@ const Json::Value& Config::getSaveValues() const{
 	return rootSav;
 }
 
-Json::Value const Config::findSkill(int id) const {
-	for (unsigned int i(0); i < rootSav["skill"].size(); ++i) {
-		for (unsigned int j(0); j < rootSav["skill"][i].size(); ++j) {
-			if (rootSav["skill"][i][j]["id"].asInt() == id) {
-				return rootSav["skill"][i][j];
-			}
-		}
-	}
-	return rootSav;
-}
-
 bool Config::isSaveFile() const{
 	return save_file;
 }

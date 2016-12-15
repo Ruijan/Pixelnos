@@ -42,8 +42,7 @@ void Tower::initFromConfig() {
 	xp = save["towers"][config["name"].asString()]["exp"].asInt() + 
 		(SceneManager::getInstance())->getGame()->getLevel()->getTowerXP(config["name"].asString());
 	level_max = save["towers"][config["name"].asString()]["max_level"].asInt();
-	limit_enabled = ((AppDelegate*)Application::getInstance())->getConfigClass()->
-		findSkill(config["limit_skill_id"].asInt())["bought"].asBool();
+	limit_enabled = Skills::getSavedSkillFromID(config["limit_skill_id"].asInt())["bought"].asBool();
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	

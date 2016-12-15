@@ -39,7 +39,10 @@ bool Level::init()
 	}
 	
 	std::vector<Node*> elements;
+	
 	sugar = config["sugar"].asDouble();
+	sugar += Skills::getSavedSkillFromID(3)["bought"].asBool() ? Skills::getSkillFromID(3)["bonus"].asInt() : 0;
+	sugar += Skills::getSavedSkillFromID(9)["bought"].asBool() ? Skills::getSkillFromID(9)["bonus"].asInt() : 0;
 	experience = config["exp"].asInt();
 	if (save_file["c_level"].asInt() < (int)id + 1) {
 		holy_sugar = config["holy_sugar"].asInt();
@@ -207,8 +210,7 @@ float Level::getProgress() {
 }
 
 void Level::initWalls() {
-	if (((AppDelegate*)Application::getInstance())->getConfigClass()->
-		findSkill(1)["bought"].asBool()) {
+	if (Skills::getSavedSkillFromID(1)["bought"].asBool()) {
 		for (auto& path : paths) {
 			Wall* wall = Wall::create(2);
 			path[path.size() - 3]->setObject(wall);

@@ -8,9 +8,45 @@
       "en": "Exit Game",
       "fr": "Quitter le jeu"
     },
+    "requirements": {
+      "en": "Requirements: ",
+      "fr": "Conditions : "
+    },
+    "validate_part_1": {
+      "en": "Unlock ",
+      "fr": "Débloquer"
+    },
+    "validate_part_2": {
+      "en": " for ",
+      "fr": " pour "
+    },
+    "validate_part_3": {
+      "en": " holy sugar?",
+      "fr": " sucres sacrés ?"
+    },
+    "level": {
+      "en": "Level",
+      "fr": "Niveau"
+    },
+    "world": {
+      "en": "World",
+      "fr": "Monde"
+    },
+    "holy_sugar_spent": {
+      "en": "holy sugars spent",
+      "fr": "sucres sacrés dépensés"
+    },
+    "skill_bought": {
+      "en": "unlocked",
+      "fr": "débloqué"
+    },
     "quit_info": {
       "en": "You have to restart the game in order to make the language switch work.",
       "fr": "Vous devez relancer le jeu afin que le changement de langue fonctionne."
+    },
+    "talents": {
+      "en": "Talents",
+      "fr": "Talents"
     },
     "credits": {
       "en": "Credits",
@@ -19,6 +55,14 @@
     "title_menu": {
       "en": "Title Screen",
       "fr": "Ecran Titre"
+    },
+    "waiting_talent": {
+      "en": "Tap on a talents to display information",
+      "fr": "Tapoter sur un talent pour afficher une description"
+    },
+    "confirm": {
+      "en": "Confirm Unlocking",
+      "fr": "Confirmer Débloquage"
     },
     "username": {
       "en": "Enter a Username",
@@ -107,10 +151,6 @@
     "play_dialogues": {
       "en": "Play Dialogues",
       "fr": "Aff. Dialogues"
-    },
-    "level": {
-      "en": "Level",
-      "fr": "Niveau"
     },
     "locked": {
       "en": "Locked",
@@ -557,7 +597,7 @@
           "image": "res/dango/dangobese1.png",
           "name": "dangobese1",
           "reload": 5,
-          "speed": 0.5,
+          "speed": 0.35,
           "holy_sugar": {
             "prob": 0.075,
             "number": 1,
@@ -570,8 +610,8 @@
       ]
     },
     "dangorille": {
-      "skeleton": "res/dango/animations/dango.json",
-      "atlas": "res/dango/animations/dango.atlas",
+      "skeleton": "res/dango/animations/dangorilla.json",
+      "atlas": "res/dango/animations/dangorilla.atlas",
       "cellperanim": 0.55,
       "name": "Dangorille",
       "description_en": "",
@@ -599,7 +639,7 @@
               "Singes"
             ]
           },
-          "speed": 1,
+          "speed": 0.65,
           "xp": 15,
           "skin": "soy",
           "holy_sugar": {
@@ -822,7 +862,25 @@
             "res/levels/objects/forest.png"
           ],
           "x": -0.03,
-          "y": 0
+          "y": 0,
+          "challenges": [
+            {
+              "name": "Untouchable",
+              "int_value": 3,
+              "str_value": ""
+            },
+            {
+              "name": "Misanthrope",
+              "int_value": -1,
+              "str_value": ""
+
+            },
+            {
+              "name": "Stingy",
+              "int_value": 250,
+              "str_value": ""
+            }
+          ]
         },
         {
           "id": 6,
@@ -836,7 +894,7 @@
           "path_level": "Level_6.json",
           "musics": [ "music/On-Tiptoe.mp3.mp3" ],
           "reward": "res/levels/plan1.png",
-          "sugar": 90,
+          "sugar": 400,
           "type":  "normal",
           "tileset": [
             "res/levels/objects/ground.plist",
@@ -967,6 +1025,143 @@
       "res/levels/wall_wood_1.png"
     ]
   },
+  "talents": [
+    {
+      "name_en": "Wall Lvl.1",
+      "name_fr": "Mur Nv.1",
+      "sprite_enabled": "res/buttons/Skills/wall.png",
+      "sprite_disabled": "res/buttons/Skills/lock.png",
+      "description_en": "Place a wall at the end of each path. Dangos will attack this wall instead of moving. \n\nThe wall can stand 3 hits.",
+      "description_fr": "Place un mur au bout de chaque chemin. Les Dangos attaqueront ce mur plutôt que d’avancer. \n\nLe mur peut encaisser 3 attaques.",
+      "condition_id": -1,
+      "condition_sugar": -1,
+      "condition_level": 4,
+      "condition_world": -1,
+      "bonus": 3,
+      "id": 1,
+      "cost": 5
+    },
+    {
+      "name_en": "Life Lvl.1",
+      "name_fr": "Vie Nv.1",
+      "sprite_enabled": "res/buttons/Skills/life.png",
+      "sprite_disabled": "res/buttons/Skills/lock.png",
+      "description_en": "Add 3 life points to the base number of life points. \n\nYou can let more Dangos pass through your defenses before failing the mission.",
+      "description_fr": "Ajoute 3 points de vie aux nombre de points de vie de base. \n\nVous pourrez laisser passer plus de Dangos avant que la mission soit un échec.",
+      "condition_id": 1,
+      "condition_sugar": -1,
+      "condition_level": 4,
+      "condition_world": -1,
+      "bonus": 3,
+      "id": 2,
+      "cost": 10
+    },
+    {
+      "name_en": "Sugar Lvl.1",
+      "name_fr": "Sucre Nv.1",
+      "sprite_enabled": "res/buttons/Skills/sugar.png",
+      "sprite_disabled": "res/buttons/Skills/lock.png",
+      "description_en": "Increase by 30 the number of sugars available at the beginning of the level.",
+      "description_fr": "Augmente la quantité de sucre disponible en début de niveau de 30.",
+      "condition_id": 1,
+      "condition_sugar": -1,
+      "condition_level": 4,
+      "condition_world": -1,
+      "bonus": 30,
+      "id": 3,
+      "cost": 10
+    },
+    {
+      "name_en": "Bomber Rage Lvl.1",
+      "name_fr": "Rage du Bombeur Nv.1",
+      "sprite_enabled": "res/buttons/Skills/sugar.png",
+      "sprite_disabled": "res/buttons/Skills/lock.png",
+      "description_en": "Unlock the Bomber rage. Every attack increase the Bomber's rage gauge. \n\nOnce filled, you can release it to increase the attack speed (x2) of all the Bomber towers for 5s.",
+      "description_fr": " Débloque la rage du Bombeur. Chaque attaque augmente la jauge de rage du Bombeur. \n\nUne fois à son maximum, vous pouvez libérer sa rage pour augmenter la vitesse d’attaque (x2) de toutes les tourelles de type bombeur pendant 5s.",
+      "condition_id": -1,
+      "condition_sugar": 10,
+      "condition_level": 6,
+      "condition_world": -1,
+      "bonus": 5,
+      "id": 4,
+      "cost": 5
+    },
+    {
+      "name_en": "Saucer Rage Lvl.1",
+      "name_fr": "Rage du Sauceur Nv.1",
+      "sprite_enabled": "res/buttons/Skills/sugar.png",
+      "sprite_disabled": "res/buttons/Skills/lock.png",
+      "description_en": "Unlock the Saucer rage. Every attack increase the Saucer's rage gauge. \n\nOnce filled, you can release it. Every Saucer tower will throw chocospits that stun enemies for 5s.",
+      "description_fr": " Débloque la rage du Sauceur. Chaque attaque augmente la jauge de rage du Sauceur. \n\nUne fois à son maximum, vous pouvez activer sa rage. Toutes les tourelles de type Sauceur lancent des attaques qui immobilisent les ennemis pendant 5s.",
+      "condition_id": -1,
+      "condition_sugar": 10,
+      "condition_level": 0,
+      "condition_world": 1,
+      "bonus": 5,
+      "id": 5,
+      "cost": 5
+    },
+    {
+      "name_en": "Cutter Rage Lvl.1",
+      "name_fr": "Rage du Cutteur Nv.1",
+      "sprite_enabled": "res/buttons/Skills/sugar.png",
+      "sprite_disabled": "res/buttons/Skills/lock.png",
+      "description_en": "Unlock the Cutter rage. Every attack increase the Cutter's rage gauge. \n\nOnce filled, you can release it. Every Cutter tower will deal deep wounds (+50% damage per attack, +100% if lvl 4) for 5s.",
+      "description_fr": " Débloque la rage du Cutteur. Chaque attaque augmente la jauge de rage du Cutteur. Une fois à son maximum, vous pouvez activer sa rage. Toutes les tourelles de type Cutteur infligeront des attaques profondes (+50% de dégâts par attaque, +100% si la tourelle inflige déjà ces attaques) for 5s.",
+      "condition_id": -1,
+      "condition_sugar": 10,
+      "condition_level": 0,
+      "condition_world": 1,
+      "id": 6,
+      "cost": 5
+    },
+    {
+      "name_en": "Wall Lvl.2",
+      "name_fr": "Mur Nv.2",
+      "sprite_enabled": "res/buttons/Skills/wall.png",
+      "sprite_disabled": "res/buttons/Skills/lock.png",
+      "description_en": "Place a wall at the end of each path. Dangos will attack this wall instead of moving. \n\nThe wall can stand 3 hits.",
+      "description_fr": "Place un mur au bout de chaque chemin. Les Dangos attaqueront ce mur plutôt que d’avancer. \n\nLe mur peut encaisser 3 attaques.",
+      "condition_id": -1,
+      "condition_sugar": -1,
+      "condition_level": -1,
+      "condition_world": 2,
+      "bonus": 3,
+      "id": 7,
+      "cost": 5
+    },
+    {
+      "name_en": "Life Lvl.2",
+      "name_fr": "Vie Nv.2",
+      "sprite_enabled": "res/buttons/Skills/life.png",
+      "sprite_disabled": "res/buttons/Skills/lock.png",
+      "description_en": "Add 3 life points to the base number of life points. \n\nYou can let more Dangos pass through your defenses before failing the mission.",
+      "description_fr": "Ajoute 3 points de vie aux nombre de points de vie de base. \n\nVous pourrez laisser passer plus de Dangos avant que la mission soit un échec.",
+      "condition_id": 1,
+      "condition_sugar": -1,
+      "condition_level": -1,
+      "condition_world": 2,
+      "bonus": 3,
+      "id": 8,
+      "cost": 10
+    },
+    {
+      "name_en": "Sugar Lvl.2",
+      "name_fr": "Sucre Nv.2",
+      "sprite_enabled": "res/buttons/Skills/sugar.png",
+      "sprite_disabled": "res/buttons/Skills/lock.png",
+      "description_en": "Increase by 30 the number of sugars available at the beginning of the level.",
+      "description_fr": "Augmente la quantité de sucre disponible en début de niveau de 30.",
+      "condition_id": 1,
+      "condition_sugar": -1,
+      "condition_level": -1,
+      "condition_world": 2,
+      "bonus": 30,
+      "id": 9,
+      "cost": 10
+    }
+
+  ],
   "skills": [
     [
       {

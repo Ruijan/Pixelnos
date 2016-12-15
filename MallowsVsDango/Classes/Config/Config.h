@@ -76,11 +76,6 @@ public:
 	const Json::Value&  getSaveValues() const;
 
 	/**
-	* @brief Find a skill and return its Json entry.
-	*/
-	Json::Value const findSkill(int id) const;
-
-	/**
 	* @brief Save the configuration, the skills and so on.
 	* @param nroot. Set the json map of the saving file.
 	*/

@@ -1,0 +1,83 @@
+
+dangorilla.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+blush_dangorilla
+  rotate: false
+  xy: 562, 626
+  size: 44, 30
+  orig: 44, 30
+  offset: 0, 0
+  index: -1
+body_dangorilla
+  rotate: false
+  xy: 2, 611
+  size: 558, 411
+  orig: 558, 411
+  offset: 0, 0
+  index: -1
+butt_dangorilla
+  rotate: false
+  xy: 2, 123
+  size: 300, 153
+  orig: 300, 153
+  offset: 0, 0
+  index: -1
+call_dangorilla
+  rotate: true
+  xy: 562, 658
+  size: 82, 253
+  orig: 82, 253
+  offset: 0, 0
+  index: -1
+choco_cap_dangorilla
+  rotate: false
+  xy: 2, 278
+  size: 517, 331
+  orig: 517, 331
+  offset: 0, 0
+  index: -1
+eye_dangorilla
+  rotate: false
+  xy: 304, 214
+  size: 26, 62
+  orig: 26, 62
+  offset: 0, 0
+  index: -1
+face_dangorilla
+  rotate: false
+  xy: 562, 742
+  size: 364, 280
+  orig: 364, 280
+  offset: 0, 0
+  index: -1
+mouth_call_dangorilla
+  rotate: false
+  xy: 2, 26
+  size: 80, 95
+  orig: 80, 95
+  offset: 0, 0
+  index: -1
+mouth_dangorilla
+  rotate: true
+  xy: 521, 533
+  size: 76, 16
+  orig: 76, 16
+  offset: 0, 0
+  index: -1
+nose_dangorilla
+  rotate: false
+  xy: 2, 2
+  size: 36, 22
+  orig: 36, 22
+  offset: 0, 0
+  index: -1
+shine_dangorilla
+  rotate: true
+  xy: 928, 874
+  size: 148, 52
+  orig: 148, 52
+  offset: 0, 0
+  index: -1

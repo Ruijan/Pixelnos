@@ -75,16 +75,7 @@ void Dango::initFromConfig() {
 
 	});
 	skeleton->setCompleteListener([this](int trackIndex, int loopCount) {
-		std::string name = skeleton->getCurrent()->animation->name;
-		if (Value(skeleton->getCurrent()->animation->name).asString() == "blink" ||
-			Value(skeleton->getCurrent()->animation->name).asString() == "hello") {
-			skeleton->clearTracks();
-			skeleton->setAnimation(0, "still", false);
-			skeleton->addAnimation(0, "blink", false);
-		}
-		if (Value(skeleton->getCurrent()->animation->name).asString() == "death_normal") {
-			state = DEAD;
-		}
+		skeletonAnimationHandle();
 	});
 	skeleton->setEventListener([this](int trackIndex, spEvent* event) {
 		/*if (Value(event->data->name).asString() == "up") {
@@ -611,4 +602,15 @@ void Dango::updateEffects(float dt) {
 		}
 	}
 	effects.erase(std::remove(effects.begin(), effects.end(), nullptr), effects.end());
+}
+
+void Dango::skeletonAnimationHandle() {
+	std::string name = skeleton->getCurrent()->animation->name;
+	if (Value(name).asString() == "death_normal") {
+		endDyingAnimation();
+	}
+}
+
+void Dango::endDyingAnimation() {
+	state = DEAD;
 }

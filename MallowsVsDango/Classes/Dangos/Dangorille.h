@@ -16,6 +16,7 @@ public:
 	virtual ~Dangorille();
 	static Dangorille* create(std::vector<Cell*> npath, int nlevel);
 
+	virtual void skeletonAnimationHandle();
 	static Json::Value getConfig();
 	Json::Value getSpecConfig();
 	void attackSpe(float dt);
@@ -25,6 +26,7 @@ public:
 	void generateMonkeys();
 	void startAttackSpeAnimation();
 	void animateWords(std::vector<cocos2d::Label*> texts, int index);
+	virtual void endDyingAnimation();
 
 private:
 	double nb_monkeys;
@@ -32,6 +34,7 @@ private:
 	double attack_spe_reload_timer;
 	double attack_spe_reload_time;
 	Json::Value attack_spe_text;
+	bool attack_spe_done;
 };
 
 #endif

@@ -5,7 +5,7 @@
 USING_NS_CC;
 
 Dangorille::Dangorille(std::vector<Cell*> npath, int nlevel) :
-Dangosimple(npath, nlevel){
+Dangosimple(npath, nlevel), attack_spe_done(true){
 	auto config = getSpecConfig();
 	attack_spe_reload_time = config["level"][nlevel]["reload_spe"].asDouble();
 	nb_monkeys = config["level"][nlevel]["attack_spe"]["nb_monkeys"].asInt();
@@ -82,14 +82,14 @@ void Dangorille::update(float dt) {
 		}
 		break; 
 	case ATTACK_SPE:
-		if (shouldAttackSpe()) {
+		if (shouldAttackSpe() && attack_spe_done) {
 			attackSpe(dt);
-			state = MOVE;
-			attack_spe_reload_timer = 0;
+			attack_spe_done = false;
 		}
-		else {
+		else if(attack_spe_done){
 			state = MOVE;
 			updateAnimation();
+			attack_spe_reload_timer = 0;
 		}
 		break;
 	case MOVE:
@@ -281,8 +281,9 @@ void Dangorille::startAttackSpeAnimation() {
 		((SceneManager*)SceneManager::getInstance())->getGame()->getMenu()->removeChild(spe_attack);
 	});
 	auto call_monkeys = CallFunc::create([this]() {
-		this->generateMonkeys();
+		spTrackEntry* anim = skeleton->setAnimation(0, "call_monkeys", true);
 	});
+
 	auto animate_words = CallFunc::create([this, texts, index]() {
 		animateWords(texts, index);
 	});
@@ -325,4 +326,34 @@ void Dangorille::animateWords(std::vector<Label*> texts, int index) {
 			nullptr
 		));
 	}
+}
+
+void Dangorille::skeletonAnimationHandle() {
+	Dango::skeletonAnimationHandle();
+	std::string name = skeleton->getCurrent()->animation->name;
+	if (Value(name).asString() == "call_monkeys") {
+		generateMonkeys();
+		attack_spe_done = true;
+	}
+}
+
+void Dangorille::endDyingAnimation() {
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	
+	Sprite* liane = Sprite::create("res/dango/liane.png");
+	liane->setScale(Cell::getCellWidth() * 0.8 / liane->getContentSize().width);
+	liane->setPosition(Vec2(getPosition().x, visibleSize.height / 2 + liane->getContentSize().height / 2));
+	liane->setAnchorPoint(Vec2(0.5, 0));
+	auto* showAction = EaseBackIn::create(MoveTo::create(0.5f, getPosition()));
+	auto* hideAction = EaseBackIn::create(MoveTo::create(0.5f, Vec2(getPosition().x, visibleSize.height / 2 + liane->getContentSize().height / 2)));
+	((SceneManager*)SceneManager::getInstance())->getGame()->getMenu()->addChild(liane);
+
+	TargetedAction* liane_action_down = TargetedAction::create(liane, Sequence::createWithTwoActions(DelayTime::create(0.25f), showAction->clone()));
+	TargetedAction* liane_action_up = TargetedAction::create(liane, Sequence::createWithTwoActions(DelayTime::create(0.25f), hideAction->clone()));
+	TargetedAction* dangorille_action_up = TargetedAction::create(this, Sequence::createWithTwoActions(DelayTime::create(0.25f), hideAction->clone()));
+	auto switch_state = CallFunc::create([this]() {
+		Dango::endDyingAnimation();
+	});
+
+	runAction(Sequence::create(liane_action_down, Spawn::createWithTwoActions(liane_action_up, dangorille_action_up), switch_state, nullptr));
 }

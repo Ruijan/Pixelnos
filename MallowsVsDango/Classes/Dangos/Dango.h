@@ -55,10 +55,12 @@ public:
 
 	virtual void update(float dt);
 	virtual void updateAnimation();
+	virtual void skeletonAnimationHandle();
 	void pauseAnimation();
 	void resumeAnimation();
 	void updateDirection(cocos2d::Vec2 direction);
 	void updateEffects(float dt);
+	
 
 	void takeDamages(double damages);
 	void applyProspectiveDamages(int id_damage);
@@ -82,6 +84,8 @@ public:
 	void removeTargetingAttack(Attack* tower);
 
 	void die();	
+	virtual void endDyingAnimation();
+
 protected:
 	STATE state;
 	DIRECTION cDirection;

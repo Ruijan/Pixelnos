@@ -56,6 +56,7 @@ bool StoryMenu::init(){
 	worlds->setContentSize(Size(visibleSize.width,visibleSize.height));
 	worlds->setPosition(Vec2(visibleSize.width/2 - worlds->getContentSize().width / 2,
 		visibleSize.height/2 - worlds->getContentSize().height / 2));
+	worlds->setCustomScrollThreshold(visibleSize.width * 0.1f);
 
 	int worlds_count = ((AppDelegate*)Application::getInstance())->getConfig()["worlds"].size();
 
