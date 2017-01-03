@@ -104,6 +104,7 @@ protected:
 	void builtCallback(Ref* sender);
 	std::pair<std::string, cocos2d::Sprite*> getTowerFromPoint(cocos2d::Vec2 location);
 	void displayTowerMenu(cocos2d::Sprite*);
+	void endGame();
 };
 
 #endif

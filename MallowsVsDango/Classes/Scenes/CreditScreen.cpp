@@ -16,12 +16,12 @@ std::vector <std::string> credit_subtitle = {	"Game developers",
 												"Graphic helpers", 
 												"Acknowledgement", 
 												"Softwares & libraries" };
-std::vector <std::string> credit_content_subtitle = {	"Julien Rechenmann\nXianle Wang", 
-														"Julien Rechenmann\n Xianle Wang", 
-														"Kevin Passageon\n Julien Rechenmann",
+std::vector <std::string> credit_content_subtitle = {	"Julien Rechenmann", 
+														"Julien Rechenmann", 
+														"Julien Rechenmann",
 														"Bensound.com\nSoundeffect-lab.info\npurple-planet.com", 
 														"Subtlepatterns.com", 
-														"Thomas Czereba\nOmid Ahoura\nAnn Pongsakul\nGenia Shevchenko\nAvril Li",
+														"Charline Loisil\nXianle Wang\nKevin Passageon\nThomas Czereba\nOmid Ahoura\nAnn Pongsakul\nGenia Shevchenko\nAvril Li",
 														"Cocos2d-x\nTexturePacker\nTiledMap\nInkscape\nGIMP\nSpine" };
 
 bool CreditScreen::init(){
@@ -37,7 +37,7 @@ bool CreditScreen::init(){
 	getChildByName("background")->setScale(visibleSize.width / getChildByName("background")->getContentSize().width);
 
 	// Instanciation du bouton de retour à la selection des niveaux
-	auto return_to_game_button = ui::Button::create("res/buttons/back.png");
+	auto return_to_game_button = ui::Button::create("res/buttons/restart_button.png");
 	return_to_game_button->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			SceneManager::getInstance()->setScene(SceneManager::LEVELS);

@@ -30,8 +30,40 @@ Config::Config(std::string configfilename, std::string savename) :
 	srand(time(NULL));
 }
 
-const Json::Value& Config::getConfigValues() const{
-	return root;
+const Json::Value& Config::getConfigValues(ConfigType type) const{
+	switch (type) {
+	case GENERAL:
+		return conf_general;
+		break;
+	case TUTORIAL:
+		return conf_tutorial;
+		break;
+	case ADVICE:
+		return conf_advice;
+		break;
+	case TOWER:
+		return conf_tower;
+		break;
+	case DANGO:
+		return conf_dango;
+		break;
+	case BUTTON:
+		return conf_button;
+		break;
+	case CHALLENGE:
+		return conf_challenge;
+		break;
+	case TALENT:
+		return conf_talent;
+		break;
+	case LEVEL:
+		return conf_level;
+		break;
+	default:
+		return conf_general;
+		break;
+	}
+	
 }
 
 const Json::Value& Config::getSaveValues() const{
@@ -97,19 +129,39 @@ void Config::init(){
 	std::string levelTrackingFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + level_tracking_filename);
 
 	Json::Reader reader;
-	Json::Reader readerSav;
-	Json::Reader readerTracking;
-	Json::Reader readerLevelTracking;
 	bool parsingConfigSuccessful(false);
 	bool parsingSaveSuccessful(false);
 	bool parsingTrackingSuccessful(false);
 	bool parsingLevelTrackingSuccessful(false);
 
-	parsingConfigSuccessful = reader.parse(configFile, root, false);
-	parsingSaveSuccessful = readerSav.parse(saveFile, rootSav, false);
-	parsingTrackingSuccessful = readerTracking.parse(trackingFile, tracking, false);
-	parsingLevelTrackingSuccessful = readerTracking.parse(levelTrackingFile, level_tracking, false);
+	parsingConfigSuccessful = reader.parse(configFile, conf_general, false);
+	bool parsing_conf_towers(false), parsing_conf_advice(false), parsing_conf_dangos(false),
+		parsing_conf_challenges(false), parsing_conf_tutorials(false), parsing_conf_talents(false),
+		parsing_conf_levels(false), parsing_conf_buttons(false);
+	if (parsingConfigSuccessful) {
+		parsing_conf_towers = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tower"].asString()), conf_tower, false);
+		parsing_conf_advice = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["advice"].asString()), conf_advice, false);
+		parsing_conf_dangos = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["dango"].asString()), conf_dango, false);
+		parsing_conf_challenges = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["challenge"].asString()), conf_challenge, false);
+		parsing_conf_tutorials = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tutorial"].asString()), conf_tutorial, false);
+		parsing_conf_talents = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["talent"].asString()), conf_talent, false);
+		parsing_conf_levels = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["level"].asString()), conf_level, false);
+		std::string buttons = fileUtils->getStringFromFile(conf_general["configuration_files"]["button"].asString());
+		parsing_conf_buttons = reader.parse(buttons, conf_button, false);
+		if (!parsing_conf_towers || !parsing_conf_advice || !parsing_conf_dangos ||
+			!parsing_conf_challenges || !parsing_conf_tutorials || !parsing_conf_talents ||
+			!parsing_conf_levels || !parsing_conf_buttons) {
+			std::string error = reader.getFormattedErrorMessages();
+			log("ERROR : loading configuration files. %s", error.c_str());
+			return;
+		}
+	}
+	else {
+		std::string error = reader.getFormattedErrorMessages();
+		return;
+	}
 
+	parsingLevelTrackingSuccessful = reader.parse(levelTrackingFile, level_tracking, false);
 	if (parsingLevelTrackingSuccessful) {
 		progression_need_save = true;
 		Json::Value tracking_to_remove;
@@ -163,6 +215,8 @@ void Config::init(){
 			});
 		}
 	}
+	
+	parsingTrackingSuccessful = reader.parse(trackingFile, tracking, false);
 	if (parsingTrackingSuccessful) {
 		tracking_need_save = true;
 		Json::Value tracking_to_remove;
@@ -193,14 +247,10 @@ void Config::init(){
 		}
 	}
 
-	if (!parsingConfigSuccessful){
-		// report to the user the failure and their locations in the document.
-		std::string error = reader.getFormattedErrorMessages();
-		return;
-	}
+	parsingSaveSuccessful = reader.parse(saveFile, rootSav, false);
 	if (!parsingSaveSuccessful){
 		// report to the user the failure and their locations in the document.
-		std::string error = readerSav.getFormattedErrorMessages();
+		std::string error = reader.getFormattedErrorMessages();
 		rootSav["settings"]["always_grid"] = false;
 		rootSav["settings"]["moving_grid"] = true;
 		rootSav["settings"]["never_grid"] = false;
@@ -211,21 +261,21 @@ void Config::init(){
 		rootSav["c_level"] = 0;
 		rootSav["c_world"] = 0;
 		rootSav["username"] = "";
-		//rootSav["tutorials"] = root["tutorials"];
-		std::vector<std::string> tuto_names = root["tutorials"].getMemberNames();
+		//rootSav["tutorials"] = conf_tutorial;
+		std::vector<std::string> tuto_names = conf_tutorial.getMemberNames();
 		for (unsigned int i(0); i < tuto_names.size(); ++i) {
-			rootSav["tutorials"][tuto_names[i]]["state"] = root["tutorials"][tuto_names[i]]["state"];
+			rootSav["tutorials"][tuto_names[i]]["state"] = conf_tutorial[tuto_names[i]]["state"];
 		}
-		for (unsigned int i(0); i < root["towers"].size(); ++i) {
-			rootSav["towers"][root["towers"].getMemberNames()[i]]["exp"] = 0;
+		for (unsigned int i(0); i < conf_tower.size(); ++i) {
+			rootSav["towers"][conf_tower.getMemberNames()[i]]["exp"] = 0;
 
-			rootSav["towers"][root["towers"].getMemberNames()[i]]["max_level"] = 0;
-			if (root["towers"][root["towers"].getMemberNames()[i]]["unlock_level"].asInt() == -1 &&
-				root["towers"][root["towers"].getMemberNames()[i]]["unlock_skill"].asInt() == -1) {
-				rootSav["towers"][root["towers"].getMemberNames()[i]]["unlocked"] = true;
+			rootSav["towers"][conf_tower.getMemberNames()[i]]["max_level"] = 0;
+			if (conf_tower[conf_tower.getMemberNames()[i]]["unlock_level"].asInt() == -1 &&
+				conf_tower[conf_tower.getMemberNames()[i]]["unlock_skill"].asInt() == -1) {
+				rootSav["towers"][conf_tower.getMemberNames()[i]]["unlocked"] = true;
 			}
 			else {
-				rootSav["towers"][root["towers"].getMemberNames()[i]]["unlocked"] = false;
+				rootSav["towers"][conf_tower.getMemberNames()[i]]["unlocked"] = false;
 			}
 		}
 		user_need_creation = true;
@@ -964,7 +1014,7 @@ void Config::setUsername(std::string username) {
 }
 
 int Config::getLevelBDDID(int world_id, int level_id) {
-	std::string level_name = root["worlds"][world_id]["levels"][level_id]["path_level"].asString();
+	std::string level_name = conf_level["worlds"][world_id]["levels"][level_id]["path_level"].asString();
 	level_name = level_name.substr(0, level_name.find('.'));
 	for (auto& level : rootSav["local_editor_levels"]) {
 		if (level["name"].asString() == level_name) {

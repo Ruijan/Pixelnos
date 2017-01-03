@@ -47,10 +47,10 @@ void Dangorille::attackSpe(float dt) {
 }
 
 Json::Value Dangorille::getConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["dangos"]["dangorille"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::DANGO)["dangorille"];
 }
 Json::Value Dangorille::getSpecConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["dangos"]["dangorille"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::DANGO)["dangorille"];
 }
 
 void Dangorille::update(float dt) {

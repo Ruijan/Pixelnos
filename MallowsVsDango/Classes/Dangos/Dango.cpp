@@ -370,7 +370,7 @@ bool Dango::isDone(){
 }
 
 Json::Value Dango::getConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfig()["dangos"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::DANGO);
 }
 
 int Dango::getTargetedCell(){

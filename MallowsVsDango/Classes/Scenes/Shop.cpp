@@ -9,7 +9,6 @@ bool Shop::init(){
 
 	if (!Scene::init()){ return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	config = ((AppDelegate*)Application::getInstance())->getConfig()["skills"]; //load data file
 	root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 
 	//generating a background for skills 

@@ -43,7 +43,6 @@ public:
     */
     virtual void applicationWillEnterForeground();
 
-	Json::Value const getConfig() const;
 	Json::Value const getSave() const;
 	Config* getConfigClass();
 	bool isSaveFile() const;

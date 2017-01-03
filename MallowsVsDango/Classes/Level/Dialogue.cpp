@@ -113,8 +113,8 @@ void Dialogue::launch(){
 
 	auto skip = ui::Button::create("res/buttons/red_button.png");
 	skip->setScale(visibleSize.width / 5 / skip->getContentSize().width);
-	skip->setTitleText(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()
-		["buttons"]["skip_dialogues"][language].asString());
+	skip->setTitleText(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)
+		["skip_dialogues"][language].asString());
 	skip->setTitleFontName("fonts/LICABOLD.ttf");
 	skip->setTitleFontSize(45.f);
 	Label* skip_label = skip->getTitleRenderer();
@@ -129,8 +129,8 @@ void Dialogue::launch(){
 	skip->setPosition(Vec2(visibleSize.width * 3 / 4 - skip->getContentSize().width*skip->getScale(),
 		skip->getContentSize().height*skip->getScale()/4));
 
-	tapToContinue = Label::createWithSystemFont(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()
-		["buttons"]["tap_continue"][language].asString(), "Arial", 25.f * visibleSize.width / 1280);
+	tapToContinue = Label::createWithSystemFont(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)
+		["tap_continue"][language].asString(), "Arial", 25.f * visibleSize.width / 1280);
 	tapToContinue->setPosition(Point(speech->getPosition().x, speechBubble->getPosition().y - 
 		currentSpeechBubble->getContentSize().height*speechBubble->getScale() / 4));
 

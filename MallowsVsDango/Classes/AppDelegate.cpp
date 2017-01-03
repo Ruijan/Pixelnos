@@ -148,10 +148,6 @@ void AppDelegate::applicationWillEnterForeground() {
     // SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
 
-Json::Value const AppDelegate::getConfig() const{
-	return config->getConfigValues();
-}
-
 Json::Value const AppDelegate::getSave() const{
 	return config->getSaveValues();
 }

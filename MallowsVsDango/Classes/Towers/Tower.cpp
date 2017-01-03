@@ -642,7 +642,7 @@ void Tower::startAnimation(float speed){
 }
 
 const Json::Value& Tower::getConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER);
 }
 
 void Tower::reload(){
@@ -699,7 +699,7 @@ void Tower::setSelected(bool select){
 ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	const auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["buttons"];
+	const auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 	const auto spec_config = getSpecConfig();
 	auto layout = ui::Layout::create();
 
@@ -827,8 +827,8 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 						setColor(Color3B::YELLOW);
 				}
 				((Label*)layout->getChildByName("next_level_layout")->getChildByName("level_label"))->
-					setString(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()
-						["buttons"]["level"][language].asString() + " " + Value(level + 2).asString());
+					setString(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)
+						["level"][language].asString() + " " + Value(level + 2).asString());
 				if (level < (int)cost_size - 2) {
 					std::string s("");
 					s = Value(damages[level + 1]).asString();
@@ -876,8 +876,8 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 				}
 				std::string s("");
 				((Label*)layout->getChildByName("current_level_layout")->getChildByName("level_label"))->
-					setString(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()
-						["buttons"]["level"][language].asString()+ " " + Value(level + 1).asString());
+					setString(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)
+						["level"][language].asString()+ " " + Value(level + 1).asString());
 				s = Value(damages[level]).asString();
 				s.resize(4);
 				((Label*)layout->getChildByName("current_level_layout")->getChildByName("attack_label"))->
@@ -1165,11 +1165,9 @@ void Tower::updateInformationLayout(ui::Layout* layout) {
 		int dot_pos = s.find('.');
 		s = s.substr(0, dot_pos);
 		if (((Label*)layout->getChildByName("next_level_layout")->getChildByName("locked_label"))->getString() !=
-			((AppDelegate*)Application::getInstance())->getConfig()
-			["buttons"]["locked"][language].asString() + "\n" + Value(xp).asString() + "/" + s) {
+			((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["locked"][language].asString() + "\n" + Value(xp).asString() + "/" + s) {
 			((Label*)layout->getChildByName("next_level_layout")->getChildByName("locked_label"))->setString(
-				((AppDelegate*)Application::getInstance())->getConfig()
-				["buttons"]["locked"][language].asString() + "\n" + Value(xp).asString() + "/" + s);
+				((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["locked"][language].asString() + "\n" + Value(xp).asString() + "/" + s);
 		}
 	}
 }

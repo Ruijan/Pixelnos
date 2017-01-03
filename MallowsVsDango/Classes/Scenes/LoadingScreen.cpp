@@ -49,7 +49,7 @@ bool LoadingScreen::init(){
 	image->setScale(visibleSize.width / 5 / image->getContentSize().width);
 
 	Label* loading_label = Label::createWithTTF(
-		((AppDelegate*)Application::getInstance())->getConfig()["buttons"]["loading"][language].asString(), 
+		((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["loading"][language].asString(), 
 		"fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 10.0));
 	loading_label->setColor(Color3B::YELLOW);
 	loading_label->setPosition(visibleSize.width/2,visibleSize.height/2 + 

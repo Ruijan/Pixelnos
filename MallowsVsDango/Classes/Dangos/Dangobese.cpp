@@ -33,10 +33,10 @@ Dangobese* Dangobese::create(std::vector<Cell*> npath, int nlevel)
 }
 
 Json::Value Dangobese::getConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["dangos"]["dangobese"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::DANGO)["dangobese"];
 }
 Json::Value Dangobese::getSpecConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["dangos"]["dangobese"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::DANGO)["dangobese"];
 }
 
 void Dangobese::attackSpe(float dt) {

@@ -35,11 +35,11 @@ void Saucer::initSpecial() {
 }
 
 const Json::Value& Saucer::getConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["saucer"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER)["saucer"];
 }
 
 const Json::Value& Saucer::getSpecConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["saucer"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER)["saucer"];
 }
 
 void Saucer::attack(){

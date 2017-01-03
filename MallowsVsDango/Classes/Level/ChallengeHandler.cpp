@@ -16,7 +16,7 @@ ChallengeHandler* ChallengeHandler::create(const Json::Value& value) {
 }
 
 ChallengeHandler::ChallengeHandler(const Json::Value& value) {
-	Json::Value j_challenges = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["challenges"];
+	Json::Value j_challenges = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::CHALLENGE);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	float size_button = visibleSize.width / 20;
 
@@ -88,15 +88,15 @@ ChallengeHandler::ChallengeHandler(const Json::Value& value) {
 
 					std::string str_progress("");
 					if (c_challenge->getState() == Challenge::State::Running) {
-						str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["buttons"]["progress_running"][language].asString();
+						str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["progress_running"][language].asString();
 						((ui::Text*)text_layout->getChildByName("progress_text"))->setColor(Color3B::WHITE);
 					}
 					else if (c_challenge->getState() == Challenge::State::Failed) {
-						str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["buttons"]["progress_failed"][language].asString();
+						str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["progress_failed"][language].asString();
 						((ui::Text*)text_layout->getChildByName("progress_text"))->setColor(Color3B::ORANGE);
 					}
 					else if (c_challenge->getState() == Challenge::State::Succeed) {
-						str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["buttons"]["progress_succeed"][language].asString();
+						str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["progress_succeed"][language].asString();
 						((ui::Text*)text_layout->getChildByName("progress_text"))->setColor(Color3B::GREEN);
 					}
 					std::string n_description = description;
@@ -280,7 +280,6 @@ void ChallengeHandler::endChallengeHandler() {
 			addChild(succeed, 2);
 		}
 	}
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues();
 	Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
 	int worldID = SceneManager::getInstance()->getGame()->getLevel()->getWorldId();
 	int levelID = SceneManager::getInstance()->getGame()->getLevel()->getLevelId();

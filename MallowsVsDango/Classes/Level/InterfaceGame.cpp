@@ -8,6 +8,8 @@
 #include "../Lib/Functions.h"
 #include "../Lib/AudioSlider.h"
 #include "../Config/AudioController.h"
+#include "Rewards/RewardTower.h"
+#include "Rewards/RewardSugar.h"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -32,7 +34,7 @@ bool InterfaceGame::init(){
 
 	state = State::IDLE;
 	game_state = INTRO;
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues();
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL);
 
 	initParametersMenu(config);
 	initLoseMenu(config);
@@ -473,7 +475,6 @@ void InterfaceGame::showWin(){
 	auto* showAction = TargetedAction::create(getChildByName("menu_win"),
 		EaseBackOut::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2))));
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave();
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues();
 
 	((Label*)getChildByName("menu_win")->getChildByName("reward_sugar_n"))->setString("+" + Value(game->getLevel()->getHolySugar()).asString());
 	getChildByName("menu_win")->getChildByName("reward_sugar_n")->runAction(
@@ -508,7 +509,7 @@ void InterfaceGame::showWin(){
 void InterfaceGame::reset(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues();
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL);
 
 
 	state = IDLE;
@@ -528,7 +529,8 @@ void InterfaceGame::reset(){
 	getChildByName("title")->setPosition(Vec2(getChildByName("title")->getPosition().x,
 		visibleSize.height + getChildByName("title")->getContentSize().height * getChildByName("title")->getScaleY()));
 	((Label*)getChildByName("title"))->runAction(FadeIn::create(0.5f));
-	((Label*)getChildByName("title"))->setString(config["buttons"]["level"][language].asString() + " " +
+	((Label*)getChildByName("title"))->setString(
+		((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["level"][language].asString() + " " +
 		Value((int)(game->getLevel()->getLevelId() + 1)).asString());
 	getChildByName("advice")->setVisible(false);
 	getChildByName("advice")->runAction(RepeatForever::create(Sequence::create(
@@ -559,7 +561,7 @@ void InterfaceGame::initParametersMenu(const Json::Value& config){
 	ui::Layout* menu_pause = ui::Layout::create();
 	menu_pause->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	Json::Value buttons = config["buttons"];
+	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 
 	ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel2.png");
 	panel->setZoomScale(0);
@@ -852,7 +854,7 @@ void InterfaceGame::initParametersMenu(const Json::Value& config){
 void InterfaceGame::initStartMenu(const Json::Value& config) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	Json::Value buttons = config["buttons"];
+	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 
 	Label* title = Label::createWithTTF(buttons["level"][language].asString() + " " +
 		Value((int)(game->getLevel()->getLevelId() + 1)).asString(), 
@@ -957,7 +959,7 @@ void InterfaceGame::initLabels(const Json::Value& config){
 	loadingBarBackground->setScale(loadingBar->getScale());
 	loadingBarBackground->setVisible(false);
 	node_top->addChild(loadingBarBackground, 3, "loading_bar_background");
-	challenges = ChallengeHandler::create(config["worlds"]
+	challenges = ChallengeHandler::create(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
 		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["challenges"]);
 	challenges->setPosition(Vec2(sugar->getPosition().x + sugar->getContentSize().width * sugar->getScale() / 2,
 		node_top->getPosition().y + sugar->getPosition().y - sugar->getContentSize().height * sugar->getScale()));
@@ -971,7 +973,7 @@ void InterfaceGame::initLoseMenu(const Json::Value& config){
 	Color4F grey(102 / 255.0f, 178 / 255.0f, 255 / 255.0f, 0.66f);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	Json::Value buttons = config["buttons"];
+	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 
 	auto menu_lose = ui::Layout::create();
 	menu_lose->setPosition(Vec2(Point(visibleSize.width / 2, visibleSize.height * 1.5)));
@@ -1033,7 +1035,7 @@ void InterfaceGame::initLoseMenu(const Json::Value& config){
 	you_lose->setColor(Color3B::YELLOW);
 	menu_lose->addChild(you_lose, 2, "text");
 
-	auto conf = config["advice"][language];
+	auto conf = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::ADVICE)[language];
 	std::string advice_text = conf[rand() % conf.size()].asString();
 
 	Label* advice = Label::createWithTTF(advice_text, "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
@@ -1054,7 +1056,7 @@ void InterfaceGame::initWinMenu(const Json::Value& config){
 	Color4F grey(102 / 255.0f, 178 / 255.0f, 255 / 255.0f, 0.66f);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	Json::Value buttons = config["buttons"];
+	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 
 	auto menu_win = ui::Layout::create();
 	menu_win->setPosition(Vec2(Point(visibleSize.width / 2, visibleSize.height * 1.5)));
@@ -1625,7 +1627,6 @@ void InterfaceGame::generateHolySugar(Vec2 pos) {
 		move_h2 = MoveBy::create(1.0f, Vec2(-45, 0));
 	}
 
-
 	node->runAction(Sequence::create(Spawn::createWithTwoActions(move1, move_h1),
 		Spawn::createWithTwoActions(move2, move_h2),
 		 nullptr));
@@ -1646,6 +1647,9 @@ void InterfaceGame::generateHolySugar(Vec2 pos) {
 void InterfaceGame::startRewarding(Vec2 pos){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	Json::Value rootSave = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
+	Json::Value level_config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
+		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()];
 
 	challenges->endChallengeHandler();
 	int successfull_challenges = challenges->countSucceedChallenges();
@@ -1664,104 +1668,56 @@ void InterfaceGame::startRewarding(Vec2 pos){
 			}
 		}
 	}
-	ui::Layout* reward_layout = (ui::Layout*)getChildByName("reward_layout");
 
-	Node* node = Node::create();
-	Sprite* sugar = Sprite::create("res/buttons/holy_sugar.png");
-	Sprite* shining = Sprite::create("res/buttons/holy_sugar_shining.png");
 
-	sugar->setScale(Cell::getCellWidth() / sugar->getContentSize().width);
-	shining->setScale(1.1 * Cell::getCellWidth() / (shining->getContentSize().width));
-	node->addChild(shining);
-	node->addChild(sugar);
+	if ((int)game->getLevel()->getWorldId() >= rootSave["c_world"].asInt() &&
+		(int)game->getLevel()->getLevelId() >= rootSave["c_level"].asInt()) {
+		ui::Layout* reward_layout = (ui::Layout*)getChildByName("reward_layout");
 
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["worlds"]
-		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()];
-	auto* move1 = EaseOut::create(MoveBy::create(0.25f, Vec2(0, 75)), 2);
-	auto* move2 = EaseBounceOut::create(MoveBy::create(1.0f, Vec2(0, -75)));
+		// Creating Holy Sugar reward animation
+		auto reward_holy_sugar = RewardSugar::create(pos);
+		reward_layout->addChild(reward_holy_sugar, 2);
+		reward_holy_sugar->animate();
+		game_state = DONE;
 
-	node->setPosition(pos);
-	reward_layout->addChild(node, 2);
+		// If another reward can be displayed, then display it and animate it
+		if (level_config["reward"]["type"].asString() != "none") {
+			auto black_mask = ui::Button::create("res/buttons/mask.png");
+			black_mask->setScaleX(visibleSize.width / black_mask->getContentSize().width);
+			black_mask->setScaleY(visibleSize.height / black_mask->getContentSize().height);
+			black_mask->setPosition(visibleSize / 2);
+			black_mask->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
+				if (type == cocos2d::ui::Widget::TouchEventType::ENDED) { endGame(); }
+			});
+			reward_layout->addChild(black_mask, 1, "black_mask");
 
-	ScaleBy* scale_to1 = ScaleBy::create(1.0f, 1.2f);
-	ScaleBy* scale_to2 = ScaleBy::create(1.0f, 1 / 1.2f);
-	shining->runAction(RepeatForever::create(Sequence::create(scale_to1, scale_to2, nullptr)));
-
-	MoveBy* move_h1 = nullptr;
-	MoveBy* move_h2 = nullptr;
-	if (pos.x - 60 < 0) {
-		move_h1 = MoveBy::create(0.25f, Vec2(25, 0));
-		move_h2 = MoveBy::create(1.0f, Vec2(75, 0));
-	}
-	else {
-		move_h1 = MoveBy::create(0.25f, Vec2(-15, 0));
-		move_h2 = MoveBy::create(1.0f, Vec2(-45, 0));
-	}
-
-	EaseIn* move = EaseIn::create(MoveTo::create(1.5f, Vec2(visibleSize.width / 2, visibleSize.height)), 2);
-	EaseIn* scale = EaseIn::create(ScaleTo::create(1.5f, 0.01f), 2);
-
-	node->runAction(Sequence::create(Spawn::createWithTwoActions(move1, move_h1),
-		Spawn::createWithTwoActions(move2, move_h2),
-		Spawn::createWithTwoActions(move, scale), nullptr));
-
-	if (config["reward"].asString() != "none") {
-		auto black_mask = ui::Button::create("res/buttons/mask.png");
-		black_mask->setScaleX(visibleSize.width / black_mask->getContentSize().width);
-		black_mask->setScaleY(visibleSize.height / black_mask->getContentSize().height);
-		black_mask->setPosition(visibleSize / 2);
-		black_mask->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
-			if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-				setGameState(DONE);
-				setListening(false);
+			if (level_config["reward"]["type"].asString() == "tower") {
+				auto reward = RewardTower::create(level_config["reward"]["file"].asString(), level_config["reward"]["tower_name"].asString(),
+					pos,
+					[&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
+						if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+							endGame();
+						}
+					}
+				);
+				reward_layout->addChild(reward, 2);
+				reward->animate();
 			}
-		});
-		reward_layout->addChild(black_mask, 1, "black_mask");
+			
+			// Add a Tap to continue to inform the user what to do.
+			auto tapToContinue = Label::createWithTTF(
+				((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)
+				["tap_continue"][language].asString(), "fonts/LICABOLD.ttf", 35.f * visibleSize.width / 1280);
+			tapToContinue->setPosition(Vec2(visibleSize.width * 3 / 8, visibleSize.height / 15 + tapToContinue->getContentSize().height / 2));
+			tapToContinue->setColor(Color3B::WHITE);
+			tapToContinue->setVisible(true);
+			FadeIn* fadeIn = FadeIn::create(0.75f);
+			FadeOut* fadeout = FadeOut::create(0.75f);
+			tapToContinue->runAction(RepeatForever::create(Sequence::create(fadeIn, fadeout, NULL)));
+			reward_layout->addChild(tapToContinue, 2, "taptocontinue");
 
-		auto reward = ui::Button::create(config["reward"].asString());
-		reward->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
-			if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-				setGameState(DONE);
-				setListening(false);
-			}
-		});
-		reward->setPosition(Vec2(0, 0));
-		reward->setPosition(pos);
-		reward->setScale(Cell::getCellWidth() / reward->getContentSize().width);
-		reward_layout->addChild(reward, 1);
-		MoveBy* move_h1 = nullptr;
-		MoveBy* move_h2 = nullptr;
-		if (60 + pos.x < visibleSize.width * 2 / 3) {
-			move_h1 = MoveBy::create(0.25f, Vec2(15, 0));
-			move_h2 = MoveBy::create(1.0f, Vec2(45, 0));
+			game_state = ENDING;
 		}
-		else {
-			move_h1 = MoveBy::create(0.25f, Vec2(-25, 0));
-			move_h2 = MoveBy::create(1.0f, Vec2(-75, 0));
-		}
-		auto* scale = EaseOut::create(ScaleTo::create(1.0f, 1), 2);
-		// Since the level takes 3/4 of the screen. The center of the level is at 3/8.
-		auto* movetocenter = EaseIn::create(MoveTo::create(0.5f, Vec2(visibleSize.width * 3 / 8,
-			visibleSize.height / 2)), 2);
-
-		reward->runAction(Sequence::create(Spawn::createWithTwoActions(move1->clone(), move_h1),
-			Spawn::createWithTwoActions(move2->clone(), move_h2),
-			Spawn::createWithTwoActions(scale, movetocenter), nullptr));
-
-		// Add a Tap to continue to inform the user what to do.
-		auto tapToContinue = Label::createWithSystemFont(
-			((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()
-			["buttons"]["tap_continue"][language].asString(), "Arial", 25.f);
-		tapToContinue->setPosition(Vec2(visibleSize.width * 3 / 8, 50));
-
-		tapToContinue->setColor(Color3B::WHITE);
-		tapToContinue->setVisible(true);
-		FadeIn* fadeIn = FadeIn::create(0.75f);
-		FadeOut* fadeout = FadeOut::create(0.75f);
-
-		tapToContinue->runAction(RepeatForever::create(Sequence::create(fadeIn, fadeout, NULL)));
-		reward_layout->addChild(tapToContinue, 2,"taptocontinue");
-		game_state = ENDING;
 	}
 	else {
 		game_state = DONE;
@@ -1775,7 +1731,8 @@ void InterfaceGame::initDialoguesFromLevel(const Json::Value& config) {
 
 	Json::Reader reader;
 	Json::Value dialogue_json;
-	bool parsingConfigSuccessful = reader.parse(fileUtils->getStringFromFile(config["worlds"]
+	bool parsingConfigSuccessful = reader.parse(fileUtils->getStringFromFile(
+		((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
 		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["dialogues_file"].asString()), dialogue_json, false);
 
 	bool play_dialogue = ((AppDelegate*)Application::getInstance())->getConfigClass()->isDialoguesEnabled();
@@ -1810,7 +1767,7 @@ void InterfaceGame::handleDeadDango() {
 void InterfaceGame::updateIncrementXP(Label* exp_label, ui::LoadingBar* loading_bar, std::string tower_name, 
 	float* increment, int initial_value, int diff_exp, int loop, int max_level) {
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave();
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues();
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER);
 	
 	int c_exp = initial_value;
 	float duration = 4.0 / ((float)loop + 1.0);
@@ -1819,9 +1776,9 @@ void InterfaceGame::updateIncrementXP(Label* exp_label, ui::LoadingBar* loading_
 
 	if (root["towers"][tower_name]["unlocked"].asBool()) {
 		c_exp += (*increment);
-		while (max_level < (int)config["towers"][tower_name]["xp_level"].size() &&
-			c_exp > config["towers"][tower_name]["xp_level"][max_level + 1].asInt()) {
-			c_exp -= config["towers"][tower_name]["xp_level"][max_level + 1].asInt();
+		while (max_level < (int)config[tower_name]["xp_level"].size() &&
+			c_exp > config[tower_name]["xp_level"][max_level + 1].asInt()) {
+			c_exp -= config[tower_name]["xp_level"][max_level + 1].asInt();
 			++max_level;
 		}
 		if (initial_value != 0 && c_exp - (*increment) <= 0) {
@@ -1863,7 +1820,7 @@ void InterfaceGame::updateIncrementXP(Label* exp_label, ui::LoadingBar* loading_
 
 void InterfaceGame::updateTutorial(float dt) {
 	Json::Value save = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
-	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["tutorials"];
+	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TUTORIAL);
 
 	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("tower_positioning") && 
 		!tutorial_running) {
@@ -2248,4 +2205,9 @@ void InterfaceGame::createTowersLayout() {
 			++j;
 		}
 	}
+}
+
+void InterfaceGame::endGame() {
+	setGameState(DONE);
+	setListening(false);
 }

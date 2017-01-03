@@ -1,0 +1,128 @@
+{
+  "dangosimple": {
+    "cellperanim": 1.1,
+    "name": "Dango",
+    "skeleton": "res/dango/animations/dango.json",
+    "atlas": "res/dango/animations/dango.atlas",
+    "description_en": "Simple dango you can find everywhere.",
+    "description_fr": "Dango de base, fait à partir d'eau et de farine de riz.",
+    "level": [
+      {
+        "attack": 1,
+        "gain": 2,
+        "hitpoints": 3,
+        "image": "res/dango/dango1.png",
+        "name": "dango1",
+        "reload": 1.5,
+        "speed": 0.75,
+        "xp": 3,
+        "holy_sugar": {
+          "prob": 0.05,
+          "number": 1,
+          "type": "full"
+        }
+      },
+      {
+        "attack": 1.5,
+        "gain": 5,
+        "hitpoints": 6,
+        "image": "res/dango/dango2.png",
+        "name": "dango2",
+        "reload": 1.5,
+        "speed": 0.75,
+        "xp": 7,
+        "holy_sugar": {
+          "prob": 0.05,
+          "number": 1,
+          "type": "full"
+        }
+      },
+      {
+        "attack": 1.5,
+        "gain": 5,
+        "hitpoints": 10,
+        "image": "res/dango/dango2.png",
+        "name": "dango3",
+        "reload": 1.5,
+        "speed": 0.75,
+        "xp": 15,
+        "skin": "soy",
+        "holy_sugar": {
+          "prob": 0.05,
+          "number": 1,
+          "type": "full"
+        }
+      }
+    ]
+  },
+  "dangobese": {
+    "cellperanim": 0.55,
+    "name": "Dangobese",
+    "skeleton": "res/dango/animations/dango.json",
+    "atlas": "res/dango/animations/dango.atlas",
+    "description_en": "So big ! So fat ! Wait... is that my sock?!",
+    "description_fr": "Si grand ! Si gros ! Mais... c'est ma chausette ?!",
+    "level": [
+      {
+        "xp": 10,
+        "skin": "normal",
+        "attack": 2,
+        "gain": 5,
+        "hitpoints": 6,
+        "image": "res/dango/dangobese1.png",
+        "name": "dangobese1",
+        "reload": 5,
+        "speed": 0.35,
+        "holy_sugar": {
+          "prob": 0.075,
+          "number": 1,
+          "type": "full"
+        },
+        "attack_spe": {
+          "attack_duration": 3
+        }
+      }
+    ]
+  },
+  "dangorille": {
+    "skeleton": "res/dango/animations/dangorilla.json",
+    "atlas": "res/dango/animations/dangorilla.atlas",
+    "cellperanim": 0.55,
+    "name": "Dangorille",
+    "description_en": "",
+    "description_fr": "Toute la surface du dango est couverte de poils! Toute ? Non, une zone resiste encore et toujours a l'envahisseur!",
+    "level": [
+      {
+        "attack": 3,
+        "gain": 15,
+        "hitpoints": 20,
+        "image": "res/dango/dangorille1.png",
+        "name": "dangorille1",
+        "reload": 3,
+        "reload_spe": 10,
+        "attack_spe": {
+          "nb_monkeys": 4,
+          "text_en": [
+            "Four",
+            "Monkeys",
+            "Army"
+          ],
+          "text_fr": [
+            "L'Armée",
+            "des",
+            "Quatres",
+            "Singes"
+          ]
+        },
+        "speed": 0.65,
+        "xp": 15,
+        "skin": "soy",
+        "holy_sugar": {
+          "prob": 1,
+          "number": 1,
+          "type": "full"
+        }
+      }
+    ]
+  }
+}

@@ -27,11 +27,11 @@ Cutter* Cutter::create()
 }
 
 const Json::Value& Cutter::getConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["cutter"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER)["cutter"];
 }
 
 const Json::Value& Cutter::getSpecConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["cutter"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER)["cutter"];
 }
 
 void Cutter::removeTarget(Dango* dango) {

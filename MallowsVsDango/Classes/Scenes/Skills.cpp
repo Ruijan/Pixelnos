@@ -14,9 +14,9 @@ bool Skills::init() {
 	c_button = nullptr;
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["talents"]; //load data file
+	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
-	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["buttons"];
+	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 
 	if (!save_root.isMember("holy_sugar")) {
 		save_root["holy_sugar"] = 0;
@@ -87,7 +87,7 @@ bool Skills::init() {
 	// Scene Title
 	Label* title = Label::createWithTTF(buttons["talents"][language].asString(),
 		"fonts/LICABOLD.ttf", round(visibleSize.width / 20));
-	title->setColor(Color3B::ORANGE);
+	title->setColor(Color3B::YELLOW);
 	title->enableOutline(Color4B::BLACK, 2);
 	title->setPosition(Vec2(visibleSize.width / 8, visibleSize.height - title->getContentSize().height * title->getScaleY() / 2 -
 		visibleSize.height / 25
@@ -111,7 +111,7 @@ bool Skills::init() {
 	//label for setting skill_name
 	Label* skill_name = Label::createWithTTF(" ",
 		"fonts/LICABOLD.ttf", round(visibleSize.width / 40));
-	skill_name->setColor(Color3B::ORANGE);
+	skill_name->setColor(Color3B::YELLOW);
 	skill_name->enableOutline(Color4B::BLACK, 2);
 	skill_name->setWidth(visibleSize.width / 5);
 	skill_name->setHorizontalAlignment(TextHAlignment::CENTER);
@@ -151,7 +151,7 @@ bool Skills::init() {
 	panel->setZoomScale(0);
 	validate_buy->addChild(panel, 1, "panel");
 	panel->setScale9Enabled(true);
-	panel->setScale(0.35*visibleSize.width / panel->getContentSize().width);
+	panel->setScale(0.4*visibleSize.width / panel->getContentSize().width);
 
 	validate_buy->setPosition(Vec2(visibleSize.width / 2, visibleSize.height +
 		getChildByName("validate_buy")->getChildByName("panel")->getContentSize().height *
@@ -176,7 +176,7 @@ bool Skills::init() {
 	//add fixed validation text
 	Label* confirm_text = Label::createWithTTF(buttons["confirm"][language].asString(),
 		"fonts/LICABOLD.ttf", round(visibleSize.width / 30.f));
-	confirm_text->setColor(Color3B::ORANGE);
+	confirm_text->setColor(Color3B::YELLOW);
 	confirm_text->enableOutline(Color4B::BLACK, 2);
 	confirm_text->setPosition(Vec2(0, panel->getContentSize().height * panel->getScaleY() / 3 -
 		visibleSize.height / 25));
@@ -185,8 +185,8 @@ bool Skills::init() {
 
 	//add buy validation button
 	auto validate_button = ui::Button::create("res/buttons/yellow_button.png");
-	validate_button->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["validate"][language].asString());
+	validate_button->setTitleText(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)
+		["validate"][language].asString());
 	validate_button->setTitleFontName("fonts/LICABOLD.ttf");
 	validate_button->setTitleFontSize(60.f);
 	Label* validate_label = validate_button->getTitleRenderer();
@@ -250,12 +250,11 @@ bool Skills::init() {
 	std::string txt = buttons["skill_bought"][language].asString();
 	txt[0] = toupper(txt[0]);
 	Label* unlocked_txt = Label::createWithTTF(txt, "fonts/LICABOLD.ttf", round(visibleSize.width / 25));
-	unlocked_txt->setColor(Color3B::GREEN);
+	unlocked_txt->setColor(Color3B::YELLOW);
 	unlocked_txt->enableOutline(Color4B::BLACK, 1);
 	unlocked_txt->setPosition(buy_layout->getPosition());
 	addChild(unlocked_txt, 1, "unlocked_txt");
 	unlocked_txt->setVisible(false);
-
 	
 	//create talents
 	initTalents();
@@ -264,7 +263,7 @@ bool Skills::init() {
 }
 
 Json::Value Skills::getSkillFromID(int id) {
-	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["talents"]; //load data file
+	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	for (auto& talent : talents) {
 		if (talent["id"] == id) {
 			return talent;
@@ -295,10 +294,10 @@ int Skills::getSavedSkillPosFromID(int id) {
 
 void Skills::initTalents() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["talents"]; //load data file
+	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["buttons"];
+	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 
 	// create Page view for talents
 	ui::PageView* talent_pages = ui::PageView::create();
@@ -327,7 +326,7 @@ void Skills::initTalents() {
 			(talent["condition_id"].asInt() > 0 && getSavedSkillFromID(talent["condition_id"].asInt())["bought"].asBool()))) {
 			sprite_name = talent["sprite_enabled"].asString();
 		}
-		else if (save_root["c_level"].asInt() > talent["condition_level"].asInt() || save_root["c_world"].asInt() > talent["condition_world"].asInt()) {
+		else {
 			sprite_name = talent["sprite_disabled"].asString();
 		}
 		ui::Button* talent_btn = ui::Button::create(sprite_name);
@@ -380,9 +379,9 @@ void Skills::selectSkill(int id) {
 	ui::Button* talent_btn = talents_button[id];
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["talents"]; //load data file
+	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
-	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["buttons"];
+	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 
 	((Label*)getChildByName("skill_name"))->setString(talent["name_" + language].asString());
 	((Label*)getChildByName("skill_description"))->stopAllActions();
@@ -411,7 +410,7 @@ void Skills::selectSkill(int id) {
 	requirement_description->pushBackElement(re1);
 	int elements = 1;
 	if (talent["condition_sugar"].asInt() != -1) {
-		Color3B color = Color3B::GREEN;
+		Color3B color = Color3B(1,69,0);
 		if (save_root["holy_sugar_spent"].asInt() < talent["condition_sugar"].asInt()) {
 			color = Color3B::RED;
 			((ui::Button*)getChildByName("buy_layout")->getChildByName("buy_button"))->setEnabled(false);
@@ -426,7 +425,7 @@ void Skills::selectSkill(int id) {
 				"fonts/LICABOLD.ttf", round(visibleSize.width / 55.f)));
 	}
 	if (talent["condition_id"].asInt() != -1 && getSkillFromID(talent["condition_id"].asInt()) != Json::Value::null) {
-		Color3B color = Color3B::GREEN;
+		Color3B color = Color3B(1, 69, 0);
 		if (!getSavedSkillFromID(talent["condition_id"].asInt())["bought"].asBool()) {
 			color = Color3B::RED;
 			((ui::Button*)getChildByName("buy_layout")->getChildByName("buy_button"))->setEnabled(false);
@@ -443,7 +442,7 @@ void Skills::selectSkill(int id) {
 	if (elements == 1) {
 		++elements;
 		requirement_description->pushBackElement(
-			ui::RichElementText::create(elements, Color3B::GREEN, 255, "None",
+			ui::RichElementText::create(elements, Color3B(1, 69, 0), 255, buttons["none"][language].asString(),
 				"fonts/LICABOLD.ttf", round(visibleSize.width / 55.f)));
 	}
 	((Label*)getChildByName("skill_description"))->setString(talent["description_" + language].asString());
@@ -464,8 +463,8 @@ void Skills::selectSkill(int id) {
 	}
 	c_button = talent_btn;
 	c_talent = talent;
-	Sprite* selected = Sprite::create("res/buttons/yellow.png");
-	selected->setScale(talent_btn->getContentSize().width / selected->getContentSize().width * 1.1);
+	Sprite* selected = Sprite::create("res/buttons/Skills/selected.png");
+	selected->setScale(talent_btn->getScale() * 1.05);
 	selected->setPosition(Vec2(talent_btn->getContentSize().width / 2, talent_btn->getContentSize().height / 2));
 	talent_btn->addChild(selected, -1, "yellow");
 }
@@ -482,9 +481,9 @@ void Skills::hideValidationPanel() {
 void Skills::showValidationPanel() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["talents"]; //load data file
+	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
-	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["buttons"];
+	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 	Node* validate_buy = getChildByName("validate_buy");
 	Node* panel = getChildByName("validate_buy")->getChildByName("panel");
 	getChildByName("black_mask")->setVisible(true);
@@ -503,11 +502,11 @@ void Skills::showValidationPanel() {
 	int font_size = round(visibleSize.width / 35.f);
 	validation_text->pushBackElement(ui::RichElementText::create(1, Color3B::BLACK, 255, buttons["validate_part_1"][language].asString(),
 		"fonts/LICABOLD.ttf", font_size));
-	validation_text->pushBackElement(ui::RichElementText::create(2, Color3B::ORANGE, 255, c_talent["name_" + language].asString(),
+	validation_text->pushBackElement(ui::RichElementText::create(2, Color3B::YELLOW, 255, c_talent["name_" + language].asString(),
 		"fonts/LICABOLD.ttf", font_size));
 	validation_text->pushBackElement(ui::RichElementText::create(3, Color3B::BLACK, 255, buttons["validate_part_2"][language].asString(),
 		"fonts/LICABOLD.ttf", font_size));
-	validation_text->pushBackElement(ui::RichElementText::create(4, Color3B::ORANGE, 255, c_talent["cost"].asString(),
+	validation_text->pushBackElement(ui::RichElementText::create(4, Color3B::YELLOW, 255, c_talent["cost"].asString(),
 		"fonts/LICABOLD.ttf", font_size));
 	validation_text->pushBackElement(ui::RichElementText::create(5, Color3B::BLACK, 255, buttons["validate_part_3"][language].asString(),
 		"fonts/LICABOLD.ttf", font_size));
@@ -521,7 +520,7 @@ void Skills::update(float dt) {
 
 void Skills::updateTutorial(float dt) {
 	auto save = ((AppDelegate*)Application::getInstance())->getSave();
-	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["tutorials"];
+	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TUTORIAL);
 	if (((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialRunning("skills") &&
 		save["c_level"].asInt() >= config["skills"]["level"].asInt() &&
 		save["c_world"].asInt() >= config["skills"]["world"].asInt()) {
@@ -605,6 +604,8 @@ void Skills::updateTutorial(float dt) {
 }
 
 void Skills::onEnterTransitionDidFinish() {
+	removeChildByName("talent_page");
+	initTalents();
 	((Label*)getChildByName("sugar_amount"))->setString("x " + ((AppDelegate*)Application::getInstance())->getSave()["holy_sugar"].asString());
 	scheduleUpdate();
 }

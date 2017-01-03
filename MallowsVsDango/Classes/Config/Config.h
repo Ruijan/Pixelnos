@@ -18,9 +18,20 @@ struct TrackingEvent {
 	time_t time;
 };
 
+
+
 class Config: public cocos2d::Ref{
 private:
-	Json::Value root;   // will contains the root value after parsing.
+	Json::Value conf_general;   // will contains the root value after parsing.
+	Json::Value conf_tutorial;   // will contains the root value after parsing.
+	Json::Value conf_advice;   // will contains the root value after parsing.
+	Json::Value conf_challenge;   // will contains the root value after parsing.
+	Json::Value conf_button;   // will contains the root value after parsing.
+	Json::Value conf_tower;   // will contains the root value after parsing.
+	Json::Value conf_dango;   // will contains the root value after parsing.
+	Json::Value conf_level;   // will contains the root value after parsing.
+	Json::Value conf_talent;   // will contains the root value after parsing.
+
 	std::string config_filename;
 	Json::Value rootSav;   // will contains the root value after parsing.
 	std::string save_filename;
@@ -57,13 +68,25 @@ private:
 
 
 public:
+	enum ConfigType {
+		GENERAL,
+		TUTORIAL,
+		ADVICE,
+		TOWER,
+		DANGO,
+		BUTTON,
+		CHALLENGE,
+		TALENT,
+		LEVEL
+	};
 	Config(std::string configfilename, std::string savename);
 	void init();
 
 	/**
 	* @brief Return the current configuration json value.
 	*/
-	const Json::Value& getConfigValues() const;
+	const Json::Value& getConfigValues(ConfigType type) const;
+
 
 	/**
 	* @brief Return the current save json value.

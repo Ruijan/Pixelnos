@@ -1898,7 +1898,7 @@ void LevelEditor::loadLevelFromJson(Json::Value root) {
 	}
 	for (unsigned int i(0); i < root["objects"].size(); ++i) {
 		std::string name = root["objects"][i]["image_name"].asString();
-		Sprite* object = Sprite::createWithSpriteFrameName(root["objects"][i]["image_name"].asString());
+		Sprite* object = Sprite::createWithSpriteFrameName(name);
 		object->setRotation(root["objects"][i]["rotation"].asDouble());
 		object->setPosition(root["objects"][i]["position"][0].asDouble() * ratio,
 			root["objects"][i]["position"][1].asDouble() * ratio);

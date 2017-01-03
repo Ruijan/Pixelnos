@@ -1,0 +1,210 @@
+{
+  "start": {
+    "en": "Start",
+    "fr": "Jouer"
+  },
+  "quit": {
+    "en": "Exit Game",
+    "fr": "Quitter le jeu"
+  },
+  "none": {
+    "en": "None",
+    "fr": "Aucun"
+  },
+  "new_tower": {
+    "en": "New Tower!",
+    "fr": "Nouvelle Tour !"
+  },
+  "requirements": {
+    "en": "Requirements: ",
+    "fr": "Conditions : "
+  },
+  "validate_part_1": {
+    "en": "Unlock ",
+    "fr": "Débloquer"
+  },
+  "validate_part_2": {
+    "en": " for ",
+    "fr": " pour "
+  },
+  "validate_part_3": {
+    "en": " holy sugar?",
+    "fr": " sucres sacrés ?"
+  },
+  "level": {
+    "en": "Level",
+    "fr": "Niveau"
+  },
+  "world": {
+    "en": "World",
+    "fr": "Monde"
+  },
+  "holy_sugar_spent": {
+    "en": "holy sugars spent",
+    "fr": "sucres sacrés dépensés"
+  },
+  "skill_bought": {
+    "en": "unlocked",
+    "fr": "débloqué"
+  },
+  "quit_info": {
+    "en": "You have to restart the game in order to make the language switch work.",
+    "fr": "Vous devez relancer le jeu afin que le changement de langue fonctionne."
+  },
+  "talents": {
+    "en": "Talents",
+    "fr": "Talents"
+  },
+  "credits": {
+    "en": "Credits",
+    "fr": "Crédits"
+  },
+  "title_menu": {
+    "en": "Title Screen",
+    "fr": "Ecran Titre"
+  },
+  "waiting_talent": {
+    "en": "Tap on a talents to display information",
+    "fr": "Tapoter sur un talent pour afficher une description"
+  },
+  "confirm": {
+    "en": "Confirm Unlocking",
+    "fr": "Confirmer Débloquage"
+  },
+  "username": {
+    "en": "Enter a Username",
+    "fr": "Enter un Nom de Joueur"
+  },
+  "validate": {
+    "en": "Validate",
+    "fr": "Valider"
+  },
+  "skip_dialogues": {
+    "en": "Skip Dialogue",
+    "fr": "Passer Dialogue"
+  },
+  "main_menu": {
+    "en": "Main Menu",
+    "fr": "Menu Princip."
+  },
+  "resume": {
+    "en": "Resume",
+    "fr": "Continuer"
+  },
+  "start_game": {
+    "en": "START",
+    "fr": "JOUER"
+  },
+  "sell": {
+    "en": "Sell",
+    "fr": "Vendre"
+  },
+  "upgrade": {
+    "en": "Upgrade",
+    "fr": "Améliorer"
+  },
+  "buy": {
+    "en": "Buy",
+    "fr": "Acheter"
+  },
+  "shop": {
+    "en": "Shop",
+    "fr": "Magasin"
+  },
+  "soon": {
+    "en": "Coming Soon...",
+    "fr": "A venir..."
+  },
+  "language": {
+    "en": "Language",
+    "fr": "Langue"
+  },
+  "settings": {
+    "en": "Settings",
+    "fr": "Paramètres"
+  },
+  "music": {
+    "en": "Music",
+    "fr": "Musique"
+  },
+  "effects": {
+    "en": "Effects",
+    "fr": "Effets"
+  },
+  "loop_music": {
+    "en": "Loop Music",
+    "fr": "Musique en boucle"
+  },
+  "show_grid": {
+    "en": "Show Grid",
+    "fr": "Aff. la Grille"
+  },
+  "grid_always": {
+    "en": "Always",
+    "fr": "Toujours"
+  },
+  "grid_move": {
+    "en": "On Move",
+    "fr": "Mvt"
+  },
+  "grid_never": {
+    "en": "Never",
+    "fr": "Jamais"
+  },
+  "auto_limit": {
+    "en": "Auto Limit",
+    "fr": "Auto Limit"
+  },
+  "play_dialogues": {
+    "en": "Play Dialogues",
+    "fr": "Aff. Dialogues"
+  },
+  "locked": {
+    "en": "Locked",
+    "fr": "Bloqué"
+  },
+  "advice_game_drag": {
+    "en": "Drag and drop towers to defend your base.",
+    "fr": "Glisse et dépose les tours pour défendre la base."
+  },
+  "lose_info": {
+    "en": "Nice Try !",
+    "fr": "Bien essayé"
+  },
+  "holy_sugar": {
+    "en": "Holy Sugar",
+    "fr": "Sucre Sacré"
+  },
+  "level_cleared": {
+    "en": "Level Cleared!",
+    "fr": "Niveau Complété !"
+  },
+  "next_level": {
+    "en": "Next Level",
+    "fr": "Niveau Suivant"
+  },
+  "tap_continue": {
+    "en": "Tap to Continue",
+    "fr": "Appuye pour Continuer"
+  },
+  "retry": {
+    "en": "Retry",
+    "fr": "Réessayer"
+  },
+  "loading": {
+    "en": "Loading",
+    "fr": "Chargement"
+  },
+  "progress_running": {
+    "en": "State: On going",
+    "fr": "État :En cours"
+  },
+  "progress_failed": {
+    "en": "State: Failed",
+    "fr": "État : Échoué"
+  },
+  "progress_succeed": {
+    "en": "State: Success",
+    "fr": "État : Réussi"
+  }
+}

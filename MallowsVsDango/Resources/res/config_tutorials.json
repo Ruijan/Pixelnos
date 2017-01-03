@@ -1,0 +1,234 @@
+{
+	  "tower_positioning": {
+	    "state": "uncompleted"
+	  },
+	  "sugar": {
+	    "state": "uncompleted",
+	    "dialogue": [
+	      {
+	        "emotion": [
+	          "NORMAL",
+	          "NORMAL"
+	        ],
+	        "side": "LEFT",
+	        "speaker": "res/turret/general.png",
+	        "text_en": [
+	          "Be careful, everytime you place a tower, it consumes sugar.",
+	          "Everytime you destroy a dango, you get some sugar!"
+	        ],
+	        "text_fr": [
+	          "Attention, à chaque fois aue vous posez une tourelle, vous utilisez du sucre.",
+	          "Pour gagner plus de sucre, détruisez des dangos !"
+	        ]
+	      }
+	    ]
+	  },
+	  "life": {
+	    "state": "uncompleted",
+	    "dialogue": [
+	      {
+	        "emotion": [
+	          "NORMAL",
+	          "NORMAL",
+	          "NORMAL"
+	        ],
+	        "side": "LEFT",
+	        "speaker": "res/turret/general.png",
+	        "text_en": [
+	          "Be careful, an enemy is close to the end of the path. Our rear guard can handle few enemies but not that many.",
+	          "You can check on top right how many enemies they can still handle.",
+	          "Place more towers or upgrade them to prevent that from happening."
+	        ],
+	        "text_fr": [
+	          "Attention, un ennemi s'est éloigné sur le chemin. Notre arrière-garde peut s'occuper de plusieurs ennemis mais pas plus.",
+	          "Vous pouvez vérifier dans le coin haut à gauche de l'écran combien ils peuvent encore combattre.",
+	          "Placez plus de tourelles pour empêcher que cela arrive."
+	        ]
+	      }
+	    ]
+	  },
+	  "saucer": {
+	    "state": "uncompleted",
+	    "dialogue": [
+	      {
+	        "emotion": [
+	          "ANGRY",
+	          "ANGRY",
+	          "NORMAL"
+	        ],
+	        "side": "LEFT",
+	        "speaker": "res/turret/general.png",
+	        "text_en": [
+	          "Stronger enemies are coming!",
+	          "Give more time to the Bomber to attack the enemies by slowing them down! \nPlace Saucer towers!",
+	          "Their CHOCOSPIT deals low damage but the enemy will be disgusted and slowed down !"
+	        ],
+	        "text_fr": [
+	          "Des ennemis plus puissants arrivent !",
+	          "Donnez plus de temps aux Bombeurs pour les attaquer en les ralentissant! \n Placez des Sauceurs !",
+	          "Leur CHOCOCRACHAT fait peu de dégats mais les ennemis seront écoeurés et ralentiront !"
+	        ]
+	      }
+	    ],
+	    "level": 1,
+	    "world": 0
+	  },
+	  "upgrade": {
+	    "state": "uncompleted",
+	    "dialogue": [
+	      {
+	        "emotion": [
+	          "NORMAL",
+	          "NORMAL",
+	          "NORMAL"
+	        ],
+	        "side": "LEFT",
+	        "speaker": "res/turret/general.png",
+	        "text_en": [
+	          "Thanks to your commands, our Bombers are now able to improve during a fight.",
+	          "Once the marshmallow is placed, access to its caracteristics by taping on it.",
+	          "If you have enough sugar, you can improve to level 2. It will deal more damage, faster and its range will increase."
+	        ],
+	        "text_fr": [
+	          "Grâce à votre commandement, nos Bombeurs sont maintenant capables de s'améliorer durant un combat.",
+	          "Une fois le marshmallow placé, accédez à ses caracteristique en tapotant dessus.",
+	          "Si vous avez assez de sucre, vous pouvez l’améliorer au niveau 2. Il fera plus de dégats, attaquera plus vite et aura une plus grande portée."
+	        ]
+	      }
+	    ],
+	    "level": 2,
+	    "world": 0
+	  },
+	  "multi_paths": {
+	    "state": "uncompleted",
+	    "dialogue": [
+	      {
+	        "emotion": [
+	          "NORMAL",
+	          "NORMAL"
+	        ],
+	        "side": "LEFT",
+	        "speaker": "res/turret/general.png",
+	        "text_en": [
+	          "Be careful! the roads of the Mighty Sweety Mallows' Empire are tortuous and manifold.",
+	          "Enemies can come from multiple paths at the same time. Don't forget to protect all the exits!"
+	        ],
+	        "text_fr": [
+	          "Attention ! Les routes du Grand Empire Sucré des Mallows sont sinueuses multiples.",
+	          "Les ennemis peuvent venir de plusieurs chemins en même temps. N'oublier pas de protéger toutes les sorties !"
+	        ]
+	      }
+	    ],
+	    "level": 3,
+	    "world": 0
+	  },
+	  "dangorilla": {
+	    "state": "uncompleted",
+	    "dialogue": [
+	      {
+	        "emotion": [
+	          "ANGRY",
+	          "ANGRY",
+	          "ANGRY"
+	        ],
+	        "side": "LEFT",
+	        "speaker": "res/dango/dangorille.png",
+	        "text_en": [
+	          "I AM DANGORILLA THE HAIRY!",
+	          "I am one of the most powerful captain of the Dangos' Empire !",
+	          "Me and my Four Monkeys Army (I asked for 12 but we didn't have enough budget) will beat your ass !"
+	        ],
+	        "text_fr": [
+	          "JE SUIS DANGORILLE LE POILU !",
+	          "Je suis l'un des plus puissants capitaine de l'Empire des Dangos!",
+	          "Moi et mon Armée des Quatre Singes (j'avais demandé 12 mais ils n'avaient pas assez de budget), on va vous botter les fesses !"
+	        ]
+	      },
+	      {
+	        "emotion": [
+	          "ANGRY",
+	          "ANGRY"
+	        ],
+	        "side": "RIGHT",
+	        "speaker": "res/turret/general.png",
+	        "text_en": [
+	          "By the holiness of all sugars ! A terrifying enemy just appeared and he has a thick dough !",
+	          "Tap on the monkeys that will try to block our marshmallows!"
+	        ],
+	        "text_fr": [
+	          "Par le saint de tous les sucres ! Un terrible ennemi vient d’apparaitre et il a la pate epaisse! ",
+	          "Tapez sur les singes qui essaieront de bloquer nos marshmallows !"
+	        ]
+	      }
+	    ],
+	    "level": 4,
+	    "world": 0
+	  },
+	  "skills": {
+	    "state": "uncompleted",
+	    "dialogue": [
+	      {
+	        "emotion": [
+	          "NORMAL"
+	        ],
+	        "side": "LEFT",
+	        "speaker": "res/turret/general.png",
+	        "text_en": [
+	          "We accumulated a lot of Holy Sugar!\n Let's see what we can do with it..."
+	        ],
+	        "text_fr": [
+	          "Nous avons accumulé beaucoup de Sucre Sacré!\n Voyons ce qu'on peut faire avec..."
+	        ]
+	      }
+	    ],
+	    "dialogue_skills": [
+	      {
+	        "emotion": [
+	          "NORMAL",
+	          "NORMAL"
+	        ],
+	        "side": "LEFT",
+	        "speaker": "res/turret/general.png",
+	        "text_en": [
+	          "I have an idea! We could place a Mallow on the path to block our enemies. Like a wall!",
+	          "I am a genius! Let's develop this new technology!"
+	        ],
+	        "text_fr": [
+	          "Je sais ! Nous pourrions placer un Mallow sur le chemin afin de bloquer nos ennemis. Un peu comme un mur !",
+	          "Je suis un géni ! Allons développer cette nouvelle technologie!"
+	        ]
+	      }
+	    ],
+	    "level": 5,
+	    "world": 0
+	  },
+	  "dangobese": {
+	    "state": "uncompleted",
+	    "dialogue": [
+	      {
+	        "emotion": [
+	          "ANGRY",
+	          "ANGRY",
+	          "NORMAL",
+	          "NORMAL"
+	        ],
+	        "side": "LEFT",
+	        "speaker": "res/turret/general.png",
+	        "text_en": [
+	          "It's gigantic ! \n It's not a dango! It's a peak! It's a cape, what do I say... It's... It's...",
+	          "It's a Dangobese!!!",
+	          "Dangose are so fat that they can aspirate projectiles. Use our new troop: the Cutter.",
+	          "It doesn't reach far but can touch all the enemies around it. Impossible for the Dangobese to dodge!"
+	        ],
+	        "text_fr": [
+	          "C'est énorme ! \n Ce n'est pas un dango ! C'est un pic ! C'est un cap, que dis-je... c'est, c'est...",
+	          "C'est un Dangobèse !!!",
+	          "Les Dangobèses sont tellement gros qu’ils peuvent aspirer les projectiles. Utilisez notre nouvelle troupe: le Cutteur.",
+	          "Il n’attaque pas de loin mais peut toucher tous les ennemis autour de lui. Impossible que le Dangobèse puisse esquiver !"
+	        ]
+	      }
+	    ],
+	    "level": 5,
+	    "world": 0
+	  }
+}

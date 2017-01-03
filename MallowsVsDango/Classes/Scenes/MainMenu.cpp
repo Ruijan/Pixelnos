@@ -10,6 +10,8 @@ bool MainMenu::init()
 	if(!Scene::init()){ return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
+
 
 	/*loading sprites, setting position, scaling for main menu*/
 
@@ -64,8 +66,7 @@ bool MainMenu::init()
 	float coeff2 = visibleSize.width*0.35 / dangotxt->getContentSize().width;
 
 	cocos2d::ui::Button* button = ui::Button::create();
-	button->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["start"][language].asString());
+	button->setTitleText(buttons["start"][language].asString());
 	button->setTitleColor(Color3B::YELLOW);
 	button->setTitleFontName("fonts/LICABOLD.ttf");
 	button->setTitleFontSize(75.f* visibleSize.width / 960);
@@ -77,7 +78,7 @@ bool MainMenu::init()
 
 	cocos2d::ui::Button* language_button = ui::Button::create("res/buttons/yellow_button.png");
 	language_button->setScale(visibleSize.width * 0.2 / language_button->getContentSize().width);
-	int nb_languages = ((AppDelegate*)Application::getInstance())->getConfig()["languages"].size();
+	int nb_languages = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL)["languages"].size();
 	if (language == "en") {
 		language = "English";
 	}
@@ -124,6 +125,7 @@ bool MainMenu::init()
 		mask->setScaleX(visibleSize.width / mask->getContentSize().width);
 		mask->setScaleY(visibleSize.height / mask->getContentSize().height);
 		mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+		mask->setOpacity(0.0f);
 		getChildByName("black_mask")->addChild(mask);
 
 		ui::Layout* layout_username = ui::Layout::create();
@@ -132,7 +134,7 @@ bool MainMenu::init()
 		panel->setZoomScale(0);
 		layout_username->addChild(panel, 1, "panel");
 		panel->setScale9Enabled(true);
-		panel->setScale(0.30*visibleSize.width / panel->getContentSize().width);
+		panel->setScale(0.50*visibleSize.width / panel->getContentSize().width);
 
 		layout_username->setPosition(Vec2(visibleSize.width / 2, visibleSize.height +
 			layout_username->getChildByName("panel")->getContentSize().height *
@@ -159,18 +161,22 @@ bool MainMenu::init()
 		layout_username->addChild(close_shadow, -1);
 		layout_username->addChild(close, 5, "close");
 
-		Label* title = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()
-			["buttons"]["username"][language].asString(), "fonts/LICABOLD.ttf", 40.0f * visibleSize.width / 1280);
+		Label* title = Label::createWithTTF(buttons["username"][language].asString(), "fonts/LICABOLD.ttf", 50.0f * visibleSize.width / 1280);
 		title->setColor(Color3B::WHITE);
 		title->enableOutline(Color4B::BLACK, 2);
+		title->setDimensions(panel->getContentSize().width * panel->getScaleX() * 0.90,
+			panel->getContentSize().height * panel->getScaleY() / 4);
 		title->setPosition(0, panel->getContentSize().height*panel->getScaleY() / 3);
+		title->setAlignment(TextHAlignment::CENTER);
+		title->setVerticalAlignment(TextVAlignment::CENTER);
 		layout_username->addChild(title, 2, "title");
-		ui::EditBox* username = ui::EditBox::create(Size(visibleSize.width / 4, visibleSize.height / 15),
+		ui::EditBox* username = ui::EditBox::create(Size(panel->getContentSize().width * panel->getScaleX() * 2 / 3, 
+			panel->getContentSize().height * panel->getScaleY() / 4),
 			ui::Scale9Sprite::create("res/buttons/input_username.png"));
 		username->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
-		username->setFontName("fonts/LICABOLD.ttf");
-		username->setFontSize(25);
-		username->setFontColor(Color3B::RED);
+		username->setFontName("Arial Rounded MT Bold");
+		username->setFontSize(45 * visibleSize.width / 1280);
+		username->setFontColor(Color3B::BLACK);
 		username->setPlaceHolder("");
 		username->setPlaceholderFontColor(Color3B::WHITE);
 		username->setMaxLength(15);
@@ -190,8 +196,7 @@ bool MainMenu::init()
 				((AppDelegate*)Application::getInstance())->getConfigClass()->setUsername(username->getText());
 			}
 		});
-		validate_username->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
-			["buttons"]["validate"][language].asString());
+		validate_username->setTitleText(buttons["validate"][language].asString());
 		validate_username->setTitleFontName("fonts/LICABOLD.ttf");
 		validate_username->setTitleFontSize(60.f);
 		validate_username->setEnabled(false);
@@ -201,7 +206,8 @@ bool MainMenu::init()
 		validate_username->setScale(panel->getContentSize().width*panel->getScaleX() / 2 / validate_username->getContentSize().width);
 		validate_username->setPosition(Vec2(0, -panel->getContentSize().height*panel->getScaleY() / 3));
 		layout_username->addChild(validate_username, 2, "validate_username");
-		username_show = TargetedAction::create(layout_username, EaseBackOut::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2))));
+		username_show = Spawn::createWithTwoActions(TargetedAction::create(mask, FadeIn::create(0.1f)),
+			TargetedAction::create(layout_username, EaseBackOut::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2)))));
 	}
 	
 
@@ -233,7 +239,8 @@ bool MainMenu::init()
 	TargetedAction* fadeinbutton = TargetedAction::create(button, FadeIn::create(1.0f));
 
 	/*action sequence*/
-	auto sequence = Sequence::create(fadein, delay, fadeout, fadeinbg1, fadeintxt1, fadeintxt2, fadeinvs, actionvs, fadeinf, fadeoutf1, fadeinf, fadeoutf1, fadeinf, actionbg2, fadeinbutton, username_show, nullptr);
+	auto sequence = Sequence::create(fadein, delay, fadeout, fadeinbg1, fadeintxt1, fadeintxt2, fadeinvs, actionvs, 
+		fadeinf, fadeoutf1, fadeinf, fadeoutf1, fadeinf, actionbg2, username_show, fadeinbutton, nullptr);
 	bglogo->runAction(sequence);
 
 	return true;
@@ -275,14 +282,16 @@ void MainMenu::onEnterTransitionDidFinish(){
 }
 
 void MainMenu::initLanguageList() {
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL);
+
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	int nb_languages = ((AppDelegate*)Application::getInstance())->getConfig()["languages"].size();
+	int nb_languages = config["languages"].size();
 	ui::Button* language_button = ((ui::Button*)getChildByName("interface")->getChildByName("language"));
 	ui::Layout* list_languages_levels = (ui::Layout*)getChildByName("interface")->getChildByName("list_language");
 
 	int nb_displayed_languages = 0;
 	for (int i(0); i < nb_languages; ++i) {
-		std::string n_language = ((AppDelegate*)Application::getInstance())->getConfig()["languages"][i].asString();
+		std::string n_language = config["languages"][i].asString();
 		std::string l;
 		if (n_language == "en") {
 			l = "English";
@@ -321,11 +330,11 @@ void MainMenu::initLanguageList() {
 void MainMenu::switchLanguage() {
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 
 
 	((ui::Button*)getChildByName("interface")->getChildByName("start"))->setTitleText(
-		((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["start"][language].asString());
+		buttons["start"][language].asString());
 
 	auto menu_restart = ui::Layout::create();
 	menu_restart->setPosition(Vec2(Point(visibleSize.width / 2, visibleSize.height * 1.5)));
@@ -338,8 +347,7 @@ void MainMenu::switchLanguage() {
 
 	ui::Button* quit = ui::Button::create("res/buttons/yellow_button.png");
 	quit->setScale(visibleSize.width / 5 / quit->getContentSize().width);
-	quit->setTitleText(((AppDelegate*)Application::getInstance())->getConfig()
-		["buttons"]["quit"][language].asString());
+	quit->setTitleText(buttons["quit"][language].asString());
 	quit->setTitleFontName("fonts/LICABOLD.ttf");
 	quit->setTitleFontSize(45.f * visibleSize.width / 1280);
 	Label* quit_label = quit->getTitleRenderer();
@@ -363,8 +371,7 @@ void MainMenu::switchLanguage() {
 		quit->getContentSize().height*quit->getScaleY() * 0.41));
 	menu_restart->addChild(quit, 1, "quit");
 
-	Label* advice = Label::createWithTTF(((AppDelegate*)Application::getInstance())->getConfig()["buttons"]["quit_info"][
-		language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* advice = Label::createWithTTF(buttons["quit_info"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	advice->setDimensions(panel->getContentSize().width * panel->getScaleX() * 0.75,
 		panel->getContentSize().height * panel->getScaleY() * 0.4);
 	advice->setPosition(0, 0);

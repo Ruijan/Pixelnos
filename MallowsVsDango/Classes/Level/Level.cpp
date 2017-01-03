@@ -31,7 +31,7 @@ bool Level::init()
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["worlds"][id_world]["levels"][id];
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"][id_world]["levels"][id];
 	Json::Value save_file = ((AppDelegate*)Application::getInstance())->getSave();
 
 	for (unsigned int i(0); i < config["towers"].size(); ++i) {
@@ -546,7 +546,7 @@ void Level::reset(){
 	}
 	attacks.clear();
 
-	sugar = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["worlds"][id_world]["levels"][id]["sugar"].asDouble();
+	sugar = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"][id_world]["levels"][id]["sugar"].asDouble();
 	used_sugar = 0;
 	life = 3;
 	paused = false;

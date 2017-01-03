@@ -24,11 +24,11 @@ Bomber* Bomber::create()
 }
 
 const Json::Value& Bomber::getConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["bomber"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER)["bomber"];
 }
 
 const Json::Value& Bomber::getSpecConfig(){
-	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"]["bomber"];
+	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER)["bomber"];
 }
 
 void Bomber::attack(){

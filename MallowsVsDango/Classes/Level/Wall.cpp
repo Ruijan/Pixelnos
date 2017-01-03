@@ -9,7 +9,7 @@ Wall::Wall(unsigned int n_hp, unsigned int n_max_hp): hp(n_hp), max_hp(n_max_hp)
 Wall::~Wall() {}
 
 Wall* Wall::create() {
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["wall"];
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL)["wall"];
 	Json::Value save = ((AppDelegate*)Application::getInstance())->getSave()["wall"];
 	Wall* wall = new Wall(config["max_hp"].asInt(), config["max_hp"].asInt());
 	if (wall->init()) {
@@ -26,8 +26,7 @@ Wall* Wall::create() {
 
 Wall* Wall::create(unsigned int n_max_hp) {
 	Wall* wall = new Wall(n_max_hp, n_max_hp);
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfig()["wall"];
-
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL)["wall"];
 	if (wall->init()) {
 		for (unsigned int i(0); i < config["sprites"].size(); ++i) {
 			wall->addChild(Sprite::create(config["sprites"][i].asString()));

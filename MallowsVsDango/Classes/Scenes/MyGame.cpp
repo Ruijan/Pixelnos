@@ -46,7 +46,7 @@ bool MyGame::initLevel(int level_id, int world_id){
 
 	id_level = level_id;
 	id_world = world_id;
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["worlds"][id_world]["levels"][id_level];
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"][id_world]["levels"][id_level];
 	for(unsigned int i(0); i < config["animations"].size(); ++i){
 		addAnimation(config["animations"][i].asString());
 	}
@@ -101,7 +101,7 @@ void MyGame::update(float delta) {
 		cLevel->removeElements();
 	}
 	else if(menu->getGameState() == InterfaceGame::GameState::NEXT_LEVEL){
-		Json::Value worlds = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["worlds"][id_world];
+		Json::Value worlds = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"][id_world];
 		Json::Value levels = worlds["levels"];
 		unlockTowers();
 		if(levels.size() > cLevel->getLevelId() + 1){
@@ -185,7 +185,7 @@ bool MyGame::isAccelerated(){
 
 bool MyGame::save(){
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave();
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues();
+	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER);
 
 	if(root["c_level"].asInt() < (int)cLevel->getLevelId()+1){
 		root["c_level"] = cLevel->getLevelId()+1;
@@ -196,10 +196,10 @@ bool MyGame::save(){
 		std::string tower_name = root["towers"].getMemberNames()[i];
 		if (root["towers"][tower_name]["unlocked"].asBool()) {
 			root["towers"][tower_name]["exp"] = root["towers"][tower_name]["exp"].asInt() + cLevel->getTowerXP(tower_name) + cLevel->getTotalExperience();
-			while (root["towers"][tower_name]["max_level"].asInt() < (int)config["towers"][tower_name]["xp_level"].size() &&
-				root["towers"][tower_name]["exp"].asInt() > config["towers"][tower_name]["xp_level"][root["towers"][tower_name]["max_level"].asInt() + 1].asInt()) {
+			while (root["towers"][tower_name]["max_level"].asInt() < (int)config[tower_name]["xp_level"].size() &&
+				root["towers"][tower_name]["exp"].asInt() > config[tower_name]["xp_level"][root["towers"][tower_name]["max_level"].asInt() + 1].asInt()) {
 				root["towers"][tower_name]["exp"] = root["towers"][tower_name]["exp"].asInt() -
-					config["towers"][tower_name]["xp_level"][root["towers"][tower_name]["max_level"].asInt() + 1].asInt();
+					config[tower_name]["xp_level"][root["towers"][tower_name]["max_level"].asInt() + 1].asInt();
 				root["towers"][tower_name]["max_level"] = root["towers"][tower_name]["max_level"].asInt() + 1;
 			}
 		}
@@ -287,7 +287,7 @@ void MyGame::switchLanguage() {
 }
 
 void MyGame::unlockTowers() {
-	auto towers = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues()["towers"];
+	auto towers = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER);
 	for (unsigned int i(0); i < towers.getMemberNames().size(); ++i) {
 		if (towers[towers.getMemberNames()[i]]["unlock_level"].asInt() == id_level &&
 			towers[towers.getMemberNames()[i]]["unlock_world"].asInt() == id_world) {
