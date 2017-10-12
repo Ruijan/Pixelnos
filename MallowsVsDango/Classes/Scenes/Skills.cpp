@@ -336,7 +336,7 @@ void Skills::initTalents() {
 		else {
 			talent_btn->setEnabled(false);
 		}
-		talent_btn->setScale(talent_pages->getContentSize().width / talent_btn->getContentSize().width / (2 * max_row));
+		talent_btn->setScale(talent_pages->getContentSize().width / talent_btn->getContentSize().width / (1.75 * max_row));
 		float position_x = column * talent_pages->getContentSize().width * 1 / max_column + talent_pages->getContentSize().width * 1 / (2 * max_column);
 		float position_y = -row * talent_pages->getContentSize().height * 1 / max_row + talent_pages->getContentSize().height * (2 * max_row - 1) / (2 * max_row);
 		talent_btn->setPosition(Vec2(position_x, position_y));
@@ -464,7 +464,7 @@ void Skills::selectSkill(int id) {
 	c_button = talent_btn;
 	c_talent = talent;
 	Sprite* selected = Sprite::create("res/buttons/Skills/selected.png");
-	selected->setScale(talent_btn->getScale() * 1.05);
+	selected->setScale((talent_btn->getScale() * talent_btn->getContentSize().width + visibleSize.width / 20)/ selected->getContentSize().width);
 	selected->setPosition(Vec2(talent_btn->getContentSize().width / 2, talent_btn->getContentSize().height / 2));
 	talent_btn->addChild(selected, -1, "yellow");
 }

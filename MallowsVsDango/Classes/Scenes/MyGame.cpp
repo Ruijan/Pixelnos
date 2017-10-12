@@ -128,9 +128,9 @@ void MyGame::update(float delta) {
 	else if (menu->getGameState() == InterfaceGame::GameState::DONE && !cLevel->isPaused()) {
 		menu->showWin();
 		cLevel->pause();
-		save();
 		updateTracker(cLevel->getHolySugar(), "completed", time(0));
 		unlockTowers();
+		save();
 	}
 }
 
@@ -174,13 +174,19 @@ void MyGame::setReloading(bool nreloading){
 
 void MyGame::increaseSpeed(){
 	acceleration = 4.0;
+	cLevel->setGameSpeed(acceleration);
 }
 void MyGame::setNormalSpeed(){
 	acceleration = 1.0;
+	cLevel->setGameSpeed(acceleration);
 }
 
 bool MyGame::isAccelerated(){
 	return acceleration != 1.0;
+}
+
+float MyGame::getAcceleration() {
+	return acceleration;
 }
 
 bool MyGame::save(){

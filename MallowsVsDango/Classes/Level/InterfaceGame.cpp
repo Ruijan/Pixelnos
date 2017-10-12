@@ -317,6 +317,12 @@ void InterfaceGame::addEvents()
 						selected_turret->displayRange(true);
 						selected_turret->setVisible(true);
 					}
+					else {
+						getChildByName("label_information")->getChildByName("sugar")->stopAllActions();
+						getChildByName("label_information")->getChildByName("sugar")->setRotation(0.f);
+						getChildByName("label_information")->getChildByName("sugar")->setScale(1.0f);
+						shakeScaleElement((Label*)getChildByName("label_information")->getChildByName("sugar"), false);
+					}
 				}
 			}
 		}
@@ -519,6 +525,7 @@ void InterfaceGame::reset(){
 	tutorial_running = false;
 
 	getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
+	((ui::CheckBox*)getChildByName("menu_panel")->getChildByName("speed_up"))->setSelected(false);
 	getChildByName("menu_lose")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	getChildByName("menu_win")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	getChildByName("menu_pause")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
@@ -549,7 +556,7 @@ void InterfaceGame::reset(){
 	towers_menu.empty();
 	getChildByName("menu_panel")->getChildByName("towers")->removeAllChildren();
 	createTowersLayout();
-	removeChildByName("win_menu");
+	removeChildByName("menu_win");
 	initWinMenu(config);
 	removeChild(challenges);
 	removeChildByName("label_information");
@@ -1252,10 +1259,28 @@ void InterfaceGame::initRightPanel(const Json::Value& config){
 		}
 	});
 	parameters->setScale(1 / (parameters->getBoundingBox().size.width / sizeButton));
-	parameters->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() / 4,
+	parameters->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() * 0.3,
 		panel->getContentSize().height*panel->getScaleY() * 0.48 -
 		parameters->getContentSize().height*parameters->getScaleY() / 2));
 	menu_panel->addChild(parameters, 2, "parameters");
+
+	auto speed_up = ui::CheckBox::create("res/buttons/speed_up.png", "res/buttons/normal_speed.png", ui::Widget::TextureResType::LOCAL);
+	speed_up->addTouchEventListener([&, speed_up](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			if (speed_up->isSelected()) {
+				game->increaseSpeed();
+			}
+			else {
+				game->setNormalSpeed();
+			}
+		}
+	});
+	speed_up->setScale(1 / (speed_up->getBoundingBox().size.width / sizeButton));
+	speed_up->setPosition(Vec2(0,
+		panel->getContentSize().height*panel->getScaleY() * 0.48 -
+		speed_up->getContentSize().height*speed_up->getScaleY() / 2));
+	menu_panel->addChild(speed_up, 2, "speed_up");
+
 	auto reload = ui::Button::create("res/buttons/restart_button.png"); 
 	reload->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
@@ -1264,7 +1289,7 @@ void InterfaceGame::initRightPanel(const Json::Value& config){
 		}
 	});
 	reload->setScale(1 / (reload->getBoundingBox().size.width / sizeButton));
-	reload->setPosition(Vec2(-panel->getContentSize().width*panel->getScaleX() / 4,
+	reload->setPosition(Vec2(-panel->getContentSize().width*panel->getScaleX() * 0.3,
 		panel->getContentSize().height*panel->getScaleY() * 0.48 -
 		reload->getContentSize().height*reload->getScaleY() / 2));
 	menu_panel->addChild(reload, 2, "reload");
@@ -1362,10 +1387,11 @@ void InterfaceGame::displayTowerInfos(std::string item_name){
 		unsigned int required_quantity(0);
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("attack_label"))->setString(
 			tower_config["damages"][0].asString());
-		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("speed_label"))->setString(
-			tower_config["attack_speed"][0].asString());
+		std::string s = tower_config["attack_speed"][0].asString();
+		s.resize(4);
+		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("speed_label"))->setString(s);
 		double range = round(tower_config["range"][0].asDouble() / Cell::getCellWidth() * 100) / 100;
-		std::string s = Value(range).asString();
+		s = Value(range).asString();
 		s.resize(4);
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("range_label"))->setString(
 			s);
@@ -1449,6 +1475,7 @@ void InterfaceGame::builtCallback(Ref* sender){
 		towers_menu["saucer"].first->stopAllActions();
 		towers_menu["saucer"].first->setRotation(0);
 		tutorial_running = false;
+		game->getLevel()->resume();
 		if (game_state == TITLE) {
 			getChildByName("start")->setVisible(true);
 			getChildByName("title")->setVisible(true);
@@ -1545,11 +1572,19 @@ void InterfaceGame::updateButtonDisplay(){
 				cost_label->setColor(Color3B::RED);
 				cost_label->enableOutline(Color4B::BLACK, 1.0);
 			}
+			if (!tower.second.first->getChildByName("disable")->isVisible()) {
+				tower.second.first->getChildByName("disable")->setVisible(true);
+				tower.second.first->getChildByName("sprite")->setColor(Color3B::GRAY);
+			}
 		}
 		else {
 			if (cost_label->getColor() != Color3B::GREEN) {
 				cost_label->setColor(Color3B::GREEN);
 				cost_label->enableOutline(Color4B::BLACK, 1.0);
+			}
+			if (tower.second.first->getChildByName("disable")->isVisible()) {
+				tower.second.first->getChildByName("disable")->setVisible(false);
+				tower.second.first->getChildByName("sprite")->setColor(Color3B::WHITE);
 			}
 		}
 	}
@@ -2117,42 +2152,48 @@ void InterfaceGame::updateTutorial(float dt) {
 	}
 }
 
-void InterfaceGame::shakeElement(Node* element) {
+void InterfaceGame::shakeElement(Node* element, bool loop) {
 	RotateTo* left = RotateTo::create(0.1f, 15);
 	RotateTo* right = RotateTo::create(0.1f, -15);
 	RotateTo* center = RotateTo::create(0.2f, 0);
-	element->runAction(
-		RepeatForever::create(
-			Sequence::create(
-				left, right,
-				left->clone(), right->clone(),
-				left->clone(), right->clone(),
-				center, DelayTime::create(1.f),
-				nullptr)
-		)
-	);
+	Sequence* seq = Sequence::create(
+		left, right,
+		left->clone(), right->clone(),
+		left->clone(), right->clone(),
+		center, DelayTime::create(1.f),
+		nullptr);
+	if (loop) {
+		element->runAction(RepeatForever::create(seq));
+	}
+	else {
+		element->runAction(seq);
+	}
+	
 }
 
-void InterfaceGame::shakeScaleElement(Node* element) {
+void InterfaceGame::shakeScaleElement(Node* element, bool loop) {
 	RotateTo* left = RotateTo::create(0.1f, 15);
 	RotateTo* right = RotateTo::create(0.1f, -15);
 	RotateTo* center = RotateTo::create(0.2f, 0);
-	element->runAction(
-		RepeatForever::create(
-			Spawn::createWithTwoActions(
-				Sequence::create(
-					left, right,
-					left->clone(), right->clone(),
-					left->clone(), right->clone(),
-					center, DelayTime::create(1.f),
-					nullptr),
-				Sequence::create(
-					ScaleTo::create(0.4f, 1.5f),
-					ScaleTo::create(0.4f, 1.f),
-					nullptr)
-			)
-		)
+	Spawn* spawn = Spawn::createWithTwoActions(
+		Sequence::create(
+			left, right,
+			left->clone(), right->clone(),
+			left->clone(), right->clone(),
+			center, DelayTime::create(1.f),
+			nullptr),
+		Sequence::create(
+			ScaleTo::create(0.4f, 1.5f),
+			ScaleTo::create(0.4f, 1.f),
+			nullptr)
 	);
+
+	if (loop) {
+		element->runAction(RepeatForever::create(spawn));
+	}
+	else {
+		element->runAction(spawn);
+	}
 }
 
 void InterfaceGame::createTowersLayout() {
@@ -2171,11 +2212,16 @@ void InterfaceGame::createTowersLayout() {
 			//std::string sprite3_background_filename = "res/buttons/tower_button.png";
 			std::string sprite3_background_filename = "res/buttons/tower_button2.png";
 			//std::string sprite3_disable_filename = "res/buttons/tower_inactive.png";
-			std::string sprite3_disable_filename = "res/buttons/tower_button2_inactive.png";
+			std::string sprite3_disable_filename = "res/buttons/tower_button2_disabled.png";
 			std::string sprite3_clip_filename = "res/buttons/tower_button_clip.png";
 			std::string sprite7_active_filename = "res/buttons/tower_active.png";
 
 			auto tower = Sprite::create(sprite3_background_filename);
+			Sprite* inactive_background = Sprite::create(sprite3_disable_filename);
+			inactive_background->setScale(tower->getContentSize().width / inactive_background->getContentSize().width);
+			inactive_background->setPosition(Vec2(tower->getContentSize().width / 2,
+				tower->getContentSize().height / 2));
+			tower->addChild(inactive_background, 4, "disable");
 			tower->addChild(Sprite::create(sprite3_filename), 5, "sprite");
 			towers->addChild(tower, 1, Value(tower_names[i]).asString());
 			tower->setScale(sizeTower / tower->getContentSize().width);

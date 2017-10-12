@@ -1,0 +1,138 @@
+
+dangobese.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+airflow_1
+  rotate: false
+  xy: 2, 20
+  size: 177, 67
+  orig: 177, 67
+  offset: 0, 0
+  index: -1
+airflow_2
+  rotate: false
+  xy: 579, 47
+  size: 130, 40
+  orig: 130, 40
+  offset: 0, 0
+  index: -1
+body_blue
+  rotate: false
+  xy: 2, 553
+  size: 489, 462
+  orig: 489, 462
+  offset: 0, 0
+  index: -1
+body_green
+  rotate: false
+  xy: 2, 89
+  size: 489, 462
+  orig: 489, 462
+  offset: 0, 0
+  index: -1
+body_pink
+  rotate: false
+  xy: 493, 553
+  size: 489, 462
+  orig: 489, 462
+  offset: 0, 0
+  index: -1
+body_yellow
+  rotate: false
+  xy: 493, 89
+  size: 489, 462
+  orig: 489, 462
+  offset: 0, 0
+  index: -1
+candy_2
+  rotate: true
+  xy: 465, 4
+  size: 83, 112
+  orig: 83, 112
+  offset: 0, 0
+  index: -1
+eye
+  rotate: false
+  xy: 984, 934
+  size: 33, 81
+  orig: 33, 81
+  offset: 0, 0
+  index: -1
+mouth_2
+  rotate: false
+  xy: 711, 2
+  size: 85, 85
+  orig: 85, 85
+  offset: 0, 0
+  index: -1
+reflect
+  rotate: false
+  xy: 181, 5
+  size: 161, 82
+  orig: 161, 82
+  offset: 0, 0
+  index: -1
+tongue
+  rotate: false
+  xy: 344, 2
+  size: 119, 85
+  orig: 119, 85
+  offset: 0, 0
+  index: -1
+white_eye
+  rotate: true
+  xy: 2, 4
+  size: 14, 25
+  orig: 14, 25
+  offset: 0, 0
+  index: -1
+
+dangobese2.png
+size: 1024,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+candy_1
+  rotate: true
+  xy: 226, 6
+  size: 99, 96
+  orig: 99, 96
+  offset: 0, 0
+  index: -1
+choco
+  rotate: false
+  xy: 585, 36
+  size: 407, 220
+  orig: 407, 220
+  offset: 0, 0
+  index: -1
+choco_body
+  rotate: true
+  xy: 2, 107
+  size: 400, 329
+  orig: 400, 329
+  offset: 0, 0
+  index: -1
+dango_splash
+  rotate: false
+  xy: 585, 258
+  size: 400, 249
+  orig: 400, 249
+  offset: 0, 0
+  index: -1
+dango_splash_blue
+  rotate: true
+  xy: 333, 106
+  size: 401, 250
+  orig: 401, 250
+  offset: 0, 0
+  index: -1
+mouth
+  rotate: false
+  xy: 2, 2
+  size: 222, 103
+  orig: 222, 103
+  offset: 0, 0
+  index: -1

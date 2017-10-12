@@ -76,6 +76,7 @@ public:
 	void blockTower(bool block);
 	bool isTowerBlocked();
 	virtual void stopAttacking();
+	void changeSpeedAnimation(float speed);
 	
 	// Updates
 	virtual void update(float dt);

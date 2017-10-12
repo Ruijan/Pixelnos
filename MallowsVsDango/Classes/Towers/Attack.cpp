@@ -10,7 +10,7 @@ USING_NS_CC;
 
 Attack::Attack(Dango* ntarget, double ndamages, std::string njsontype): target(ntarget), 
 	damages(ndamages), touched(false), action(nullptr), hasToBeDeleted(false), 
-	enabled(true), jsontype(njsontype){
+	enabled(true), jsontype(njsontype), previous_pos(Vec2(0,0)), previous_target_pos(Vec2(0, 0)) {
 }
 
 Attack::~Attack(){
@@ -155,10 +155,24 @@ void WaterBall::update(float dt) {
 	if (enabled) {
 		if (target != nullptr) {
 			if (!touched) {
+				// check if bullet has touched the enemy during the time interval
 				Vec2 direction = target->getPosition() - getPosition();
+				Vec2 prev_direction = previous_target_pos - previous_pos;
+				bool has_touched = false;
+				if (prev_direction != Vec2(0, 0) && previous_target_pos != Vec2(0, 0)) {
+					if ((prev_direction.x < 0 && direction.x > 0) || (prev_direction.x > 0 && direction.x < 0) ||
+						(prev_direction.y < 0 && direction.y > 0) || (prev_direction.y > 0 && direction.y < 0)) {
+						has_touched = true;
+					}
+				}
 				double distance = sqrt(direction.x*direction.x + direction.y*direction.y);
 				Size visibleSize = Director::getInstance()->getVisibleSize();
 				if (distance < 10 * visibleSize.width / 960) {
+					has_touched = true;
+				}
+
+				// if yes then apply damages/effects
+				if (has_touched) {
 					bool is_enemy_alive = target->isDying();
 
 					touched = true;
@@ -173,6 +187,8 @@ void WaterBall::update(float dt) {
 				}
 				else {
 					direction.normalize();
+					previous_pos = getPosition();
+					previous_target_pos = target->getPosition();
 					setPosition(getPosition() + direction * speed * dt);
 					setRotation(getRotation() + 360 * dt);
 				}
@@ -218,10 +234,24 @@ void WaterBombBall::update(float dt) {
 	if (enabled) {
 		if (target != nullptr) {
 			if (!touched) {
+				// check if bullet has touched the enemy during the time interval
 				Vec2 direction = target->getPosition() - getPosition();
+				Vec2 prev_direction = previous_target_pos - previous_pos;
+				bool has_touched = false;
+				if (prev_direction != Vec2(0, 0) && previous_target_pos != Vec2(0, 0)) {
+					if ((prev_direction.x < 0 && direction.x > 0) || (prev_direction.x > 0 && direction.x < 0) ||
+						(prev_direction.y < 0 && direction.y > 0) || (prev_direction.y > 0 && direction.y < 0)) {
+						has_touched = true;
+					}
+				}
 				double distance = sqrt(direction.x*direction.x + direction.y*direction.y);
 				Size visibleSize = Director::getInstance()->getVisibleSize();
-				if (distance < Cell::getCellWidth() / 2) {
+				if (distance < 10 * visibleSize.width / 960) {
+					has_touched = true;
+				}
+
+				// if yes then apply damages/effects
+				if (has_touched) {
 					touched = true;
 					std::vector<Dango*> enemies = SceneManager::getInstance()->getGame()->
 						getLevel()->getEnemiesInRange(target->getPosition(), range);
@@ -246,6 +276,8 @@ void WaterBombBall::update(float dt) {
 				}
 				else {
 					direction.normalize();
+					previous_pos = getPosition();
+					previous_target_pos = target->getPosition();
 					setPosition(getPosition() + direction * speed * dt);
 					setRotation(getRotation() + 360 * dt);
 				}
@@ -305,10 +337,24 @@ void ChocoSpit::update(float dt) {
 	if (enabled) {
 		if (target != nullptr) {
 			if (!touched) {
+				// check if bullet has touched the enemy during the time interval
 				Vec2 direction = target->getPosition() - getPosition();
+				Vec2 prev_direction = previous_target_pos - previous_pos;
+				bool has_touched = false;
+				if (prev_direction != Vec2(0, 0) && previous_target_pos != Vec2(0, 0)) {
+					if ((prev_direction.x < 0 && direction.x > 0) || (prev_direction.x > 0 && direction.x < 0) ||
+						(prev_direction.y < 0 && direction.y > 0) || (prev_direction.y > 0 && direction.y < 0)) {
+						has_touched = true;
+					}
+				}
 				double distance = sqrt(direction.x*direction.x + direction.y*direction.y);
 				Size visibleSize = Director::getInstance()->getVisibleSize();
 				if (distance < 10 * visibleSize.width / 960) {
+					has_touched = true;
+				}
+
+				// if yes then apply damages/effects
+				if (has_touched) {
 					bool is_enemy_alive = target->isDying();
 
 					touched = true;
@@ -326,6 +372,8 @@ void ChocoSpit::update(float dt) {
 				}
 				else {
 					direction.normalize();
+					previous_pos = getPosition();
+					previous_target_pos = target->getPosition();
 					setPosition(getPosition() + direction * speed * dt);
 					//float rot_angle = 180 * direction.getAngle() / M_PI;
 					setRotation(-180 * direction.getAngle() / M_PI);

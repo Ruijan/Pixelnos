@@ -33,17 +33,16 @@ Dango::~Dango() {
 
 void Dango::initFromConfig() {
 	auto config = getSpecConfig();
-	hitPoints = config["level"][level]["hitpoints"].asDouble();
-	speed = config["level"][level]["speed"].asDouble();
-	attack_reloading = config["level"][level]["reload"].asDouble();
-	attack_damages = config["level"][level]["damages"].asDouble();
-	animation_duration = config["level"][level]["animation_attack_time"].asDouble();
-	nb_frames_anim = config["level"][level]["animation_attack_size"].asInt();
-	name = config["level"][level]["name"].asString();
-	xp = config["level"][level]["xp"].asInt();
-	double proba = config["level"][level]["holy_sugar"]["proba"].asDouble();
-	double number = config["level"][level]["holy_sugar"]["number"].asDouble();
-	std::string type_proba = config["level"][level]["holy_sugar"]["type"].asString();
+	hitPoints = config["hitpoints"][level].asDouble();
+	speed = config["speed"][level].asDouble();
+	attack_reloading = config["reload"][level].asDouble();
+	attack_damages = config["damages"][level].asDouble();
+	name = config["names"][level].asString();
+	xp = config["xp"][level].asInt();
+	double proba = config["holy_sugar"]["proba"][level].asDouble();
+	double number = config["holy_sugar"]["number"][level].asDouble();
+	std::string type_proba = config["holy_sugar"]["type"][level].asString();
+	stay_on_ground = config["stay_on_ground"].asBool();
 	holy_sugar = 0;
 	if (type_proba == "full") {
 		double proba = rand() % 1000 / 1000;
@@ -78,12 +77,12 @@ void Dango::initFromConfig() {
 		skeletonAnimationHandle();
 	});
 	skeleton->setEventListener([this](int trackIndex, spEvent* event) {
-		/*if (Value(event->data->name).asString() == "up") {
+		if (Value(event->data->name).asString() == "up") {
 			on_ground = false;
 		}
 		else if (Value(event->data->name).asString() == "down") {
 			on_ground = true;
-		}*/
+		}
 		//log("%d event: %s, %d, %f, %s", trackIndex, event->data->name, event->intValue, event->floatValue, event->stringValue);
 	});
 	skeleton->setSkin("normal_" + Value(level + 1).asString());
@@ -92,6 +91,23 @@ void Dango::initFromConfig() {
 	skeleton->setTimeScale(1 / (getSpeed() * anim->animation->duration));*/
 	//skeleton->setPosition(Vec2(0, -Cell::getCellHeight() * 3 / 10));
 	addChild(skeleton,2);
+
+	auto layout = ui::Layout::create();
+	//layout->setPosition(Vec2(-Cell::getCellWidth() / 2, -Cell::getCellWidth() / 2));
+
+	ui::LoadingBar* loading_bar = ui::LoadingBar::create("res/buttons/sliderProgress.png");
+	loading_bar->setPercent((double)hitPoints / getSpecConfig()["hitpoints"][level].asDouble() * 100);
+	loading_bar->setScaleX(Cell::getCellWidth() / 2 / loading_bar->getContentSize().width);
+	loading_bar->setScaleY(Cell::getCellWidth() / 10 / loading_bar->getContentSize().height);
+	layout->addChild(loading_bar, 2, "loading_bar");
+
+	Sprite* loading_background = Sprite::create("res/buttons/loaderBackground.png");
+	loading_background->setScaleX(Cell::getCellWidth() / 2 / loading_background->getContentSize().width);
+	loading_background->setScaleY(Cell::getCellWidth() / 10 / loading_background->getContentSize().height);
+	layout->addChild(loading_background, 1, "loading_background");
+
+	layout->setVisible(false);
+	addChild(layout, 2, "life_bar");
 }
 
 void Dango::update(float dt) {
@@ -133,7 +149,7 @@ void Dango::update(float dt) {
 			}
 			break;
 		case MOVE:
-			if (!on_ground) {
+			if (!on_ground || !stay_on_ground) {
 				move(dt);
 			}
 			
@@ -206,29 +222,27 @@ void Dango::updateAnimation(){
 		stopAction(cAction);
 	}
 	double x = this->getScaleX();
+	float game_speed = SceneManager::getInstance()->getGame()->getAcceleration();
+
 	spTrackEntry* anim;
 	if (state == ATTACK) {
 		switch (cDirection) {
 		case UP:
-			
 			anim = skeleton->setAnimation(0, "attack_up", false);
-			skeleton->setTimeScale(1.25f);
 			break;
 		case RIGHT:
-			skeleton->setTimeScale(1.25f);
 			this->setScaleX(((x > 0) - (x < 0))* x);
 			anim = skeleton->setAnimation(0, "attack_side", false);
 			break;
 		case LEFT:
-			skeleton->setTimeScale(1.25f);
 			this->setScaleX(-((x > 0) - (x < 0))*x);
 			anim = skeleton->setAnimation(0, "attack_side", false);
 			break;
 		case DOWN:
-			skeleton->setTimeScale(1.25f);
 			anim = skeleton->setAnimation(0, "attack_down", false);
 			break;
 		}
+		skeleton->setTimeScale(1.25f * game_speed);
 	}
 	else if(state == MOVE) {
 		switch (cDirection) {
@@ -247,7 +261,7 @@ void Dango::updateAnimation(){
 			anim = skeleton->setAnimation(0, "jump_down", true);
 			break;
 		}
-		skeleton->setTimeScale(anim->animation->duration * getSpeed());
+		skeleton->setTimeScale(anim->animation->duration * (1 - getSpeedRedtuctionRatio()) * game_speed);
 	}
 }
 
@@ -264,7 +278,7 @@ double Dango::getHitPoints(){
 }
 
 double Dango::getGain(){
-	return getSpecConfig()["level"][level]["gain"].asDouble();
+	return getSpecConfig()["gain"][level].asDouble();
 }
 
 void Dango::takeDamages(double damages){
@@ -282,12 +296,14 @@ void Dango::takeDamages(double damages){
 		state = DYING;
 		die();
 	}
+	updateLifeBar();
 }
 
 void Dango::applyProspectiveDamages(int id_damage) {
 	runAction(Sequence::create(Hide::create(), DelayTime::create(0.1f), Show::create(), nullptr));
 	hitPoints -= prospective_damages[id_damage];
 	removePDamages(id_damage);
+	
 	if (hitPoints < 0) {
 		hitPoints = 0;
 	}
@@ -295,6 +311,7 @@ void Dango::applyProspectiveDamages(int id_damage) {
 		state = DYING;
 		die();
 	}
+	updateLifeBar();
 	/*log("take prospective damages id : %i, size: %i", id_damage, prospective_damages.size());
 	for (auto id : prospective_damages){
 		log("-> damages id : %i", id);
@@ -446,79 +463,9 @@ ui::Layout* Dango::getInformationLayout(InterfaceGame* interface_game) {
 
 	auto layout = ui::Layout::create();
 	layout->setPosition(Vec2(-Cell::getCellWidth() / 2, -Cell::getCellWidth() / 2));
-	/*
-	auto panel = ui::Button::create("res/buttons/wood_information_panel.png");
-	panel->setScaleX(visibleSize.width / 5 / panel->getContentSize().width);
-	panel->setScaleY(visibleSize.width / 8 / panel->getContentSize().width);
-	panel->setZoomScale(0);
-	layout->addChild(panel, 0, "panel");
-
-	Label* dango_label = Label::createWithTTF(getSpecConfig()["name"].asString(), "fonts/LICABOLD.ttf", 35 * visibleSize.width / 1280);
-	dango_label->setColor(Color3B::BLACK);
-	dango_label->setPosition(Vec2(0,
-		panel->getContentSize().height * panel->getScaleY() * 0.90/2));
-	dango_label->setAnchorPoint(Vec2(0.5, 1));
-	layout->addChild(dango_label, 1, "level_label");
-
-	Sprite* speed_mv = Sprite::create("res/buttons/speed.png");
-	Sprite* attack = Sprite::create("res/buttons/attack.png");
-	Sprite* speed_attack = Sprite::create("res/buttons/speed.png");
-	Sprite* life = Sprite::create("res/buttons/life.png");
-	layout->addChild(speed_mv, 1, "speed_mv");
-	layout->addChild(attack, 1, "attack");
-	layout->addChild(life, 1, "range");
-
-	double size_sprite = panel->getContentSize().width * panel->getScaleX() / 12;
-	
-
-	speed_mv->setScale(size_sprite / speed_mv->getContentSize().width);
-	attack->setScale(size_sprite / attack->getContentSize().width);
-	speed_attack->setScale(size_sprite / speed_attack->getContentSize().width);
-	life->setScale(size_sprite / life->getContentSize().width);
-
-	std::string s = Value(getSpeed() / Cell::getCellWidth()).asString();
-	s.resize(4);
-	Label* speed_mv_label = Label::createWithTTF(s, "fonts/LICABOLD.ttf", 20 * visibleSize.width / 1280);
-	speed_mv_label->setColor(Color3B::BLACK);
-	speed_mv_label->setAnchorPoint(Vec2(0.f, 0.5f));
-	layout->addChild(speed_mv_label, 1, "speed_mv_label");
-
-	s = Value(attack_damages).asString();
-	s.resize(4);
-	Label* attack_label = Label::createWithTTF(s, "fonts/LICABOLD.ttf", 20 * visibleSize.width / 1280);
-	attack_label->setColor(Color3B::BLACK);
-	attack_label->setAnchorPoint(Vec2(0.f, 0.5f));
-	layout->addChild(attack_label, 1, "attack_label");
-
-	Label* life_label = Label::createWithTTF(Value((int)hitPoints).asString() + "/" + 
-		getSpecConfig()["level"][level]["hitpoints"].asString(),
-		"fonts/LICABOLD.ttf", 20 * visibleSize.width / 1280);
-	life_label->setColor(Color3B::BLACK);
-	life_label->setAnchorPoint(Vec2(0.f, 0.5f));
-	layout->addChild(life_label, 1, "life_label");
-
-	double total_width = 3 * size_sprite + speed_mv_label->getContentSize().width +
-		attack_label->getContentSize().width + life_label->getContentSize().width +
-		3 / 4 * size_sprite;
-
-	speed_mv->setPosition(-total_width / 2,
-		-panel->getContentSize().height * panel->getScaleY() / 4);
-	speed_mv_label->setPosition(Vec2(speed_mv->getPosition().x + size_sprite * 3 / 4,
-		speed_mv->getPosition().y));
-	attack->setPosition(speed_mv_label->getPosition().x + speed_mv_label->getContentSize().width +
-		attack->getContentSize().width * attack->getScale() * 3 / 4,
-		-panel->getContentSize().height * panel->getScaleY() / 4);
-	attack_label->setPosition(Vec2(attack->getPosition().x + size_sprite * 3 / 4,
-		attack->getPosition().y));
-	life->setPosition(attack_label->getPosition().x + attack_label->getContentSize().width +
-		life->getContentSize().width * life->getScale() * 3 / 4,
-		-panel->getContentSize().height * panel->getScaleY() / 4);
-	life_label->setPosition(Vec2(life->getPosition().x + size_sprite * 3 / 4,
-		life->getPosition().y));
-	*/
 
 	ui::LoadingBar* loading_bar = ui::LoadingBar::create("res/buttons/sliderProgress.png");
-	loading_bar->setPercent((double)hitPoints / getSpecConfig()["level"][level]["hitpoints"].asDouble() * 100);
+	loading_bar->setPercent((double)hitPoints / getSpecConfig()["hitpoints"][level].asDouble() * 100);
 	loading_bar->setScaleX(Cell::getCellWidth() / 2 / loading_bar->getContentSize().width);
 	loading_bar->setScaleY(Cell::getCellWidth() / 10 / loading_bar->getContentSize().height);
 	layout->addChild(loading_bar, 2, "loading_bar");
@@ -550,7 +497,7 @@ void Dango::updateInformationLayout(cocos2d::ui::Layout* layout) {
 
 	auto loading_background = layout->getChildByName("loading_background");
 	auto loading_bar = (ui::LoadingBar*)layout->getChildByName("loading_bar");
-	loading_bar->setPercent((double)hitPoints / getSpecConfig()["level"][level]["hitpoints"].asDouble() * 100);
+	loading_bar->setPercent((double)hitPoints / getSpecConfig()["hitpoints"][level].asDouble() * 100);
 
 	double position_x = getPosition().x;
 	double position_y = getPosition().y + getContentSize().height * getScaleY();
@@ -613,4 +560,22 @@ void Dango::skeletonAnimationHandle() {
 
 void Dango::endDyingAnimation() {
 	state = DEAD;
+}
+
+void Dango::changeSpeedAnimation(float game_speed) {
+	if (state == ATTACK) {
+		skeleton->setTimeScale(1.25f * game_speed);
+	}
+	else if (state == MOVE) {
+		skeleton->setTimeScale(skeleton->getCurrent()->animation->duration * getSpeed() * game_speed);
+	}
+}
+
+void Dango::updateLifeBar() {
+	if (!getChildByName("life_bar")->isVisible()) {
+		getChildByName("life_bar")->setVisible(true);
+	}
+	auto loading_background = getChildByName("life_bar")->getChildByName("loading_background");
+	auto loading_bar = (ui::LoadingBar*)getChildByName("life_bar")->getChildByName("loading_bar");
+	loading_bar->setPercent((double)hitPoints / getSpecConfig()["hitpoints"][level].asDouble() * 100);
 }

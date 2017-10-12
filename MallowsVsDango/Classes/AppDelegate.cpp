@@ -60,7 +60,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if(!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-		glview = GLViewImpl::createWithRect("Mallows Vs Dangos", Rect(0, 0, 1280, 720));
+		glview = GLViewImpl::createWithRect("Mallows Vs Dangos", Rect(0, 0, 1280, 800));
 #else
         glview = GLViewImpl::create("Mallows Vs Dangos");
 #endif
@@ -68,7 +68,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 
     // turn on display FPS
-    director->setDisplayStats(true);
+    director->setDisplayStats(false);
 
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0f / 60.0f);

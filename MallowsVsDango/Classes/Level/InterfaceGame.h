@@ -65,8 +65,8 @@ public:
 	void showTowerInfo();
 	void hideTowerInfo();
 
-	static void shakeElement(cocos2d::Node* element);
-	static void shakeScaleElement(Node* element);
+	static void shakeElement(cocos2d::Node* element, bool loop = true);
+	static void shakeScaleElement(Node* element, bool loop = true);
 
 private:
 	std::unordered_map<std::string, std::pair<cocos2d::Sprite*, double>> towers_menu;

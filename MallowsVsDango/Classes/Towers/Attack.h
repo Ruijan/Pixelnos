@@ -32,6 +32,8 @@ protected:
 	int id;
 	double damages;
 	int damages_id;
+	cocos2d::Vec2 previous_pos;
+	cocos2d::Vec2 previous_target_pos;
 
 	// deletion attributes
 	bool touched;

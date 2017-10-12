@@ -628,3 +628,12 @@ Dango* Level::getLastEnemy() {
 		return nullptr;
 	}
 }
+
+void Level::setGameSpeed(float game_speed) {
+	for (auto& dango : dangos) {
+		dango->changeSpeedAnimation(game_speed);
+	}
+	for (auto& tower : towers) {
+		tower->changeSpeedAnimation(game_speed);
+	}
+}

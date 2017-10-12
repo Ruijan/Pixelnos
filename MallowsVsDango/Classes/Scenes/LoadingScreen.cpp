@@ -44,51 +44,41 @@ bool LoadingScreen::init(){
 	loadingBackground->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2));
 	loadingBackground->setScale(visibleSize.width / loadingBackground->getContentSize().width);
 
-	Sprite* image = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("dangobese1_j_000.png"));
-	image->setPosition(visibleSize.width/2,visibleSize.height/2);
-	image->setScale(visibleSize.width / 5 / image->getContentSize().width);
+	SkeletonAnimation* skeleton = SkeletonAnimation::createWithFile("res/dango/animations/dangobese.json",
+		"res/dango/animations/dangobese.atlas", 0.5f * visibleSize.width / 1280);
+	skeleton->setPosition(visibleSize.width / 2, visibleSize.height * 1 / 3);
+	skeleton->setSkin("normal_1");
+	
 
 	Label* loading_label = Label::createWithTTF(
 		((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["loading"][language].asString(), 
 		"fonts/Love Is Complicated Again.ttf", round(visibleSize.width / 10.0));
 	loading_label->setColor(Color3B::YELLOW);
-	loading_label->setPosition(visibleSize.width/2,visibleSize.height/2 + 
-		image->getContentSize().height * image->getScale() * 3/4);
+	loading_label->setPosition(visibleSize.width/2,visibleSize.height * 5 / 6);
 
 	// set the direction of the loading bars progress
 	loadingBar->setDirection(ui::LoadingBar::Direction::LEFT);
-	loadingBar->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2 - image->getContentSize().height * image->getScale() *3/4));
+	loadingBar->setPosition(Vec2(visibleSize.width/2,visibleSize.height/6));
 
 	Sprite* loadingBarBackground = Sprite::create("res/buttons/loaderBackground.png");
-	loadingBarBackground->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 
-		image->getContentSize().height * image->getScale() * 3 / 4));
+	loadingBarBackground->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 6));
 	loadingBarBackground->setScale(visibleSize.width / 2 / loadingBarBackground->getContentSize().width);
 
 	addChild(loadingBackground,1,"background");
 	addChild(loadingBarBackground,1,"loadingBackground");
 	addChild(loadingBar,1,"loadingBar");
-	addChild(image,1,"dangobese");
+	addChild(skeleton, 1, "dangobese_sk");
 	addChild(loading_label,1,"loading_label");
 
 	return true;
 }
 
 void LoadingScreen::start(){
-	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-	cache->addSpriteFramesWithFile("res/dango/animations/dangobese1.plist", "res/dango/animations/dangobese1.png");
-	cocos2d::Vector<SpriteFrame*> animFrames;
-	char str[100] = { 0 };
-	for (int i = 0; i < 24; ++i){
-		sprintf(str, "dangobese1_j_%03d.png", i);
-		SpriteFrame* frame = cache->getSpriteFrameByName(str);
-		animFrames.pushBack(frame);
-	}
-	Animation* animation = Animation::createWithSpriteFrames(animFrames, 1.0f / 24.0f);
-	getChildByName("dangobese")->runAction(RepeatForever::create(Animate::create(animation)));
+	((SkeletonAnimation*)getChildByName("dangobese_sk"))->setAnimation(0, "jump_down", true);
 }
 
 void LoadingScreen::stop(){
-	getChildByName("dangobese")->stopAllActions();
+	((SkeletonAnimation*)getChildByName("dangobese_sk"))->stopAllActions();
 }
 /*
  * Set Loading Percentage in % not in ratio.

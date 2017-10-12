@@ -69,6 +69,7 @@ public:
 	bool hasLost();
 	void reset();
 	std::vector<Attack*> getAttacks();
+	void setGameSpeed(float game_speed);
 
 	void showGrid(bool show);
 

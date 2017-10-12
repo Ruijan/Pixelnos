@@ -7,6 +7,11 @@ USING_NS_CC;
 
 Dangobese::Dangobese(std::vector<Cell*> npath, int nlevel) :
 Dango(npath, nlevel){
+	auto config = getSpecConfig();
+	attack_spe_reload_time = config["attack_spe"]["reload_spe"][nlevel].asDouble();
+	attack_spe_duration = config["attack_spe"]["attack_duration"][nlevel].asDouble();
+	attack_spe_reload_timer = 0;
+	attack_spe_timer = 0;
 }
 
 Dangobese::~Dangobese() {
@@ -19,11 +24,8 @@ Dangobese* Dangobese::create(std::vector<Cell*> npath, int nlevel)
 
 	/*if (pSprite->initWithFile(getConfig()["level"][nlevel]["image"].asString()))
 	{*/
-		pSprite->setScale(Cell::getCellWidth() / pSprite->getContentSize().width);
+		pSprite->initFromConfig();
 		pSprite->autorelease();
-
-		pSprite->setAnchorPoint(Point(0.5,0.25));
-		pSprite->updateAnimation();
 
 		return pSprite;
 	//}
@@ -49,7 +51,7 @@ void Dangobese::attackSpe(float dt) {
 			double speed = 500;
 			double time_to_reach = distance / speed;
 			if (distance < 150 * visibleSize.width / 960 &&
-				time_to_reach < attack_duration - attack_spe_reload_timer &&
+				time_to_reach < attack_spe_duration - attack_spe_timer &&
 				!((WaterBall*)attack)->isForceApplied()) {
 				Vec2 direction = Vec2(attack->getPosition().x - getPosition().x,
 					attack->getPosition().y - getPosition().y).getNormalized();
@@ -66,13 +68,15 @@ void Dangobese::attackSpe(float dt) {
 }
 
 bool Dangobese::shouldAttackSpe() {
-	std::vector<Attack*> attacks = ((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getAttacks();
-	for (auto& attack : attacks) {
-		if (!isAffectedByAttack(attack)) {
-			double distance = sqrt(pow(attack->getPosition().x - getPosition().x, 2) +
-				pow(attack->getPosition().y - getPosition().y, 2));
-			if (distance < 150 && !((WaterBall*)attack)->isForceApplied()) {
-				return true;
+	if (attack_spe_reload_timer > attack_spe_reload_time) {
+		std::vector<Attack*> attacks = ((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getAttacks();
+		for (auto& attack : attacks) {
+			if (!isAffectedByAttack(attack)) {
+				double distance = sqrt(pow(attack->getPosition().x - getPosition().x, 2) +
+					pow(attack->getPosition().y - getPosition().y, 2));
+				if (distance < 150 && !((WaterBall*)attack)->isForceApplied()) {
+					return true;
+				}
 			}
 		}
 	}
@@ -89,7 +93,10 @@ void Dangobese::update(float dt) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	reload_timer += dt;
-	attack_spe_reload_timer += dt;
+	if (attack_spe_done) {
+		attack_spe_reload_timer += dt;
+	}
+	
 	switch (state) {
 	case IDLE:
 		if (shouldAttack() && reload_timer > attack_reloading) {
@@ -113,19 +120,34 @@ void Dangobese::update(float dt) {
 		}
 		break;
 	case ATTACK_SPE:
-		if (shouldAttackSpe()) {
+		if (shouldAttackSpe() && attack_spe_done) {
 			attackSpe(dt);
-			state = MOVE;
+			startAttackSpeAnimation();
 			attack_spe_reload_timer = 0;
+			attack_spe_timer = 0;
+			attack_spe_done = false;
 		}
-		else {
+		else if(!shouldAttackSpe() && attack_spe_done) {
 			state = MOVE;
 			updateAnimation();
+		}
+		else if (!attack_spe_done) {
+			if (attack_spe_timer > attack_spe_duration) {
+				state = MOVE;
+				updateAnimation();
+				attack_spe_done = true;
+			}
+			else {
+				attackSpe(dt);
+				attack_spe_timer += dt;
+			}
 		}
 		break;
 	case MOVE:
 		if (path[targetedCell]->isFree()) {
-			move(dt);
+			if (!on_ground || !stay_on_ground) {
+				move(dt);
+			}
 			if (shouldAttackSpe()) {
 				state = ATTACK_SPE;
 				updateAnimation();
@@ -146,4 +168,8 @@ void Dangobese::update(float dt) {
 
 bool Dangobese::isAffectedByAttack(Attack* attack) {
 	return attack->affectEnemy(this);
+}
+
+void Dangobese::startAttackSpeAnimation() {
+	skeleton->setAnimation(0, "aspirate", true);
 }

@@ -124,6 +124,12 @@ public:
 	bool isAccelerated();
 
 	/**
+	* @brief Get acceleration value
+	* @return accelerate value
+	*/
+	float getAcceleration();
+
+	/**
 	* @brief Save the new experience and the progression of the game.
 	* @return If everything is okay, return true
 	*/

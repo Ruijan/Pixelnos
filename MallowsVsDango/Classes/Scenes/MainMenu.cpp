@@ -171,7 +171,7 @@ bool MainMenu::init()
 		title->setVerticalAlignment(TextVAlignment::CENTER);
 		layout_username->addChild(title, 2, "title");
 		ui::EditBox* username = ui::EditBox::create(Size(panel->getContentSize().width * panel->getScaleX() * 2 / 3, 
-			panel->getContentSize().height * panel->getScaleY() / 4),
+			panel->getContentSize().height * panel->getScaleY() / 5),
 			ui::Scale9Sprite::create("res/buttons/input_username.png"));
 		username->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
 		username->setFontName("Arial Rounded MT Bold");
@@ -180,6 +180,7 @@ bool MainMenu::init()
 		username->setPlaceHolder("");
 		username->setPlaceholderFontColor(Color3B::WHITE);
 		username->setMaxLength(15);
+		username->setInputFlag(cocos2d::ui::EditBox::InputFlag::SENSITIVE);
 		username->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 		username->setDelegate(this);
 		layout_username->addChild(username, 2, "username_input");

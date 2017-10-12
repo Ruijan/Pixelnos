@@ -223,8 +223,8 @@
             "res/levels/objects/trees.png",
             "res/levels/objects/forest.png"
           ],
-          "x": -0.03,
-          "y": 0,
+          "x": -0.017,
+          "y": -0.01,
           "challenges": [
             {
               "name": "Untouchable",
@@ -258,8 +258,8 @@
           "reward": {
             "type": "none"
           },
-          "sugar": 400,
-          "type":  "normal",
+          "sugar": 90,
+          "type": "normal",
           "tileset": [
             "res/levels/objects/ground.plist",
             "res/levels/objects/trees.plist",
@@ -270,7 +270,36 @@
             "res/levels/objects/trees.png",
             "res/levels/objects/forest.png"
           ],
-          "x": 0.07,
+          "x": 0.16,
+          "y": -0.12
+        },
+        {
+          "id": 7,
+          "dialogues_file": "Levels/lvl_7_dialogues.json",
+          "animations": [ "res/turret/animations/splash.plist", "res/turret/animations/cut.plist" ],
+          "background": "res/levels/background2.png",
+          "effects": [ "music/splash.mp3", "music/slash.mp3" ],
+          "exp": 25,
+          "holy_sugar": 2,
+          "finalized": false,
+          "path_level": "Level_6.json",
+          "musics": [ "music/On-Tiptoe.mp3.mp3" ],
+          "reward": {
+            "type": "none"
+          },
+          "sugar": 400,
+          "type": "normal",
+          "tileset": [
+            "res/levels/objects/ground.plist",
+            "res/levels/objects/trees.plist",
+            "res/levels/objects/forest.plist"
+          ],
+          "tilesetpng": [
+            "res/levels/objects/ground.png",
+            "res/levels/objects/trees.png",
+            "res/levels/objects/forest.png"
+          ],
+          "x": 0.1,
           "y": 0.03
         }
       ]

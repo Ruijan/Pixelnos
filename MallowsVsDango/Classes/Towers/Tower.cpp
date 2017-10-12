@@ -580,16 +580,16 @@ void Tower::displayRange(bool disp){
 void Tower::startAnimation(float speed){
 	std::string action("");
 	skeleton->clearTracks();
-
+	float game_speed = SceneManager::getInstance()->getGame()->getAcceleration();
 	switch (state) {
 	case IDLE:
-		skeleton->setTimeScale(1.f * speed);
+		skeleton->setTimeScale(1.f * speed * game_speed);
 		skeleton->setSkin("normal_" + Value(level + 1).asString());
 		skeleton->setAnimation(0, "still", false);
 		skeleton->setAnimation(1, "blink", false);
 		break;
 	case ATTACKING:
-		skeleton->setTimeScale(1.5f * speed);
+		skeleton->setTimeScale(1.5f * speed * game_speed);
 		skeleton->setSkin("normal_" + Value(level + 1).asString());
 		updateDirection();
 		switch (direction) {
@@ -611,7 +611,7 @@ void Tower::startAnimation(float speed){
 		}
 		break;
 	case LIMIT_BURSTING:
-		skeleton->setTimeScale(1.5f * speed);
+		skeleton->setTimeScale(1.5f * speed * game_speed);
 		skeleton->setSkin("enraged_" + Value(level + 1).asString());
 		updateDirection();
 		switch (direction) {
@@ -773,7 +773,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	double position_x = getPosition().x;
 	double position_y = getPosition().y + panel->getContentSize().height * panel->getScaleY() / 2 +
 		Cell::getCellHeight() / 2;
-	if (position_x - panel->getContentSize().width * panel->getScaleX() / 2 < 0) {
+	/*if (position_x - panel->getContentSize().width * panel->getScaleX() / 2 < 0) {
 		position_x += abs(position_x - panel->getContentSize().width * panel->getScaleX() / 2);
 	}
 	else if (position_x + panel->getContentSize().width * panel->getScaleX() / 2 > visibleSize.width * 3 / 4) {
@@ -782,7 +782,14 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	if (position_y + panel->getContentSize().height * panel->getScaleY() / 2 > visibleSize.height) {
 		position_y = getPosition().y - panel->getContentSize().height * panel->getScaleY() / 2 -
 			Cell::getCellHeight() / 2;
+	}*/
+	if (position_x >= visibleSize.width * 3 / 8) {
+		position_x = panel->getContentSize().width * panel->getScaleX() / 2;
 	}
+	else if (position_x < visibleSize.width * 3 / 8) {
+		position_x = visibleSize.width * 3 / 4 - panel->getContentSize().width * panel->getScaleX() / 2;
+	}
+	position_y = panel->getContentSize().height * panel->getScaleY() / 2;
 	layout->setPosition(Vec2(position_x, position_y));
 	layout->addChild(current_level_layout, 2, "current_level_layout");
 
@@ -1174,6 +1181,7 @@ void Tower::updateInformationLayout(ui::Layout* layout) {
 
 void Tower::updateDirection() {
 	Vec2 vec = target->getPosition() - getPosition();
+	vec.normalize();
 	float angle = vec.getAngle();
 	if (abs(angle) <= M_PI_4) {
 		direction = RIGHT;
@@ -1217,4 +1225,22 @@ void Tower::stopAttacking() {
 		target->removeTargetingTower(this);
 		target = nullptr;
 	}
+}
+
+void Tower::changeSpeedAnimation(float game_speed) {
+	switch (state) {
+	case IDLE:
+		skeleton->setTimeScale(1.f * game_speed);
+		break;
+	case ATTACKING:
+		skeleton->setTimeScale(1.5f * game_speed);
+		break;
+	case LIMIT_BURSTING:
+		skeleton->setTimeScale(1.5f * game_speed);
+		break;
+	default:
+		std::cerr << "No animation found for this state.";
+		std::cerr << "Steady state animation used instead." << std::endl;
+		break;
+	};
 }

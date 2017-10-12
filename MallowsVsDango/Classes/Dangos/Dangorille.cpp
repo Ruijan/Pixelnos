@@ -7,10 +7,10 @@ USING_NS_CC;
 Dangorille::Dangorille(std::vector<Cell*> npath, int nlevel) :
 Dangosimple(npath, nlevel), attack_spe_done(true){
 	auto config = getSpecConfig();
-	attack_spe_reload_time = config["level"][nlevel]["reload_spe"].asDouble();
-	nb_monkeys = config["level"][nlevel]["attack_spe"]["nb_monkeys"].asInt();
+	attack_spe_reload_time = config["reload_spe"][nlevel].asDouble();
+	nb_monkeys = config["attack_spe"]["nb_monkeys"][nlevel].asInt();
 	attack_spe_reload_timer = 0;
-	attack_spe_text = config["level"][nlevel]["attack_spe"]["text_" + ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()];
+	attack_spe_text = config["attack_spe"]["text_" + ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()];
 }
 
 Dangorille::~Dangorille() {

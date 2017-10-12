@@ -60,6 +60,7 @@ public:
 	void resumeAnimation();
 	void updateDirection(cocos2d::Vec2 direction);
 	void updateEffects(float dt);
+	void updateLifeBar();
 	
 
 	void takeDamages(double damages);
@@ -70,6 +71,8 @@ public:
 	void move(float dt);
 	virtual void attack(float dt);
 	void addEffect(Effect* effect);
+	void changeSpeedAnimation(float speed);
+
 
 	cocos2d::ui::Layout* getInformationLayout(InterfaceGame* interface_game);
 	virtual void updateInformationLayout(cocos2d::ui::Layout* layout);
@@ -94,8 +97,6 @@ protected:
 	std::vector<Cell*> path;
 	cocos2d::Action* cAction;
 
-	double animation_duration;
-	double nb_frames_anim;
 	std::string name;
 	SkeletonAnimation* skeleton;
 
@@ -117,6 +118,7 @@ protected:
 	int level;
 	int xp;
 	int holy_sugar;
+	bool stay_on_ground;
 
 	std::vector<Effect*> effects;
 };

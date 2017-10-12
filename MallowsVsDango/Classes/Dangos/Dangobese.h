@@ -22,12 +22,16 @@ public:
 	virtual void update(float dt);
 	virtual void updateAnimation();
 	virtual bool shouldAttackSpe();
+	virtual void startAttackSpeAnimation();
 
 	bool isAffectedByAttack(Attack* attack);
 
 private:
-	double attack_duration;
+	double attack_spe_duration;
+	double attack_spe_timer;
 	double attack_spe_reload_timer;
+	double attack_spe_reload_time;
+	bool attack_spe_done;
 };
 
 #endif
