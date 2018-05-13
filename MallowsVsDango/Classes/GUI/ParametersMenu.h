@@ -1,7 +1,7 @@
 #pragma once
 #include "ui/CocosGUI.h"
 #include "cocos2d.h"
-#include "Config/json.h"
+#include "../Config/json.h"
 #include "../Scenes/MyGame.h"
 #include "../Config/AudioController.h"
 #include "../Config/Config.h"
@@ -27,7 +27,7 @@ private:
 	void addBlackMask(const cocos2d::Size &visibleSize);
 	void addGlobalSettings(Json::Value &buttons, std::string &language, const cocos2d::Size &visibleSize, Config * config);
 	void addSoundController(const std::string& title, cocos2d::Size visibleSize, AudioController::SOUNDTYPE type);
-	void addLoopCheckBox(Json::Value &buttons, std::string &language, const cocos2d::Size &visibleSize, AudioController * audioController);
+	void addMusicLoopCheckBox(Json::Value &buttons, std::string &language, const cocos2d::Size &visibleSize, AudioController * audioController);
 	void addTitle(Json::Value &buttons, std::string &language, const cocos2d::Size &visibleSize);
 	void addPanel(const cocos2d::Size &visibleSize);
 	cocos2d::ui::CheckBox* createNormalCheckBox(const cocos2d::Size& visibleSize, cocos2d::Vec2 position);

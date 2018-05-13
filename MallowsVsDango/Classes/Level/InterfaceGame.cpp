@@ -12,6 +12,7 @@
 #include <string>
 #include <sstream>
 #include "../GUI/ParametersMenu.h"
+#include "../GUI/StartMenu.h"
 
 
 USING_NS_CC;
@@ -113,9 +114,7 @@ bool InterfaceGame::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
 				state = State::TOUCHED;
 				displayTowerInfos(item.first);
 				if (game_state == TITLE) {
-					getChildByName("start")->setVisible(false);
-					getChildByName("title")->setVisible(false);
-					getChildByName("advice")->setVisible(false);
+					((StartMenu*)getChildByName("start"))->hide();
 				}
 			}
 			else {
@@ -133,9 +132,7 @@ bool InterfaceGame::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
 		}
 		else {
 			if (game_state == TITLE) {
-				getChildByName("start")->setVisible(false);
-				getChildByName("advice")->setVisible(false);
-				getChildByName("title")->setVisible(false);
+				((StartMenu*)getChildByName("start"))->hide();
 			}
 			Tower* tower = game->getLevel()->touchingTower(p);
 			if (tower != nullptr) {
@@ -160,9 +157,7 @@ bool InterfaceGame::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
 					selected_turret->displayRange(false);
 					hideTowerInfo();
 					if (game_state == TITLE) {
-						getChildByName("start")->setVisible(false);
-						getChildByName("title")->setVisible(false);
-						getChildByName("advice")->setVisible(false);
+						((StartMenu*)getChildByName("start"))->hide();
 					}
 					selected_turret = nullptr;
 					state = IDLE;
@@ -227,9 +222,7 @@ void InterfaceGame::onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) {
 			selected_turret = nullptr;
 			state = IDLE;
 			if (game_state == TITLE) {
-				getChildByName("start")->setVisible(true);
-				getChildByName("title")->setVisible(true);
-				getChildByName("advice")->setVisible(true);
+				((StartMenu*)getChildByName("start"))->displayWithAnimation();
 			}
 		}
 	}
@@ -242,9 +235,7 @@ void InterfaceGame::onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) {
 			selected_dango = nullptr;
 			state = IDLE;
 			if (game_state == TITLE) {
-				getChildByName("start")->setVisible(true);
-				getChildByName("advice")->setVisible(true);
-				getChildByName("title")->setVisible(true);
+				((StartMenu*)getChildByName("start"))->displayWithAnimation();
 			}
 		}
 	}
@@ -256,45 +247,29 @@ void InterfaceGame::onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) {
 				selected_turret->displayRange(false);
 				getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
 				selected_turret = nullptr;
-				if (game_state == TITLE) {
-					getChildByName("start")->setVisible(true);
-					getChildByName("title")->setVisible(true);
-					getChildByName("advice")->setVisible(true);
-				}
 			}
 			else {
 				selected_turret->destroyCallback(this);
 				removeTower();
-				if (game_state == TITLE) {
-					getChildByName("start")->setVisible(true);
-					getChildByName("advice")->setVisible(true);
-					getChildByName("title")->setVisible(true);
-				}
 			}
 		}
 		else {
 			selected_turret->destroyCallback(this);
 			removeTower();
-			if (game_state == TITLE) {
-				getChildByName("start")->setVisible(true);
-				getChildByName("advice")->setVisible(true);
-				getChildByName("title")->setVisible(true);
-			}
+		}
+		if (game_state == TITLE) {
+			((StartMenu*)getChildByName("start"))->displayWithAnimation();
 		}
 	}
 	else if (state == TOUCHED) {
 		if (game_state == TITLE) {
-			getChildByName("start")->setVisible(true);
-			getChildByName("title")->setVisible(true);
-			getChildByName("advice")->setVisible(true);
+			((StartMenu*)getChildByName("start"))->displayWithAnimation();
 		}
 		//state = IDLE;
 	}
 	if (state == IDLE) {
 		if (game_state == TITLE) {
-			getChildByName("start")->setVisible(true);
-			getChildByName("title")->setVisible(true);
-			getChildByName("advice")->setVisible(true);
+			((StartMenu*)getChildByName("start"))->displayWithAnimation();
 		}
 		getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
 	}
@@ -320,9 +295,7 @@ void InterfaceGame::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) {
 					selected_turret->setVisible(true);
 				}
 				else {
-					getChildByName("label_information")->getChildByName("sugar")->stopAllActions();
-					getChildByName("label_information")->getChildByName("sugar")->setRotation(0.f);
-					getChildByName("label_information")->getChildByName("sugar")->setScale(1.0f);
+					resetSugarLabel();
 					shakeScaleElement((Label*)getChildByName("label_information")->getChildByName("sugar"), false);
 				}
 			}
@@ -344,6 +317,13 @@ void InterfaceGame::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) {
 			moveSelectedTurret(pos);
 		}
 	}
+}
+
+void InterfaceGame::resetSugarLabel()
+{
+	getChildByName("label_information")->getChildByName("sugar")->stopAllActions();
+	getChildByName("label_information")->getChildByName("sugar")->setRotation(0.f);
+	getChildByName("label_information")->getChildByName("sugar")->setScale(1.0f);
 }
 
 void InterfaceGame::addEvents()
@@ -413,13 +393,7 @@ void InterfaceGame::update(float dt){
 			removeChild(dialogues);
 			dialogues = nullptr;
 			game_state = TITLE;
-			getChildByName("start")->setVisible(true);
-			getChildByName("title")->setVisible(true);
-			getChildByName("advice")->setVisible(true);
-			getChildByName("title")->runAction(Sequence::create(EaseBackOut::create(MoveTo::create(0.5f,Vec2(getChildByName("title")->getPosition().x,
-				visibleSize.height/2))), DelayTime::create(1.f), FadeOut::create(0.5f),nullptr));
-			getChildByName("start")->runAction(EaseBackOut::create(MoveTo::create(0.5f, Vec2(getChildByName("start")->getPosition().x,
-				getChildByName("start")->getContentSize().height * getChildByName("start")->getScaleY()))));
+			((StartMenu*)getChildByName("start"))->displayWithAnimation();
 		}
 		updateButtonDisplay();
 		break;
@@ -531,17 +505,7 @@ void InterfaceGame::reset(){
 	getChildByName("menu_pause")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	getChildByName("black_mask")->setVisible(false);
 
-	getChildByName("start")->setPosition(Vec2(getChildByName("start")->getPosition().x, 
-		-getChildByName("start")->getContentSize().height * getChildByName("start")->getScaleY()));
-	getChildByName("title")->setPosition(Vec2(getChildByName("title")->getPosition().x,
-		visibleSize.height + getChildByName("title")->getContentSize().height * getChildByName("title")->getScaleY()));
-	((Label*)getChildByName("title"))->runAction(FadeIn::create(0.5f));
-	((Label*)getChildByName("title"))->setString(
-		((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["level"][language].asString() + " " +
-		Value((int)(game->getLevel()->getLevelId() + 1)).asString());
-	getChildByName("advice")->setVisible(false);
-	getChildByName("advice")->runAction(RepeatForever::create(Sequence::create(
-		FadeIn::create(1.f), FadeOut::create(0.5f), DelayTime::create(1.f), NULL)));
+	((StartMenu*)getChildByName("start"))->reset(game->getLevel()->getLevelId());
 	getChildByName("label_information")->getChildByName("dango_head")->setVisible(false);
 	getChildByName("label_information")->getChildByName("loading_bar_background")->setVisible(false);
 	getChildByName("label_information")->getChildByName("loading_bar")->setVisible(false);
@@ -570,57 +534,13 @@ void InterfaceGame::initParametersMenu(const Json::Value& config){
 }
 
 void InterfaceGame::initStartMenu(const Json::Value& config) {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
+	addChild(StartMenu::create(this, game->getLevel()->getLevelId()), 2, "start");
+}
 
-	Label* title = Label::createWithTTF(buttons["level"][language].asString() + " " +
-		Value((int)(game->getLevel()->getLevelId() + 1)).asString(), 
-		"fonts/LICABOLD.ttf", round(visibleSize.width / 12.0));
-	title->setColor(Color3B::YELLOW);
-	title->enableOutline(Color4B::BLACK, 3);
-	title->setPosition(round(visibleSize.width * 3 / 8.0), visibleSize.height + title->getContentSize().height/2);
-	addChild(title, 2, "title");
-
-	Label* advice = Label::createWithTTF(buttons["advice_game_drag"][language].asString(),
-		"fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	advice->setDimensions(visibleSize.width / 2, visibleSize.height / 10);
-	advice->setPosition(round(visibleSize.width * 3 / 8.0), visibleSize.height - advice->getContentSize().height);
-	advice->setColor(Color3B::WHITE);
-	advice->enableOutline(Color4B::BLACK, 2);
-	advice->setAlignment(TextHAlignment::CENTER);
-	advice->setVisible(false);
-	advice->runAction(RepeatForever::create(Sequence::create(
-		FadeIn::create(1.f), FadeOut::create(0.5f), DelayTime::create(1.f) , NULL)));
-	addChild(advice, 2, "advice");
-
-
-	ui::Button* start = ui::Button::create("res/buttons/blue_button.png");
-	start->setScale(visibleSize.width / 4 / start->getContentSize().width);
-	start->setTitleText(buttons["start_game"][language].asString());
-	start->setTitleFontName("fonts/LICABOLD.ttf");
-	start->setTitleFontSize(45.f);
-	Label* start_label = start->getTitleRenderer();
-	start_label->enableOutline(Color4B::BLACK, 2);
-	start->setTitleColor(Color3B::YELLOW);
-	start->setTitleAlignment(cocos2d::TextHAlignment::CENTER);
-	start->setPosition(Vec2(title->getPosition().x, -start->getContentSize().height * start->getScaleY()));
-	start->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == ui::Widget::TouchEventType::ENDED) {
-			setListening(true);
-			getChildByName("start")->runAction(EaseBackIn::create(MoveTo::create(0.5f, Vec2(getChildByName("start")->getPosition().x,
-				-getChildByName("start")->getContentSize().height * getChildByName("start")->getScaleY()))));
-			getChildByName("title")->setVisible(false);
-			getChildByName("advice")->setVisible(false);
-			getChildByName("label_information")->getChildByName("dango_head")->setVisible(true);
-			getChildByName("label_information")->getChildByName("loading_bar_background")->setVisible(true);
-			getChildByName("label_information")->getChildByName("loading_bar")->setVisible(true);
-
-
-			this->setGameState(RUNNING);
-		}
-	});
-	addChild(start, 2, "start");
+void InterfaceGame::showLabelInformation() {
+	getChildByName("label_information")->getChildByName("dango_head")->setVisible(true);
+	getChildByName("label_information")->getChildByName("loading_bar_background")->setVisible(true);
+	getChildByName("label_information")->getChildByName("loading_bar")->setVisible(true);
 }
 
 void InterfaceGame::initLabels(const Json::Value& config){
@@ -1170,9 +1090,7 @@ void InterfaceGame::builtCallback(Ref* sender){
 		towers_menu["bomber"].first->setRotation(0);
 		tutorial_running = false;
 		if (game_state == TITLE) {
-			getChildByName("start")->setVisible(true);
-			getChildByName("title")->setVisible(true);
-			getChildByName("advice")->setVisible(true);
+			((StartMenu*)getChildByName("start"))->displayWithAnimation();
 		}
 	}
 	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("saucer") &&
@@ -1184,9 +1102,7 @@ void InterfaceGame::builtCallback(Ref* sender){
 		tutorial_running = false;
 		game->getLevel()->resume();
 		if (game_state == TITLE) {
-			getChildByName("start")->setVisible(true);
-			getChildByName("title")->setVisible(true);
-			getChildByName("advice")->setVisible(true);
+			((StartMenu*)getChildByName("start"))->displayWithAnimation();
 		}
 	}
 }
@@ -1224,9 +1140,7 @@ void InterfaceGame::hideDangoInfo() {
 		getChildByName("information_dango")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
 	}
 	if (game_state == TITLE) {
-		getChildByName("start")->setVisible(true);
-		getChildByName("advice")->setVisible(true);
-		getChildByName("title")->setVisible(true);
+		((StartMenu*)getChildByName("start"))->displayWithAnimation();
 	}
 }
 
@@ -1263,9 +1177,7 @@ void InterfaceGame::hideTowerInfo() {
 		getChildByName("information_tower")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
 	}
 	if (game_state == TITLE) {
-		getChildByName("start")->setVisible(true);
-		getChildByName("advice")->setVisible(true);
-		getChildByName("title")->setVisible(true);
+		((StartMenu*)getChildByName("start"))->displayWithAnimation();
 	}
 }
 
@@ -1486,12 +1398,7 @@ void InterfaceGame::initDialoguesFromLevel(const Json::Value& config) {
 	}
 	else {
 		game_state = TITLE;
-		getChildByName("title")->runAction(Sequence::create(EaseBackOut::create(
-			MoveTo::create(0.5f, Vec2(getChildByName("title")->getPosition().x,
-			visibleSize.height / 2))), DelayTime::create(1.f), FadeOut::create(0.5f), nullptr));
-		getChildByName("start")->runAction(EaseBackOut::create(MoveTo::create(0.5f, Vec2(getChildByName("start")->getPosition().x,
-			getChildByName("start")->getContentSize().height * getChildByName("start")->getScaleY()))));
-		getChildByName("start")->setVisible(true);
+		((StartMenu*)getChildByName("start"))->displayWithAnimation();
 		dialogues = nullptr;
 	}
 }
@@ -1570,9 +1477,7 @@ void InterfaceGame::updateTutorial(float dt) {
 		tutorial_running = true;
 		shakeElement(towers_menu["bomber"].first);
 		if (game_state == TITLE) {
-			getChildByName("start")->setVisible(false);
-			getChildByName("title")->setVisible(false);
-			getChildByName("advice")->setVisible(false);
+			((StartMenu*)getChildByName("start"))->hide();
 		}
 		Sprite* hand = Sprite::create("res/buttons/hand.png");
 		hand->setAnchorPoint(Vec2(0.15f, 0.5f));
@@ -1601,9 +1506,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			if (game_state == TITLE) {
-				getChildByName("start")->setVisible(false);
-				getChildByName("title")->setVisible(false);
-				getChildByName("advice")->setVisible(false);
+				((StartMenu*)getChildByName("start"))->hide();
 			}
 			shakeScaleElement(getChildByName("label_information")->getChildByName("sugar"));
 		}
@@ -1614,13 +1517,9 @@ void InterfaceGame::updateTutorial(float dt) {
 				dialogues = nullptr;
 				game->getLevel()->resume();
 				((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("sugar");
-				getChildByName("label_information")->getChildByName("sugar")->stopAllActions();
-				getChildByName("label_information")->getChildByName("sugar")->setRotation(0);
-				getChildByName("label_information")->getChildByName("sugar")->setScale(1.f);
+				resetSugarLabel();
 				if (game_state == TITLE) {
-					getChildByName("start")->setVisible(true);
-					getChildByName("title")->setVisible(true);
-					getChildByName("advice")->setVisible(true);
+					((StartMenu*)getChildByName("start"))->displayWithAnimation();
 				}
 			}
 		}
@@ -1657,9 +1556,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			if (game_state == TITLE) {
-				getChildByName("start")->setVisible(false);
-				getChildByName("title")->setVisible(false);
-				getChildByName("advice")->setVisible(false);
+				((StartMenu*)getChildByName("start"))->hide();
 			}
 		}
 		else if(dialogues != nullptr) {
@@ -1713,9 +1610,7 @@ void InterfaceGame::updateTutorial(float dt) {
 				addChild(dialogues, 1, "dialogue");
 				dialogues->launch();
 				if (game_state == TITLE) {
-					getChildByName("start")->setVisible(false);
-					getChildByName("title")->setVisible(false);
-					getChildByName("advice")->setVisible(false);
+					((StartMenu*)getChildByName("start"))->hide();
 				}
 			}
 		}
@@ -1747,9 +1642,7 @@ void InterfaceGame::updateTutorial(float dt) {
 					selected_turret = nullptr;
 					removeChildByName("invisble_mask");
 					if (game_state == TITLE) {
-						getChildByName("start")->setVisible(true);
-						getChildByName("title")->setVisible(true);
-						getChildByName("advice")->setVisible(true);
+						((StartMenu*)getChildByName("start"))->displayWithAnimation();
 					}
 				});
 
@@ -1776,9 +1669,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			if (game_state == TITLE) {
-				getChildByName("start")->setVisible(false);
-				getChildByName("title")->setVisible(false);
-				getChildByName("advice")->setVisible(false);
+				((StartMenu*)getChildByName("start"))->hide();
 			}
 		}
 		else {
@@ -1789,9 +1680,7 @@ void InterfaceGame::updateTutorial(float dt) {
 				game->getLevel()->resume();
 				((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("multi_paths");
 				if (game_state == TITLE) {
-					getChildByName("start")->setVisible(true);
-					getChildByName("title")->setVisible(true);
-					getChildByName("advice")->setVisible(true);
+					((StartMenu*)getChildByName("start"))->displayWithAnimation();
 				}
 			}
 		}
@@ -1808,9 +1697,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			if (game_state == TITLE) {
-				getChildByName("start")->setVisible(false);
-				getChildByName("title")->setVisible(false);
-				getChildByName("advice")->setVisible(false);
+				((StartMenu*)getChildByName("start"))->hide();
 			}
 		}
 		else {
@@ -1821,9 +1708,7 @@ void InterfaceGame::updateTutorial(float dt) {
 				game->getLevel()->resume();
 				((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("dangorilla");
 				if (game_state == TITLE) {
-					getChildByName("start")->setVisible(true);
-					getChildByName("title")->setVisible(true);
-					getChildByName("advice")->setVisible(true);
+					((StartMenu*)getChildByName("start"))->displayWithAnimation();
 				}
 			}
 		}
@@ -1837,9 +1722,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			if (game_state == TITLE) {
-				getChildByName("start")->setVisible(false);
-				getChildByName("title")->setVisible(false);
-				getChildByName("advice")->setVisible(false);
+				((StartMenu*)getChildByName("start"))->hide();
 			}
 		}
 		else {
@@ -1850,9 +1733,7 @@ void InterfaceGame::updateTutorial(float dt) {
 				game->getLevel()->resume();
 				((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("dangobese");
 				if (game_state == TITLE) {
-					getChildByName("start")->setVisible(true);
-					getChildByName("title")->setVisible(true);
-					getChildByName("advice")->setVisible(true);
+					((StartMenu*)getChildByName("start"))->displayWithAnimation();
 				}
 			}
 		}

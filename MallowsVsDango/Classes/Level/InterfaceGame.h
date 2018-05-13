@@ -67,6 +67,8 @@ public:
 	void showTowerInfo();
 	void hideTowerInfo();
 
+	void showLabelInformation();
+
 	static void shakeElement(cocos2d::Node* element, bool loop = true);
 	static void shakeScaleElement(Node* element, bool loop = true);
 
@@ -102,6 +104,8 @@ protected:
 	bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
 	void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
 	void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
+
+	void resetSugarLabel();
 
 	void displayTowerInfos(std::string itemName);
 	void createTowersLayout();

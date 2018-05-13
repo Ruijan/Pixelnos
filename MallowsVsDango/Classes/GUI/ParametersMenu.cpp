@@ -1,7 +1,7 @@
 #include "ParametersMenu.h"
 #include "../AppDelegate.h"
 
-ParametersMenu * ParametersMenu::create(MyGame* game)
+ParametersMenu* ParametersMenu::create(MyGame* game)
 {
 	ParametersMenu* menu = new (std::nothrow) ParametersMenu();
 	if (menu && menu->init(game))
@@ -30,12 +30,12 @@ bool ParametersMenu::init(MyGame* game) {
 	addRightButton(buttons, language);
 	addSoundController(buttons["music"][language].asString(), visibleSize, AudioController::SOUNDTYPE::MUSIC);
 	addSoundController(buttons["effects"][language].asString(), visibleSize, AudioController::SOUNDTYPE::EFFECT);
-	addLoopCheckBox(buttons, language, visibleSize, audioController);
+	addMusicLoopCheckBox(buttons, language, visibleSize, audioController);
 	addGlobalSettings(buttons, language, visibleSize, config);
 	return initialized;
 }
 
-void ParametersMenu::addLoopCheckBox(Json::Value &buttons, std::string &language, const cocos2d::Size &visibleSize, AudioController * audioController)
+void ParametersMenu::addMusicLoopCheckBox(Json::Value &buttons, std::string &language, const cocos2d::Size &visibleSize, AudioController * audioController)
 {
 	auto checkboxLoop = createCheckBoxWithLabel(buttons["loop_music"][language].asString(), visibleSize, 0);
 	audioController->addButtonLoop(checkboxLoop);
