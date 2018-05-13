@@ -133,6 +133,8 @@ public:
 	* Ex: AudioController::SOUNDTYPE::EFFECTS.
 	*/
 	void addButton(cocos2d::ui::CheckBox* box, SOUNDTYPE type);
+	void addMusicButton(cocos2d::ui::CheckBox* box);
+	void addEffectsButton(cocos2d::ui::CheckBox* box);
 	/**
 	* @brief Add a checkbox to the vector of checkbox. It will add it to the update
 	* loop. When the checkbox is selected (disabled), it will disable the loop for music.
@@ -168,6 +170,10 @@ public:
 	* @return A volume between 0.0 and 1.0
 	*/
 	double getMaxEffectsVolume();
+
+	double getMaxVolume(AudioController::SOUNDTYPE soundType);
+
+	bool isLoopEnabled();
 
 
 private:

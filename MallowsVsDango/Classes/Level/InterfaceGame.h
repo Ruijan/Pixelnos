@@ -33,6 +33,8 @@ public:
 	InterfaceGame();
 	~InterfaceGame();
 	virtual bool init();
+	void addRewardLayout();
+	void addBlackMask(cocos2d::Size &visibleSize);
 	void addEvents();
 	static InterfaceGame* create(MyGame* ngame);
 	
@@ -96,6 +98,10 @@ protected:
 	void initLabels(const Json::Value& config);
 	void initStartMenu(const Json::Value& config);
 	void initDialoguesFromLevel(const Json::Value& config);
+
+	bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
+	void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
+	void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
 
 	void displayTowerInfos(std::string itemName);
 	void createTowersLayout();

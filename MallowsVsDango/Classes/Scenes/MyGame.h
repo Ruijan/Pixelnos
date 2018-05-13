@@ -151,7 +151,7 @@ public:
 
 	void addActionToTracker(Json::Value action);
 	void createNewTracker();
-	void updateTracker(int holy_sugar, std::string state, int duration);
+	void updateTracker(std::string state);
 	virtual void switchLanguage();
 	void unlockTowers();
 

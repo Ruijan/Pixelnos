@@ -80,20 +80,49 @@ void AudioController::addSlider(AudioSlider* slider, SOUNDTYPE type){
 	}
 }
 
+void AudioController::addMusicButton(cocos2d::ui::CheckBox* checkbox) {
+	checkbox->setSelected(!music_enabled);
+	music_buttons.push_back(checkbox);
+	checkbox->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		switch (type) {
+		case cocos2d::ui::Widget::TouchEventType::ENDED:
+			enableMusic(!((cocos2d::ui::CheckBox*)sender)->isSelected());
+			break;
+		}
+	});
+}
+
+void AudioController::addEffectsButton(cocos2d::ui::CheckBox* checkbox) {
+	checkbox->setSelected(!effects_enabled);
+	effects_buttons.push_back(checkbox);
+	checkbox->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		switch (type) {
+		case cocos2d::ui::Widget::TouchEventType::ENDED:
+			enableEffects(!((cocos2d::ui::CheckBox*)sender)->isSelected());
+			break;
+		}
+	});
+}
+
 void AudioController::addButton(cocos2d::ui::CheckBox* checkbox, SOUNDTYPE type) {
 	if (type == MUSIC) {
-		checkbox->setSelected(!music_enabled);
-		music_buttons.push_back(checkbox);
+		addMusicButton(checkbox);
 	}
-	else {
-		checkbox->setSelected(!effects_enabled);
-		effects_buttons.push_back(checkbox);
+	else if (type == EFFECT) {
+		addEffectsButton(checkbox);
 	}
 }
 
 void AudioController::addButtonLoop(cocos2d::ui::CheckBox* box) {
 	box->setSelected(loop_enabled);
 	loop_buttons.push_back(box);
+	box->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		switch (type) {
+		case cocos2d::ui::Widget::TouchEventType::ENDED:
+			enableLoop(!((cocos2d::ui::CheckBox*)sender)->isSelected());
+			break;
+		}
+	});
 }
 
 void AudioController::removeSlider(AudioSlider* slider){
@@ -220,6 +249,15 @@ double AudioController::getMaxEffectsVolume(){
 	return max_effects_volume;
 }
 
+double AudioController::getMaxVolume(AudioController::SOUNDTYPE soundType) {
+	if (soundType == MUSIC) {
+		return getMaxMusicVolume();
+	}
+	else if (soundType == EFFECT) {
+		return getMaxEffectsVolume();
+	}
+}
+
 void AudioController::playMusic(std::string filename, bool looped, double volume) {
 	// Stop the previous music
 	if (music_ID != AudioEngine::INVALID_AUDIO_ID) {
@@ -255,4 +293,8 @@ void AudioController::playEffect(std::string filename, double volume) {
 
 void AudioController::playEffect(std::string filename) {
 	playEffect(filename, max_music_volume);
+}
+
+bool AudioController::isLoopEnabled() {
+	return loop_enabled;
 }

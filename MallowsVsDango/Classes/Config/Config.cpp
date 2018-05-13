@@ -320,29 +320,54 @@ void Config::init(){
 }
 
 void Config::addGridButton(cocos2d::ui::CheckBox* box) {
-	box->setSelected(!always_grid_enabled);
+	box->setSelected(always_grid_enabled);
 	always_grid_buttons.push_back(box);
+	box->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+			enableAlwaysGrid(true);
+		}
+	});
 }
 
 void Config::addMovingGridButton(cocos2d::ui::CheckBox* box) {
-	box->setSelected(!moving_grid_enabled);
+	box->setSelected(moving_grid_enabled);
 	moving_grid_buttons.push_back(box);
+	box->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+			enableMovingGrid(true);
+		}
+	});
 }
 
 void Config::addNeverGridButton(cocos2d::ui::CheckBox* box) {
-	box->setSelected(!never_grid_enabled);
+	box->setSelected(never_grid_enabled);
 	never_grid_buttons.push_back(box);
+	box->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+			enableNeverGrid(true);
+		}
+	});
 }
 
 
 void Config::addLimitButton(cocos2d::ui::CheckBox* box) {
 	box->setSelected(!limit_enabled);
 	limit_buttons.push_back(box);
+	box->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+			enableAutoLimit(((cocos2d::ui::CheckBox*)sender)->isSelected());
+		}
+	});
 }
 
 void Config::addDialogueButton(cocos2d::ui::CheckBox* box) {
 	box->setSelected(!dialogues_enabled);
 	dialogues_buttons.push_back(box);
+	box->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+			enableDialogues(((cocos2d::ui::CheckBox*)sender)->isSelected());
+		}
+	});
 }
 
 void Config::removeGridButton(cocos2d::ui::CheckBox* box) {
@@ -372,35 +397,46 @@ void Config::removeDialogueButton(cocos2d::ui::CheckBox* box) {
 
 void Config::enableAlwaysGrid(bool enable) {
 	always_grid_enabled = enable;
-	// Change all the checkbox selection to the new value
-	for (auto checkbox : always_grid_buttons) {
-		checkbox->setSelected(always_grid_enabled);
-	}
+	moving_grid_enabled = false;
+	never_grid_enabled = enable ? false : true;
+	updateGridCheckBoxes();
+	updateGridSettings();
+}
+
+void Config::enableMovingGrid(bool enable) {
+	moving_grid_enabled = enable;
+	never_grid_enabled = enable ? false : true;
+	always_grid_enabled = false;
+	updateGridCheckBoxes();
+	updateGridSettings();
+}
+
+void Config::enableNeverGrid(bool enable) {
+	never_grid_enabled = enable;
+	always_grid_enabled = enable ? false : true;
+	moving_grid_enabled = false;
+	updateGridCheckBoxes();
+	updateGridSettings();
+}
+
+void Config::updateGridSettings() {
+	rootSav["settings"]["moving_grid"] = moving_grid_enabled;
+	rootSav["settings"]["never_grid"] = never_grid_enabled;
 	rootSav["settings"]["always_grid"] = always_grid_enabled;
 	save();
 	setSettingsNeedSave(true);
 }
 
-void Config::enableMovingGrid(bool enable) {
-	moving_grid_enabled = enable;
-	// Change all the checkbox selection to the new value
+void Config::updateGridCheckBoxes() {
 	for (auto checkbox : moving_grid_buttons) {
 		checkbox->setSelected(moving_grid_enabled);
 	}
-	rootSav["settings"]["moving_grid"] = moving_grid_enabled;
-	save();
-	setSettingsNeedSave(true);
-}
-
-void Config::enableNeverGrid(bool enable) {
-	never_grid_enabled = enable;
-	// Change all the checkbox selection to the new value
+	for (auto checkbox : always_grid_buttons) {
+		checkbox->setSelected(always_grid_enabled);
+	}
 	for (auto checkbox : never_grid_buttons) {
 		checkbox->setSelected(never_grid_enabled);
 	}
-	rootSav["settings"]["never_grid"] = never_grid_enabled;
-	save();
-	setSettingsNeedSave(true);
 }
 
 void Config::enableAutoLimit(bool enable) {

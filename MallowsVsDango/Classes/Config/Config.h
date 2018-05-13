@@ -204,6 +204,10 @@ public:
 	*/
 	void enableMovingGrid(bool enable);
 
+	void updateGridSettings();
+
+	void updateGridCheckBoxes();
+
 	/**
 	* @brief Change the value of the settings regarding the display of the grid.
 	* it will save the new value in the save file and ask to the network to save it

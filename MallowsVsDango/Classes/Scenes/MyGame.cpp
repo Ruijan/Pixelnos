@@ -85,7 +85,7 @@ void MyGame::update(float delta) {
 	if (cLevel->hasLost() && !cLevel->isPaused()){
 		menu->showLose();	
 		cLevel->pause();
-		updateTracker(cLevel->getHolySugar(), "lost", time(0));
+		updateTracker("lost");
 	}
 	
 	// In case of reloading
@@ -122,13 +122,13 @@ void MyGame::update(float delta) {
 		cLevel->update(delta * acceleration);
 		// update tracking event of the level
 		if (cLevel->getHolySugar() != l_event.holy_sugar) {
-			updateTracker(cLevel->getHolySugar(), "running", time(0));
+			updateTracker("running");
 		}
 	}
 	else if (menu->getGameState() == InterfaceGame::GameState::DONE && !cLevel->isPaused()) {
 		menu->showWin();
 		cLevel->pause();
-		updateTracker(cLevel->getHolySugar(), "completed", time(0));
+		updateTracker("completed");
 		unlockTowers();
 		save();
 	}
@@ -281,9 +281,9 @@ void MyGame::createNewTracker() {
 	((AppDelegate*)Application::getInstance())->getConfigClass()->addLevelTrackingEvent(l_event);
 }
 
-void MyGame::updateTracker(int holy_sugar, std::string state, int c_time) {
-	l_event.holy_sugar = holy_sugar;
-	l_event.duration = c_time - l_event.time;
+void MyGame::updateTracker(std::string state) {
+	l_event.holy_sugar = cLevel->getHolySugar();
+	l_event.duration = time(0) - l_event.time;
 	l_event.state = state;
 	((AppDelegate*)Application::getInstance())->getConfigClass()->updateCurrentLevelTrackingEvent(l_event);
 }
