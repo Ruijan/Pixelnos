@@ -16,8 +16,9 @@
 USING_NS_CC;
 
 InterfaceGame::InterfaceGame() : sizeButton(cocos2d::Director::getInstance()->getVisibleSize().width / 15),
-sizeTower(cocos2d::Director::getInstance()->getVisibleSize().width / 10), tutorial_running(false)
+sizeTower(cocos2d::Director::getInstance()->getVisibleSize().width / 10), tutorial_running(false), startMenu(nullptr)
 {}
+
 InterfaceGame::~InterfaceGame() {
 	if (dialogues != nullptr) {
 		delete dialogues;
@@ -389,7 +390,7 @@ void InterfaceGame::update(float dt) {
 			removeChild(dialogues);
 			dialogues = nullptr;
 			game_state = TITLE;
-			((StartMenu*)getChildByName("start"))->displayWithAnimation();
+			startMenu->displayWithAnimation();
 		}
 		updateButtonDisplay();
 		break;
@@ -499,7 +500,7 @@ void InterfaceGame::reset() {
 	getChildByName("menu_pause")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	getChildByName("black_mask")->setVisible(false);
 
-	((StartMenu*)getChildByName("start"))->reset(game->getLevel()->getLevelId());
+	startMenu->reset(game->getLevel()->getLevelId());
 	getChildByName("label_information")->getChildByName("dango_head")->setVisible(false);
 	getChildByName("label_information")->getChildByName("loading_bar_background")->setVisible(false);
 	getChildByName("label_information")->getChildByName("loading_bar")->setVisible(false);
@@ -528,7 +529,8 @@ void InterfaceGame::initParametersMenu(const Json::Value& config) {
 }
 
 void InterfaceGame::initStartMenu(const Json::Value& config) {
-	addChild(StartMenu::create(this, game->getLevel()->getLevelId()), 2, "start");
+	startMenu = StartMenu::create(this, game->getLevel()->getLevelId());
+	addChild(startMenu, 2, "start");
 }
 
 void InterfaceGame::showLabelInformation() {
@@ -1081,7 +1083,7 @@ void InterfaceGame::builtCallback(Ref* sender) {
 
 void InterfaceGame::displayStartMenuIfInTitleState() {
 	if (game_state == TITLE) {
-		((StartMenu*)getChildByName("start"))->displayWithAnimation();
+		startMenu->displayWithAnimation();
 	}
 }
 
@@ -1157,7 +1159,7 @@ void InterfaceGame::hideTowerInfo() {
 
 void InterfaceGame::hideStartMenu()
 {
-	((StartMenu*)getChildByName("start"))->hide();
+	startMenu->hide();
 }
 
 void InterfaceGame::updateButtonDisplay() {
@@ -1390,7 +1392,7 @@ void InterfaceGame::initDialoguesFromLevel(const Json::Value& config) {
 	}
 	else {
 		game_state = TITLE;
-		((StartMenu*)getChildByName("start"))->displayWithAnimation();
+		startMenu->displayWithAnimation();
 		dialogues = nullptr;
 	}
 }
@@ -1477,25 +1479,6 @@ void InterfaceGame::pauseLevel()
 void InterfaceGame::resumeLevel()
 {
 	game->getLevel()->resume();
-}
-
-void InterfaceGame::shakeElement(Node* element, bool loop) {
-	RotateTo* left = RotateTo::create(0.1f, 15);
-	RotateTo* right = RotateTo::create(0.1f, -15);
-	RotateTo* center = RotateTo::create(0.2f, 0);
-	Sequence* seq = Sequence::create(
-		left, right,
-		left->clone(), right->clone(),
-		left->clone(), right->clone(),
-		center, DelayTime::create(1.f),
-		nullptr);
-	if (loop) {
-		element->runAction(RepeatForever::create(seq));
-	}
-	else {
-		element->runAction(seq);
-	}
-
 }
 
 void InterfaceGame::shakeScaleElement(Node* element, bool loop) {

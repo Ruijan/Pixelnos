@@ -4,13 +4,13 @@
 
 
 StartMenu::StartMenu() :
+	interfaceGame(nullptr),
 	hidden(false)
 {
 
 }
 
-StartMenu* StartMenu::create(InterfaceGame* interfaceGame, int levelId)
-{
+StartMenu* StartMenu::create(InterfaceGame* interfaceGame, int levelId) {
 	StartMenu* menu = new (std::nothrow) StartMenu();
 	if (menu && menu->init(interfaceGame, levelId))
 	{

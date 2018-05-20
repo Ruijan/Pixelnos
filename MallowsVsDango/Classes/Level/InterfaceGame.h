@@ -47,7 +47,6 @@ public:
 	void showLose();
 	
 	void update(float dt);
-	void updateTutorial(float dt);
 	void updateButtonDisplay();
 	void updateObjectDisplay(float dt);
 	void updateIncrementXP(cocos2d::Label* exp_label, cocos2d::ui::LoadingBar* loading_bar, 
@@ -96,6 +95,7 @@ private:
 	GameState game_state;
 	Tower* selected_turret;
 	Dango* selected_dango;
+	StartMenu* startMenu;
 
 	const double sizeButton;
 	const double sizeTower;
