@@ -1,15 +1,15 @@
 #pragma once
 #include "DialogueTutorial.h"
-#include "../Dialogue.h"
-#include "../Level.h"
+
 
 class InterfaceGame;
+class Level;
 class DangobeseTutorial : public DialogueTutorial {
 public:
-	DangobeseTutorial(InterfaceGame* interfaceGame, Level* level);
+	DangobeseTutorial(Config* config, InterfaceGame* interfaceGame, Level* level);
 	bool isDone();
 	bool areConditionsMet();
-	virtual ~DangobeseTutorial();
+	virtual ~DangobeseTutorial ();
 
 protected:
 	void startDialogues();

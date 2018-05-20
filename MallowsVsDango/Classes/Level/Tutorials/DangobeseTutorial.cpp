@@ -1,9 +1,10 @@
 #include "DangobeseTutorial.h"
+#include "../Level.h"
 #include "../InterfaceGame.h"
-#include "../../AppDelegate.h"
-#include "../../GUI/StartMenu.h"
+#include "../../Config/Config.h"
 
-DangobeseTutorial::DangobeseTutorial(InterfaceGame * interfaceGame, Level * level) :
+DangobeseTutorial::DangobeseTutorial(Config* config, InterfaceGame * interfaceGame, Level * level) :
+	DialogueTutorial(config),
 	level(level),
 	interfaceGame(interfaceGame)
 {
@@ -11,15 +12,13 @@ DangobeseTutorial::DangobeseTutorial(InterfaceGame * interfaceGame, Level * leve
 
 bool DangobeseTutorial::isDone()
 {
-	return ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->isGameTutorialComplete("dangobese");
+	return config->isGameTutorialComplete("dangobese");
 }
 
 bool DangobeseTutorial::areConditionsMet()
 {
-	auto config = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GAMETUTORIAL);
-
-	return level->getLevelId() == config["dangobese"]["level"].asInt() &&
-		level->getWorldId() == config["dangobese"]["world"].asInt();
+	return level->getLevelId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangobese"]["level"].asInt() &&
+		level->getWorldId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangobese"]["world"].asInt();
 }
 
 DangobeseTutorial::~DangobeseTutorial()
@@ -29,8 +28,7 @@ DangobeseTutorial::~DangobeseTutorial()
 void DangobeseTutorial::startDialogues()
 {
 	level->pause();
-	dialogues = Dialogue::createFromConfig(
-		((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangobese"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangobese"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	interfaceGame->hideStartMenu();
@@ -41,7 +39,7 @@ void DangobeseTutorial::endTutorial()
 	interfaceGame->removeChild(dialogues);
 	dialogues = nullptr;
 	level->resume();
-	((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->completeTutorial("dangobese");
+	config->completeTutorial("dangobese");
 	interfaceGame->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
 }

@@ -1,11 +1,10 @@
 #pragma once
 #include "DialogueTutorial.h"
-#include "../Dialogue.h"
 
-
+class InterfaceGame;
 class SugarTutorial : public DialogueTutorial {
 public:
-	SugarTutorial(InterfaceGame* interfaceGame);
+	SugarTutorial(Config* config, InterfaceGame* interfaceGame);
 	bool isDone();
 
 protected:

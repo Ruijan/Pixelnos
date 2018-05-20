@@ -1,33 +1,33 @@
 #include "TutorialFactory.h"
 
 
-Tutorial * TutorialFactory::createTutorial(TutorialType tutorialType, MyGame* game)
+Tutorial * TutorialFactory::createTutorial(TutorialType tutorialType, Config* config, MyGame* game)
 {
 	Tutorial* tutorial = nullptr;
 	switch (tutorialType) {
 	case DANGOBESE:
-		tutorial = new DangobeseTutorial(game->getMenu(), game->getLevel());
+		tutorial = new DangobeseTutorial(config, game->getMenu(), game->getLevel());
 		break;
 	case DANGORILLA:
-		tutorial = new DangorillaTutorial(game->getMenu(), game->getLevel());
+		tutorial = new DangorillaTutorial(config, game->getMenu(), game->getLevel());
 		break;
 	case MULTIPATHS:
-		tutorial = new MultiPathsTutorial(game->getMenu(), game->getLevel());
+		tutorial = new MultiPathsTutorial(config, game->getMenu(), game->getLevel());
 		break;
 	case LIFE:
-		tutorial = new LifeTutorial(game->getMenu());
+		tutorial = new LifeTutorial(config, game->getMenu());
 		break;
 	case SUGAR:
-		tutorial = new SugarTutorial(game->getMenu());
+		tutorial = new SugarTutorial(config, game->getMenu());
 		break;
 	case SAUCER:
-		tutorial = new SaucerTutorial(game->getMenu(), game->getLevel());
+		tutorial = new SaucerTutorial(config, game->getMenu(), game->getLevel());
 		break;
 	case TOWERPOSITIONING:
-		tutorial = new TowerPositioningTutorial(game->getMenu());
+		tutorial = new TowerPositioningTutorial(config, game->getMenu());
 		break;
 	case UPGRADE:
-		tutorial = new UpgradeTutorial(game->getMenu(), game->getLevel());
+		tutorial = new UpgradeTutorial(config, game->getMenu(), game->getLevel());
 		break;
 	}
 	if (tutorial == nullptr) {

@@ -1,12 +1,12 @@
 #pragma once
 #include "DialogueTutorial.h"
-#include "../Dialogue.h"
 #include "../Level.h"
 
 class InterfaceGame;
+class Level;
 class DangorillaTutorial : public DialogueTutorial {
 public:
-	DangorillaTutorial(InterfaceGame* interfaceGame, Level* level);
+	DangorillaTutorial(Config* config, InterfaceGame* interfaceGame, Level* level);
 	bool isDone();
 	bool areConditionsMet();
 	virtual ~DangorillaTutorial();

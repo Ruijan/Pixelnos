@@ -1,9 +1,11 @@
 #include "TowerPositioningTutorial.h"
 #include "../InterfaceGame.h"
-#include "../../AppDelegate.h"
+#include "../../Config/Config.h"
 
 
-TowerPositioningTutorial::TowerPositioningTutorial(InterfaceGame * nInterfaceGame):
+
+TowerPositioningTutorial::TowerPositioningTutorial(Config* config, InterfaceGame * nInterfaceGame):
+	Tutorial(config),
 	interfaceGame(nInterfaceGame)
 {
 }
@@ -41,7 +43,7 @@ void TowerPositioningTutorial::update(float dt)
 }
 
 void TowerPositioningTutorial::endTutorial() {
-	((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->completeTutorial("tower_positioning");
+	config->completeTutorial("tower_positioning");
 	interfaceGame->removeChildByName("hand");
 	interfaceGame->resetTowerMenu();
 	interfaceGame->displayStartMenuIfInTitleState();
@@ -50,11 +52,10 @@ void TowerPositioningTutorial::endTutorial() {
 
 bool TowerPositioningTutorial::isDone()
 {
-	return ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->isGameTutorialComplete("tower_positioning");
+	return config->isGameTutorialComplete("tower_positioning");
 }
 
 bool TowerPositioningTutorial::isLastTowerCreatedABomber() {
-	Config*  config = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass();
 	return config->getLastLevelAction()["action"] == "create_tower" &&
 		config->getLastLevelAction()["tower_name"] == "bomber";
 }

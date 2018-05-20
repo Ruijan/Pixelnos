@@ -1,12 +1,10 @@
 #pragma once
-
 #include "DialogueTutorial.h"
-#include "../Dialogue.h"
 
-
+class InterfaceGame;
 class LifeTutorial : public DialogueTutorial {
 public:
-	LifeTutorial(InterfaceGame* interfaceGame);
+	LifeTutorial(Config* config, InterfaceGame* interfaceGame);
 	bool isDone();
 	virtual ~LifeTutorial();
 

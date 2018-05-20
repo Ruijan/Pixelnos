@@ -1,9 +1,11 @@
 #include "DangorillaTutorial.h"
+#include "../Level.h"
 #include "../InterfaceGame.h"
-#include "../../AppDelegate.h"
+#include "../../Config/Config.h"
 
 
-DangorillaTutorial::DangorillaTutorial(InterfaceGame * interfaceGame, Level* level) :
+DangorillaTutorial::DangorillaTutorial(Config* config, InterfaceGame * interfaceGame, Level* level) :
+	DialogueTutorial(config),
 	level(level),
 	interfaceGame(interfaceGame)
 {
@@ -11,14 +13,13 @@ DangorillaTutorial::DangorillaTutorial(InterfaceGame * interfaceGame, Level* lev
 
 bool DangorillaTutorial::isDone()
 {
-	return ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->isGameTutorialComplete("dangorilla");
+	return config->isGameTutorialComplete("dangorilla");
 }
 
 bool DangorillaTutorial::areConditionsMet()
 {
-	auto config = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GAMETUTORIAL);
-	return level->getLevelId() == config["dangorilla"]["level"].asInt() &&
-		level->getWorldId() == config["dangorilla"]["world"].asInt() &&
+	return level->getLevelId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangorilla"]["level"].asInt() &&
+		level->getWorldId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangorilla"]["world"].asInt() &&
 		level->getLastEnemy() != nullptr &&
 		level->getLastEnemy()->getSpecConfig()["name"].asString() == "Dangorille";
 }
@@ -30,8 +31,7 @@ DangorillaTutorial::~DangorillaTutorial()
 void DangorillaTutorial::startDialogues()
 {
 	level->pause();
-	dialogues = Dialogue::createFromConfig(
-		((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangorilla"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangorilla"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	interfaceGame->hideStartMenu();
@@ -42,7 +42,7 @@ void DangorillaTutorial::endTutorial()
 	interfaceGame->removeChild(dialogues);
 	dialogues = nullptr;
 	level->resume();
-	((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->completeTutorial("dangorilla");
+	config->completeTutorial("dangorilla");
 	interfaceGame->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
 }

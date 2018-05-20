@@ -12,8 +12,8 @@
 
 USING_NS_CC;
 
-bool StoryMenu::init(){
-	if (!Scene::init()){ return false; }
+bool StoryMenu::init() {
+	if (!Scene::init()) { return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 
@@ -30,7 +30,7 @@ bool StoryMenu::init(){
 	getChildByName("black_mask")->setVisible(false);
 
 	// Background
-	addChild(Sprite::create("res/background/space.png"),0,"background");
+	addChild(Sprite::create("res/background/space.png"), 0, "background");
 	getChildByName("background")->setPosition(visibleSize.width / 2, visibleSize.height / 2);
 	getChildByName("background")->setScaleX(visibleSize.width / getChildByName("background")->getContentSize().width);
 	getChildByName("background")->setScaleY(visibleSize.height / getChildByName("background")->getContentSize().height);
@@ -54,9 +54,9 @@ bool StoryMenu::init(){
 
 	// Pages
 	ui::PageView* worlds = ui::PageView::create();
-	worlds->setContentSize(Size(visibleSize.width,visibleSize.height));
-	worlds->setPosition(Vec2(visibleSize.width/2 - worlds->getContentSize().width / 2,
-		visibleSize.height/2 - worlds->getContentSize().height / 2));
+	worlds->setContentSize(Size(visibleSize.width, visibleSize.height));
+	worlds->setPosition(Vec2(visibleSize.width / 2 - worlds->getContentSize().width / 2,
+		visibleSize.height / 2 - worlds->getContentSize().height / 2));
 	worlds->setCustomScrollThreshold(visibleSize.width * 0.1f);
 
 	Json::Value level_config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL);
@@ -64,7 +64,7 @@ bool StoryMenu::init(){
 
 	int worlds_count = level_config["worlds"].size();
 
-	for (int i = 0; i < worlds_count; ++i){
+	for (int i = 0; i < worlds_count; ++i) {
 		ui::Layout* page = ui::Layout::create();
 		ui::Layout* layout = ui::Layout::create();
 		page->setContentSize(Size(worlds->getContentSize().width*0.6, worlds->getContentSize().height));
@@ -99,11 +99,11 @@ bool StoryMenu::init(){
 			label->setColor(Color3B::YELLOW);
 			label->enableOutline(Color4B::BLACK, 5);
 			label->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 0.90));
-			page->addChild(label,2,"label");
+			page->addChild(label, 2, "label");
 		}
 		world->setScale9Enabled(true);
 		world->setScale(page->getContentSize().width / world->getContentSize().width);
-		layout->addChild(world,0,"world");
+		layout->addChild(world, 0, "world");
 
 		// selection of levels
 		ui::Layout* levels = ui::Layout::create();
@@ -113,7 +113,7 @@ bool StoryMenu::init(){
 
 		world->addChild(levels, 1, "levels");
 		initLevels(levels, i);
-		page->addChild(layout,1,"layout");
+		page->addChild(layout, 1, "layout");
 		worlds->insertPage(page, i);
 	}
 	ui::Button* previous = ui::Button::create("res/buttons/next_world_button.png");
@@ -140,11 +140,11 @@ bool StoryMenu::init(){
 	worlds->addEventListener(CC_CALLBACK_2(StoryMenu::changeWorld, this));
 	worlds->setCurPageIndex(((AppDelegate*)Application::getInstance())->getSave()["c_world"].asInt());
 	changeWorld(nullptr, ui::PageView::EventType::TURNING);
-	
+
 
 	double offset_horizontal = visibleSize.width / 32;
 	double offset_vertical = 0;
-	
+
 	// Interface with buttons and settings
 	addChild(ui::Layout::create(), 2, "interface");
 	ui::Button* level_editor = ui::Button::create("res/buttons/menu_button_editor.png");
@@ -185,7 +185,7 @@ bool StoryMenu::init(){
 	skill_tree->setPosition(Vec2(achivements->getPosition().x -
 		achivements->getContentSize().width * achivements->getScaleX() - offset_horizontal, offset_vertical));
 	skill_tree->setAnchorPoint(Vec2(1.f, 0.f));
-	getChildByName("interface")->addChild(skill_tree,1,"skill_tree");
+	getChildByName("interface")->addChild(skill_tree, 1, "skill_tree");
 
 	ui::Button* shop = ui::Button::create("res/buttons/menu_button_shop.png");
 	shop->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
@@ -232,14 +232,14 @@ void StoryMenu::changeWorld(cocos2d::Ref* sender, cocos2d::ui::PageView::EventTy
 	}
 }
 
-void StoryMenu::selectLevelCallBack(Ref* sender, ui::Widget::TouchEventType type, int level_id, int world_id){
+void StoryMenu::selectLevelCallBack(Ref* sender, ui::Widget::TouchEventType type, int level_id, int world_id) {
 	if (type == ui::Widget::TouchEventType::ENDED) {
-		SceneManager::getInstance()->getGame()->initLevel(level_id,world_id);
+		SceneManager::getInstance()->getGame()->initLevel(level_id, world_id);
 		SceneManager::getInstance()->setScene(SceneManager::GAME);
 	}
 }
 
-void StoryMenu::onEnterTransitionDidFinish(){
+void StoryMenu::onEnterTransitionDidFinish() {
 	Scene::onEnterTransitionDidFinish();
 	scheduleUpdate();
 	Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -248,16 +248,16 @@ void StoryMenu::onEnterTransitionDidFinish(){
 		((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->
 			getChildByName("levels")->removeAllChildren();
 		initLevels((ui::Layout*)((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->
-			getChildByName("levels"),i);
+			getChildByName("levels"), i);
 		((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->stopAllActions();
 		((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->
 			runAction(RepeatForever::create(
 				Sequence::create(MoveTo::create(5.f, Vec2(0, -visibleSize.height / 40)),
-			MoveTo::create(5.f, Vec2(0, visibleSize.height / 40)), nullptr)));
+					MoveTo::create(5.f, Vec2(0, visibleSize.height / 40)), nullptr)));
 	}
 }
 
-void StoryMenu::showCredit(Ref* sender){
+void StoryMenu::showCredit(Ref* sender) {
 	SceneManager::getInstance()->setScene(SceneManager::CREDIT);
 }
 
@@ -309,7 +309,7 @@ void StoryMenu::initLevels(ui::Layout* page, int id_world) {
 		star_left->setRotation(-35);
 		Sprite* star_middle = Sprite::create(nb_challenges >= 2 ? "res/buttons/small_star_full.png" : "res/buttons/small_star_empty.png");
 		star_middle->setScale(level->getContentSize().height * level->getScaleY() / 2 / star_middle->getContentSize().width);
-		star_middle->setPosition(Vec2(0, star_left->getPosition().y + side * star_left->getContentSize().width * star_left ->getScale() / 3));
+		star_middle->setPosition(Vec2(0, star_left->getPosition().y + side * star_left->getContentSize().width * star_left->getScale() / 3));
 		Sprite* star_right = Sprite::create(nb_challenges == 3 ? "res/buttons/small_star_full.png" : "res/buttons/small_star_empty.png");
 		star_right->setScale(level->getContentSize().height * level->getScaleY() / 2 / star_right->getContentSize().width);
 		star_right->setRotation(35);
@@ -342,8 +342,8 @@ void StoryMenu::updateTutorial(float dt) {
 	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isSkillTutorialComplete("skills") &&
 		save["c_level"].asInt() >= config["skills"]["level"].asInt() &&
 		save["c_world"].asInt() >= config["skills"]["world"].asInt()) {
-		
-		if (getChildByName("dialogue") == nullptr && !tutorial_running && 
+
+		if (getChildByName("dialogue") == nullptr && !tutorial_running &&
 			!((AppDelegate*)Application::getInstance())->getConfigClass()->isSkillTutorialRunning("skills")) {
 			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
 			addChild(Dialogue::createFromConfig(config["skills"]["dialogue"]), 3, "dialogue");
@@ -361,7 +361,7 @@ void StoryMenu::updateTutorial(float dt) {
 			mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 			getChildByName("invisble_mask")->addChild(mask);
 		}
-		else if (getChildByName("dialogue") != nullptr){
+		else if (getChildByName("dialogue") != nullptr) {
 			((Dialogue*)getChildByName("dialogue"))->update();
 			if (((Dialogue*)getChildByName("dialogue"))->hasFinished()) {
 				removeChildByName("dialogue");

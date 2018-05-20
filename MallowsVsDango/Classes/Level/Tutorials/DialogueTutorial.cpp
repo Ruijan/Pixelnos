@@ -1,5 +1,10 @@
 #include "DialogueTutorial.h"
 
+DialogueTutorial::DialogueTutorial(Config * config):
+	Tutorial(config)
+{
+}
+
 void DialogueTutorial::update(float dt)
 {
 	if (!isDone() && areConditionsMet()) {

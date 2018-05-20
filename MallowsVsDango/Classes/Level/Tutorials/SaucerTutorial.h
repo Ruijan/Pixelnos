@@ -1,14 +1,13 @@
 #pragma once
-
 #include "DialogueTutorial.h"
-#include "../Dialogue.h"
 #include "../Level.h"
 #include "../InterfaceGame.h"
 
-
+class InterfaceGame;
+class Level;
 class SaucerTutorial : public DialogueTutorial {
 public:
-	SaucerTutorial(InterfaceGame* interfaceGame, Level* level);
+	SaucerTutorial(Config* config, InterfaceGame* interfaceGame, Level* level);
 	void update(float dt);
 	bool isDone();
 protected:

@@ -1,13 +1,13 @@
 #pragma once
-
 #include "DialogueTutorial.h"
-#include "../Dialogue.h"
-#include "../Level.h"
-#include "../InterfaceGame.h"
 
+
+class InterfaceGame;
+class Level;
+class Tower;
 class UpgradeTutorial : public DialogueTutorial {
 public:
-	UpgradeTutorial(InterfaceGame* interfaceGame, Level* level);
+	UpgradeTutorial(Config* config, InterfaceGame* interfaceGame, Level* level);
 	virtual void update(float dt);
 	bool isDone();
 	virtual ~UpgradeTutorial();

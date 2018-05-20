@@ -7,7 +7,7 @@ USING_NS_CC;
 
 bool MainMenu::init()
 {
-	if(!Scene::init()){ return false; }
+	if (!Scene::init()) { return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
@@ -21,7 +21,7 @@ bool MainMenu::init()
 	addChild(loadingBackground, 1, "logo_background");
 
 	Sprite* bglogo = Sprite::create("res/background/logo.png");
-	addChild(bglogo, 1 ,"logo");
+	addChild(bglogo, 1, "logo");
 	bglogo->setPosition(visibleSize.width / 2, visibleSize.height / 2);
 	bglogo->setScale((visibleSize.width / 2) / bglogo->getContentSize().width);
 	bglogo->setOpacity(0.0);
@@ -40,7 +40,7 @@ bool MainMenu::init()
 	flash->setOpacity(0.0);
 
 	Sprite* bg2 = Sprite::create("res/background/menu_background_battle.png");
-	addChild(bg2,1,"last_background");
+	addChild(bg2, 1, "last_background");
 	bg2->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	bg2->setScale((visibleSize.width) / bg2->getContentSize().width);
 	bg2->setOpacity(0.0);
@@ -70,7 +70,7 @@ bool MainMenu::init()
 	button->setTitleColor(Color3B::YELLOW);
 	button->setTitleFontName("fonts/LICABOLD.ttf");
 	button->setTitleFontSize(75.f* visibleSize.width / 960);
-	button->setPosition(Vec2(visibleSize.width/2, visibleSize.height/4));
+	button->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 4));
 	button->setOpacity(0.0);
 	Label* start_label = button->getTitleRenderer();
 	start_label->enableOutline(Color4B::BLACK, 2.f * visibleSize.width / 1280);
@@ -92,18 +92,18 @@ bool MainMenu::init()
 	language_button->setTitleColor(Color3B::BLACK);
 	language_button->setTitleFontName("fonts/LICABOLD.ttf");
 	language_button->setTitleFontSize(60.f);
-	language_button->setPosition(Vec2(visibleSize.width - 
-		language_button->getContentSize().width * language_button->getScaleX() * 2 / 3, 
+	language_button->setPosition(Vec2(visibleSize.width -
+		language_button->getContentSize().width * language_button->getScaleX() * 2 / 3,
 		visibleSize.height * 9 / 10));
-	
+
 	auto list_languages_levels = ui::Layout::create();
 	list_languages_levels->setBackGroundColorType(ui::Layout::BackGroundColorType::SOLID);
 	list_languages_levels->setBackGroundColor(Color3B::GREEN);
 	list_languages_levels->setAnchorPoint(Vec2(0.5f, 0.5f));
-	list_languages_levels->setPosition(language_button->getPosition() - 
-		Vec2(0, language_button->getContentSize().height * language_button->getScaleY() / 2 + 
+	list_languages_levels->setPosition(language_button->getPosition() -
+		Vec2(0, language_button->getContentSize().height * language_button->getScaleY() / 2 +
 			language_button->getContentSize().height * language_button->getScaleY() / 2));
-	
+
 	list_languages_levels->setScale(0);
 	language_button->addTouchEventListener([&, list_languages_levels](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
@@ -170,7 +170,7 @@ bool MainMenu::init()
 		title->setAlignment(TextHAlignment::CENTER);
 		title->setVerticalAlignment(TextVAlignment::CENTER);
 		layout_username->addChild(title, 2, "title");
-		ui::EditBox* username = ui::EditBox::create(Size(panel->getContentSize().width * panel->getScaleX() * 2 / 3, 
+		ui::EditBox* username = ui::EditBox::create(Size(panel->getContentSize().width * panel->getScaleX() * 2 / 3,
 			panel->getContentSize().height * panel->getScaleY() / 5),
 			ui::Scale9Sprite::create("res/buttons/input_username.png"));
 		username->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
@@ -210,12 +210,12 @@ bool MainMenu::init()
 		username_show = Spawn::createWithTwoActions(TargetedAction::create(mask, FadeIn::create(0.1f)),
 			TargetedAction::create(layout_username, EaseBackOut::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2)))));
 	}
-	
 
-	addChild(layout,1,"interface");
-	layout->addChild(button,1,"start");
-	layout->addChild(language_button,1,"language");
-	layout->addChild(list_languages_levels,1,"list_language");
+
+	addChild(layout, 1, "interface");
+	layout->addChild(button, 1, "start");
+	layout->addChild(language_button, 1, "language");
+	layout->addChild(list_languages_levels, 1, "list_language");
 	initLanguageList();
 	/*actions of sprites, fadein/out, flash*/
 
@@ -224,11 +224,11 @@ bool MainMenu::init()
 	TargetedAction* fadeout = TargetedAction::create(bglogo, FadeOut::create(1.0f));
 
 	TargetedAction* fadeinbg1 = TargetedAction::create(bg1, FadeIn::create(1.0f));
-	TargetedAction* fadeintxt1 = TargetedAction::create(mallowstxt, Spawn::createWithTwoActions(FadeIn::create(1.0f), EaseElasticOut::create(ScaleTo::create(1.0f,coeff1))));
+	TargetedAction* fadeintxt1 = TargetedAction::create(mallowstxt, Spawn::createWithTwoActions(FadeIn::create(1.0f), EaseElasticOut::create(ScaleTo::create(1.0f, coeff1))));
 	TargetedAction* fadeintxt2 = TargetedAction::create(dangotxt, Spawn::createWithTwoActions(FadeIn::create(1.0f), EaseElasticOut::create(ScaleTo::create(1.0f, coeff2))));
 
 	TargetedAction* fadeinvs = TargetedAction::create(vs, FadeIn::create(0.3f));
-	TargetedAction* actionvs = TargetedAction::create(vs, Spawn::createWithTwoActions(MoveTo::create(1.0f, Vec2(visibleSize.width * (8.0/12.0), visibleSize.height * (9.0 / 12.0))), RotateTo::create(1.0f, 720)));
+	TargetedAction* actionvs = TargetedAction::create(vs, Spawn::createWithTwoActions(MoveTo::create(1.0f, Vec2(visibleSize.width * (8.0 / 12.0), visibleSize.height * (9.0 / 12.0))), RotateTo::create(1.0f, 720)));
 
 	TargetedAction* fadeinf = TargetedAction::create(flash, FadeIn::create(0.f));
 	TargetedAction* fadeoutf1 = TargetedAction::create(flash, FadeOut::create(0.3f));
@@ -240,15 +240,15 @@ bool MainMenu::init()
 	TargetedAction* fadeinbutton = TargetedAction::create(button, FadeIn::create(1.0f));
 
 	/*action sequence*/
-	auto sequence = Sequence::create(fadein, delay, fadeout, fadeinbg1, fadeintxt1, fadeintxt2, fadeinvs, actionvs, 
+	auto sequence = Sequence::create(fadein, delay, fadeout, fadeinbg1, fadeintxt1, fadeintxt2, fadeinvs, actionvs,
 		fadeinf, fadeoutf1, fadeinf, fadeoutf1, fadeinf, actionbg2, username_show, fadeinbutton, nullptr);
 	bglogo->runAction(sequence);
 
 	return true;
-	
+
 }
 
-void MainMenu::update(float dt){
+void MainMenu::update(float dt) {
 
 }
 
@@ -273,11 +273,11 @@ void MainMenu::menuContinueCallback(cocos2d::Ref* sender, cocos2d::ui::Widget::T
 }
 
 
-void MainMenu::onEnter(){
+void MainMenu::onEnter() {
 	Scene::onEnter();
 }
 
-void MainMenu::onEnterTransitionDidFinish(){
+void MainMenu::onEnterTransitionDidFinish() {
 	Scene::onEnterTransitionDidFinish();
 	scheduleUpdate();
 }
@@ -357,14 +357,14 @@ void MainMenu::switchLanguage() {
 	quit->setTitleAlignment(cocos2d::TextHAlignment::CENTER);
 	quit->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) || (CC_TARGET_PLATFORM == CC_PLATFORM_WP8)
-						CCMessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
-			#else
-						Director::getInstance()->end();
-			#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-						exit(0);
-			#endif
-			#endif
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) || (CC_TARGET_PLATFORM == CC_PLATFORM_WP8)
+			CCMessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
+#else
+			Director::getInstance()->end();
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+			exit(0);
+#endif
+#endif
 		}
 	});
 	quit->setPosition(Vec2(0,
@@ -404,7 +404,7 @@ void MainMenu::editBoxEditingDidBegin(ui::EditBox *editBox) {
 
 
 void MainMenu::editBoxTextChanged(ui::EditBox *editBox, std::string &text) {
-	
+
 }
 
 void MainMenu::editBoxReturn(ui::EditBox *editBox) {

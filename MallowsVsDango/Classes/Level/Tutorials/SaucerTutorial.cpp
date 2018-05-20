@@ -1,8 +1,10 @@
 #include "SaucerTutorial.h"
+#include "../Level.h"
 #include "../InterfaceGame.h"
-#include "../../AppDelegate.h"
+#include "../../Config/Config.h"
 
-SaucerTutorial::SaucerTutorial(InterfaceGame* interfaceGame, Level* level) :
+SaucerTutorial::SaucerTutorial(Config* config, InterfaceGame* interfaceGame, Level* level) :
+	DialogueTutorial(config),
 	interfaceGame(interfaceGame),
 	level(level)
 {
@@ -15,7 +17,7 @@ void SaucerTutorial::update(float dt)
 			startDialogues();
 			running = true;
 		}
-		else if (dialogues != nullptr){
+		else if (dialogues != nullptr) {
 			dialogues->update();
 			if (dialogues->hasFinished()) {
 				interfaceGame->removeChild(dialogues);
@@ -30,21 +32,18 @@ void SaucerTutorial::update(float dt)
 }
 
 bool SaucerTutorial::areConditionsMet() {
-	auto config = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GAMETUTORIAL);
-
-	return level->getLevelId() == config["saucer"]["level"].asInt() &&
-		level->getWorldId() == config["saucer"]["world"].asInt() &&
+	return level->getLevelId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["saucer"]["level"].asInt() &&
+		level->getWorldId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["saucer"]["world"].asInt() &&
 		interfaceGame->getGameState() == InterfaceGame::GameState::TITLE;
 }
 
 bool SaucerTutorial::isDone() {
-	return ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->isGameTutorialComplete("saucer");
+	return config->isGameTutorialComplete("saucer");
 }
 
 void SaucerTutorial::startDialogues() {
-	auto config = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GAMETUTORIAL);
 	interfaceGame->pauseLevel();
-	dialogues = Dialogue::createFromConfig(config["saucer"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["saucer"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	interfaceGame->hideStartMenu();
@@ -52,7 +51,7 @@ void SaucerTutorial::startDialogues() {
 }
 
 void SaucerTutorial::endTutorial() {
-	((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->completeTutorial("saucer");
+	config->completeTutorial("saucer");
 	interfaceGame->removeChildByName("hand");
 	interfaceGame->resetTowerMenu();
 	interfaceGame->resumeLevel();
@@ -88,7 +87,6 @@ void SaucerTutorial::showTower()
 
 
 bool SaucerTutorial::isLastTowerCreatedASaucer() {
-	Config*  config = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass();
 	return config->getLastLevelAction()["action"] == "create_tower" &&
 		config->getLastLevelAction()["tower_name"] == "bomber";
 }

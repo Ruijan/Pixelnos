@@ -1,14 +1,15 @@
 #include "LifeTutorial.h"
 #include "../InterfaceGame.h"
-#include "../../AppDelegate.h"
+#include "../../Config/Config.h"
 
-LifeTutorial::LifeTutorial(InterfaceGame * nInterfaceGame):
+LifeTutorial::LifeTutorial(Config* config, InterfaceGame * nInterfaceGame):
+	DialogueTutorial(config),
 	interfaceGame(nInterfaceGame)
 {
 }
 
 bool LifeTutorial::isDone() {
-	return ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->isGameTutorialComplete("life");
+	return config->isGameTutorialComplete("life");
 }
 
 LifeTutorial::~LifeTutorial()
@@ -16,9 +17,8 @@ LifeTutorial::~LifeTutorial()
 }
 
 void LifeTutorial::startDialogues() {
-	auto config = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GAMETUTORIAL);
 	interfaceGame->pauseLevel();
-	dialogues = Dialogue::createFromConfig(config["life"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["life"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	shakeScaleElement(interfaceGame->getChildByName("label_information")->getChildByName("life"), true);
@@ -28,7 +28,7 @@ void LifeTutorial::endTutorial() {
 	interfaceGame->removeChild(dialogues);
 	dialogues = nullptr;
 	interfaceGame->resumeLevel();
-	((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->completeTutorial("life");
+	config->completeTutorial("life");
 	interfaceGame->getChildByName("label_information")->getChildByName("life")->stopAllActions();
 	interfaceGame->getChildByName("label_information")->getChildByName("life")->setRotation(0);
 	interfaceGame->getChildByName("label_information")->getChildByName("life")->setScale(1.f);

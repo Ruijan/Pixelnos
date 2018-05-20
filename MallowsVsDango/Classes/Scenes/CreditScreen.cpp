@@ -9,23 +9,23 @@ USING_NS_CC;
 
 Label* credit_label;
 std::string	credit_title = "Credits";
-std::vector <std::string> credit_subtitle = {	"Game developers", 
+std::vector <std::string> credit_subtitle = { "Game developers",
 												"Game designers",
 												"Designers",
-												"Music & sounds", 
-												"Graphic helpers", 
-												"Acknowledgement", 
+												"Music & sounds",
+												"Graphic helpers",
+												"Acknowledgement",
 												"Softwares & libraries" };
-std::vector <std::string> credit_content_subtitle = {	"Julien Rechenmann", 
-														"Julien Rechenmann", 
+std::vector <std::string> credit_content_subtitle = { "Julien Rechenmann",
 														"Julien Rechenmann",
-														"Bensound.com\nSoundeffect-lab.info\npurple-planet.com", 
-														"Subtlepatterns.com", 
+														"Julien Rechenmann",
+														"Bensound.com\nSoundeffect-lab.info\npurple-planet.com",
+														"Subtlepatterns.com",
 														"Charline Loisil\nXianle Wang\nKevin Passageon\nThomas Czereba\nOmid Ahoura\nAnn Pongsakul\nGenia Shevchenko\nAvril Li",
 														"Cocos2d-x\nTexturePacker\nTiledMap\nInkscape\nGIMP\nSpine" };
 
-bool CreditScreen::init(){
-	if (!Scene::init()){ return false; }
+bool CreditScreen::init() {
+	if (!Scene::init()) { return false; }
 
 	// Instanciation du background et menu
 	Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -48,7 +48,7 @@ bool CreditScreen::init(){
 	return_to_game_button->setEnabled(true);
 	return_to_game_button->setScale(visibleSize.width / 15 / return_to_game_button->getContentSize().width);
 	addChild(return_to_game_button, 2);
-	
+
 	// Instanciation du texte des crédits. On itère les deux listes en faisant correspondre les éléments entre eux.
 	auto layout = ui::Layout::create();
 	addChild(layout, 2, "layout");
@@ -62,8 +62,8 @@ bool CreditScreen::init(){
 	for (unsigned int i = 0; i < credit_content_subtitle.size(); i++) {
 		Label* credit_subtitle_bold = Label::createWithTTF(credit_subtitle[i], "fonts/Love Is Complicated Again.ttf", 56 * visibleSize.width / 1280);
 		credit_subtitle_bold->setAlignment(TextHAlignment::CENTER);
-		credit_subtitle_bold->setPosition(Vec2(visibleSize.width / 2, previous_label->getPosition().y - 
-			previous_label->getContentSize().height - visibleSize.height / 15 ));
+		credit_subtitle_bold->setPosition(Vec2(visibleSize.width / 2, previous_label->getPosition().y -
+			previous_label->getContentSize().height - visibleSize.height / 15));
 		credit_subtitle_bold->setAnchorPoint(Vec2(0.5, 1));
 		credit_subtitle_bold->enableOutline(Color4B::ORANGE, 3);
 		layout->addChild(credit_subtitle_bold);
@@ -80,12 +80,12 @@ bool CreditScreen::init(){
 		total_height = -credit_subtitle_content->getPosition().y + credit_subtitle_content->getContentSize().height;
 		previous_label = credit_subtitle_content;
 	}
-	layout->setContentSize(Size(visibleSize.width,total_height));
+	layout->setContentSize(Size(visibleSize.width, total_height));
 
 	return true;
 }
 
-void CreditScreen::onEnterTransitionDidFinish(){
+void CreditScreen::onEnterTransitionDidFinish() {
 	Scene::onEnterTransitionDidFinish();
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
@@ -100,7 +100,7 @@ void CreditScreen::onEnterTransitionDidFinish(){
 
 void CreditScreen::onExitTransitionDidStart() {
 	Scene::onExitTransitionDidStart();
-	Size visibleSize = Director::getInstance()->getVisibleSize(); 
+	Size visibleSize = Director::getInstance()->getVisibleSize();
 	getChildByName("layout")->stopAllActions();
 	getChildByName("layout")->setPosition(Vec2(0, 0));
 }

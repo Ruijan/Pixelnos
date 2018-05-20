@@ -2,10 +2,11 @@
 #include "cocos2d.h"
 
 class InterfaceGame;
+class Config;
 
 class Tutorial {
 public:
-	Tutorial();
+	Tutorial(Config* config);
 	virtual void update(float dt) = 0;
 	void shakeElement(cocos2d::Node * element, bool loop);
 	void shakeScaleElement(cocos2d::Node * element, bool loop);
@@ -17,4 +18,5 @@ protected:
 
 protected:
 	bool running;
+	Config* config;
 };

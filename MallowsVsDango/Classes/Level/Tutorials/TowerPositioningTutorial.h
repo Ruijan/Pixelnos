@@ -1,10 +1,10 @@
 #pragma once
 #include "Tutorial.h"
 
-
+class InterfaceGame;
 class TowerPositioningTutorial : public Tutorial {
 public:
-	TowerPositioningTutorial(InterfaceGame* interfaceGame);
+	TowerPositioningTutorial(Config* config, InterfaceGame* interfaceGame);
 	virtual void update(float dt);
 	virtual bool isDone();
 	bool isLastTowerCreatedABomber();

@@ -1,12 +1,8 @@
 #include "Tutorial.h"
-#include "../../Config/json.h"
-#include "../../AppDelegate.h"
-#include "../InterfaceGame.h"
-#include "../../GUI/StartMenu.h"
 
-
-Tutorial::Tutorial() :
-	running(false)
+Tutorial::Tutorial(Config* config) :
+	running(false),
+	config(config)
 {
 }
 

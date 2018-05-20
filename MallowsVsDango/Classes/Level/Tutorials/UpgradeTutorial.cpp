@@ -1,10 +1,11 @@
 #include "UpgradeTutorial.h"
+#include "../Level.h"
 #include "../InterfaceGame.h"
-#include "../../AppDelegate.h"
+#include "../../Config/Config.h"
 
 
-
-UpgradeTutorial::UpgradeTutorial(InterfaceGame* interfaceGame, Level* level) :
+UpgradeTutorial::UpgradeTutorial(Config* config, InterfaceGame* interfaceGame, Level* level) :
+	DialogueTutorial(config),
 	interfaceGame(interfaceGame),
 	level(level),
 	selectedTower(nullptr)
@@ -30,7 +31,7 @@ void UpgradeTutorial::update(float dt)
 
 bool UpgradeTutorial::isDone()
 {
-	return ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->isGameTutorialComplete("upgrade");
+	return config->isGameTutorialComplete("upgrade");
 }
 
 UpgradeTutorial::~UpgradeTutorial()
@@ -48,8 +49,7 @@ void UpgradeTutorial::startDialogues()
 	if (selectedTower != nullptr) {
 		interfaceGame->pauseLevel();
 		interfaceGame->setSelectedTower(selectedTower);
-		const Json::Value& config = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GAMETUTORIAL);
-		dialogues = Dialogue::createFromConfig(config["upgrade"]["dialogue"]);
+		dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["upgrade"]["dialogue"]);
 		interfaceGame->addChild(dialogues, 1, "dialogue");
 		dialogues->launch();
 		interfaceGame->hideStartMenu();
@@ -95,7 +95,7 @@ void UpgradeTutorial::showHand() {
 void UpgradeTutorial::endTutorial()
 {
 	interfaceGame->resumeLevel();
-	((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->completeTutorial("upgrade");
+	config->completeTutorial("upgrade");
 	interfaceGame->hideTowerInfo();
 	interfaceGame->setSelectedTower(nullptr);
 	interfaceGame->removeChildByName("invisble_mask");
@@ -104,8 +104,6 @@ void UpgradeTutorial::endTutorial()
 
 bool UpgradeTutorial::areConditionsMet()
 {
-	auto config = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GAMETUTORIAL);
-
-	return level->getLevelId() == config["upgrade"]["level"].asInt() &&
-		level->getWorldId() == config["upgrade"]["world"].asInt();
+	return level->getLevelId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["upgrade"]["level"].asInt() &&
+		level->getWorldId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["upgrade"]["world"].asInt();
 }
