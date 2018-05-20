@@ -3,8 +3,8 @@
 #include "../../AppDelegate.h"
 
 
-DangorillaTutorial::DangorillaTutorial(InterfaceGame * interfaceGame, Level* level):
-	level(level), 
+DangorillaTutorial::DangorillaTutorial(InterfaceGame * interfaceGame, Level* level) :
+	level(level),
 	interfaceGame(interfaceGame)
 {
 }

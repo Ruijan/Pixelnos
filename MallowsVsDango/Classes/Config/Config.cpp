@@ -12,12 +12,12 @@ USING_NS_CC;
 USING_NS_CC_EXT;
 using namespace cocos2d::network;
 
-Config::Config(std::string configfilename, std::string savename) : 
+Config::Config(std::string configfilename, std::string savename) :
 	config_filename(configfilename), save_filename(savename), save_file(false),
 	always_grid_enabled(false), never_grid_enabled(false), moving_grid_enabled(false),
 	limit_enabled(false), dialogues_enabled(false), settings_need_save(false),
-	tracking_need_save(false), progression_need_save(false), user_need_creation(false), 
-	user_need_save(false), waiting_answer(false), tracking_filename("temp_tracking.json"), c_tracking_index(0), 
+	tracking_need_save(false), progression_need_save(false), user_need_creation(false),
+	user_need_save(false), waiting_answer(false), tracking_filename("temp_tracking.json"), c_tracking_index(0),
 	level_tracking_filename("temp_level_tracking.json"), c_level_tracking(-1) {
 
 	//network_controller = new NetworkController("http://127.0.0.1/mvd/");
@@ -25,12 +25,12 @@ Config::Config(std::string configfilename, std::string savename) :
 
 	scheduler = Director::getInstance()->getScheduler();
 	scheduler->retain();
-	scheduler->schedule(CC_SCHEDULE_SELECTOR(Config::serverUpdate), this , 5.f, false);
+	scheduler->schedule(CC_SCHEDULE_SELECTOR(Config::serverUpdate), this, 5.f, false);
 
 	srand(time(NULL));
 }
 
-const Json::Value& Config::getConfigValues(ConfigType type) const{
+const Json::Value& Config::getConfigValues(ConfigType type) const {
 	switch (type) {
 	case GENERAL:
 		return conf_general;
@@ -66,31 +66,31 @@ const Json::Value& Config::getConfigValues(ConfigType type) const{
 		return conf_general;
 		break;
 	}
-	
+
 }
 
-const Json::Value& Config::getSaveValues() const{
+const Json::Value& Config::getSaveValues() const {
 	return rootSav;
 }
 
-bool Config::isSaveFile() const{
+bool Config::isSaveFile() const {
 	return save_file;
 }
 
-void Config::setSave(Json::Value nroot){
+void Config::setSave(Json::Value nroot) {
 	rootSav = nroot;
 }
 
-void Config::save(){
+void Config::save() {
 	Json::StyledWriter writer;
 	std::string outputSave = writer.write(rootSav);
 	std::string path = FileUtils::getInstance()->getWritablePath() + save_filename;
 
 	bool succeed = FileUtils::getInstance()->writeStringToFile(outputSave, path);
-	if(succeed){
-		log("Saved File in %s",path.c_str());
+	if (succeed) {
+		log("Saved File in %s", path.c_str());
 	}
-	else{
+	else {
 		log("error saving file %s", path.c_str());
 	}
 }
@@ -123,8 +123,8 @@ void Config::saveLevelTracking() {
 	}
 }
 
-void Config::init(){
-	auto fileUtils =  FileUtils::getInstance();
+void Config::init() {
+	auto fileUtils = FileUtils::getInstance();
 
 	std::string configFile = fileUtils->getStringFromFile(config_filename);
 	std::string saveFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + save_filename);
@@ -225,7 +225,7 @@ void Config::init(){
 			});
 		}
 	}
-	
+
 	parsingTrackingSuccessful = reader.parse(trackingFile, tracking, false);
 	if (parsingTrackingSuccessful) {
 		tracking_need_save = true;
@@ -258,7 +258,7 @@ void Config::init(){
 	}
 
 	parsingSaveSuccessful = reader.parse(saveFile, rootSav, false);
-	if (!parsingSaveSuccessful){
+	if (!parsingSaveSuccessful) {
 		// report to the user the failure and their locations in the document.
 		std::string error = reader.getFormattedErrorMessages();
 		rootSav["settings"]["always_grid"] = false;
@@ -299,7 +299,7 @@ void Config::init(){
 		save();
 		createUserIntoDB();
 	}
-	else{
+	else {
 		save_file = true;
 		auto tutos = rootSav["gameTutorials"].getMemberNames();
 		for (unsigned int j(0); j < rootSav["gameTutorials"].getMemberNames().size(); ++j) {
@@ -584,7 +584,7 @@ void Config::serverUpdate(float dt) {
 					if (response->isSucceed()) {
 						std::vector<char> *buffer = response->getResponseData();
 						std::string str(buffer->begin(), buffer->end());
-						
+
 						if (this->level_tracking[i].isMember("tracking_id")) {
 							if (str != "") {
 								log("error while updating level tracking");
@@ -698,7 +698,7 @@ void Config::updateCurrentLevelTrackingEvent(LevelTrackingEvent n_event) {
 }
 
 Json::Value Config::getLastLevelAction() {
-	return level_tracking[c_level_tracking]["actions"][level_tracking[c_level_tracking]["actions"].size()-1];
+	return level_tracking[c_level_tracking]["actions"][level_tracking[c_level_tracking]["actions"].size() - 1];
 }
 
 std::string Config::getStringFromSceneType(SceneManager::SceneType type) {
@@ -786,9 +786,9 @@ void Config::saveLevelTrackingIntoDB(Json::Value tracking_conf, const cocos2d::n
 	}
 	else {
 		request += "create_level_tracking&id_user=" + rootSav["id_player"].asString() + "&level_id_bdd=" + tracking_conf["level_id_bdd"].asString() +
-			"&level_id=" + tracking_conf["level_id"].asString() + "&world_id=" + tracking_conf["world_id"].asString() + 
-			"&state=" + tracking_conf["state"].asString() + "&holy_sugar=" + tracking_conf["holy_sugar"].asString() + 
-			"&duration=" + tracking_conf["duration"].asString() + "&date_time=" + tracking_conf["time"].asString() + 
+			"&level_id=" + tracking_conf["level_id"].asString() + "&world_id=" + tracking_conf["world_id"].asString() +
+			"&state=" + tracking_conf["state"].asString() + "&holy_sugar=" + tracking_conf["holy_sugar"].asString() +
+			"&duration=" + tracking_conf["duration"].asString() + "&date_time=" + tracking_conf["time"].asString() +
 			"&actions=" + actions;
 		network_controller->sendNewRequest(NetworkController::Request::LEVEL_TRACKING, request, callback,
 			"POST createTracking");
@@ -825,7 +825,7 @@ void Config::createUserIntoDB() {
 
 void Config::updateUserInfo() {
 	/* There are two ids, one for the game, one for the database.
-	Since the database starts from 1 to +infinite, it would be too easy to 
+	Since the database starts from 1 to +infinite, it would be too easy to
 	find the id of the player. It allows also to generate a new profile without
 	having an internet connection.*/
 	// save the main user infos
@@ -833,7 +833,7 @@ void Config::updateUserInfo() {
 	time(&rawtime);
 	std::string postData = "action=updateUser&id_game=" + rootSav["id_player"].asString() +
 		"&time=" + Value((int)rawtime).asString() + "&level=" + rootSav["c_level"].asString() +
-		"&world=" + rootSav["c_world"].asString() + "&holy_sugar=" + rootSav["holy_sugar"].asString() + 
+		"&world=" + rootSav["c_world"].asString() + "&holy_sugar=" + rootSav["holy_sugar"].asString() +
 		"&username=" + rootSav["username"].asString();
 	network_controller->sendNewRequest(NetworkController::Request::USER_AND_SETTINGS, postData,
 		[&, this](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
@@ -1021,7 +1021,7 @@ void Config::startTutorial(std::string name) {
 	save();
 }
 
-bool Config::isGameTutorialComplete(std::string name){
+bool Config::isGameTutorialComplete(std::string name) {
 	return rootSav["gameTutorials"][name]["state"].asString() == "complete";
 }
 
@@ -1044,7 +1044,7 @@ void Config::startSkillTutorial(std::string name) {
 	save();
 }
 
-bool Config::isSkillTutorialComplete(std::string name){
+bool Config::isSkillTutorialComplete(std::string name) {
 	return rootSav["skillsTutorials"][name]["state"].asString() == "complete";
 }
 

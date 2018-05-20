@@ -2,12 +2,12 @@
 #include "../InterfaceGame.h"
 #include "../../AppDelegate.h"
 
-SugarTutorial::SugarTutorial(InterfaceGame* nInterfaceGame): 
+SugarTutorial::SugarTutorial(InterfaceGame* nInterfaceGame) :
 	interfaceGame(nInterfaceGame)
 {
 }
 
-bool SugarTutorial::isDone(){
+bool SugarTutorial::isDone() {
 	return ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->isGameTutorialComplete("sugar");
 }
 

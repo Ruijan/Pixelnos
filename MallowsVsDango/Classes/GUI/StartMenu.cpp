@@ -38,7 +38,7 @@ void StartMenu::displayWithAnimation()
 }
 
 void StartMenu::hide() {
-	if(!hidden){
+	if (!hidden) {
 		getChildByName("start")->setVisible(false);
 		getChildByName("title")->setVisible(false);
 		getChildByName("advice")->setVisible(false);
@@ -80,7 +80,7 @@ bool StartMenu::init(InterfaceGame* interfaceGame, int levelId) {
 	return initialized;
 }
 
-void StartMenu::addTitleLabel(Json::Value &buttons, std::string &language, int levelId, cocos2d::Size &visibleSize){
+void StartMenu::addTitleLabel(Json::Value &buttons, std::string &language, int levelId, cocos2d::Size &visibleSize) {
 	cocos2d::Label* title = cocos2d::Label::createWithTTF(buttons["level"][language].asString() + " " +
 		Json::Value((int)(levelId + 1)).asString(),
 		"fonts/LICABOLD.ttf", round(visibleSize.width / 12.0));
@@ -90,7 +90,7 @@ void StartMenu::addTitleLabel(Json::Value &buttons, std::string &language, int l
 	addChild(title, 2, "title");
 }
 
-void StartMenu::addAdviceLabel(Json::Value &buttons, std::string &language, cocos2d::Size &visibleSize){
+void StartMenu::addAdviceLabel(Json::Value &buttons, std::string &language, cocos2d::Size &visibleSize) {
 	cocos2d::Label* advice = cocos2d::Label::createWithTTF(buttons["advice_game_drag"][language].asString(),
 		"fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	advice->setDimensions(visibleSize.width / 2, visibleSize.height / 10);

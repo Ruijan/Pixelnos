@@ -3,8 +3,8 @@
 #include "../../AppDelegate.h"
 #include "../../GUI/StartMenu.h"
 
-DangobeseTutorial::DangobeseTutorial(InterfaceGame * interfaceGame, Level * level):
-	level(level), 
+DangobeseTutorial::DangobeseTutorial(InterfaceGame * interfaceGame, Level * level) :
+	level(level),
 	interfaceGame(interfaceGame)
 {
 }

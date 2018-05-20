@@ -4,7 +4,7 @@
 
 
 
-UpgradeTutorial::UpgradeTutorial(InterfaceGame* interfaceGame, Level* level): 
+UpgradeTutorial::UpgradeTutorial(InterfaceGame* interfaceGame, Level* level) :
 	interfaceGame(interfaceGame),
 	level(level),
 	selectedTower(nullptr)
@@ -17,7 +17,7 @@ void UpgradeTutorial::update(float dt)
 		if (!running) {
 			startDialogues();
 		}
-		else if(dialogues != nullptr){
+		else if (dialogues != nullptr) {
 			dialogues->update();
 			if (dialogues->hasFinished()) {
 				interfaceGame->removeChild(dialogues);

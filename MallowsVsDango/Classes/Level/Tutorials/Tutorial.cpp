@@ -5,7 +5,7 @@
 #include "../../GUI/StartMenu.h"
 
 
-Tutorial::Tutorial():
+Tutorial::Tutorial() :
 	running(false)
 {
 }

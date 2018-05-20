@@ -20,11 +20,11 @@ struct TrackingEvent {
 
 
 
-class Config: public cocos2d::Ref{
+class Config : public cocos2d::Ref {
 private:
 	Json::Value conf_general;
 	Json::Value conf_game_tutorial;
-	Json::Value conf_skills_tutorial;  
+	Json::Value conf_skills_tutorial;
 	Json::Value conf_advice;
 	Json::Value conf_challenge;
 	Json::Value conf_button;
@@ -56,7 +56,7 @@ private:
 	bool user_need_creation;
 	bool user_need_save;
 	bool waiting_answer;
-	std::string language; 
+	std::string language;
 	int c_tracking_index;
 	int c_level_tracking;
 
@@ -191,7 +191,7 @@ public:
 
 	/**
 	* @brief Change the value of the settings regarding the display of the grid.
-	* it will save the new value in the save file and ask to the network to save it 
+	* it will save the new value in the save file and ask to the network to save it
 	* online at the next call. It changes also the value of all the grid checkbox
 	* @param true of false if you want to show the grid all the time.
 	*/
@@ -259,7 +259,7 @@ public:
 	void serverUpdate(float dt);
 
 	/**
-	* @brief Send the request to create a new user into the DB. It will also 
+	* @brief Send the request to create a new user into the DB. It will also
 	* generate the towers for progression and its settings. It returns an id
 	* that will be used later to update its information.
 	*/
@@ -271,7 +271,7 @@ public:
 	void updateUserInfo();
 
 	/**
-	* @brief Add a tracking event to the tracker. 
+	* @brief Add a tracking event to the tracker.
 	* @param TrackingEvent is a struct that needs:
 	*		std::string from_scene;
 	*		std::string to_scene;
@@ -279,7 +279,7 @@ public:
 	*/
 	void addTrackingEvent(TrackingEvent n_event);
 	/**
-	* @brief Add a level tracking event to the tracker. Usually called for every 
+	* @brief Add a level tracking event to the tracker. Usually called for every
 	* new level.
 	* @param LevelTrackingEvent is a struct that needs:
 	*		int level_id;
@@ -293,7 +293,7 @@ public:
 	void addLevelTrackingEvent(LevelTrackingEvent n_event);
 
 	/**
-	* @brief Set the current LevelTrackingEvent to the new n_event. 
+	* @brief Set the current LevelTrackingEvent to the new n_event.
 	* Usually called every time the user is making a new action.
 	* @param LevelTrackingEvent is a struct that needs:
 	*		int level_id;
@@ -355,7 +355,7 @@ public:
 	* @param lang should take only two values.
 	*		"en" for english
 	*		"fr" for french
-	* HAS TO BE CHANGED TO ONLY TAKE AN ENUM !!! 
+	* HAS TO BE CHANGED TO ONLY TAKE AN ENUM !!!
 	* RIGHT NOW THERE IS AN STRING CHECK !!!!
 	* AAAAAAAAAAAAAAAAH !!!!!
 	*/
