@@ -138,28 +138,19 @@ void Config::init() {
 	bool parsingLevelTrackingSuccessful(false);
 
 	parsingConfigSuccessful = reader.parse(configFile, conf_general, false);
-	bool parsing_conf_towers(false);
-	bool parsing_conf_advice(false);
-	bool parsing_conf_dangos(false);
-	bool parsing_conf_challenges(false);
-	bool parsing_conf_game_tutorials(false);
-	bool parsing_conf_skills_tutorials(false);
-	bool parsing_conf_talents(false);
-	bool parsing_conf_levels(false);
-	bool parsing_conf_buttons(false);
 	if (parsingConfigSuccessful) {
-		parsing_conf_towers = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tower"].asString()), conf_tower, false);
-		parsing_conf_advice = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["advice"].asString()), conf_advice, false);
-		parsing_conf_dangos = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["dango"].asString()), conf_dango, false);
-		parsing_conf_challenges = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["challenge"].asString()), conf_challenge, false);
-		parsing_conf_game_tutorials = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["gameTutorial"].asString()), conf_game_tutorial, false);
-		parsing_conf_skills_tutorials = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["skillsTutorial"].asString()), conf_skills_tutorial, false);
-		parsing_conf_talents = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["talent"].asString()), conf_talent, false);
-		parsing_conf_levels = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["level"].asString()), conf_level, false);
+		bool parsing_conf_towers = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tower"].asString()), conf_tower, false);
+		bool parsing_conf_advice = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["advice"].asString()), conf_advice, false);
+		bool parsing_conf_dangos = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["dango"].asString()), conf_dango, false);
+		bool parsing_conf_challenges = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["challenge"].asString()), conf_challenge, false);
+		bool parsing_conf_game_tutorials = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["gameTutorial"].asString()), conf_game_tutorial, false);
+		bool parsing_conf_skills_tutorials = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["skillsTutorial"].asString()), conf_skills_tutorial, false);
+		bool parsing_conf_talents = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["talent"].asString()), conf_talent, false);
+		bool parsing_conf_levels = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["level"].asString()), conf_level, false);
 		std::string buttons = fileUtils->getStringFromFile(conf_general["configuration_files"]["button"].asString());
-		parsing_conf_buttons = reader.parse(buttons, conf_button, false);
+		bool parsing_conf_buttons = reader.parse(buttons, conf_button, false);
 		if (!parsing_conf_towers || !parsing_conf_advice || !parsing_conf_dangos ||
-			!parsing_conf_challenges || !parsing_conf_game_tutorials || !parsing_conf_talents ||
+			!parsing_conf_challenges || !parsing_conf_game_tutorials || !parsing_conf_skills_tutorials || !parsing_conf_talents ||
 			!parsing_conf_levels || !parsing_conf_buttons) {
 			std::string error = reader.getFormattedErrorMessages();
 			throw std::invalid_argument("ERROR : loading configuration files. " + error);
