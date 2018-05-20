@@ -520,8 +520,8 @@ void Skills::update(float dt) {
 
 void Skills::updateTutorial(float dt) {
 	auto save = ((AppDelegate*)Application::getInstance())->getSave();
-	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TUTORIAL);
-	if (((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialRunning("skills") &&
+	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::SKILLTUTORIAL);
+	if (((AppDelegate*)Application::getInstance())->getConfigClass()->isSkillTutorialRunning("skills") &&
 		save["c_level"].asInt() >= config["skills"]["level"].asInt() &&
 		save["c_world"].asInt() >= config["skills"]["world"].asInt()) {
 
@@ -562,7 +562,7 @@ void Skills::updateTutorial(float dt) {
 						this->removeChildByName("invisble_mask");
 						this->removeChildByName("hand");
 						this->hideValidationPanel();
-						((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("skills");
+						((AppDelegate*)Application::getInstance())->getConfigClass()->completeSkillTutorial("skills");
 						tutorial_running = false;
 					});
 					Size visibleSize = Director::getInstance()->getVisibleSize();

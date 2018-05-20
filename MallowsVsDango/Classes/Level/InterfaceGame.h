@@ -53,10 +53,21 @@ public:
 	void updateIncrementXP(cocos2d::Label* exp_label, cocos2d::ui::LoadingBar* loading_bar, 
 		std::string tower_name, float* increment, int initial_value, int diff_exp, int loop, int max_level);
 
+	void pauseLevel();
+	void resumeLevel();
+
 	void reset();
+	void resetSugarLabel();
+	void resetTowerMenu();
+
 	GameState getGameState() const;
+	cocos2d::Vec2 getAbsoluteMenuTowerPosition(std::string towerName);
+	cocos2d::Sprite* getMenuTower(std::string towerName);
 	Dango* getCurrentDango();
+	int getSugarQuantity();
+	int getLifeQuantity();
 	void setGameState(GameState g_state);
+	void setSelectedTower(Tower* tower);
 	void generateHolySugar(cocos2d::Vec2 pos);
 	void startRewarding(cocos2d::Vec2 pos);
 	void removeTower();
@@ -66,11 +77,15 @@ public:
 	void hideDangoInfo();
 	void showTowerInfo();
 	void hideTowerInfo();
+	void hideStartMenu();
 
 	void showLabelInformation();
 
 	static void shakeElement(cocos2d::Node* element, bool loop = true);
 	static void shakeScaleElement(Node* element, bool loop = true);
+
+	void displayStartMenuIfInTitleState();
+
 
 private:
 	std::unordered_map<std::string, std::pair<cocos2d::Sprite*, double>> towers_menu;
@@ -105,7 +120,6 @@ protected:
 	void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
 	void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
 
-	void resetSugarLabel();
 
 	void displayTowerInfos(std::string itemName);
 	void createTowersLayout();
@@ -113,7 +127,6 @@ protected:
 	void destroyCallback(Ref* sender);
 	void builtCallback(Ref* sender);
 	std::pair<std::string, cocos2d::Sprite*> getTowerFromPoint(cocos2d::Vec2 location);
-	void displayTowerMenu(cocos2d::Sprite*);
 	void endGame();
 };
 

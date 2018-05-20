@@ -10,11 +10,10 @@ class ParametersMenu : public cocos2d::ui::Layout{
 public:
 	static ParametersMenu* create(MyGame* game);
 	virtual bool init(MyGame* game);
-	
 	void displayWithAnimation();
 	virtual ~ParametersMenu();
 
-protected:	
+protected:
 	cocos2d::ui::Layout* blackMask;
 	MyGame* game;
 	cocos2d::Vec2 lastObjectPosition;

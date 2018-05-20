@@ -5,8 +5,8 @@
 
 
 class StartMenu : public cocos2d::ui::Layout {
-
 public:
+	StartMenu();
 	static StartMenu* create(InterfaceGame* interfaceGame, int levelId);
 	void displayWithAnimation();
 	virtual void hide();
@@ -15,6 +15,7 @@ public:
 
 protected:
 	InterfaceGame* interfaceGame;
+	bool hidden;
 
 protected:
 	void startButtonCallback(Ref* sender, cocos2d::ui::Widget::TouchEventType type);

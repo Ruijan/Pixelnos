@@ -3,6 +3,12 @@
 #include "../AppDelegate.h"
 
 
+StartMenu::StartMenu() :
+	hidden(false)
+{
+
+}
+
 StartMenu* StartMenu::create(InterfaceGame* interfaceGame, int levelId)
 {
 	StartMenu* menu = new (std::nothrow) StartMenu();
@@ -23,8 +29,8 @@ void StartMenu::displayWithAnimation()
 	getChildByName("advice")->setVisible(true);
 	getChildByName("title")->runAction(cocos2d::Sequence::create(
 		cocos2d::EaseBackOut::create(
-			cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(getChildByName("title")->getPosition().x, visibleSize.height / 2))), 
-		cocos2d::DelayTime::create(1.f), 
+			cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(getChildByName("title")->getPosition().x, visibleSize.height / 2))),
+		cocos2d::DelayTime::create(1.f),
 		cocos2d::FadeOut::create(0.5f), nullptr));
 	getChildByName("start")->runAction(cocos2d::EaseBackOut::create(
 		cocos2d::MoveTo::create(0.5f,
@@ -32,9 +38,11 @@ void StartMenu::displayWithAnimation()
 }
 
 void StartMenu::hide() {
-	getChildByName("start")->setVisible(false);
-	getChildByName("title")->setVisible(false);
-	getChildByName("advice")->setVisible(false);
+	if(!hidden){
+		getChildByName("start")->setVisible(false);
+		getChildByName("title")->setVisible(false);
+		getChildByName("advice")->setVisible(false);
+	}
 }
 
 StartMenu::~StartMenu()

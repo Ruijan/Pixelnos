@@ -4,8 +4,6 @@
 #include "../Scenes/MyGame.h"
 #include "../Towers/TowerFactory.h"
 #include "../Lib/Functions.h"
-#include "../Lib/AudioSlider.h"
-#include "../Config/AudioController.h"
 #include "Rewards/RewardTower.h"
 #include "Rewards/RewardSugar.h"
 #include <iostream>
@@ -114,7 +112,7 @@ bool InterfaceGame::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
 				state = State::TOUCHED;
 				displayTowerInfos(item.first);
 				if (game_state == TITLE) {
-					((StartMenu*)getChildByName("start"))->hide();
+					hideStartMenu();
 				}
 			}
 			else {
@@ -132,7 +130,7 @@ bool InterfaceGame::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
 		}
 		else {
 			if (game_state == TITLE) {
-				((StartMenu*)getChildByName("start"))->hide();
+				hideStartMenu();
 			}
 			Tower* tower = game->getLevel()->touchingTower(p);
 			if (tower != nullptr) {
@@ -157,7 +155,7 @@ bool InterfaceGame::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
 					selected_turret->displayRange(false);
 					hideTowerInfo();
 					if (game_state == TITLE) {
-						((StartMenu*)getChildByName("start"))->hide();
+						hideStartMenu();
 					}
 					selected_turret = nullptr;
 					state = IDLE;
@@ -221,9 +219,7 @@ void InterfaceGame::onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) {
 			getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
 			selected_turret = nullptr;
 			state = IDLE;
-			if (game_state == TITLE) {
-				((StartMenu*)getChildByName("start"))->displayWithAnimation();
-			}
+			displayStartMenuIfInTitleState();
 		}
 	}
 	else if (state == DANGO_SELECTED) {
@@ -234,9 +230,7 @@ void InterfaceGame::onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) {
 		else {
 			selected_dango = nullptr;
 			state = IDLE;
-			if (game_state == TITLE) {
-				((StartMenu*)getChildByName("start"))->displayWithAnimation();
-			}
+			displayStartMenuIfInTitleState();
 		}
 	}
 	else if (state == TURRET_CHOSEN) {
@@ -257,20 +251,14 @@ void InterfaceGame::onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) {
 			selected_turret->destroyCallback(this);
 			removeTower();
 		}
-		if (game_state == TITLE) {
-			((StartMenu*)getChildByName("start"))->displayWithAnimation();
-		}
+		displayStartMenuIfInTitleState();
 	}
 	else if (state == TOUCHED) {
-		if (game_state == TITLE) {
-			((StartMenu*)getChildByName("start"))->displayWithAnimation();
-		}
+		displayStartMenuIfInTitleState();
 		//state = IDLE;
 	}
 	if (state == IDLE) {
-		if (game_state == TITLE) {
-			((StartMenu*)getChildByName("start"))->displayWithAnimation();
-		}
+		displayStartMenuIfInTitleState();
 		getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
 	}
 }
@@ -324,6 +312,14 @@ void InterfaceGame::resetSugarLabel()
 	getChildByName("label_information")->getChildByName("sugar")->stopAllActions();
 	getChildByName("label_information")->getChildByName("sugar")->setRotation(0.f);
 	getChildByName("label_information")->getChildByName("sugar")->setScale(1.0f);
+}
+
+void InterfaceGame::resetTowerMenu()
+{
+	for (auto it : towers_menu) {
+		it.second.first->stopAllActions();
+		it.second.first->setRotation(0);
+	}
 }
 
 void InterfaceGame::addEvents()
@@ -400,12 +396,12 @@ void InterfaceGame::update(float dt){
 	case TITLE:
 		updateButtonDisplay();
 		updateObjectDisplay(dt);
-		updateTutorial(dt);
+		//updateTutorial(dt);
 		break;
 	case RUNNING:
 		updateButtonDisplay();
 		updateObjectDisplay(dt);
-		updateTutorial(dt);
+		//updateTutorial(dt);
 		break;
 	}
 }
@@ -1083,17 +1079,15 @@ void InterfaceGame::builtCallback(Ref* sender){
 	selected_turret->setFixed(true);
 	game->getLevel()->decreaseQuantity(selected_turret->getCost());
 	displayTowerInfos("");
-	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("tower_positioning")) {
+	/*if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isGameTutorialComplete("tower_positioning")) {
 		((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("tower_positioning");
 		removeChildByName("hand");
 		towers_menu["bomber"].first->stopAllActions();
 		towers_menu["bomber"].first->setRotation(0);
 		tutorial_running = false;
-		if (game_state == TITLE) {
-			((StartMenu*)getChildByName("start"))->displayWithAnimation();
-		}
+		displayStartMenuIfInTitleState();
 	}
-	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("saucer") &&
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isGameTutorialComplete("saucer") &&
 		game->getLevel()->getLevelId() == 1 && game->getLevel()->getWorldId() == 0) {
 		((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("saucer");
 		removeChildByName("hand");
@@ -1101,9 +1095,13 @@ void InterfaceGame::builtCallback(Ref* sender){
 		towers_menu["saucer"].first->setRotation(0);
 		tutorial_running = false;
 		game->getLevel()->resume();
-		if (game_state == TITLE) {
-			((StartMenu*)getChildByName("start"))->displayWithAnimation();
-		}
+		displayStartMenuIfInTitleState();
+	}*/
+}
+
+void InterfaceGame::displayStartMenuIfInTitleState() {
+	if (game_state == TITLE) {
+		((StartMenu*)getChildByName("start"))->displayWithAnimation();
 	}
 }
 
@@ -1139,9 +1137,7 @@ void InterfaceGame::hideDangoInfo() {
 		});
 		getChildByName("information_dango")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
 	}
-	if (game_state == TITLE) {
-		((StartMenu*)getChildByName("start"))->displayWithAnimation();
-	}
+	displayStartMenuIfInTitleState();
 }
 
 void InterfaceGame::showTowerInfo() {
@@ -1176,9 +1172,12 @@ void InterfaceGame::hideTowerInfo() {
 		});
 		getChildByName("information_tower")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
 	}
-	if (game_state == TITLE) {
-		((StartMenu*)getChildByName("start"))->displayWithAnimation();
-	}
+	displayStartMenuIfInTitleState();
+}
+
+void InterfaceGame::hideStartMenu()
+{
+	((StartMenu*)getChildByName("start"))->hide();
 }
 
 void InterfaceGame::updateButtonDisplay(){
@@ -1240,8 +1239,21 @@ std::pair<std::string, cocos2d::Sprite*> InterfaceGame::getTowerFromPoint(cocos2
 InterfaceGame::GameState InterfaceGame::getGameState() const{
 	return game_state;
 }
+cocos2d::Vec2 InterfaceGame::getAbsoluteMenuTowerPosition(std::string towerName)
+{
+	return towers_menu[towerName].first->getPosition() - cocos2d::Vec2(0, sizeTower) + getChildByName("menu_panel")->getChildByName("towers")->getPosition() + getChildByName("menu_panel")->getPosition();
+}
+Sprite * InterfaceGame::getMenuTower(std::string towerName)
+{
+	return towers_menu[towerName].first;
+}
 void InterfaceGame::setGameState(GameState g_state) {
 	game_state = g_state;
+}
+
+void InterfaceGame::setSelectedTower(Tower * tower)
+{
+	selected_turret = tower;
 }
 
 void InterfaceGame::setListening(bool listening){
@@ -1407,6 +1419,16 @@ Dango* InterfaceGame::getCurrentDango() {
 	return selected_dango;
 }
 
+int InterfaceGame::getSugarQuantity()
+{
+	return game->getLevel()->getQuantity();
+}
+
+int InterfaceGame::getLifeQuantity()
+{
+	return game->getLevel()->getLife();
+}
+
 void InterfaceGame::handleDeadDango() {
 	hideDangoInfo();
 	selected_dango = nullptr;
@@ -1467,17 +1489,27 @@ void InterfaceGame::updateIncrementXP(Label* exp_label, ui::LoadingBar* loading_
 	}
 }
 
+void InterfaceGame::pauseLevel()
+{
+	game->getLevel()->pause();
+}
+
+void InterfaceGame::resumeLevel()
+{
+	game->getLevel()->resume();
+}
+
 void InterfaceGame::updateTutorial(float dt) {
-	Json::Value save = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
+	/*Json::Value save = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
 	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TUTORIAL);
 
-	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("tower_positioning") && 
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isGameTutorialComplete("tower_positioning") && 
 		!tutorial_running) {
 		Size visibleSize = Director::getInstance()->getVisibleSize();
 		tutorial_running = true;
 		shakeElement(towers_menu["bomber"].first);
 		if (game_state == TITLE) {
-			((StartMenu*)getChildByName("start"))->hide();
+			hideStartMenu();
 		}
 		Sprite* hand = Sprite::create("res/buttons/hand.png");
 		hand->setAnchorPoint(Vec2(0.15f, 0.5f));
@@ -1498,7 +1530,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			nullptr))
 		);
 	}
-	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("sugar") && 
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isGameTutorialComplete("sugar") && 
 		game->getLevel()->getQuantity() < 90) {
 		if (dialogues == nullptr) {
 			game->getLevel()->pause();
@@ -1506,7 +1538,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			if (game_state == TITLE) {
-				((StartMenu*)getChildByName("start"))->hide();
+				hideStartMenu();
 			}
 			shakeScaleElement(getChildByName("label_information")->getChildByName("sugar"));
 		}
@@ -1518,13 +1550,11 @@ void InterfaceGame::updateTutorial(float dt) {
 				game->getLevel()->resume();
 				((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("sugar");
 				resetSugarLabel();
-				if (game_state == TITLE) {
-					((StartMenu*)getChildByName("start"))->displayWithAnimation();
-				}
+				displayStartMenuIfInTitleState();
 			}
 		}
 	}
-	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("life") && 
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isGameTutorialComplete("life") && 
 		game->getLevel()->getLife() < 3) {
 		if (dialogues == nullptr) {
 			game->getLevel()->pause();
@@ -1546,7 +1576,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			}
 		}
 	}
-	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("saucer") &&
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isGameTutorialComplete("saucer") &&
 		game->getLevel()->getLevelId() == config["saucer"]["level"].asInt() &&
 		game->getLevel()->getWorldId() == config["saucer"]["world"].asInt()) {
 		if (dialogues == nullptr && !tutorial_running) {
@@ -1556,7 +1586,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			if (game_state == TITLE) {
-				((StartMenu*)getChildByName("start"))->hide();
+				hideStartMenu();
 			}
 		}
 		else if(dialogues != nullptr) {
@@ -1589,7 +1619,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			}
 		}
 	}
-	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("upgrade") &&
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isGameTutorialComplete("upgrade") &&
 		game->getLevel()->getLevelId() == config["upgrade"]["level"].asInt() &&
 		game->getLevel()->getWorldId() == config["upgrade"]["world"].asInt()) {
 		
@@ -1610,7 +1640,7 @@ void InterfaceGame::updateTutorial(float dt) {
 				addChild(dialogues, 1, "dialogue");
 				dialogues->launch();
 				if (game_state == TITLE) {
-					((StartMenu*)getChildByName("start"))->hide();
+					hideStartMenu();
 				}
 			}
 		}
@@ -1641,9 +1671,7 @@ void InterfaceGame::updateTutorial(float dt) {
 					hideTowerInfo();
 					selected_turret = nullptr;
 					removeChildByName("invisble_mask");
-					if (game_state == TITLE) {
-						((StartMenu*)getChildByName("start"))->displayWithAnimation();
-					}
+					displayStartMenuIfInTitleState();
 				});
 
 				hand->runAction(Sequence::create(
@@ -1660,7 +1688,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			}
 		}
 	}
-	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("multi_paths") &&
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isGameTutorialComplete("multi_paths") &&
 		game->getLevel()->getLevelId() == config["multi_paths"]["level"].asInt() &&
 		game->getLevel()->getWorldId() == config["multi_paths"]["world"].asInt()) {
 		if (dialogues == nullptr) {
@@ -1669,7 +1697,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			if (game_state == TITLE) {
-				((StartMenu*)getChildByName("start"))->hide();
+				hideStartMenu();
 			}
 		}
 		else {
@@ -1679,13 +1707,11 @@ void InterfaceGame::updateTutorial(float dt) {
 				dialogues = nullptr;
 				game->getLevel()->resume();
 				((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("multi_paths");
-				if (game_state == TITLE) {
-					((StartMenu*)getChildByName("start"))->displayWithAnimation();
-				}
+				displayStartMenuIfInTitleState();
 			}
 		}
 	}
-	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("dangorilla") &&
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isGameTutorialComplete("dangorilla") &&
 		game->getLevel()->getLevelId() == config["dangorilla"]["level"].asInt() &&
 		game->getLevel()->getWorldId() == config["dangorilla"]["world"].asInt() &&
 		game->getLevel()->getLastEnemy() != nullptr &&
@@ -1697,7 +1723,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			if (game_state == TITLE) {
-				((StartMenu*)getChildByName("start"))->hide();
+				hideStartMenu();
 			}
 		}
 		else {
@@ -1707,13 +1733,11 @@ void InterfaceGame::updateTutorial(float dt) {
 				dialogues = nullptr;
 				game->getLevel()->resume();
 				((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("dangorilla");
-				if (game_state == TITLE) {
-					((StartMenu*)getChildByName("start"))->displayWithAnimation();
-				}
+				displayStartMenuIfInTitleState();
 			}
 		}
 	}
-	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialComplete("dangobese") &&
+	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isGameTutorialComplete("dangobese") &&
 		game->getLevel()->getLevelId() == config["dangobese"]["level"].asInt() &&
 		game->getLevel()->getWorldId() == config["dangobese"]["world"].asInt()) {
 		if (dialogues == nullptr) {
@@ -1722,7 +1746,7 @@ void InterfaceGame::updateTutorial(float dt) {
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			if (game_state == TITLE) {
-				((StartMenu*)getChildByName("start"))->hide();
+				hideStartMenu();
 			}
 		}
 		else {
@@ -1732,12 +1756,10 @@ void InterfaceGame::updateTutorial(float dt) {
 				dialogues = nullptr;
 				game->getLevel()->resume();
 				((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("dangobese");
-				if (game_state == TITLE) {
-					((StartMenu*)getChildByName("start"))->displayWithAnimation();
-				}
+				displayStartMenuIfInTitleState();
 			}
 		}
-	}
+	}*/
 }
 
 void InterfaceGame::shakeElement(Node* element, bool loop) {

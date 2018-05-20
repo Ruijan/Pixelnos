@@ -22,15 +22,16 @@ struct TrackingEvent {
 
 class Config: public cocos2d::Ref{
 private:
-	Json::Value conf_general;   // will contains the root value after parsing.
-	Json::Value conf_tutorial;   // will contains the root value after parsing.
-	Json::Value conf_advice;   // will contains the root value after parsing.
-	Json::Value conf_challenge;   // will contains the root value after parsing.
-	Json::Value conf_button;   // will contains the root value after parsing.
-	Json::Value conf_tower;   // will contains the root value after parsing.
-	Json::Value conf_dango;   // will contains the root value after parsing.
-	Json::Value conf_level;   // will contains the root value after parsing.
-	Json::Value conf_talent;   // will contains the root value after parsing.
+	Json::Value conf_general;
+	Json::Value conf_game_tutorial;
+	Json::Value conf_skills_tutorial;  
+	Json::Value conf_advice;
+	Json::Value conf_challenge;
+	Json::Value conf_button;
+	Json::Value conf_tower;
+	Json::Value conf_dango;
+	Json::Value conf_level;
+	Json::Value conf_talent;
 
 	std::string config_filename;
 	Json::Value rootSav;   // will contains the root value after parsing.
@@ -70,7 +71,8 @@ private:
 public:
 	enum ConfigType {
 		GENERAL,
-		TUTORIAL,
+		GAMETUTORIAL,
+		SKILLTUTORIAL,
 		ADVICE,
 		TOWER,
 		DANGO,
@@ -304,6 +306,8 @@ public:
 	*/
 	void updateCurrentLevelTrackingEvent(LevelTrackingEvent n_event);
 
+	Json::Value getLastLevelAction();
+
 	/**
 	* @brief check the state of the grid.
 	*/
@@ -378,7 +382,18 @@ public:
 	/**
 	* @brief Check if a tutorial has been completed
 	*/
-	bool isTutorialComplete(std::string name);
+	bool isGameTutorialComplete(std::string name);
+
+	bool isSkillTutorialComplete(std::string name);
+
+	void completeSkillTutorial(std::string name);
+
+	void startSkillTutorial(std::string name);
+
+	bool isSkillTutorialUncompleted(std::string name);
+
+	bool isSkillTutorialRunning(std::string name);
+
 
 	/**
 	* @brief Check if a tutorial has not been completed

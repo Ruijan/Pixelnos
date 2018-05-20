@@ -1,6 +1,6 @@
 #include "MyGame.h"
 #include "../AppDelegate.h"
-
+#include "../Level/Tutorials/TutorialFactory.h"
 
 
 USING_NS_CC;
@@ -35,6 +35,7 @@ bool MyGame::init()
 bool MyGame::initLevel(int level_id, int world_id){
 	// reset the game just in case.
 	reset();
+	removeTutorials();
 	// remove the level and the interface if it is initialized.
 	if(cLevel != nullptr){
 		removeChild(cLevel,1);
@@ -67,9 +68,18 @@ bool MyGame::initLevel(int level_id, int world_id){
 	return true;
 }
 
+void MyGame::removeTutorials()
+{
+	for (unsigned int tutorialIndex(0); tutorialIndex < tutorials.size(); ++tutorialIndex) {
+		delete tutorials[tutorialIndex];
+	}
+	tutorials.clear();
+}
+
 void MyGame::onEnterTransitionDidFinish(){
 	Scene::onEnterTransitionDidFinish();
 }
+
 void MyGame::onExitTransitionDidStart(){
 	Scene::onExitTransitionDidStart();
 	unload();
@@ -81,6 +91,9 @@ void MyGame::update(float delta) {
 	//update the scene, the interface and the level.
 	Scene::update(delta);
 	menu->update(delta);
+	for (auto* tutorial : tutorials) {
+		tutorial->update(delta);
+	}
 	// If the player lost, we show the losing screen
 	if (cLevel->hasLost() && !cLevel->isPaused()){
 		menu->showLose();	
@@ -101,22 +114,7 @@ void MyGame::update(float delta) {
 		cLevel->removeElements();
 	}
 	else if(menu->getGameState() == InterfaceGame::GameState::NEXT_LEVEL){
-		Json::Value worlds = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"][id_world];
-		Json::Value levels = worlds["levels"];
-		unlockTowers();
-		if(levels.size() > cLevel->getLevelId() + 1){
-			int new_level_id = cLevel->getLevelId() + 1;
-			removeChild(cLevel,1);
-			cLevel = Level::create(new_level_id, id_world);
-			menu->reset();
-			menu->setListening(true);
-			acceleration = 1.;0;
-			addChild(cLevel,0);
-			createNewTracker();
-		}
-		else{
-			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
-		}
+		switchLevel();
 	}
 	else if (menu->getGameState() == InterfaceGame::GameState::RUNNING) {
 		cLevel->update(delta * acceleration);
@@ -131,6 +129,28 @@ void MyGame::update(float delta) {
 		updateTracker("completed");
 		unlockTowers();
 		save();
+	}
+}
+
+void MyGame::switchLevel()
+{
+	Json::Value worlds = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"][id_world];
+	Json::Value levels = worlds["levels"];
+	unlockTowers();
+	if (levels.size() > cLevel->getLevelId() + 1) {
+		int new_level_id = cLevel->getLevelId() + 1;
+		removeChild(cLevel, 1);
+		cLevel = Level::create(new_level_id, id_world);
+		menu->reset();
+		menu->setListening(true);
+		acceleration = 1.; 0;
+		addChild(cLevel, 0);
+		createNewTracker();
+		removeTutorials();
+		loadTutorials();
+	}
+	else {
+		SceneManager::getInstance()->setScene(SceneManager::LEVELS);
 	}
 }
 
@@ -240,6 +260,7 @@ void MyGame::initAttributes(){
 	// Let's the game begin: we schedule the update of MyGame
 	scheduleUpdate();
 
+	loadTutorials();
 	// Before, set interface visible and listening to input (touch)
 	loadingScreen->setLoadingPercent(100);
 	FadeOut* fade = FadeOut::create(0.5f);
@@ -249,6 +270,14 @@ void MyGame::initAttributes(){
 	menu->setVisible(true);
 	menu->setListening(true);
 	createNewTracker();
+}
+
+void MyGame::loadTutorials()
+{
+	Json::Value tutorialConfiguration = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GAMETUTORIAL);
+	for (std::string tutorial : tutorialConfiguration.getMemberNames()) {
+		tutorials.push_back(TutorialFactory::createTutorial(TutorialFactory::getTutorialTypeFromString(tutorial), this));
+	}
 }
 
 void MyGame::updateLoading(float dt){
