@@ -20,17 +20,18 @@ struct TrackingEvent {
 
 
 
-class Config: public cocos2d::Ref{
+class Config : public cocos2d::Ref {
 private:
-	Json::Value conf_general;   // will contains the root value after parsing.
-	Json::Value conf_tutorial;   // will contains the root value after parsing.
-	Json::Value conf_advice;   // will contains the root value after parsing.
-	Json::Value conf_challenge;   // will contains the root value after parsing.
-	Json::Value conf_button;   // will contains the root value after parsing.
-	Json::Value conf_tower;   // will contains the root value after parsing.
-	Json::Value conf_dango;   // will contains the root value after parsing.
-	Json::Value conf_level;   // will contains the root value after parsing.
-	Json::Value conf_talent;   // will contains the root value after parsing.
+	Json::Value conf_general;
+	Json::Value conf_game_tutorial;
+	Json::Value conf_skills_tutorial;
+	Json::Value conf_advice;
+	Json::Value conf_challenge;
+	Json::Value conf_button;
+	Json::Value conf_tower;
+	Json::Value conf_dango;
+	Json::Value conf_level;
+	Json::Value conf_talent;
 
 	std::string config_filename;
 	Json::Value rootSav;   // will contains the root value after parsing.
@@ -55,7 +56,7 @@ private:
 	bool user_need_creation;
 	bool user_need_save;
 	bool waiting_answer;
-	std::string language; 
+	std::string language;
 	int c_tracking_index;
 	int c_level_tracking;
 
@@ -70,7 +71,8 @@ private:
 public:
 	enum ConfigType {
 		GENERAL,
-		TUTORIAL,
+		GAMETUTORIAL,
+		SKILLTUTORIAL,
 		ADVICE,
 		TOWER,
 		DANGO,
@@ -189,7 +191,7 @@ public:
 
 	/**
 	* @brief Change the value of the settings regarding the display of the grid.
-	* it will save the new value in the save file and ask to the network to save it 
+	* it will save the new value in the save file and ask to the network to save it
 	* online at the next call. It changes also the value of all the grid checkbox
 	* @param true of false if you want to show the grid all the time.
 	*/
@@ -257,7 +259,7 @@ public:
 	void serverUpdate(float dt);
 
 	/**
-	* @brief Send the request to create a new user into the DB. It will also 
+	* @brief Send the request to create a new user into the DB. It will also
 	* generate the towers for progression and its settings. It returns an id
 	* that will be used later to update its information.
 	*/
@@ -269,7 +271,7 @@ public:
 	void updateUserInfo();
 
 	/**
-	* @brief Add a tracking event to the tracker. 
+	* @brief Add a tracking event to the tracker.
 	* @param TrackingEvent is a struct that needs:
 	*		std::string from_scene;
 	*		std::string to_scene;
@@ -277,7 +279,7 @@ public:
 	*/
 	void addTrackingEvent(TrackingEvent n_event);
 	/**
-	* @brief Add a level tracking event to the tracker. Usually called for every 
+	* @brief Add a level tracking event to the tracker. Usually called for every
 	* new level.
 	* @param LevelTrackingEvent is a struct that needs:
 	*		int level_id;
@@ -291,7 +293,7 @@ public:
 	void addLevelTrackingEvent(LevelTrackingEvent n_event);
 
 	/**
-	* @brief Set the current LevelTrackingEvent to the new n_event. 
+	* @brief Set the current LevelTrackingEvent to the new n_event.
 	* Usually called every time the user is making a new action.
 	* @param LevelTrackingEvent is a struct that needs:
 	*		int level_id;
@@ -303,6 +305,8 @@ public:
 	*		Json::Value actions;
 	*/
 	void updateCurrentLevelTrackingEvent(LevelTrackingEvent n_event);
+
+	Json::Value getLastLevelAction();
 
 	/**
 	* @brief check the state of the grid.
@@ -351,7 +355,7 @@ public:
 	* @param lang should take only two values.
 	*		"en" for english
 	*		"fr" for french
-	* HAS TO BE CHANGED TO ONLY TAKE AN ENUM !!! 
+	* HAS TO BE CHANGED TO ONLY TAKE AN ENUM !!!
 	* RIGHT NOW THERE IS AN STRING CHECK !!!!
 	* AAAAAAAAAAAAAAAAH !!!!!
 	*/
@@ -378,7 +382,18 @@ public:
 	/**
 	* @brief Check if a tutorial has been completed
 	*/
-	bool isTutorialComplete(std::string name);
+	bool isGameTutorialComplete(std::string name);
+
+	bool isSkillTutorialComplete(std::string name);
+
+	void completeSkillTutorial(std::string name);
+
+	void startSkillTutorial(std::string name);
+
+	bool isSkillTutorialUncompleted(std::string name);
+
+	bool isSkillTutorialRunning(std::string name);
+
 
 	/**
 	* @brief Check if a tutorial has not been completed

@@ -5,9 +5,9 @@
 
 USING_NS_CC;
 
-bool Shop::init(){
+bool Shop::init() {
 
-	if (!Scene::init()){ return false; }
+	if (!Scene::init()) { return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 
@@ -40,22 +40,22 @@ bool Shop::init(){
 	Label* sugar_amount = Label::createWithTTF("x " + root["holy_sugar"].asString(), "fonts/LICABOLD.ttf", round(visibleSize.width / 25));
 	sugar_amount->setColor(Color3B::YELLOW);
 	sugar_amount->enableOutline(Color4B::BLACK, 2);
-	sugar_amount->setPosition(sugar_sprite1->getPosition() + 
-		Vec2(sugar_sprite1->getContentSize().width * sugar_sprite1->getScaleX() / 2 + visibleSize.width / 20,0));
+	sugar_amount->setPosition(sugar_sprite1->getPosition() +
+		Vec2(sugar_sprite1->getContentSize().width * sugar_sprite1->getScaleX() / 2 + visibleSize.width / 20, 0));
 	addChild(sugar_amount, 3, "sugar_amount");
 
 	ui::ListView* list_view = ui::ListView::create();
-	
+
 	list_view->setItemsMargin(visibleSize.width / 40);
 	list_view->setGravity(ui::ListView::Gravity::CENTER_HORIZONTAL);
 	list_view->setDirection(ui::ScrollView::Direction::HORIZONTAL);
 	list_view->setContentSize(Size(visibleSize.width, visibleSize.height * 0.7));
 	//list_view->setBackGroundColorType(ui::LAYOUT_COLOR_SOLID);
 	list_view->setBackGroundColor(Color3B::GREEN);
-	list_view->setPosition(Vec2(visibleSize.width / 2 - list_view->getContentSize().width / 2, 
+	list_view->setPosition(Vec2(visibleSize.width / 2 - list_view->getContentSize().width / 2,
 		visibleSize.height * 0.4 - list_view->getContentSize().height / 2));
 
-	for (int i = 0; i<10; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		ui::Layout* item = ui::Layout::create();
 		Sprite* model = Sprite::create("res/buttons/shop_item.png");
@@ -75,9 +75,9 @@ bool Shop::init(){
 		title->setTextHorizontalAlignment(TextHAlignment::CENTER);
 
 		Sprite* item_image = Sprite::create("res/buttons/bunch_holy_sugar.png");
-		item_image->setScale(item->getContentSize().width * 0.9 / 
+		item_image->setScale(item->getContentSize().width * 0.9 /
 			item_image->getContentSize().width);
-		item_image->setPosition(model->getPosition().x,model->getPosition().y - model->getContentSize().height * model->getScaleY() * 0.1);
+		item_image->setPosition(model->getPosition().x, model->getPosition().y - model->getContentSize().height * model->getScaleY() * 0.1);
 
 		ui::Button* buy = ui::Button::create("res/buttons/shop.png");
 		buy->setScale(model->getContentSize().width * model->getScaleX() * 0.6 / buy->getContentSize().width);

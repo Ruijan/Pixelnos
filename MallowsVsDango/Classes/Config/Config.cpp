@@ -12,12 +12,12 @@ USING_NS_CC;
 USING_NS_CC_EXT;
 using namespace cocos2d::network;
 
-Config::Config(std::string configfilename, std::string savename) : 
+Config::Config(std::string configfilename, std::string savename) :
 	config_filename(configfilename), save_filename(savename), save_file(false),
 	always_grid_enabled(false), never_grid_enabled(false), moving_grid_enabled(false),
 	limit_enabled(false), dialogues_enabled(false), settings_need_save(false),
-	tracking_need_save(false), progression_need_save(false), user_need_creation(false), 
-	user_need_save(false), waiting_answer(false), tracking_filename("temp_tracking.json"), c_tracking_index(0), 
+	tracking_need_save(false), progression_need_save(false), user_need_creation(false),
+	user_need_save(false), waiting_answer(false), tracking_filename("temp_tracking.json"), c_tracking_index(0),
 	level_tracking_filename("temp_level_tracking.json"), c_level_tracking(-1) {
 
 	//network_controller = new NetworkController("http://127.0.0.1/mvd/");
@@ -25,18 +25,21 @@ Config::Config(std::string configfilename, std::string savename) :
 
 	scheduler = Director::getInstance()->getScheduler();
 	scheduler->retain();
-	scheduler->schedule(CC_SCHEDULE_SELECTOR(Config::serverUpdate), this , 5.f, false);
+	scheduler->schedule(CC_SCHEDULE_SELECTOR(Config::serverUpdate), this, 5.f, false);
 
 	srand(time(NULL));
 }
 
-const Json::Value& Config::getConfigValues(ConfigType type) const{
+const Json::Value& Config::getConfigValues(ConfigType type) const {
 	switch (type) {
 	case GENERAL:
 		return conf_general;
 		break;
-	case TUTORIAL:
-		return conf_tutorial;
+	case GAMETUTORIAL:
+		return conf_game_tutorial;
+		break;
+	case SKILLTUTORIAL:
+		return conf_skills_tutorial;
 		break;
 	case ADVICE:
 		return conf_advice;
@@ -63,31 +66,31 @@ const Json::Value& Config::getConfigValues(ConfigType type) const{
 		return conf_general;
 		break;
 	}
-	
+
 }
 
-const Json::Value& Config::getSaveValues() const{
+const Json::Value& Config::getSaveValues() const {
 	return rootSav;
 }
 
-bool Config::isSaveFile() const{
+bool Config::isSaveFile() const {
 	return save_file;
 }
 
-void Config::setSave(Json::Value nroot){
+void Config::setSave(Json::Value nroot) {
 	rootSav = nroot;
 }
 
-void Config::save(){
+void Config::save() {
 	Json::StyledWriter writer;
 	std::string outputSave = writer.write(rootSav);
 	std::string path = FileUtils::getInstance()->getWritablePath() + save_filename;
 
 	bool succeed = FileUtils::getInstance()->writeStringToFile(outputSave, path);
-	if(succeed){
-		log("Saved File in %s",path.c_str());
+	if (succeed) {
+		log("Saved File in %s", path.c_str());
 	}
-	else{
+	else {
 		log("error saving file %s", path.c_str());
 	}
 }
@@ -120,8 +123,8 @@ void Config::saveLevelTracking() {
 	}
 }
 
-void Config::init(){
-	auto fileUtils =  FileUtils::getInstance();
+void Config::init() {
+	auto fileUtils = FileUtils::getInstance();
 
 	std::string configFile = fileUtils->getStringFromFile(config_filename);
 	std::string saveFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + save_filename);
@@ -135,24 +138,22 @@ void Config::init(){
 	bool parsingLevelTrackingSuccessful(false);
 
 	parsingConfigSuccessful = reader.parse(configFile, conf_general, false);
-	bool parsing_conf_towers(false), parsing_conf_advice(false), parsing_conf_dangos(false),
-		parsing_conf_challenges(false), parsing_conf_tutorials(false), parsing_conf_talents(false),
-		parsing_conf_levels(false), parsing_conf_buttons(false);
 	if (parsingConfigSuccessful) {
-		parsing_conf_towers = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tower"].asString()), conf_tower, false);
-		parsing_conf_advice = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["advice"].asString()), conf_advice, false);
-		parsing_conf_dangos = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["dango"].asString()), conf_dango, false);
-		parsing_conf_challenges = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["challenge"].asString()), conf_challenge, false);
-		parsing_conf_tutorials = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tutorial"].asString()), conf_tutorial, false);
-		parsing_conf_talents = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["talent"].asString()), conf_talent, false);
-		parsing_conf_levels = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["level"].asString()), conf_level, false);
+		bool parsing_conf_towers = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tower"].asString()), conf_tower, false);
+		bool parsing_conf_advice = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["advice"].asString()), conf_advice, false);
+		bool parsing_conf_dangos = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["dango"].asString()), conf_dango, false);
+		bool parsing_conf_challenges = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["challenge"].asString()), conf_challenge, false);
+		bool parsing_conf_game_tutorials = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["gameTutorial"].asString()), conf_game_tutorial, false);
+		bool parsing_conf_skills_tutorials = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["skillsTutorial"].asString()), conf_skills_tutorial, false);
+		bool parsing_conf_talents = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["talent"].asString()), conf_talent, false);
+		bool parsing_conf_levels = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["level"].asString()), conf_level, false);
 		std::string buttons = fileUtils->getStringFromFile(conf_general["configuration_files"]["button"].asString());
-		parsing_conf_buttons = reader.parse(buttons, conf_button, false);
+		bool parsing_conf_buttons = reader.parse(buttons, conf_button, false);
 		if (!parsing_conf_towers || !parsing_conf_advice || !parsing_conf_dangos ||
-			!parsing_conf_challenges || !parsing_conf_tutorials || !parsing_conf_talents ||
+			!parsing_conf_challenges || !parsing_conf_game_tutorials || !parsing_conf_skills_tutorials || !parsing_conf_talents ||
 			!parsing_conf_levels || !parsing_conf_buttons) {
 			std::string error = reader.getFormattedErrorMessages();
-			log("ERROR : loading configuration files. %s", error.c_str());
+			throw std::invalid_argument("ERROR : loading configuration files. " + error);
 			return;
 		}
 	}
@@ -215,7 +216,7 @@ void Config::init(){
 			});
 		}
 	}
-	
+
 	parsingTrackingSuccessful = reader.parse(trackingFile, tracking, false);
 	if (parsingTrackingSuccessful) {
 		tracking_need_save = true;
@@ -248,7 +249,7 @@ void Config::init(){
 	}
 
 	parsingSaveSuccessful = reader.parse(saveFile, rootSav, false);
-	if (!parsingSaveSuccessful){
+	if (!parsingSaveSuccessful) {
 		// report to the user the failure and their locations in the document.
 		std::string error = reader.getFormattedErrorMessages();
 		rootSav["settings"]["always_grid"] = false;
@@ -261,10 +262,14 @@ void Config::init(){
 		rootSav["c_level"] = 0;
 		rootSav["c_world"] = 0;
 		rootSav["username"] = "";
-		//rootSav["tutorials"] = conf_tutorial;
-		std::vector<std::string> tuto_names = conf_tutorial.getMemberNames();
+		//rootSav["gameTutorials"] = conf_game_tutorial;
+		std::vector<std::string> tuto_names = conf_game_tutorial.getMemberNames();
 		for (unsigned int i(0); i < tuto_names.size(); ++i) {
-			rootSav["tutorials"][tuto_names[i]]["state"] = conf_tutorial[tuto_names[i]]["state"];
+			rootSav["gameTutorials"][tuto_names[i]]["state"] = conf_game_tutorial[tuto_names[i]]["state"];
+		}
+		tuto_names = conf_skills_tutorial.getMemberNames();
+		for (unsigned int i(0); i < tuto_names.size(); ++i) {
+			rootSav["skillsTutorials"][tuto_names[i]]["state"] = conf_skills_tutorial[tuto_names[i]]["state"];
 		}
 		for (unsigned int i(0); i < conf_tower.size(); ++i) {
 			rootSav["towers"][conf_tower.getMemberNames()[i]]["exp"] = 0;
@@ -285,12 +290,12 @@ void Config::init(){
 		save();
 		createUserIntoDB();
 	}
-	else{
+	else {
 		save_file = true;
-		auto tutos = rootSav["tutorials"].getMemberNames();
-		for (unsigned int j(0); j < rootSav["tutorials"].getMemberNames().size(); ++j) {
-			if (rootSav["tutorials"][tutos[j]]["state"].asString() == "running") {
-				rootSav["tutorials"][tutos[j]]["state"] = "uncompleted";
+		auto tutos = rootSav["gameTutorials"].getMemberNames();
+		for (unsigned int j(0); j < rootSav["gameTutorials"].getMemberNames().size(); ++j) {
+			if (rootSav["gameTutorials"][tutos[j]]["state"].asString() == "running") {
+				rootSav["gameTutorials"][tutos[j]]["state"] = "uncompleted";
 			}
 		}
 		save();
@@ -570,7 +575,7 @@ void Config::serverUpdate(float dt) {
 					if (response->isSucceed()) {
 						std::vector<char> *buffer = response->getResponseData();
 						std::string str(buffer->begin(), buffer->end());
-						
+
 						if (this->level_tracking[i].isMember("tracking_id")) {
 							if (str != "") {
 								log("error while updating level tracking");
@@ -683,6 +688,10 @@ void Config::updateCurrentLevelTrackingEvent(LevelTrackingEvent n_event) {
 	progression_need_save = true;
 }
 
+Json::Value Config::getLastLevelAction() {
+	return level_tracking[c_level_tracking]["actions"][level_tracking[c_level_tracking]["actions"].size() - 1];
+}
+
 std::string Config::getStringFromSceneType(SceneManager::SceneType type) {
 	switch (type) {
 	case SceneManager::SceneType::CREDIT:
@@ -768,9 +777,9 @@ void Config::saveLevelTrackingIntoDB(Json::Value tracking_conf, const cocos2d::n
 	}
 	else {
 		request += "create_level_tracking&id_user=" + rootSav["id_player"].asString() + "&level_id_bdd=" + tracking_conf["level_id_bdd"].asString() +
-			"&level_id=" + tracking_conf["level_id"].asString() + "&world_id=" + tracking_conf["world_id"].asString() + 
-			"&state=" + tracking_conf["state"].asString() + "&holy_sugar=" + tracking_conf["holy_sugar"].asString() + 
-			"&duration=" + tracking_conf["duration"].asString() + "&date_time=" + tracking_conf["time"].asString() + 
+			"&level_id=" + tracking_conf["level_id"].asString() + "&world_id=" + tracking_conf["world_id"].asString() +
+			"&state=" + tracking_conf["state"].asString() + "&holy_sugar=" + tracking_conf["holy_sugar"].asString() +
+			"&duration=" + tracking_conf["duration"].asString() + "&date_time=" + tracking_conf["time"].asString() +
 			"&actions=" + actions;
 		network_controller->sendNewRequest(NetworkController::Request::LEVEL_TRACKING, request, callback,
 			"POST createTracking");
@@ -807,7 +816,7 @@ void Config::createUserIntoDB() {
 
 void Config::updateUserInfo() {
 	/* There are two ids, one for the game, one for the database.
-	Since the database starts from 1 to +infinite, it would be too easy to 
+	Since the database starts from 1 to +infinite, it would be too easy to
 	find the id of the player. It allows also to generate a new profile without
 	having an internet connection.*/
 	// save the main user infos
@@ -815,7 +824,7 @@ void Config::updateUserInfo() {
 	time(&rawtime);
 	std::string postData = "action=updateUser&id_game=" + rootSav["id_player"].asString() +
 		"&time=" + Value((int)rawtime).asString() + "&level=" + rootSav["c_level"].asString() +
-		"&world=" + rootSav["c_world"].asString() + "&holy_sugar=" + rootSav["holy_sugar"].asString() + 
+		"&world=" + rootSav["c_world"].asString() + "&holy_sugar=" + rootSav["holy_sugar"].asString() +
 		"&username=" + rootSav["username"].asString();
 	network_controller->sendNewRequest(NetworkController::Request::USER_AND_SETTINGS, postData,
 		[&, this](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
@@ -994,25 +1003,48 @@ void Config::loadAllLevels() {
 }
 
 void Config::completeTutorial(std::string name) {
-	rootSav["tutorials"][name]["state"] = "complete";
+	rootSav["gameTutorials"][name]["state"] = "complete";
 	save();
 }
 
 void Config::startTutorial(std::string name) {
-	rootSav["tutorials"][name]["state"] = "running";
+	rootSav["gameTutorials"][name]["state"] = "running";
 	save();
 }
 
-bool Config::isTutorialComplete(std::string name){
-	return rootSav["tutorials"][name]["state"].asString() == "complete";
+bool Config::isGameTutorialComplete(std::string name) {
+	return rootSav["gameTutorials"][name]["state"].asString() == "complete";
 }
 
+
 bool Config::isTutorialUncompleted(std::string name) {
-	return rootSav["tutorials"][name]["state"].asString() == "uncompleted";
+	return rootSav["gameTutorials"][name]["state"].asString() == "uncompleted";
 }
 
 bool Config::isTutorialRunning(std::string name) {
-	return rootSav["tutorials"][name]["state"].asString() == "running";
+	return rootSav["gameTutorials"][name]["state"].asString() == "running";
+}
+
+void Config::completeSkillTutorial(std::string name) {
+	rootSav["skillsTutorials"][name]["state"] = "complete";
+	save();
+}
+
+void Config::startSkillTutorial(std::string name) {
+	rootSav["skillsTutorials"][name]["state"] = "running";
+	save();
+}
+
+bool Config::isSkillTutorialComplete(std::string name) {
+	return rootSav["skillsTutorials"][name]["state"].asString() == "complete";
+}
+
+bool Config::isSkillTutorialUncompleted(std::string name) {
+	return rootSav["gameTutorials"][name]["state"].asString() == "uncompleted";
+}
+
+bool Config::isSkillTutorialRunning(std::string name) {
+	return rootSav["gameTutorials"][name]["state"].asString() == "running";
 }
 
 tm Config::getTimeFromString(std::string date1) {

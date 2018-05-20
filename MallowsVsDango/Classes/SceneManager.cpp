@@ -9,7 +9,7 @@ USING_NS_CC;
 
 SceneManager *SceneManager::manager;
 
-SceneManager::SceneManager(){
+SceneManager::SceneManager() {
 	MainMenu* menu = MainMenu::create();
 	MyGame* game = MyGame::create();
 	StoryMenu* story_menu = StoryMenu::create();
@@ -42,22 +42,22 @@ SceneManager::SceneManager(){
 
 	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
 	Director::getInstance()->runWithScene(currentscene);
-	if(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL)["play_sound"].asBool()){
+	if (((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL)["play_sound"].asBool()) {
 		std::string music = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL)
 			["sound_transition"][c_index][c_index].asString();
 		auto action1 = ChangeMusic::create(music);
 		auto action2 = FadeInMusic::create(0.5f);
-		Director::getInstance()->getActionManager()->addAction(Sequence::create(action1,action2,nullptr),currentscene,false);
+		Director::getInstance()->getActionManager()->addAction(Sequence::create(action1, action2, nullptr), currentscene, false);
 	}
 }
 
 
-SceneManager::~SceneManager(){
+SceneManager::~SceneManager() {
 	for (Scene*& scene : cacheScene)
 		scene->release();
 }
 
-void SceneManager::setScene(SceneManager::SceneType type){
+void SceneManager::setScene(SceneManager::SceneType type) {
 	TrackingEvent c_event;
 	c_event.from_scene = Config::getStringFromSceneType((SceneType)c_index);
 	c_event.to_scene = Config::getStringFromSceneType(type);
@@ -69,7 +69,7 @@ void SceneManager::setScene(SceneManager::SceneType type){
 	Director::getInstance()->replaceScene(transition);
 	std::string music = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL)["sound_transition"][c_index][(int)type].asString();
 
-	if(music != "none" && ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL)["play_sound"].asBool()){
+	if (music != "none" && ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL)["play_sound"].asBool()) {
 		auto action1 = FadeOutMusic::create(0.5f);
 		auto action2 = ChangeMusic::create(music);
 		auto action3 = FadeInMusic::create(0.5f);
@@ -78,7 +78,7 @@ void SceneManager::setScene(SceneManager::SceneType type){
 	c_index = (int)type;
 }
 
-MyGame* SceneManager::getGame(){
+MyGame* SceneManager::getGame() {
 	return  ((MyGame*)cacheScene[GAME]);
 }
 

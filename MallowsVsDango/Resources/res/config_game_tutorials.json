@@ -164,44 +164,6 @@
 	    "level": 4,
 	    "world": 0
 	  },
-	  "skills": {
-	    "state": "uncompleted",
-	    "dialogue": [
-	      {
-	        "emotion": [
-	          "NORMAL"
-	        ],
-	        "side": "LEFT",
-	        "speaker": "res/turret/general.png",
-	        "text_en": [
-	          "We accumulated a lot of Holy Sugar!\n Let's see what we can do with it..."
-	        ],
-	        "text_fr": [
-	          "Nous avons accumulé beaucoup de Sucre Sacré!\n Voyons ce qu'on peut faire avec..."
-	        ]
-	      }
-	    ],
-	    "dialogue_skills": [
-	      {
-	        "emotion": [
-	          "NORMAL",
-	          "NORMAL"
-	        ],
-	        "side": "LEFT",
-	        "speaker": "res/turret/general.png",
-	        "text_en": [
-	          "I have an idea! We could place a Mallow on the path to block our enemies. Like a wall!",
-	          "I am a genius! Let's develop this new technology!"
-	        ],
-	        "text_fr": [
-	          "Je sais ! Nous pourrions placer un Mallow sur le chemin afin de bloquer nos ennemis. Un peu comme un mur !",
-	          "Je suis un géni ! Allons développer cette nouvelle technologie!"
-	        ]
-	      }
-	    ],
-	    "level": 5,
-	    "world": 0
-	  },
 	  "dangobese": {
 	    "state": "uncompleted",
 	    "dialogue": [

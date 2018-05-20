@@ -30,6 +30,7 @@
     "button": "res/config_buttons.json",
     "advice": "res/config_advice.json",
     "level": "res/config_levels.json",
-    "tutorial": "res/config_tutorials.json"
+    "gameTutorial": "res/config_game_tutorials.json",
+    "skillsTutorial": "res/config_skills_tutorials.json"
   }
 }

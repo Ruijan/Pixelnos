@@ -28,9 +28,9 @@ bool Skills::init() {
 	Json::Value root2 = save_root;
 	root2["talents"] = {};
 	for (unsigned int k(0); k < talents.size(); ++k) {
-			auto conf = talents[k]["id"].asInt();
-			root2["talents"][k]["id"] = talents[k]["id"].asInt();
-			root2["talents"][k]["bought"] = false;
+		auto conf = talents[k]["id"].asInt();
+		root2["talents"][k]["id"] = talents[k]["id"].asInt();
+		root2["talents"][k]["bought"] = false;
 	}
 	for (unsigned int i(0); i < save_root["talents"].size(); ++i) {
 		if (save_root["talents"][i].isMember("id")) {
@@ -255,7 +255,7 @@ bool Skills::init() {
 	unlocked_txt->setPosition(buy_layout->getPosition());
 	addChild(unlocked_txt, 1, "unlocked_txt");
 	unlocked_txt->setVisible(false);
-	
+
 	//create talents
 	initTalents();
 
@@ -410,7 +410,7 @@ void Skills::selectSkill(int id) {
 	requirement_description->pushBackElement(re1);
 	int elements = 1;
 	if (talent["condition_sugar"].asInt() != -1) {
-		Color3B color = Color3B(1,69,0);
+		Color3B color = Color3B(1, 69, 0);
 		if (save_root["holy_sugar_spent"].asInt() < talent["condition_sugar"].asInt()) {
 			color = Color3B::RED;
 			((ui::Button*)getChildByName("buy_layout")->getChildByName("buy_button"))->setEnabled(false);
@@ -464,7 +464,7 @@ void Skills::selectSkill(int id) {
 	c_button = talent_btn;
 	c_talent = talent;
 	Sprite* selected = Sprite::create("res/buttons/Skills/selected.png");
-	selected->setScale((talent_btn->getScale() * talent_btn->getContentSize().width + visibleSize.width / 20)/ selected->getContentSize().width);
+	selected->setScale((talent_btn->getScale() * talent_btn->getContentSize().width + visibleSize.width / 20) / selected->getContentSize().width);
 	selected->setPosition(Vec2(talent_btn->getContentSize().width / 2, talent_btn->getContentSize().height / 2));
 	talent_btn->addChild(selected, -1, "yellow");
 }
@@ -491,7 +491,7 @@ void Skills::showValidationPanel() {
 	if (validate_buy->getChildByName("validation_text") != nullptr) {
 		validate_buy->removeChildByName("validation_text");
 	}
-	
+
 
 	ui::RichText* validation_text = ui::RichText::create();
 	validation_text->setContentSize(Size(panel->getContentSize().width * panel->getScaleX() * 0.85,
@@ -520,8 +520,8 @@ void Skills::update(float dt) {
 
 void Skills::updateTutorial(float dt) {
 	auto save = ((AppDelegate*)Application::getInstance())->getSave();
-	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TUTORIAL);
-	if (((AppDelegate*)Application::getInstance())->getConfigClass()->isTutorialRunning("skills") &&
+	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::SKILLTUTORIAL);
+	if (((AppDelegate*)Application::getInstance())->getConfigClass()->isSkillTutorialRunning("skills") &&
 		save["c_level"].asInt() >= config["skills"]["level"].asInt() &&
 		save["c_world"].asInt() >= config["skills"]["world"].asInt()) {
 
@@ -562,7 +562,7 @@ void Skills::updateTutorial(float dt) {
 						this->removeChildByName("invisble_mask");
 						this->removeChildByName("hand");
 						this->hideValidationPanel();
-						((AppDelegate*)Application::getInstance())->getConfigClass()->completeTutorial("skills");
+						((AppDelegate*)Application::getInstance())->getConfigClass()->completeSkillTutorial("skills");
 						tutorial_running = false;
 					});
 					Size visibleSize = Director::getInstance()->getVisibleSize();
