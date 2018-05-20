@@ -19,6 +19,5 @@ protected:
 
 protected:
 	InterfaceGame* interfaceGame;
-	bool initiated;
 	Level* level;
 };

@@ -16,7 +16,7 @@
 USING_NS_CC;
 
 InterfaceGame::InterfaceGame() : sizeButton(cocos2d::Director::getInstance()->getVisibleSize().width / 15),
-	sizeTower(cocos2d::Director::getInstance()->getVisibleSize().width / 10), tutorial_running(false)
+sizeTower(cocos2d::Director::getInstance()->getVisibleSize().width / 10), tutorial_running(false)
 {}
 InterfaceGame::~InterfaceGame() {
 	if (dialogues != nullptr) {
@@ -25,9 +25,9 @@ InterfaceGame::~InterfaceGame() {
 	}
 }
 
-bool InterfaceGame::init(){
+bool InterfaceGame::init() {
 
-	if (!Layer::init()){ return false; }
+	if (!Layer::init()) { return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	state = State::IDLE;
@@ -69,7 +69,7 @@ void InterfaceGame::addBlackMask(cocos2d::Size &visibleSize)
 	getChildByName("black_mask")->setVisible(false);
 }
 
-InterfaceGame* InterfaceGame::create(MyGame* ngame){
+InterfaceGame* InterfaceGame::create(MyGame* ngame) {
 
 	InterfaceGame* interface_game = new InterfaceGame();
 	interface_game->setGame(ngame);
@@ -324,33 +324,33 @@ void InterfaceGame::resetTowerMenu()
 
 void InterfaceGame::addEvents()
 {
-    listener = cocos2d::EventListenerTouchOneByOne::create();
-    listener->setSwallowTouches(true);
+	listener = cocos2d::EventListenerTouchOneByOne::create();
+	listener->setSwallowTouches(true);
 
-    listener->onTouchBegan = CC_CALLBACK_2(InterfaceGame::onTouchBegan, this);
-    listener->onTouchEnded = CC_CALLBACK_2(InterfaceGame::onTouchEnded, this);
-    listener->onTouchMoved = CC_CALLBACK_2(InterfaceGame::onTouchMoved, this);
+	listener->onTouchBegan = CC_CALLBACK_2(InterfaceGame::onTouchBegan, this);
+	listener->onTouchEnded = CC_CALLBACK_2(InterfaceGame::onTouchEnded, this);
+	listener->onTouchMoved = CC_CALLBACK_2(InterfaceGame::onTouchMoved, this);
 
 	//cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
-    cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 30);
+	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 30);
 }
 
-void InterfaceGame::setGame(MyGame* ngame){
+void InterfaceGame::setGame(MyGame* ngame) {
 	game = ngame;
 }
 
-void InterfaceGame::accelerateOnOffCallback(Ref* sender){
-	if (game->isAccelerated()){
+void InterfaceGame::accelerateOnOffCallback(Ref* sender) {
+	if (game->isAccelerated()) {
 		game->pause();
 		game->setNormalSpeed();
 	}
-	else{
+	else {
 		game->resume();
 		game->increaseSpeed();
 	}
 }
 
-void InterfaceGame::update(float dt){
+void InterfaceGame::update(float dt) {
 	std::string sugarText = " " + to_string(game->getLevel()->getQuantity());
 	std::string lifeText = to_string(game->getLevel()->getLife());
 	Label* sugar = (Label*)getChildByName("label_information")->getChildByName("sugar");
@@ -369,7 +369,7 @@ void InterfaceGame::update(float dt){
 	if (getChildByName("information_dango") != nullptr && selected_dango != nullptr) {
 		selected_dango->updateInformationLayout((ui::Layout*)getChildByName("information_dango"));
 	}
-	if (abs(((ui::LoadingBar*)getChildByName("label_information")->getChildByName("loading_bar"))->getPercent() - 
+	if (abs(((ui::LoadingBar*)getChildByName("label_information")->getChildByName("loading_bar"))->getPercent() -
 		game->getLevel()->getProgress() * 100) > 0.01) {
 		Size visibleSize = Director::getInstance()->getVisibleSize();
 
@@ -404,20 +404,20 @@ void InterfaceGame::update(float dt){
 	}
 }
 
-void InterfaceGame::menuTurretTouchCallback(Tower::TowerType turret){
-	if(selected_turret == nullptr && !game->isPaused()){
+void InterfaceGame::menuTurretTouchCallback(Tower::TowerType turret) {
+	if (selected_turret == nullptr && !game->isPaused()) {
 		Tower* createdTower = TowerFactory::createTower(turret);
 		game->getLevel()->addTurret(createdTower);
 		selected_turret = createdTower;
 	}
 }
 
-void InterfaceGame::moveSelectedTurret(Vec2 pos){
-	if(selected_turret != nullptr){
+void InterfaceGame::moveSelectedTurret(Vec2 pos) {
+	if (selected_turret != nullptr) {
 		Cell* nearestCell = game->getLevel()->getNearestCell(selected_turret->getPosition());
-		Cell* nearestCell2 = game->getLevel()->getNearestCell(pos/game->getLevel()->getScale());
-		if(nearestCell2 != nullptr && nearestCell != nullptr){
-			if(nearestCell2->isFree() && !nearestCell2->isPath() && !nearestCell2->isOffLimit()){
+		Cell* nearestCell2 = game->getLevel()->getNearestCell(pos / game->getLevel()->getScale());
+		if (nearestCell2 != nullptr && nearestCell != nullptr) {
+			if (nearestCell2->isFree() && !nearestCell2->isPath() && !nearestCell2->isOffLimit()) {
 				nearestCell->setObject(nullptr);
 				nearestCell2->setObject(selected_turret);
 				selected_turret->setPosition(nearestCell2->getPosition());
@@ -426,10 +426,10 @@ void InterfaceGame::moveSelectedTurret(Vec2 pos){
 	}
 }
 
-bool InterfaceGame::isOnTower(Vec2 pos){
-	Cell* nearestCell = game->getLevel()->getNearestCell(pos/game->getLevel()->getScale());
-	if(nearestCell != nullptr){
-		if((nearestCell->isFree()|| nearestCell->getObject() == selected_turret) && !nearestCell->isPath() && !nearestCell->isOffLimit()){
+bool InterfaceGame::isOnTower(Vec2 pos) {
+	Cell* nearestCell = game->getLevel()->getNearestCell(pos / game->getLevel()->getScale());
+	if (nearestCell != nullptr) {
+		if ((nearestCell->isFree() || nearestCell->getObject() == selected_turret) && !nearestCell->isPath() && !nearestCell->isOffLimit()) {
 			return false;
 		}
 	}
@@ -444,7 +444,7 @@ void InterfaceGame::showLose() {
 	getChildByName("black_mask")->setVisible(true);
 }
 
-void InterfaceGame::showWin(){
+void InterfaceGame::showWin() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	auto* showAction = TargetedAction::create(getChildByName("menu_win"),
 		EaseBackOut::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2))));
@@ -480,7 +480,7 @@ void InterfaceGame::showWin(){
 	getChildByName("black_mask")->setVisible(true);
 }
 
-void InterfaceGame::reset(){
+void InterfaceGame::reset() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL);
@@ -507,7 +507,7 @@ void InterfaceGame::reset(){
 	removeChildByName("information_tower");
 	removeChildByName("information_dango");
 	if (dialogues != nullptr) {
-		removeChild(dialogues,1);
+		removeChild(dialogues, 1);
 		delete dialogues;
 	}
 	initDialoguesFromLevel(config);
@@ -521,7 +521,7 @@ void InterfaceGame::reset(){
 	initLabels(config);
 }
 
-void InterfaceGame::initParametersMenu(const Json::Value& config){
+void InterfaceGame::initParametersMenu(const Json::Value& config) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	ui::Layout* menu_pause = ParametersMenu::create(game);
 	addChild(menu_pause, 4, "menu_pause");
@@ -537,11 +537,11 @@ void InterfaceGame::showLabelInformation() {
 	getChildByName("label_information")->getChildByName("loading_bar")->setVisible(true);
 }
 
-void InterfaceGame::initLabels(const Json::Value& config){
+void InterfaceGame::initLabels(const Json::Value& config) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	
+
 	ui::Layout* node_top = ui::Layout::create();
-	node_top->setPosition(Vec2(0,visibleSize.height));
+	node_top->setPosition(Vec2(0, visibleSize.height));
 
 	Sprite* sugar = Sprite::create("res/buttons/sugar.png");
 	sugar->setScale(sizeButton / sugar->getContentSize().width * 0.75);
@@ -555,21 +555,21 @@ void InterfaceGame::initLabels(const Json::Value& config){
 		sugar->getPosition().y));
 	label->setAnchorPoint(Vec2(0, 0.5f));
 	label->setColor(Color3B::WHITE);
-	label->enableOutline(Color4B::BLACK,3);
+	label->enableOutline(Color4B::BLACK, 3);
 	Sprite* life = Sprite::create("res/buttons/life2.png");
 	life->setPosition(Point(visibleSize.width * 3 / 4,
 		sugar->getPosition().y));
 	life->setAnchorPoint(Vec2(1, 0.5f));
 	life->setScale(sizeButton / life->getContentSize().width * 0.75);
 	node_top->addChild(life, 3);
-	
+
 	Label* label_life = Label::createWithTTF("", "fonts/LICABOLD.ttf", 42 * visibleSize.width / 1280);
 	node_top->addChild(label_life, 3, "life");
 	label_life->setPosition(Point(life->getPosition().x - life->getContentSize().width * life->getScale(),
 		sugar->getPosition().y));
 	label_life->setAnchorPoint(Vec2(1, 0.5f));
 	label_life->setColor(Color3B::WHITE);
-	label_life->enableOutline(Color4B::BLACK,3);
+	label_life->enableOutline(Color4B::BLACK, 3);
 
 	ui::LoadingBar* loadingBar = ui::LoadingBar::create("res/buttons/level_progression.png");
 	loadingBar->setPercent(75);
@@ -577,10 +577,10 @@ void InterfaceGame::initLabels(const Json::Value& config){
 	loadingBar->setDirection(ui::LoadingBar::Direction::LEFT);
 	loadingBar->setPosition(Vec2(visibleSize.width * 3 / 8, -sizeButton / 2));
 	loadingBar->setVisible(false);
-	node_top->addChild(loadingBar,3,"loading_bar");
+	node_top->addChild(loadingBar, 3, "loading_bar");
 
 	Sprite* dango_head = Sprite::create("res/buttons/minidango.png");
-	dango_head->setPosition(loadingBar->getPosition() + 
+	dango_head->setPosition(loadingBar->getPosition() +
 		Vec2((loadingBar->getPercent() - 50) / 100 * visibleSize.width / 6, 0));
 	dango_head->setScale(loadingBar->getScale());
 	dango_head->setVisible(false);
@@ -600,7 +600,7 @@ void InterfaceGame::initLabels(const Json::Value& config){
 	addChild(node_top, 2, "label_information");
 }
 
-void InterfaceGame::initLoseMenu(const Json::Value& config){
+void InterfaceGame::initLoseMenu(const Json::Value& config) {
 	Color3B color1 = Color3B(255, 200, 51);
 	Color4F grey(102 / 255.0f, 178 / 255.0f, 255 / 255.0f, 0.66f);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -683,7 +683,7 @@ void InterfaceGame::initLoseMenu(const Json::Value& config){
 	addChild(menu_lose, 4, "menu_lose");
 }
 
-void InterfaceGame::initWinMenu(const Json::Value& config){
+void InterfaceGame::initWinMenu(const Json::Value& config) {
 	Color3B color1 = Color3B(255, 200, 51);
 	Color4F grey(102 / 255.0f, 178 / 255.0f, 255 / 255.0f, 0.66f);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -754,7 +754,7 @@ void InterfaceGame::initWinMenu(const Json::Value& config){
 
 	Sprite* star_left = Sprite::create("res/levels/rewards/star_empty.png");
 	star_left->setScale(panel->getContentSize().width * panel->getScaleX() / 8 / star_left->getContentSize().width);
-	star_left->setPosition(Vec2(-panel->getContentSize().width * panel->getScaleX() * 1 / 5, 
+	star_left->setPosition(Vec2(-panel->getContentSize().width * panel->getScaleX() * 1 / 5,
 		you_win->getPosition().y -
 		star_left->getContentSize().height / 2 - you_win->getContentSize().height));
 	star_left->setRotation(-35);
@@ -793,7 +793,7 @@ void InterfaceGame::initWinMenu(const Json::Value& config){
 	menu_win->addChild(holy_sugar, 2, "holy_sugar");
 
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues()["towers"];
-	Vec2 ini_pos = reward_sugar->getPosition() - Vec2(0,reward_sugar->getContentSize().height);
+	Vec2 ini_pos = reward_sugar->getPosition() - Vec2(0, reward_sugar->getContentSize().height);
 	std::vector<std::string> tower_names = root.getMemberNames();
 	for (auto tower_name : tower_names) {
 		if (root[tower_name]["unlocked"].asBool()) {
@@ -831,7 +831,7 @@ void InterfaceGame::initWinMenu(const Json::Value& config){
 			level_up->enableOutline(Color4B::RED, 1);
 			level_up->setVisible(false);
 			level_up->setPosition(loading_bar->getPosition().x, loading_bar->getPosition().y +
-				loading_bar->getContentSize().height * loading_bar ->getScaleY() / 2 +
+				loading_bar->getContentSize().height * loading_bar->getScaleY() / 2 +
 				level_up->getContentSize().height / 2);
 			menu_win->addChild(level_up, 2, tower_name + "_levelup");
 			ini_pos.y = exp_tower->getPosition().y - exp_tower->getContentSize().height / 2;
@@ -840,7 +840,7 @@ void InterfaceGame::initWinMenu(const Json::Value& config){
 
 	Sprite* win_mallow = Sprite::create("res/buttons/win.png");
 	win_mallow->setScale(panel->getContentSize().width * panel->getScaleX() / 7 / win_mallow->getContentSize().width);
-	win_mallow->setPosition(you_win->getPosition().x - you_win->getContentSize().width / 2 -win_mallow->getContentSize().width*win_mallow->getScale() * 3 / 4,
+	win_mallow->setPosition(you_win->getPosition().x - you_win->getContentSize().width / 2 - win_mallow->getContentSize().width*win_mallow->getScale() * 3 / 4,
 		you_win->getPosition().y);
 	menu_win->addChild(win_mallow, 2, "win_mallow");
 	/*Sprite* win_mallow2 = Sprite::create("res/buttons/win.png");
@@ -850,16 +850,16 @@ void InterfaceGame::initWinMenu(const Json::Value& config){
 	menu_win->addChild(win_mallow2, 2, "win_mallow2");*/
 	Sprite* win_mallow3 = Sprite::create("res/buttons/win.png");
 	win_mallow3->setScale(panel->getContentSize().width * panel->getScaleX() / 7 / win_mallow3->getContentSize().width);
-	win_mallow3->setPosition(you_win->getPosition().x + you_win->getContentSize().width / 2 + win_mallow3->getContentSize().width*win_mallow3->getScale() * 3 /4,
+	win_mallow3->setPosition(you_win->getPosition().x + you_win->getContentSize().width / 2 + win_mallow3->getContentSize().width*win_mallow3->getScale() * 3 / 4,
 		you_win->getPosition().y);
 	menu_win->addChild(win_mallow3, 2, "win_mallow3");
-	
+
 	addChild(menu_win, 4, "menu_win");
 }
 
-void InterfaceGame::initRightPanel(const Json::Value& config){
+void InterfaceGame::initRightPanel(const Json::Value& config) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	
+
 
 	Layer* menu_panel = Layer::create();
 	menu_panel->setPosition(Vec2(visibleSize.width * (3 / 4.0 + 1 / 8.0), visibleSize.height / 2));
@@ -902,7 +902,7 @@ void InterfaceGame::initRightPanel(const Json::Value& config){
 		speed_up->getContentSize().height*speed_up->getScaleY() / 2));
 	menu_panel->addChild(speed_up, 2, "speed_up");
 
-	auto reload = ui::Button::create("res/buttons/restart_button.png"); 
+	auto reload = ui::Button::create("res/buttons/restart_button.png");
 	reload->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			game->updateTracker("reloaded");
@@ -914,7 +914,7 @@ void InterfaceGame::initRightPanel(const Json::Value& config){
 		panel->getContentSize().height*panel->getScaleY() * 0.48 -
 		reload->getContentSize().height*reload->getScaleY() / 2));
 	menu_panel->addChild(reload, 2, "reload");
-	
+
 	// PANEL FOR TOWERS
 	auto towers = Layer::create();
 	towers->setContentSize(Size(visibleSize.width / 4 * 0.9, visibleSize.height * 3 / 5));
@@ -938,7 +938,7 @@ void InterfaceGame::initRightPanel(const Json::Value& config){
 	Sprite* attack = Sprite::create("res/buttons/attack.png");
 	Sprite* speed = Sprite::create("res/buttons/speed.png");
 	Sprite* range = Sprite::create("res/buttons/range.png");
-	
+
 	attack->setScale(informations->getContentSize().width / 10 / attack->getContentSize().width);
 	speed->setScale(informations->getContentSize().width / 10 / speed->getContentSize().width);
 	range->setScale(informations->getContentSize().width / 10 / range->getContentSize().width);
@@ -953,31 +953,31 @@ void InterfaceGame::initRightPanel(const Json::Value& config){
 	informations->addChild(range, 1, "range");
 	Label* attack_label = Label::createWithTTF("10", "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	attack_label->setColor(Color3B::BLACK);
-	attack_label->setPosition(Vec2(attack->getPosition().x + attack->getContentSize().width * attack->getScale(), 
+	attack_label->setPosition(Vec2(attack->getPosition().x + attack->getContentSize().width * attack->getScale(),
 		attack->getPosition().y));
 	attack_label->setAnchorPoint(Vec2(0.f, 0.5f));
 	informations->addChild(attack_label, 1, "attack_label");
 	Label* range_label = Label::createWithTTF("2", "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	range_label->setColor(Color3B::BLACK);
-	range_label->setPosition(Vec2(range->getPosition().x + attack->getContentSize().width * attack->getScale(), 
+	range_label->setPosition(Vec2(range->getPosition().x + attack->getContentSize().width * attack->getScale(),
 		range->getPosition().y));
 	range_label->setAnchorPoint(Vec2(0.f, 0.5f));
 	informations->addChild(range_label, 1, "range_label");
 	Label* speed_label = Label::createWithTTF("1.5", "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	speed_label->setColor(Color3B::BLACK);
-	speed_label->setPosition(Vec2(speed->getPosition().x + attack->getContentSize().width * attack->getScale(), 
+	speed_label->setPosition(Vec2(speed->getPosition().x + attack->getContentSize().width * attack->getScale(),
 		speed->getPosition().y));
 	speed_label->setAnchorPoint(Vec2(0.f, 0.5f));
 	informations->addChild(speed_label, 1, "speed_label");
-	
-	Label* description_tower = Label::createWithTTF("Sword Master: Attack all the dangos around him. Unavoidable damages.", 
+
+	Label* description_tower = Label::createWithTTF("Sword Master: Attack all the dangos around him. Unavoidable damages.",
 		"fonts/LICABOLD.ttf",
 		20 * visibleSize.width / 1280);
 	description_tower->setDimensions(informations->getContentSize().width, informations->getContentSize().height * 2 / 5);
 	description_tower->setColor(Color3B::BLACK);
 	description_tower->setAnchorPoint(Vec2(0.5f, 0.5f));
-	description_tower->setPosition(Vec2(0, range->getPosition().y - 
-		range->getContentSize().height * range->getScaleY() - 
+	description_tower->setPosition(Vec2(0, range->getPosition().y -
+		range->getContentSize().height * range->getScaleY() -
 		description_tower->getDimensions().height / 2));
 	informations->addChild(description_tower, 1, "description_tower");
 
@@ -994,10 +994,10 @@ void InterfaceGame::initRightPanel(const Json::Value& config){
 	informations->addChild(sugar_label, 1, "sugar_label");
 
 	menu_panel->addChild(informations, 2, "informations");
-	
+
 }
 
-void InterfaceGame::displayTowerInfos(std::string item_name){
+void InterfaceGame::displayTowerInfos(std::string item_name) {
 	if (item_name != "") {
 		getChildByName("menu_panel")->getChildByName("informations")->setVisible(true);
 		Node* batch = getChildByName("menu_panel")->getChildByName("informations")->getChildByName("animation");
@@ -1031,14 +1031,14 @@ void InterfaceGame::displayTowerInfos(std::string item_name){
 
 		auto animated_skeleton = Tower::getSkeletonAnimationFromName(item_name);
 		animated_skeleton->setScale(
-			getChildByName("menu_panel")->getChildByName("informations")->getContentSize().width * 
+			getChildByName("menu_panel")->getChildByName("informations")->getContentSize().width *
 			0.40 / animated_skeleton->getSkeleton()->data->width);
 		batch->addChild(animated_skeleton);
 	}
 	else {
 		getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
 	}
-	
+
 }
 
 void InterfaceGame::mainMenuCallBack(std::string id_menu) {
@@ -1052,20 +1052,20 @@ void InterfaceGame::mainMenuCallBack(std::string id_menu) {
 	getChildByName(id_menu)->runAction(Sequence::create(hideAction, callbackmainmenu, nullptr));
 }
 
-void InterfaceGame::removeTower(){
+void InterfaceGame::removeTower() {
 	selected_turret = nullptr;
 	state = State::IDLE;
 }
 
-void InterfaceGame::destroyCallback(Ref* sender){
-	
+void InterfaceGame::destroyCallback(Ref* sender) {
+
 	game->getLevel()->increaseQuantity(selected_turret->getCost() * 0.5 * (selected_turret->getLevel() + 1));
 }
 
-void InterfaceGame::builtCallback(Ref* sender){
+void InterfaceGame::builtCallback(Ref* sender) {
 	Json::Value action;
 	action["tower_name"] = selected_turret->getName();
-	action["time"] = (unsigned int) time(0);
+	action["time"] = (unsigned int)time(0);
 	Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(selected_turret->getPosition());
 	action["position"]["x"] = turret_position.x;
 	action["position"]["y"] = turret_position.y;
@@ -1100,7 +1100,7 @@ void InterfaceGame::showDangoInfo() {
 		});
 		getChildByName("information_dango")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
 	}
-	else if(selected_dango != nullptr){
+	else if (selected_dango != nullptr) {
 		auto layout = selected_dango->getInformationLayout(this);
 		addChild(layout, 1, "information_dango");
 		layout->setScale(0);
@@ -1160,7 +1160,7 @@ void InterfaceGame::hideStartMenu()
 	((StartMenu*)getChildByName("start"))->hide();
 }
 
-void InterfaceGame::updateButtonDisplay(){
+void InterfaceGame::updateButtonDisplay() {
 	for (auto& tower : towers_menu) {
 		auto cost_label = (Label*)tower.second.first->getChildByName("cost");
 		double cost = tower.second.second;
@@ -1189,16 +1189,16 @@ void InterfaceGame::updateButtonDisplay(){
 	challenges->update();
 }
 
-void InterfaceGame::updateObjectDisplay(float dt){
-	if(selected_turret != nullptr){
+void InterfaceGame::updateObjectDisplay(float dt) {
+	if (selected_turret != nullptr) {
 		selected_turret->updateDisplay(dt);
 	}
 }
 
-std::pair<std::string, cocos2d::Sprite*> InterfaceGame::getTowerFromPoint(cocos2d::Vec2 location){
-	cocos2d::Vec2 origin = getChildByName("menu_panel")->getBoundingBox().origin + 
+std::pair<std::string, cocos2d::Sprite*> InterfaceGame::getTowerFromPoint(cocos2d::Vec2 location) {
+	cocos2d::Vec2 origin = getChildByName("menu_panel")->getBoundingBox().origin +
 		getChildByName("menu_panel")->getChildByName("towers")->getPosition();
-	for (auto& item : towers_menu){
+	for (auto& item : towers_menu) {
 		Vec2 pointInSprite = location - item.second.first->getPosition() - origin;
 		pointInSprite.x += item.second.first->getSpriteFrame()->getRect().size.width *
 			item.second.first->getScale() / 2;
@@ -1207,8 +1207,8 @@ std::pair<std::string, cocos2d::Sprite*> InterfaceGame::getTowerFromPoint(cocos2
 		Rect itemRect = Rect(0, 0, item.second.first->getSpriteFrame()->getRect().size.width *
 			item.second.first->getScale(),
 			item.second.first->getSpriteFrame()->getRect().size.height * item.second.first->getScale());
-		if (itemRect.containsPoint(pointInSprite)){
-			return std::make_pair(item.first,item.second.first);
+		if (itemRect.containsPoint(pointInSprite)) {
+			return std::make_pair(item.first, item.second.first);
 		}
 	}
 	std::pair<std::string, Sprite*> item;
@@ -1216,7 +1216,7 @@ std::pair<std::string, cocos2d::Sprite*> InterfaceGame::getTowerFromPoint(cocos2
 	return item;
 }
 
-InterfaceGame::GameState InterfaceGame::getGameState() const{
+InterfaceGame::GameState InterfaceGame::getGameState() const {
 	return game_state;
 }
 cocos2d::Vec2 InterfaceGame::getAbsoluteMenuTowerPosition(std::string towerName)
@@ -1236,7 +1236,7 @@ void InterfaceGame::setSelectedTower(Tower * tower)
 	selected_turret = tower;
 }
 
-void InterfaceGame::setListening(bool listening){
+void InterfaceGame::setListening(bool listening) {
 	listener->setEnabled(listening);
 }
 
@@ -1259,7 +1259,7 @@ void InterfaceGame::generateHolySugar(Vec2 pos) {
 	node->setPosition(pos);
 
 	ScaleBy* scale_to1 = ScaleBy::create(1.0f, 1.2f);
-	ScaleBy* scale_to2 = ScaleBy::create(1.0f, 1/1.2f);
+	ScaleBy* scale_to2 = ScaleBy::create(1.0f, 1 / 1.2f);
 	shining->runAction(RepeatForever::create(Sequence::create(scale_to1, scale_to2, nullptr)));
 
 	MoveBy* move_h1 = nullptr;
@@ -1275,8 +1275,8 @@ void InterfaceGame::generateHolySugar(Vec2 pos) {
 
 	node->runAction(Sequence::create(Spawn::createWithTwoActions(move1, move_h1),
 		Spawn::createWithTwoActions(move2, move_h2),
-		 nullptr));
-	sugar->addTouchEventListener([&,node,sugar](Ref* sender, ui::Widget::TouchEventType type) {
+		nullptr));
+	sugar->addTouchEventListener([&, node, sugar](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
 			Size visibleSize = Director::getInstance()->getVisibleSize();
 
@@ -1290,7 +1290,7 @@ void InterfaceGame::generateHolySugar(Vec2 pos) {
 	addChild(node);
 }
 
-void InterfaceGame::startRewarding(Vec2 pos){
+void InterfaceGame::startRewarding(Vec2 pos) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
 	Json::Value rootSave = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
@@ -1341,15 +1341,15 @@ void InterfaceGame::startRewarding(Vec2 pos){
 				auto reward = RewardTower::create(level_config["reward"]["file"].asString(), level_config["reward"]["tower_name"].asString(),
 					pos,
 					[&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
-						if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-							endGame();
-						}
+					if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+						endGame();
 					}
+				}
 				);
 				reward_layout->addChild(reward, 2);
 				reward->animate();
 			}
-			
+
 			// Add a Tap to continue to inform the user what to do.
 			auto tapToContinue = Label::createWithTTF(
 				((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)
@@ -1368,11 +1368,11 @@ void InterfaceGame::startRewarding(Vec2 pos){
 	else {
 		game_state = DONE;
 	}
-	
+
 }
 
 void InterfaceGame::initDialoguesFromLevel(const Json::Value& config) {
-	Size visibleSize = Director::getInstance()->getVisibleSize(); 
+	Size visibleSize = Director::getInstance()->getVisibleSize();
 	auto fileUtils = FileUtils::getInstance();
 
 	Json::Reader reader;
@@ -1415,11 +1415,11 @@ void InterfaceGame::handleDeadDango() {
 	state = IDLE;
 }
 
-void InterfaceGame::updateIncrementXP(Label* exp_label, ui::LoadingBar* loading_bar, std::string tower_name, 
+void InterfaceGame::updateIncrementXP(Label* exp_label, ui::LoadingBar* loading_bar, std::string tower_name,
 	float* increment, int initial_value, int diff_exp, int loop, int max_level) {
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave();
 	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER);
-	
+
 	int c_exp = initial_value;
 	float duration = 4.0 / ((float)loop + 1.0);
 	float speed = 0.05f;
@@ -1445,26 +1445,26 @@ void InterfaceGame::updateIncrementXP(Label* exp_label, ui::LoadingBar* loading_
 		if ((*increment) > diff_exp) {
 			(*increment) = diff_exp;
 		}
-		auto incrementExp = CallFunc::create([this, exp_label, loading_bar, tower_name, 
+		auto incrementExp = CallFunc::create([this, exp_label, loading_bar, tower_name,
 			increment, initial_value, diff_exp, loop, max_level]() {
-			updateIncrementXP(exp_label, loading_bar, tower_name, increment, initial_value, 
+			updateIncrementXP(exp_label, loading_bar, tower_name, increment, initial_value,
 				diff_exp, loop, max_level);
 		});
 		exp_label->runAction(Sequence::create(DelayTime::create(0.04f), incrementExp, nullptr));
 	}
-	else if(loop == 0){
+	else if (loop == 0) {
 		++loop;
 		initial_value = c_exp;
 		diff_exp = game->getLevel()->getTotalExperience();
 		exp_label->setString("+" + Value(diff_exp).asString());
 		exp_label->setColor(Color3B::YELLOW);
 		(*increment) = 0;
-		auto incrementExp = CallFunc::create([this, exp_label, loading_bar, tower_name, 
+		auto incrementExp = CallFunc::create([this, exp_label, loading_bar, tower_name,
 			increment, initial_value, diff_exp, loop, max_level]() {
-			updateIncrementXP(exp_label, loading_bar, tower_name, increment, initial_value, 
+			updateIncrementXP(exp_label, loading_bar, tower_name, increment, initial_value,
 				diff_exp, loop, max_level);
 		});
-		exp_label->runAction(Sequence::create(ScaleTo::create(0.25f, 1.5f), 
+		exp_label->runAction(Sequence::create(ScaleTo::create(0.25f, 1.5f),
 			ScaleTo::create(0.25f, 1.f), DelayTime::create(0.04f), incrementExp, nullptr));
 	}
 }
@@ -1495,7 +1495,7 @@ void InterfaceGame::shakeElement(Node* element, bool loop) {
 	else {
 		element->runAction(seq);
 	}
-	
+
 }
 
 void InterfaceGame::shakeScaleElement(Node* element, bool loop) {

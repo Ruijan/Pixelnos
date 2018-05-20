@@ -24,5 +24,5 @@ enum TutorialType {
 class TutorialFactory {
 public:
 	static Tutorial* createTutorial(TutorialType tutorialType, MyGame* game);
-	static TutorialType getTutorialTypeFromString(std::string tutorialName);
+	static TutorialType getTutorialTypeFromString(const std::string& tutorialName);
 };

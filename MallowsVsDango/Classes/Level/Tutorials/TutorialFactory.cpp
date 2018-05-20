@@ -36,7 +36,7 @@ Tutorial * TutorialFactory::createTutorial(TutorialType tutorialType, MyGame* ga
 	return tutorial;
 }
 
-TutorialType TutorialFactory::getTutorialTypeFromString(std::string tutorialName)
+TutorialType TutorialFactory::getTutorialTypeFromString(const std::string& tutorialName)
 {
 	if (tutorialName == "dangobese") {
 		return DANGOBESE;
