@@ -1,8 +1,9 @@
 #pragma once
 #include "ui/CocosGUI.h"
 #include "cocos2d.h"
-#include "../Level/InterfaceGame.h"
+#include "../Config/json.h"
 
+class InterfaceGame;
 
 class StartMenu : public cocos2d::ui::Layout {
 public:

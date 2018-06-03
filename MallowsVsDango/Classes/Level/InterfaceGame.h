@@ -7,6 +7,9 @@
 #include "ui/CocosGUI.h"
 #include "Dialogue.h"
 #include "ChallengeHandler.h"
+#include "../GUI/StartMenu.h"
+#include "../GUI/WinMenu.h"
+#include "../Dangos/Dango.h"
 
 class MyGame;
 
@@ -96,6 +99,7 @@ private:
 	Tower* selected_turret;
 	Dango* selected_dango;
 	StartMenu* startMenu;
+	WinMenu* winMenu;
 
 	const double sizeButton;
 	const double sizeTower;

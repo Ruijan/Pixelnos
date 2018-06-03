@@ -1,6 +1,7 @@
 #include "StartMenu.h"
 #include "../Config/json.h"
 #include "../AppDelegate.h"
+#include "../Level/InterfaceGame.h"
 
 
 StartMenu::StartMenu() :
