@@ -112,7 +112,7 @@ protected:
 	void mainMenuCallBack(std::string id_menu);
 	
 	void initParametersMenu(const Json::Value& config);
-	void initLoseMenu(const Json::Value& config);
+	void initLoseMenu(const std::string& language, const Json::Value& buttons, const Json::Value& advice);
 	void initWinMenu(const Json::Value& config);
 	void initRightPanel(const Json::Value& config);
 	void initLabels(const Json::Value& config);

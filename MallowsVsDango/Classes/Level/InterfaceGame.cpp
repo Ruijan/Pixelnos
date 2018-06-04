@@ -37,7 +37,7 @@ bool InterfaceGame::init() {
 	Json::Value config = configClass->getConfigValues(Config::ConfigType::GENERAL);
 
 	initParametersMenu(config);
-	initLoseMenu(config);
+	initLoseMenu(configClass->getLanguage(), configClass->getConfigValues(Config::ConfigType::BUTTON), configClass->getConfigValues(Config::ConfigType::ADVICE));
 	initWinMenu(config);
 	initRightPanel(config);
 	initLabels(config);
@@ -569,8 +569,8 @@ void InterfaceGame::initLabels(const Json::Value& config) {
 	addChild(node_top, 2, "label_information");
 }
 
-void InterfaceGame::initLoseMenu(const Json::Value& config) {
-	loseMenu = LoseMenu::create(game);
+void InterfaceGame::initLoseMenu(const std::string& language, const Json::Value& buttons, const Json::Value& advice) {
+	loseMenu = LoseMenu::create(game, language, buttons, advice);
 	addChild(loseMenu, 4, "menu_lose");
 }
 
