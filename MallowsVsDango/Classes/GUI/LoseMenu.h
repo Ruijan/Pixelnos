@@ -1,11 +1,10 @@
 #pragma once
-#include "ui/CocosGUI.h"
-#include "cocos2d.h"
+#include "CentralMenu.h"
 #include "../Config/json.h"
 
 
 class MyGame;
-class LoseMenu : public cocos2d::ui::Layout {
+class LoseMenu : public CentralMenu {
 public:
 	static LoseMenu* create(MyGame *game);
 	void showLose();
@@ -15,14 +14,9 @@ protected:
 
 	void addAdvice(std::string &language, cocos2d::Size &visibleSize);
 	void addYouLoseLabel(Json::Value &buttons, std::string &language, cocos2d::Size &visibleSize);
-	void addMainMenuButton(cocos2d::Size &visibleSize, Json::Value &buttons, std::string &language);
-	void addRetryButton(cocos2d::Size &visibleSize, Json::Value &buttons, std::string &language, MyGame * game);
-	void addPanel(cocos2d::Size &visibleSize);
-
-	static cocos2d::TargetedAction* createHideAction(cocos2d::Node* target);
-	static cocos2d::Sprite* createButtonShadow(cocos2d::ui::Button* button);
+	virtual void rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type);
+	virtual void leftButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type);
 
 protected:
-	cocos2d::ui::Button* panel;
 	MyGame* game;
 };
