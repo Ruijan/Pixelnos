@@ -113,8 +113,9 @@ bool WinMenu::init(MyGame* game)
 	cocos2d::Color3B color1(255, 200, 51);
 	cocos2d::Color4F grey(102 / 255.0f, 178 / 255.0f, 255 / 255.0f, 0.66f);
 	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getLanguage();
-	Json::Value buttons = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
+	Config* config = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass();
+	std::string language = config->getLanguage();
+	Json::Value buttons = config->getConfigValues(Config::ConfigType::BUTTON);
 
 	setPosition(cocos2d::Vec2(cocos2d::Point(visibleSize.width / 2, visibleSize.height * 1.5)));
 

@@ -33,7 +33,8 @@ bool InterfaceGame::init() {
 
 	state = State::IDLE;
 	game_state = INTRO;
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL);
+	Config* configClass = ((AppDelegate*)Application::getInstance())->getConfigClass();
+	Json::Value config = configClass->getConfigValues(Config::ConfigType::GENERAL);
 
 	initParametersMenu(config);
 	initLoseMenu(config);
@@ -449,8 +450,9 @@ void InterfaceGame::showWin() {
 
 void InterfaceGame::reset() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL);
+	Config* configClass = ((AppDelegate*)Application::getInstance())->getConfigClass();
+	std::string language = configClass->getLanguage();
+	Json::Value config = configClass->getConfigValues(Config::ConfigType::GENERAL);
 
 
 	state = IDLE;
@@ -947,6 +949,7 @@ Sprite * InterfaceGame::getMenuTower(std::string towerName)
 {
 	return towers_menu[towerName].first;
 }
+
 void InterfaceGame::setGameState(GameState g_state) {
 	game_state = g_state;
 }

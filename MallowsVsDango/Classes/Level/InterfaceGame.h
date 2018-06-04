@@ -53,8 +53,6 @@ public:
 	void update(float dt);
 	void updateButtonDisplay();
 	void updateObjectDisplay(float dt);
-	void updateIncrementXP(cocos2d::Label* exp_label, cocos2d::ui::LoadingBar* loading_bar, 
-		std::string tower_name, float* increment, int initial_value, int diff_exp, int loop, int max_level);
 
 	void pauseLevel();
 	void resumeLevel();
@@ -84,7 +82,6 @@ public:
 
 	void showLabelInformation();
 
-	static void shakeElement(cocos2d::Node* element, bool loop = true);
 	static void shakeScaleElement(Node* element, bool loop = true);
 
 	void displayStartMenuIfInTitleState();
