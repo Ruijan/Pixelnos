@@ -9,6 +9,7 @@
 #include "ChallengeHandler.h"
 #include "../GUI/StartMenu.h"
 #include "../GUI/WinMenu.h"
+#include "../GUI/LoseMenu.h"
 #include "../Dangos/Dango.h"
 
 class MyGame;
@@ -100,6 +101,7 @@ private:
 	Dango* selected_dango;
 	StartMenu* startMenu;
 	WinMenu* winMenu;
+	LoseMenu* loseMenu;
 
 	const double sizeButton;
 	const double sizeTower;

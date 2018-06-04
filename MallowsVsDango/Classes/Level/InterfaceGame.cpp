@@ -438,10 +438,7 @@ bool InterfaceGame::isOnTower(Vec2 pos) {
 }
 
 void InterfaceGame::showLose() {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	auto* showAction = TargetedAction::create(getChildByName("menu_lose"),
-		EaseBackOut::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2))));
-	getChildByName("menu_lose")->runAction(showAction);
+	loseMenu->showLose();
 	getChildByName("black_mask")->setVisible(true);
 }
 
@@ -464,9 +461,9 @@ void InterfaceGame::reset() {
 
 	getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
 	((ui::CheckBox*)getChildByName("menu_panel")->getChildByName("speed_up"))->setSelected(false);
-	getChildByName("menu_lose")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
-	getChildByName("menu_win")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
-	getChildByName("menu_pause")->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
+	loseMenu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
+	winMenu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
+	//startMenu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	getChildByName("black_mask")->setVisible(false);
 
 	startMenu->reset(game->getLevel()->getLevelId());
@@ -571,86 +568,8 @@ void InterfaceGame::initLabels(const Json::Value& config) {
 }
 
 void InterfaceGame::initLoseMenu(const Json::Value& config) {
-	Color3B color1 = Color3B(255, 200, 51);
-	Color4F grey(102 / 255.0f, 178 / 255.0f, 255 / 255.0f, 0.66f);
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
-
-	auto menu_lose = ui::Layout::create();
-	menu_lose->setPosition(Vec2(Point(visibleSize.width / 2, visibleSize.height * 1.5)));
-
-	ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel2.png");
-	panel->setZoomScale(0);
-	menu_lose->addChild(panel, 1, "panel");
-	panel->setScaleX(0.45*visibleSize.width / panel->getContentSize().width);
-	panel->setScaleY(0.45*visibleSize.width / panel->getContentSize().width);
-
-	ui::Button* retry = ui::Button::create("res/buttons/yellow_button.png");
-	retry->setScale(visibleSize.width / 5 / retry->getContentSize().width);
-	retry->setTitleText(buttons["retry"][language].asString());
-	retry->setTitleFontName("fonts/LICABOLD.ttf");
-	retry->setTitleFontSize(45.f);
-	Label* retry_label = retry->getTitleRenderer();
-	retry_label->enableOutline(Color4B::BLACK, 2);
-	retry->setTitleColor(Color3B::WHITE);
-	retry->setTitleAlignment(cocos2d::TextHAlignment::CENTER);
-	retry->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == ui::Widget::TouchEventType::ENDED) {
-			Size visibleSize = Director::getInstance()->getVisibleSize();
-			auto* hideAction = TargetedAction::create(getChildByName("menu_pause"),
-				EaseBackIn::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height * 1.5))));
-			getChildByName("menu_lose")->runAction(hideAction);
-			getChildByName("black_mask")->setVisible(false);
-			game->setReloading(true);
-		}
-	});
-	retry->setPosition(Vec2(-panel->getContentSize().width*panel->getScaleX() / 4,
-		-panel->getContentSize().height*panel->getScaleY() / 2 -
-		retry->getContentSize().height*retry->getScaleY() * 0.41));
-	menu_lose->addChild(retry, 1, "retry");
-
-	ui::Button* main_menu_back = ui::Button::create("res/buttons/red_button.png");
-	main_menu_back->setScale(visibleSize.width / 5 / main_menu_back->getContentSize().width);
-	main_menu_back->setTitleText(buttons["main_menu"][language].asString());
-	main_menu_back->setTitleFontName("fonts/LICABOLD.ttf");
-	main_menu_back->setTitleFontSize(45.f);
-	Label* menu_back_label = main_menu_back->getTitleRenderer();
-	menu_back_label->enableOutline(Color4B::BLACK, 2);
-	main_menu_back->setTitleColor(Color3B::WHITE);
-	main_menu_back->setTitleAlignment(cocos2d::TextHAlignment::CENTER);
-	main_menu_back->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == ui::Widget::TouchEventType::ENDED) {
-			mainMenuCallBack("menu_lose");
-		}
-	});
-	main_menu_back->setPosition(Vec2(panel->getContentSize().width*panel->getScaleX() / 4,
-		-panel->getContentSize().height*panel->getScaleY() / 2 -
-		main_menu_back->getContentSize().height*main_menu_back->getScaleY() * 0.41));
-	menu_lose->addChild(main_menu_back, 1, "main_menu_back");
-
-	Label* you_lose = Label::createWithTTF(
-		buttons["lose_info"][language].asString(),
-		"fonts/LICABOLD.ttf", 50.f * visibleSize.width / 1280);
-	you_lose->enableOutline(Color4B::BLACK, 2);
-	you_lose->setPosition(0, panel->getContentSize().height*panel->getScaleY() * 0.35);
-	you_lose->setColor(Color3B::YELLOW);
-	menu_lose->addChild(you_lose, 2, "text");
-
-	auto conf = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::ADVICE)[language];
-	std::string advice_text = conf[rand() % conf.size()].asString();
-
-	Label* advice = Label::createWithTTF(advice_text, "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
-	advice->setDimensions(panel->getContentSize().width * panel->getScaleX() * 0.75,
-		panel->getContentSize().height * panel->getScaleY() * 0.4);
-	advice->setPosition(0, 0);
-	advice->setColor(Color3B::BLACK);
-	advice->setHorizontalAlignment(TextHAlignment::CENTER);
-	advice->setVerticalAlignment(TextVAlignment::CENTER);
-	menu_lose->addChild(advice, 2, "advice_text");
-
-	menu_lose->setVisible(true);
-	addChild(menu_lose, 4, "menu_lose");
+	loseMenu = LoseMenu::create(game);
+	addChild(loseMenu, 4, "menu_lose");
 }
 
 void InterfaceGame::initWinMenu(const Json::Value& config) {

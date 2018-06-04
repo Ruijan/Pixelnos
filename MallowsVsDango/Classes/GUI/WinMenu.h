@@ -28,7 +28,6 @@ protected:
 	static cocos2d::TargetedAction* createHideAction(cocos2d::Node* target);
 	static cocos2d::Sprite* createButtonShadow(cocos2d::ui::Button* button);
 
-
 protected:
 	cocos2d::Vec2 previousObjectPos;
 	cocos2d::Size previousObjectSize;
