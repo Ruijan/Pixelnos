@@ -451,7 +451,6 @@ void InterfaceGame::showWin() {
 void InterfaceGame::reset() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Config* configClass = ((AppDelegate*)Application::getInstance())->getConfigClass();
-	std::string language = configClass->getLanguage();
 	Json::Value config = configClass->getConfigValues(Config::ConfigType::GENERAL);
 
 
