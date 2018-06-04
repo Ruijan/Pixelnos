@@ -8,7 +8,9 @@ public:
 	virtual bool init(MyGame* game);
 
 protected:
-	virtual void addRightButton(Json::Value buttons, const std::string& language);
-	virtual void addLeftButton(Json::Value buttons, const std::string& language);
+	virtual void rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type);
+	virtual void leftButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type);
+	virtual void addBottomButtons(Json::Value & buttons, std::string & language);
+
 };
 

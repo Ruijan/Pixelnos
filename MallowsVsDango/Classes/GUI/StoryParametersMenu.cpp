@@ -31,41 +31,32 @@ bool StoryParametersMenu::init(MyGame* game) {
 	return initialized;
 }
 
-void StoryParametersMenu::addRightButton(Json::Value buttons, const std::string& language) {
-	cocos2d::ui::Button* titleScreenButton = createDefaultButton(buttons["title_menu"][language].asString(), 
-		"res/buttons/red_button.png", panelSize.width);
-
-	titleScreenButton->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			auto callbackTitleScreen = cocos2d::CallFunc::create([&]() {
-				blackMask->setVisible(false);
-				SceneManager::getInstance()->setScene(SceneManager::MENU);
-			});
-			this->runAction(cocos2d::Sequence::create(createHideAction(this), callbackTitleScreen, nullptr));
-		}
-	});
-	titleScreenButton->setPosition(cocos2d::Vec2(panelSize.width / 4, 
-		-panelSize.height / 2 - titleScreenButton->getContentSize().height*titleScreenButton->getScaleY() * 0.41));
-	addChild(createButtonShadow(titleScreenButton), -1);
-	addChild(titleScreenButton, 1, "titleScreenButton");
+void StoryParametersMenu::addBottomButtons(Json::Value &buttons, std::string &language)
+{
+	addLeftButton(buttons["credits"][language].asString());
+	addRightButton(buttons["title_menu"][language].asString());
 }
-void StoryParametersMenu::addLeftButton(Json::Value buttons, const std::string& language) {
-	cocos2d::ui::Button* creditsButton = createDefaultButton(buttons["credits"][language].asString(),
-		"res/buttons/yellow_button.png", panelSize.width);
 
-	creditsButton->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			auto callbackCredits = cocos2d::CallFunc::create([&]() {
-				blackMask->setVisible(false);
-				SceneManager::getInstance()->setScene(SceneManager::CREDIT);
-			});
-			this->runAction(cocos2d::Sequence::create(createHideAction(this), callbackCredits, nullptr));
-		}
-	});
-	creditsButton->setPosition(cocos2d::Vec2(-panelSize.width / 4, 
-		-panelSize.height / 2 - creditsButton->getContentSize().height*creditsButton->getScaleY() * 0.41));
-	addChild(createButtonShadow(creditsButton), -1);
-	addChild(creditsButton, 1, "titleScreenButton");
+void StoryParametersMenu::rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type)
+{
+	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+		auto callbackTitleScreen = cocos2d::CallFunc::create([&]() {
+			blackMask->setVisible(false);
+			SceneManager::getInstance()->setScene(SceneManager::MENU);
+		});
+		this->runAction(cocos2d::Sequence::create(createHideAction(this), callbackTitleScreen, nullptr));
+	}
+}
+
+void StoryParametersMenu::leftButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type)
+{
+	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+		auto callbackCredits = cocos2d::CallFunc::create([&]() {
+			blackMask->setVisible(false);
+			SceneManager::getInstance()->setScene(SceneManager::CREDIT);
+		});
+		this->runAction(cocos2d::Sequence::create(createHideAction(this), callbackCredits, nullptr));
+	}
 }
 
 StoryParametersMenu::~StoryParametersMenu(){}

@@ -7,6 +7,10 @@
 #include "ui/CocosGUI.h"
 #include "Dialogue.h"
 #include "ChallengeHandler.h"
+#include "../GUI/StartMenu.h"
+#include "../GUI/WinMenu.h"
+#include "../GUI/LoseMenu.h"
+#include "../Dangos/Dango.h"
 
 class MyGame;
 
@@ -49,8 +53,6 @@ public:
 	void update(float dt);
 	void updateButtonDisplay();
 	void updateObjectDisplay(float dt);
-	void updateIncrementXP(cocos2d::Label* exp_label, cocos2d::ui::LoadingBar* loading_bar, 
-		std::string tower_name, float* increment, int initial_value, int diff_exp, int loop, int max_level);
 
 	void pauseLevel();
 	void resumeLevel();
@@ -80,7 +82,6 @@ public:
 
 	void showLabelInformation();
 
-	static void shakeElement(cocos2d::Node* element, bool loop = true);
 	static void shakeScaleElement(Node* element, bool loop = true);
 
 	void displayStartMenuIfInTitleState();
@@ -96,6 +97,8 @@ private:
 	Tower* selected_turret;
 	Dango* selected_dango;
 	StartMenu* startMenu;
+	WinMenu* winMenu;
+	LoseMenu* loseMenu;
 
 	const double sizeButton;
 	const double sizeTower;
@@ -109,7 +112,7 @@ protected:
 	void mainMenuCallBack(std::string id_menu);
 	
 	void initParametersMenu(const Json::Value& config);
-	void initLoseMenu(const Json::Value& config);
+	void initLoseMenu(const std::string& language, const Json::Value& buttons, const Json::Value& advice);
 	void initWinMenu(const Json::Value& config);
 	void initRightPanel(const Json::Value& config);
 	void initLabels(const Json::Value& config);
