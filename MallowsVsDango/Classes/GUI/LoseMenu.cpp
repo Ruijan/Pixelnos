@@ -111,7 +111,7 @@ void LoseMenu::addRetryButton(cocos2d::Size &visibleSize, Json::Value &buttons, 
 				this->game->setReloading(true);
 			});
 			this->runAction(cocos2d::Sequence::create(createHideAction(this), callreloadmenu, nullptr));
-			
+
 		}
 	});
 	retry->setPosition(cocos2d::Vec2(-panel->getContentSize().width*panel->getScaleX() / 4,

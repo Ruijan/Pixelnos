@@ -19,7 +19,7 @@ void WinMenu::showWin()
 {
 	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 	auto* showAction = cocos2d::TargetedAction::create(this, cocos2d::EaseBackOut::create(
-			cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(visibleSize.width / 2, visibleSize.height / 2))));
+		cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(visibleSize.width / 2, visibleSize.height / 2))));
 	Json::Value root = ((AppDelegate*)cocos2d::Application::getInstance())->getSave();
 
 	rewardSugarValueLabel->setString("+" + Json::Value(game->getLevel()->getHolySugar()).asString());
@@ -118,13 +118,12 @@ bool WinMenu::init(MyGame* game)
 
 	setPosition(cocos2d::Vec2(cocos2d::Point(visibleSize.width / 2, visibleSize.height * 1.5)));
 
-	addPanel(visibleSize);
-	addNextLevelButton(visibleSize, buttons, language);
-	addMainMenuButton(visibleSize, buttons, language);
+	addPanel(visibleSize, 0.55);
+	addLeftButton(buttons["next_level"][language].asString());
+	addRightButton(buttons["main_menu"][language].asString());
 	addYouWinLabel(buttons, language, visibleSize);
 	addStars();
 	addRewardSugar(buttons, language, visibleSize);
-	addHolySugar();
 	addTowerExperiences(visibleSize);
 	addWinMallowsImages();
 	return initialized;
@@ -203,11 +202,6 @@ void WinMenu::addTowerLoadingExp(std::string & towerName, cocos2d::Size &visible
 	previousObjectPos.y = exp_tower->getPosition().y - exp_tower->getContentSize().height / 2;
 }
 
-void WinMenu::addHolySugar()
-{
-	
-}
-
 void WinMenu::addRewardSugar(Json::Value &buttons, std::string &language, cocos2d::Size &visibleSize)
 {
 	cocos2d::Label* rewardSugar = cocos2d::Label::createWithTTF(buttons["holy_sugar"][language].asString(),
@@ -269,81 +263,26 @@ void WinMenu::addYouWinLabel(Json::Value &buttons, std::string &language, cocos2
 	previousObjectSize = youWinLabel->getContentSize();
 }
 
-void WinMenu::addPanel(cocos2d::Size &visibleSize)
+void WinMenu::rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type)
 {
-	panel = cocos2d::ui::Button::create("res/buttons/centralMenuPanel2.png");
-	panel->setZoomScale(0);
-	addChild(panel, 1, "panel");
-	panel->setScaleX(0.55*visibleSize.width / panel->getContentSize().width);
-	panel->setScaleY(0.55*visibleSize.width / panel->getContentSize().width);
+	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+		game->updateTracker("left");
+		auto callbackmainmenu = cocos2d::CallFunc::create([&]() {
+			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+		});
+		this->runAction(cocos2d::Sequence::create(createHideAction(this), callbackmainmenu, nullptr));
+	}
 }
 
-void WinMenu::addMainMenuButton(cocos2d::Size &visibleSize, Json::Value &buttons, std::string &language)
+void WinMenu::leftButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type)
 {
-	cocos2d::ui::Button* mainMenuButton = cocos2d::ui::Button::create("res/buttons/red_button.png");
-	mainMenuButton->setScale(panel->getContentSize().width * panel->getScale() * 0.4 / mainMenuButton->getContentSize().width);
-	mainMenuButton->setTitleText(buttons["main_menu"][language].asString());
-	mainMenuButton->setTitleFontName("fonts/LICABOLD.ttf");
-	mainMenuButton->setTitleFontSize(45.f);
-	cocos2d::Label* menu_back_label = mainMenuButton->getTitleRenderer();
-	menu_back_label->enableOutline(cocos2d::Color4B::BLACK, 2);
-	mainMenuButton->setTitleColor(cocos2d::Color3B::WHITE);
-	mainMenuButton->setTitleAlignment(cocos2d::TextHAlignment::CENTER);
-	mainMenuButton->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			game->updateTracker("left");
-			auto callbackmainmenu = cocos2d::CallFunc::create([&]() {
-				SceneManager::getInstance()->setScene(SceneManager::LEVELS);
-			});
-			this->runAction(cocos2d::Sequence::create(createHideAction(this), callbackmainmenu, nullptr));
-		}
-	});
-	mainMenuButton->setPosition(cocos2d::Vec2(panel->getContentSize().width*panel->getScaleX() / 4,
-		-panel->getContentSize().height*panel->getScaleY() / 2 -
-		mainMenuButton->getContentSize().height*mainMenuButton->getScaleY() * 0.41));
-	addChild(mainMenuButton, 1, "mainMenuButton");
-}
-
-cocos2d::TargetedAction* WinMenu::createHideAction(cocos2d::Node* target) {
-	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-	return cocos2d::TargetedAction::create(target,
-		cocos2d::EaseBackIn::create(
-			cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(visibleSize.width / 2, visibleSize.height * 1.5))));
-}
-
-cocos2d::Sprite* WinMenu::createButtonShadow(cocos2d::ui::Button* button) {
-	cocos2d::Sprite* buttonShadow = cocos2d::Sprite::create("res/buttons/shadow_button.png");
-	buttonShadow->setScale(button->getScale());
-	buttonShadow->setPosition(button->getPosition());
-	return buttonShadow;
-}
-
-
-void WinMenu::addNextLevelButton(cocos2d::Size &visibleSize, Json::Value &buttons, std::string &language)
-{
-	cocos2d::ui::Button* nextLevelButton = cocos2d::ui::Button::create("res/buttons/yellow_button.png");
-	nextLevelButton->setScale(panel->getContentSize().width * panel->getScale() * 0.4 / nextLevelButton->getContentSize().width);
-	nextLevelButton->setTitleText(buttons["next_level"][language].asString());
-	nextLevelButton->setTitleFontName("fonts/LICABOLD.ttf");
-	nextLevelButton->setTitleFontSize(45.f);
-	cocos2d::Label* next_level_label = nextLevelButton->getTitleRenderer();
-	next_level_label->enableOutline(cocos2d::Color4B::BLACK, 2);
-	nextLevelButton->setTitleColor(cocos2d::Color3B::WHITE);
-	nextLevelButton->setTitleAlignment(cocos2d::TextHAlignment::CENTER);
-	nextLevelButton->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-			auto* hideAction = cocos2d::TargetedAction::create(this,
-				cocos2d::EaseBackIn::create(cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(visibleSize.width / 2, visibleSize.height * 1.5))));
-			auto callbacknextlevel = cocos2d::CallFunc::create([&]() {
-				game->switchLevel();
-			});
-			this->runAction(cocos2d::Sequence::create(hideAction, callbacknextlevel, nullptr));
-		}
-	});
-	nextLevelButton->setPosition(cocos2d::Vec2(-panel->getContentSize().width*panel->getScaleX() / 4,
-		-panel->getContentSize().height*panel->getScaleY() / 2 -
-		nextLevelButton->getContentSize().height*nextLevelButton->getScaleY() * 0.41));
-	addChild(createButtonShadow(nextLevelButton), -1);
-	addChild(nextLevelButton, 1, "nextLevelButton");
+	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+		cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+		auto* hideAction = cocos2d::TargetedAction::create(this,
+			cocos2d::EaseBackIn::create(cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(visibleSize.width / 2, visibleSize.height * 1.5))));
+		auto callbacknextlevel = cocos2d::CallFunc::create([&]() {
+			game->switchLevel();
+		});
+		this->runAction(cocos2d::Sequence::create(hideAction, callbacknextlevel, nullptr));
+	}
 }
