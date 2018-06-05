@@ -1,0 +1,401 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="win32">
+      <UniqueIdentifier>{84a8ebd7-7cf0-47f6-b75e-d441df67da40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{715254bc-d70b-4ec5-bf29-467dd3ace079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Level">
+      <UniqueIdentifier>{0749f000-a3e1-4c53-9e2f-d42db3316365}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Dangos">
+      <UniqueIdentifier>{bbf851c5-fb5d-4498-a222-6b3ed2f2f9f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Towers">
+      <UniqueIdentifier>{891a0868-eeb4-4dc0-b5a5-526083f3f782}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lib">
+      <UniqueIdentifier>{0db9581b-6169-4959-9a15-d05b46d0c52e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Config">
+      <UniqueIdentifier>{924099d1-ee8c-4c26-83b5-999cdd975316}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes">
+      <UniqueIdentifier>{3a020402-1e26-4da4-bbc6-0cf93235c00d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Level\Rewards">
+      <UniqueIdentifier>{3b525c15-5496-457c-9a32-a9886912dd6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\GUI">
+      <UniqueIdentifier>{185d32f8-940c-4af5-a2f5-f604609807b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Level\Tutorials">
+      <UniqueIdentifier>{9804e8f6-c059-4423-9378-66ba7b38ad68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Level\Tutorials\DialogueTutorials">
+      <UniqueIdentifier>{30805d16-c90f-4f49-b359-5c90a73b03ab}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\AppDelegate.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Cell.cpp">
+      <Filter>src\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\DangoGenerator.cpp">
+      <Filter>src\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Level.cpp">
+      <Filter>src\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Dangos\Dango.cpp">
+      <Filter>src\Dangos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Dangos\Dangobese.cpp">
+      <Filter>src\Dangos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Dangos\Dangosimple.cpp">
+      <Filter>src\Dangos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Lib\AudioSlider.cpp">
+      <Filter>src\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Lib\FadeMusic.cpp">
+      <Filter>src\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Lib\Functions.cpp">
+      <Filter>src\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Lib\Loader.cpp">
+      <Filter>src\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Config\AudioController.cpp">
+      <Filter>src\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Config\Config.cpp">
+      <Filter>src\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Config\jsoncpp.cpp">
+      <Filter>src\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Cutter.cpp">
+      <Filter>src\Towers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Tower.cpp">
+      <Filter>src\Towers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\SceneManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Wall.cpp">
+      <Filter>src\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Attack.cpp">
+      <Filter>src\Towers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Effect.cpp">
+      <Filter>src\Towers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Saucer.cpp">
+      <Filter>src\Towers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Bomber.cpp">
+      <Filter>src\Towers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\CreditScreen.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\LevelEditor.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\LoadingScreen.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\MainMenu.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\MyGame.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Skills.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\StoryMenu.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Dialogue.cpp">
+      <Filter>src\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\InterfaceGame.cpp">
+      <Filter>src\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Shop.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Config\NetworkController.cpp">
+      <Filter>src\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Dangos\Dangorille.cpp">
+      <Filter>src\Dangos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\ChallengeHandler.cpp">
+      <Filter>src\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Rewards\RewardTower.cpp">
+      <Filter>src\Level\Rewards</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Rewards\VisualReward.cpp">
+      <Filter>src\Level\Rewards</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Rewards\RewardSugar.cpp">
+      <Filter>src\Level\Rewards</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\TowerFactory.cpp">
+      <Filter>src\Towers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GUI\ParametersMenu.cpp">
+      <Filter>src\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GUI\StoryParametersMenu.cpp">
+      <Filter>src\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GUI\StartMenu.cpp">
+      <Filter>src\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Tutorials\Tutorial.cpp">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Tutorials\TowerPositioningTutorial.cpp">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Tutorials\SugarTutorial.cpp">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Tutorials\LifeTutorial.cpp">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Tutorials\SaucerTutorial.cpp">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Tutorials\UpgradeTutorial.cpp">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Tutorials\MultiPathsTutorial.cpp">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Tutorials\DangorillaTutorial.cpp">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Tutorials\DangobeseTutorial.cpp">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Tutorials\DialogueTutorial.cpp">
+      <Filter>src\Level\Tutorials\DialogueTutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Tutorials\TutorialFactory.cpp">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GUI\WinMenu.cpp">
+      <Filter>src\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GUI\LoseMenu.cpp">
+      <Filter>src\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GUI\CentralMenu.cpp">
+      <Filter>src\GUI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AppDelegate.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Cell.h">
+      <Filter>src\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\DangoGenerator.h">
+      <Filter>src\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Level.h">
+      <Filter>src\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Dangos\Dango.h">
+      <Filter>src\Dangos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Dangos\Dangobese.h">
+      <Filter>src\Dangos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Dangos\Dangosimple.h">
+      <Filter>src\Dangos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Lib\AudioSlider.h">
+      <Filter>src\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Lib\FadeMusic.h">
+      <Filter>src\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Lib\Functions.h">
+      <Filter>src\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Lib\Loader.h">
+      <Filter>src\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\AudioController.h">
+      <Filter>src\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\Config.h">
+      <Filter>src\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\json.h">
+      <Filter>src\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\json-forwards.h">
+      <Filter>src\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Cutter.h">
+      <Filter>src\Towers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Tower.h">
+      <Filter>src\Towers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\SceneManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Wall.h">
+      <Filter>src\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Attack.h">
+      <Filter>src\Towers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Effect.h">
+      <Filter>src\Towers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Saucer.h">
+      <Filter>src\Towers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Bomber.h">
+      <Filter>src\Towers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\CreditScreen.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\LevelEditor.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\LoadingScreen.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\MainMenu.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\MyGame.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Skills.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\StoryMenu.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Dialogue.h">
+      <Filter>src\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\InterfaceGame.h">
+      <Filter>src\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Shop.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\NetworkController.h">
+      <Filter>src\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Dangos\Dangorille.h">
+      <Filter>src\Dangos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Lib\Translationable.h">
+      <Filter>src\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\ChallengeHandler.h">
+      <Filter>src\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Rewards\RewardTower.h">
+      <Filter>src\Level\Rewards</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Rewards\VisualReward.h">
+      <Filter>src\Level\Rewards</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Rewards\RewardSugar.h">
+      <Filter>src\Level\Rewards</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\TowerFactory.h">
+      <Filter>src\Towers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GUI\ParametersMenu.h">
+      <Filter>src\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GUI\StoryParametersMenu.h">
+      <Filter>src\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GUI\StartMenu.h">
+      <Filter>src\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Tutorials\Tutorial.h">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Tutorials\SugarTutorial.h">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Tutorials\TowerPositioningTutorial.h">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Tutorials\LifeTutorial.h">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Tutorials\SaucerTutorial.h">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Tutorials\UpgradeTutorial.h">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Tutorials\MultiPathsTutorial.h">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Tutorials\DangorillaTutorial.h">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Tutorials\DangobeseTutorial.h">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Tutorials\DialogueTutorial.h">
+      <Filter>src\Level\Tutorials\DialogueTutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Tutorials\TutorialFactory.h">
+      <Filter>src\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GUI\WinMenu.h">
+      <Filter>src\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GUI\LoseMenu.h">
+      <Filter>src\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GUI\CentralMenu.h">
+      <Filter>src\GUI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="game.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
