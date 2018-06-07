@@ -6,5 +6,9 @@
 !/MallowsVsDango/Resources
 /MallowsVsDango/Resources/ScreenShots
 !/MallowsVsDango/CMakeLists.txt
-
+!/MallowsVsDango/proj.win32
+/MallowsVsDango/proj.win32/res/*
+/MallowsVsDango/proj.win32/Debug.win32/*
+/MallowsVsDango/proj.win32/Release.win32/*
+/MallowsVsDango/proj.win32/.vs/*
 /.project
