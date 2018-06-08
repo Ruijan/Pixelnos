@@ -125,12 +125,12 @@ bool StoryMenu::init() {
 	next->setPosition(Vec2(visibleSize.width * 0.95 - next->getContentSize().width * abs(next->getScale()) / 2, visibleSize.height / 2));
 	previous->addTouchEventListener([&, next, previous, worlds](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			worlds->scrollToPage(worlds->getCurPageIndex() - 1);
+			worlds->scrollToPage(worlds->getCurrentPageIndex() - 1);
 		}
 	});
 	next->addTouchEventListener([&, next, previous, worlds](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			worlds->scrollToPage(worlds->getCurPageIndex() + 1);
+			worlds->scrollToPage(worlds->getCurrentPageIndex() + 1);
 		}
 	});
 	addChild(next, 2, "next_world");
@@ -138,7 +138,7 @@ bool StoryMenu::init() {
 	addChild(worlds, 1, "worlds");
 
 	worlds->addEventListener(CC_CALLBACK_2(StoryMenu::changeWorld, this));
-	worlds->setCurPageIndex(((AppDelegate*)Application::getInstance())->getSave()["c_world"].asInt());
+	worlds->setCurrentPageIndex(((AppDelegate*)Application::getInstance())->getSave()["c_world"].asInt());
 	changeWorld(nullptr, ui::PageView::EventType::TURNING);
 
 
@@ -217,12 +217,12 @@ bool StoryMenu::init() {
 }
 
 void StoryMenu::changeWorld(cocos2d::Ref* sender, cocos2d::ui::PageView::EventType type) {
-	int a = ((ui::PageView*)getChildByName("worlds"))->getCurPageIndex();
+	int a = ((ui::PageView*)getChildByName("worlds"))->getCurrentPageIndex();
 	if (a == 0) {
 		((ui::Button*)getChildByName("previous_world"))->setVisible(false);
 		((ui::Button*)getChildByName("next_world"))->setVisible(true);
 	}
-	else if (a == ((ui::PageView*)getChildByName("worlds"))->getPages().size() - 1) {
+	else if (a == ((ui::PageView*)getChildByName("worlds"))->getItems().size() - 1) {
 		((ui::Button*)getChildByName("next_world"))->setVisible(false);
 		((ui::Button*)getChildByName("previous_world"))->setVisible(true);
 	}
@@ -245,12 +245,12 @@ void StoryMenu::onEnterTransitionDidFinish() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	for (unsigned int i(0); i < ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"].size(); ++i) {
-		((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->
+		((ui::PageView*)getChildByName("worlds"))->getItem(i)->getChildByName("layout")->getChildByName("world")->
 			getChildByName("levels")->removeAllChildren();
-		initLevels((ui::Layout*)((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->
+		initLevels((ui::Layout*)((ui::PageView*)getChildByName("worlds"))->getItem(i)->getChildByName("layout")->getChildByName("world")->
 			getChildByName("levels"), i);
-		((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->stopAllActions();
-		((ui::PageView*)getChildByName("worlds"))->getPage(i)->getChildByName("layout")->getChildByName("world")->
+		((ui::PageView*)getChildByName("worlds"))->getItem(i)->getChildByName("layout")->getChildByName("world")->stopAllActions();
+		((ui::PageView*)getChildByName("worlds"))->getItem(i)->getChildByName("layout")->getChildByName("world")->
 			runAction(RepeatForever::create(
 				Sequence::create(MoveTo::create(5.f, Vec2(0, -visibleSize.height / 40)),
 					MoveTo::create(5.f, Vec2(0, visibleSize.height / 40)), nullptr)));

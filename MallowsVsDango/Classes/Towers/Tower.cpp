@@ -46,18 +46,17 @@ void Tower::initFromConfig() {
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	
-	skeleton = SkeletonAnimation::createWithFile(config["skeleton"].asString(),
+	skeleton = SkeletonAnimation::createWithJsonFile(config["skeleton"].asString(),
 		config["atlas"].asString(),  Cell::getCellWidth() * 0.8 / config["animation_size"]["width"].asDouble());
 
-	skeleton->setStartListener([this](int trackIndex) {
-		spTrackEntry* entry = spAnimationState_getCurrent(skeleton->getState(), trackIndex);
+	skeleton->setStartListener([this](spTrackEntry* entry) {
 		const char* animationName = (entry && entry->animation) ? entry->animation->name : 0;
 		//log("%d start: %s", trackIndex, animationName);
 	});
-	skeleton->setEndListener([this](int trackIndex) {
+	skeleton->setEndListener([this](spTrackEntry* entry) {
 
 	});
-	skeleton->setCompleteListener([this](int trackIndex, int loopCount) {
+	skeleton->setCompleteListener([this](spTrackEntry* entry) {
 		std::string name = skeleton->getCurrent()->animation->name;
 		if (Value(skeleton->getCurrent()->animation->name).asString() == "blink" ||
 			Value(skeleton->getCurrent()->animation->name).asString() == "hello") {
@@ -69,7 +68,7 @@ void Tower::initFromConfig() {
 			handleEndEnrageAnimation();
 		}
 	});
-	skeleton->setEventListener([this](int trackIndex, spEvent* event) {
+	skeleton->setEventListener([this](spTrackEntry* entry, spEvent* event) {
 		if (Value(event->data->name).asString() == "throw_bomb") {
 			if (state != LIMIT_BURSTING) {
 				this->state = State::RELOADING;
@@ -362,9 +361,9 @@ SkeletonAnimation* Tower::getSkeletonAnimationFromName(std::string name) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	auto config = getConfig()[name];
-	SkeletonAnimation* animated_skeleton = SkeletonAnimation::createWithFile(config["skeleton"].asString(),
+	SkeletonAnimation* animated_skeleton = SkeletonAnimation::createWithJsonFile(config["skeleton"].asString(),
 		config["atlas"].asString(), 1.f);
-	animated_skeleton->setCompleteListener([animated_skeleton](int trackIndex, int loopCount) {
+	animated_skeleton->setCompleteListener([animated_skeleton](spTrackEntry* entry) {
 		std::string name = animated_skeleton->getCurrent()->animation->name;
 		if (Value(animated_skeleton->getCurrent()->animation->name).asString() == "hello") {
 			animated_skeleton->clearTracks();

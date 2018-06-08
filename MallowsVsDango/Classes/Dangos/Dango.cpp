@@ -61,22 +61,13 @@ void Dango::initFromConfig() {
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	skeleton = SkeletonAnimation::createWithFile(config["skeleton"].asString(),
+	skeleton = SkeletonAnimation::createWithJsonFile(config["skeleton"].asString(),
 		config["atlas"].asString(), 0.12f * visibleSize.width / 1280);
 	//skeleton->setScale(Cell::getCellWidth() / skeleton->getContentSize().width);
-
-	skeleton->setStartListener([this](int trackIndex) {
-		spTrackEntry* entry = spAnimationState_getCurrent(skeleton->getState(), trackIndex);
-		const char* animationName = (entry && entry->animation) ? entry->animation->name : 0;
-		//log("%d start: %s", trackIndex, animationName);
-	});
-	skeleton->setEndListener([this](int trackIndex) {
-
-	});
-	skeleton->setCompleteListener([this](int trackIndex, int loopCount) {
+	skeleton->setCompleteListener([&](spTrackEntry* entry) {
 		skeletonAnimationHandle();
 	});
-	skeleton->setEventListener([this](int trackIndex, spEvent* event) {
+	skeleton->setEventListener([this](spTrackEntry* entry, spEvent* event) {
 		if (Value(event->data->name).asString() == "up") {
 			on_ground = false;
 		}

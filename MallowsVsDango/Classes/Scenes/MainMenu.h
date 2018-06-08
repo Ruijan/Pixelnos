@@ -22,7 +22,7 @@ protected:
 	virtual void onEnter();
 	virtual void onEnterTransitionDidFinish();
 	void initLanguageList();
-	virtual void editBoxEditingDidEnd(cocos2d::ui::EditBox *editBox);
+	virtual void editBoxEditingDidEndWithAction(cocos2d::ui::EditBox *editBox);
 	virtual void editBoxEditingDidBegin(cocos2d::ui::EditBox *editBox);
 	virtual void editBoxTextChanged(cocos2d::ui::EditBox *editBox, std::string &text);
 	virtual void editBoxReturn(cocos2d::ui::EditBox *editBox);

@@ -44,7 +44,7 @@ bool LoadingScreen::init() {
 	loadingBackground->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	loadingBackground->setScale(visibleSize.width / loadingBackground->getContentSize().width);
 
-	SkeletonAnimation* skeleton = SkeletonAnimation::createWithFile("res/dango/animations/dangobese.json",
+	SkeletonAnimation* skeleton = SkeletonAnimation::createWithJsonFile("res/dango/animations/dangobese.json",
 		"res/dango/animations/dangobese.atlas", 0.5f * visibleSize.width / 1280);
 	skeleton->setPosition(visibleSize.width / 2, visibleSize.height * 1 / 3);
 	skeleton->setSkin("normal_1");

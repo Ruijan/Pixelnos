@@ -394,7 +394,7 @@ void MainMenu::switchLanguage() {
 	getChildByName("black_mask")->addChild(mask);
 }
 
-void MainMenu::editBoxEditingDidEnd(ui::EditBox *editBox) {
+void MainMenu::editBoxEditingDidEndWithAction(ui::EditBox *editBox) {
 	if (editBox->getText() != "") {
 		((ui::Button*)getChildByName("layout_username")->getChildByName("validate_username"))->setEnabled(true);
 	}
