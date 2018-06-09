@@ -69,8 +69,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 	// turn on display FPS
 	director->setDisplayStats(false);
-
-	// set FPS. the default value is 1.0/60 if you don't call this
 	director->setAnimationInterval(1.0f / 60.0f);
 
 	// Set the design resolution
@@ -102,10 +100,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 	register_all_packages();
 
-	// create a scene. it's an autorelease object
-	//auto scene = HelloWorld::createScene();
-	//director->runWithScene(scene);
-	manager = SceneManager::getInstance();
+	manager = SceneManager::createInstance(config);
 	/*if (COCOS2D_DEBUG == 1) {
 		g_screenLog = new ScreenLog();
 		g_screenLog->setLevelMask(LL_DEBUG | LL_INFO | LL_WARNING | LL_ERROR | LL_FATAL);

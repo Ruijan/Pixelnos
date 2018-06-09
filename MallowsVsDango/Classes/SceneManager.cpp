@@ -1,7 +1,7 @@
 #include "SceneManager.h"
 #include "Lib/Loader.h"
 #include "AppDelegate.h"
-#include "Config/Config.h"
+
 #include "Config/json.h"
 #include "Lib/FadeMusic.h"
 
@@ -9,14 +9,18 @@ USING_NS_CC;
 
 SceneManager *SceneManager::manager;
 
-SceneManager* SceneManager::getInstance()
-{
-	if (!manager)
-		manager = new SceneManager();
+SceneManager* SceneManager::createInstance(Config* config) {
+	manager = new SceneManager(config);
 	return manager;
 }
 
-SceneManager::SceneManager() {
+SceneManager* SceneManager::getInstance(){
+	return manager;
+}
+
+SceneManager::SceneManager(Config* config):
+	configClass(config)
+{
 	currentscene = SceneFactory::createScene(SceneFactory::SceneType::MENU);
 	c_index = 0;
 	TrackingEvent c_event;
@@ -24,10 +28,10 @@ SceneManager::SceneManager() {
 	c_event.to_scene = SceneFactory::getStringFromSceneType(getCurrentSceneIndex());
 	c_event.time = time(0);
 
-	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
+	configClass->addTrackingEvent(c_event);
 	Director::getInstance()->runWithScene(currentscene);
-	if (((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL)["play_sound"].asBool()) {
-		std::string music = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL)
+	if (configClass->getConfigValues(Config::ConfigType::GENERAL)["play_sound"].asBool()) {
+		std::string music = configClass->getConfigValues(Config::ConfigType::GENERAL)
 			["sound_transition"][c_index][c_index].asString();
 		auto action1 = ChangeMusic::create(music);
 		auto action2 = FadeInMusic::create(0.5f);
@@ -61,8 +65,8 @@ void SceneManager::replaceSceneWithCurrentScene(SceneFactory::SceneType type)
 
 void SceneManager::switchMusic(SceneFactory::SceneType type)
 {
-	std::string music = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL)["sound_transition"][c_index][(int)type].asString();
-	if (music != "none" && ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL)["play_sound"].asBool()) {
+	std::string music = configClass->getConfigValues(Config::ConfigType::GENERAL)["sound_transition"][c_index][(int)type].asString();
+	if (music != "none" && configClass->getConfigValues(Config::ConfigType::GENERAL)["play_sound"].asBool()) {
 		auto action1 = FadeOutMusic::create(0.5f);
 		auto action2 = ChangeMusic::create(music);
 		auto action3 = FadeInMusic::create(0.5f);
@@ -76,7 +80,7 @@ void SceneManager::addSceneTransitionTrackingEvent(SceneFactory::SceneType type)
 	c_event.from_scene = SceneFactory::getStringFromSceneType((SceneFactory::SceneType)c_index);
 	c_event.to_scene = SceneFactory::getStringFromSceneType(type);
 	c_event.time = time(0);
-	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
+	configClass->addTrackingEvent(c_event);
 }
 
 MyGame* SceneManager::getGame() {

@@ -7,13 +7,14 @@
 #include <array>
 #include "Lib/Translationable.h"
 #include "Scenes/MyGame.h"
+#include "Config/Config.h"
 
 class SceneManager
 {
 public:
 
 	//Constructor & destructor
-	SceneManager();
+	SceneManager(Config* config);
 	~SceneManager();
 
 	void startGameWithLevel(int worldID, int levelID);
@@ -24,6 +25,8 @@ public:
 	MyGame* getGame();
 	SceneFactory::SceneType getCurrentSceneIndex();
 
+	static SceneManager * createInstance(Config * config);
+
 	static SceneManager* getInstance();
 
 protected:
@@ -33,6 +36,7 @@ protected:
 	
 private:
 	static SceneManager *manager;
+	Config* configClass;
 	cocos2d::Scene* currentscene;
 	int c_index;
 };
