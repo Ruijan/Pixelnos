@@ -40,6 +40,7 @@ public:
 
 	//Add a scene
 	void setScene(SceneManager::SceneType type);
+	void addSceneTransitionTrackingEvent(SceneManager::SceneType type);
 	MyGame* getGame();
 	void switchLanguage();
 	SceneManager::SceneType getCurrentSceneIndex();

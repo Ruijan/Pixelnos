@@ -141,13 +141,13 @@ void Settings::updateGridSettings() {
 
 void Settings::updateGridCheckBoxes() {
 	for (cocos2d::ui::CheckBox* checkbox : movingGridCheckboxes) {
-		checkbox->setSelected(movingGridEnabled);
+		checkbox->setSelected(false);
 	}
 	for (cocos2d::ui::CheckBox* checkbox : alwaysGridCheckboxes) {
-		checkbox->setSelected(alwaysGridEnabled);
+		checkbox->setSelected(false);
 	}
 	for (cocos2d::ui::CheckBox* checkbox : neverGridCheckboxes) {
-		checkbox->setSelected(neverGridEnabled);
+		checkbox->setSelected(false);
 	}
 }
 

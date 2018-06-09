@@ -58,12 +58,7 @@ SceneManager::~SceneManager() {
 }
 
 void SceneManager::setScene(SceneManager::SceneType type) {
-	TrackingEvent c_event;
-	c_event.from_scene = getStringFromSceneType((SceneType)c_index);
-	c_event.to_scene = getStringFromSceneType(type);
-	c_event.time = time(0);
-
-	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
+	addSceneTransitionTrackingEvent(type);
 	currentscene = cacheScene[type];
 	TransitionFade* transition = TransitionFade::create(0.5f, currentscene);
 	Director::getInstance()->replaceScene(transition);
@@ -76,6 +71,15 @@ void SceneManager::setScene(SceneManager::SceneType type) {
 		Director::getInstance()->getActionManager()->addAction(Sequence::create(action1, action2, action3, nullptr), currentscene, false);
 	}
 	c_index = (int)type;
+}
+
+void SceneManager::addSceneTransitionTrackingEvent(SceneManager::SceneType type)
+{
+	TrackingEvent c_event;
+	c_event.from_scene = getStringFromSceneType((SceneType)c_index);
+	c_event.to_scene = getStringFromSceneType(type);
+	c_event.time = time(0);
+	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
 }
 
 MyGame* SceneManager::getGame() {

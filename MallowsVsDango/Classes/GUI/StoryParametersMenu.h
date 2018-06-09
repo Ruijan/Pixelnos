@@ -10,7 +10,7 @@ public:
 protected:
 	virtual void rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type);
 	virtual void leftButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type);
-	virtual void addBottomButtons(Json::Value & buttons, std::string & language);
+	virtual void addBottomButtons(Json::Value & buttons);
 
 };
 
