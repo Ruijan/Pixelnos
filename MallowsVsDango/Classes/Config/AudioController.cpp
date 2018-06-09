@@ -209,9 +209,6 @@ void AudioController::update(float dt) {
 	// update the music volume if the slider position is not at the same level as
 	// the maximum value. It also update the position of all the other sliders.
 	for (auto* slider : musicSliders) {
-		if (slider == nullptr) {
-			log("null slider");
-		}
 		if (slider->getValue() != maxVolumeMusic) {
 			if (musicID != AudioEngine::INVALID_AUDIO_ID) {
 				float n_volume = exp(slider->getValue()) / exp(1);
