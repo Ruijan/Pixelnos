@@ -216,6 +216,9 @@
     <ClCompile Include="..\Classes\Config\Settings.cpp">
       <Filter>src\Config</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\SceneFactory.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -397,6 +400,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Config\Settings.h">
       <Filter>src\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\SceneFactory.h">
+      <Filter>src\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -40,7 +40,7 @@ bool CreditScreen::init() {
 	auto return_to_game_button = ui::Button::create("res/buttons/restart_button.png");
 	return_to_game_button->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+			SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 		}
 	});
 	return_to_game_button->setPosition(Vec2(visibleSize.width, visibleSize.height));
@@ -92,7 +92,7 @@ void CreditScreen::onEnterTransitionDidFinish() {
 	// On créé le mouvement de scroll + le callback permettant de revenir à la "Selection des niveaux" lorsque les crédits sont finis.
 	auto moveBy = MoveBy::create(15, Vec2(0, getChildByName("layout")->getContentSize().height + visibleSize.height));
 	auto callBackToGame = CallFunc::create([]() {
-		SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+		SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 	});
 	Sequence* seq = Sequence::create(moveBy, callBackToGame, NULL);
 	getChildByName("layout")->runAction(seq);

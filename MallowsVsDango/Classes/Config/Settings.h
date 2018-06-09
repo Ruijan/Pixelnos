@@ -9,17 +9,13 @@ public:
 	Settings();
 	void init(std::string saveFolder);
 
-	void addGridButton(cocos2d::ui::CheckBox* box);
+	void addAlwaysGridCheckbox(cocos2d::ui::CheckBox* box);
 	void addMovingGridButton(cocos2d::ui::CheckBox* box);
 	void addNeverGridButton(cocos2d::ui::CheckBox* box);
 	void addLimitButton(cocos2d::ui::CheckBox* box);
 	void addDialogueButton(cocos2d::ui::CheckBox* box);
 
-	void removeGridButton(cocos2d::ui::CheckBox* box);
-	void removeMovingGridButton(cocos2d::ui::CheckBox* box);
-	void removeNeverGridButton(cocos2d::ui::CheckBox* box);
-	void removeLimitButton(cocos2d::ui::CheckBox* box);
-	void removeDialogueButton(cocos2d::ui::CheckBox* box);
+	void removeCheckbox(cocos2d::ui::CheckBox* box);
 
 	void enableAlwaysGrid(bool enable);
 	void enableMovingGrid(bool enable);

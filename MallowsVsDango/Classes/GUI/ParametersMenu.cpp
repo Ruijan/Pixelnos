@@ -27,8 +27,8 @@ bool ParametersMenu::init(MyGame* game) {
 	addPanel(visibleSize, 0.45);
 	addTitle(buttons, visibleSize);
 	addBottomButtons(buttons);
-	addSoundController(buttons["music"][settings->getLanguage()].asString(), visibleSize, AudioController::SOUNDTYPE::MUSIC);
-	addSoundController(buttons["effects"][settings->getLanguage()].asString(), visibleSize, AudioController::SOUNDTYPE::EFFECT);
+	soundControllers.push_back(createSoundController(buttons["music"][settings->getLanguage()].asString(), visibleSize, AudioController::SOUNDTYPE::MUSIC));
+	soundControllers.push_back(createSoundController(buttons["effects"][settings->getLanguage()].asString(), visibleSize, AudioController::SOUNDTYPE::EFFECT));
 	addMusicLoopCheckBox(buttons, visibleSize, audioController);
 	addGlobalSettings(buttons, visibleSize);
 	return initialized;
@@ -42,8 +42,8 @@ void ParametersMenu::addBottomButtons(Json::Value &buttons)
 
 void ParametersMenu::addMusicLoopCheckBox(Json::Value &buttons, const cocos2d::Size &visibleSize, AudioController * audioController)
 {
-	auto checkboxLoop = createCheckBoxWithLabel(buttons["loop_music"][settings->getLanguage()].asString(), visibleSize, 0);
-	audioController->addButtonLoop(checkboxLoop);
+	checkboxLoop = createCheckBoxWithLabel(buttons["loop_music"][settings->getLanguage()].asString(), visibleSize, 0);
+	audioController->addCheckBoxLoop(checkboxLoop);
 	addChild(checkboxLoop, 6, "LoopEnable");
 }
 
@@ -91,7 +91,7 @@ void ParametersMenu::addGlobalSettings(Json::Value &buttons, const cocos2d::Size
 		show_grid->getContentSize().height * 3 / 4);
 
 	auto checkboxAlwaysGrid = createNormalCheckBox(visibleSize, cocos2d::Vec2(always_show_grid->getPosition().x, show_grid->getPosition().y));
-	settings->addGridButton(checkboxAlwaysGrid);
+	settings->addAlwaysGridCheckbox(checkboxAlwaysGrid);
 	checkboxAlwaysGrid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 			settings->enableAlwaysGrid(true);
@@ -125,6 +125,9 @@ void ParametersMenu::addGlobalSettings(Json::Value &buttons, const cocos2d::Size
 	addChild(checkboxAlwaysGrid, 6, "GridEnable");
 	addChild(checkboxNeverGrid, 6, "NeverGridEnable");
 	addChild(checkboxMovingGrid, 6, "MovingGridEnable");
+	settingsCheckboxes.push_back(checkboxAlwaysGrid);
+	settingsCheckboxes.push_back(checkboxNeverGrid);
+	settingsCheckboxes.push_back(checkboxMovingGrid);
 	lastObjectPosition = show_grid->getPosition();
 	lastObjectSize = show_grid->getContentSize();
 
@@ -136,6 +139,8 @@ void ParametersMenu::addGlobalSettings(Json::Value &buttons, const cocos2d::Size
 
 	addChild(checkBoxLimit, 6, "LimitEnable");
 	addChild(checkBoxDialogues, 6, "DialogueEnable");
+	settingsCheckboxes.push_back(checkBoxLimit);
+	settingsCheckboxes.push_back(checkBoxDialogues);
 }
 
 cocos2d::ui::CheckBox* ParametersMenu::createCheckBoxWithLabel(std::string label, const cocos2d::Size& visibleSize, int posXBox) {
@@ -158,19 +163,19 @@ cocos2d::ui::CheckBox* ParametersMenu::createNormalCheckBox(const cocos2d::Size&
 	return checkBox;
 }
 
-void ParametersMenu::addSoundController(const std::string& title, cocos2d::Size visibleSize, AudioController::SOUNDTYPE type) {
+SoundController ParametersMenu::createSoundController(const std::string& title, cocos2d::Size visibleSize, AudioController::SOUNDTYPE type) {
 	cocos2d::Label* controllerLabel = cocos2d::Label::createWithTTF(title, "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	controllerLabel->setColor(cocos2d::Color3B::BLACK);
 	controllerLabel->setPosition(-panelSize.width * 2 / 5 +
 		controllerLabel->getContentSize().width / 2, lastObjectPosition.y - lastObjectSize.height -
 		controllerLabel->getContentSize().height * 3 / 4);
 
-	auto controllerEnableCheckbox = cocos2d::ui::CheckBox::create("res/buttons/music.png", "res/buttons/music.png",
+	cocos2d::ui::CheckBox* controllerEnableCheckbox = cocos2d::ui::CheckBox::create("res/buttons/music.png", "res/buttons/music.png",
 		"res/buttons/disable.png", "res/buttons/music.png", "res/buttons/music.png");
 	controllerEnableCheckbox->setPosition(cocos2d::Vec2(panelSize.width * 2 / 5,
 		controllerLabel->getPosition().y));
 	controllerEnableCheckbox->setScale(visibleSize.width / 1280);
-	((AppDelegate*)cocos2d::Application::getInstance())->getAudioController()->addButton(controllerEnableCheckbox, type);
+	((AppDelegate*)cocos2d::Application::getInstance())->getAudioController()->addCheckBox(controllerEnableCheckbox, type);
 
 	AudioSlider* controllerSlider = AudioSlider::create(AudioSlider::Horizontal);
 	controllerSlider->setValue(0, 1, ((AppDelegate*)cocos2d::Application::getInstance())->getAudioController()->getMaxVolume(type));
@@ -183,6 +188,7 @@ void ParametersMenu::addSoundController(const std::string& title, cocos2d::Size 
 	addChild(controllerEnableCheckbox, 6);
 	lastObjectPosition = controllerLabel->getPosition();
 	lastObjectSize = controllerLabel->getContentSize();
+	return std::make_pair(controllerSlider, controllerEnableCheckbox);
 }
 
 void ParametersMenu::rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type)
@@ -190,7 +196,7 @@ void ParametersMenu::rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Wid
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 		game->updateTracker("left");
 		auto callbackmainmenu = cocos2d::CallFunc::create([&]() {
-			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+			SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 		});
 		this->runAction(cocos2d::Sequence::create(createHideAction(this), callbackmainmenu, nullptr));
 		blackMask->setVisible(false);
@@ -225,4 +231,14 @@ void ParametersMenu::displayWithAnimation() {
 	blackMask->setVisible(true);
 }
 
-ParametersMenu::~ParametersMenu() {}
+ParametersMenu::~ParametersMenu() {
+	AudioController* audioController = ((AppDelegate*)cocos2d::Application::getInstance())->getAudioController();
+	audioController->removeCheckBox(checkboxLoop);
+	for (SoundController soundController : soundControllers) {
+		audioController->removeSlider(soundController.first);
+		audioController->removeCheckBox(soundController.second);
+	}
+	for (cocos2d::ui::CheckBox* checkbox : settingsCheckboxes) {
+		settings->removeCheckbox(checkbox);
+	}
+}

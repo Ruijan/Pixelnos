@@ -31,7 +31,7 @@ void Settings::init(std::string saveFolder)
 	language = settingsSave["language"].asString();
 }
 
-void Settings::addGridButton(cocos2d::ui::CheckBox* box) {
+void Settings::addAlwaysGridCheckbox(cocos2d::ui::CheckBox* box) {
 	box->setSelected(alwaysGridEnabled);
 	alwaysGridCheckboxes.push_back(box);
 	box->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
@@ -82,29 +82,13 @@ void Settings::addDialogueButton(cocos2d::ui::CheckBox* box) {
 	});
 }
 
-void Settings::removeGridButton(cocos2d::ui::CheckBox* box) {
-	alwaysGridCheckboxes.erase(std::remove(alwaysGridCheckboxes.begin(), alwaysGridCheckboxes.end(), box),
-		alwaysGridCheckboxes.end());
-}
-
-void Settings::removeMovingGridButton(cocos2d::ui::CheckBox* box) {
-	movingGridCheckboxes.erase(std::remove(movingGridCheckboxes.begin(), movingGridCheckboxes.end(), box),
-		movingGridCheckboxes.end());
-}
-
-void Settings::removeNeverGridButton(cocos2d::ui::CheckBox* box) {
-	neverGridCheckboxes.erase(std::remove(neverGridCheckboxes.begin(), neverGridCheckboxes.end(), box),
-		neverGridCheckboxes.end());
-}
-
-void Settings::removeLimitButton(cocos2d::ui::CheckBox* box) {
-	limitCheckboxes.erase(std::remove(limitCheckboxes.begin(), limitCheckboxes.end(), box),
-		limitCheckboxes.end());
-}
-
-void Settings::removeDialogueButton(cocos2d::ui::CheckBox* box) {
-	dialoguesCheckboxes.erase(std::remove(dialoguesCheckboxes.begin(), dialoguesCheckboxes.end(), box),
-		dialoguesCheckboxes.end());
+void Settings::removeCheckbox(cocos2d::ui::CheckBox * box)
+{
+	alwaysGridCheckboxes.erase(std::remove(alwaysGridCheckboxes.begin(), alwaysGridCheckboxes.end(), box), alwaysGridCheckboxes.end());
+	movingGridCheckboxes.erase(std::remove(movingGridCheckboxes.begin(), movingGridCheckboxes.end(), box), movingGridCheckboxes.end());
+	neverGridCheckboxes.erase(std::remove(neverGridCheckboxes.begin(), neverGridCheckboxes.end(), box), neverGridCheckboxes.end());
+	limitCheckboxes.erase(std::remove(limitCheckboxes.begin(), limitCheckboxes.end(), box), limitCheckboxes.end());
+	dialoguesCheckboxes.erase(std::remove(dialoguesCheckboxes.begin(), dialoguesCheckboxes.end(), box), dialoguesCheckboxes.end());
 }
 
 void Settings::enableAlwaysGrid(bool enable) {

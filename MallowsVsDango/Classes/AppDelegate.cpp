@@ -23,8 +23,8 @@ AppDelegate::AppDelegate() : config(new Config("res/config.json", "MvDSave")), c
 AppDelegate::~AppDelegate()
 {
 	TrackingEvent c_event;
-	c_event.from_scene = SceneManager::getStringFromSceneType(manager->getCurrentSceneIndex());
-	c_event.to_scene = SceneManager::getStringFromSceneType(SceneManager::SceneType::STOP);
+	c_event.from_scene = SceneFactory::getStringFromSceneType(manager->getCurrentSceneIndex());
+	c_event.to_scene = SceneFactory::getStringFromSceneType(SceneFactory::SceneType::STOP);
 	c_event.time = time(0);
 
 	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
@@ -125,8 +125,8 @@ void AppDelegate::applicationDidEnterBackground() {
 	Director::getInstance()->stopAnimation();
 	AudioEngine::pauseAll();
 	TrackingEvent c_event;
-	c_event.from_scene = SceneManager::getStringFromSceneType(manager->getCurrentSceneIndex());
-	c_event.to_scene = SceneManager::getStringFromSceneType(SceneManager::SceneType::PAUSE);
+	c_event.from_scene = SceneFactory::getStringFromSceneType(manager->getCurrentSceneIndex());
+	c_event.to_scene = SceneFactory::getStringFromSceneType(SceneFactory::SceneType::PAUSE);
 	c_event.time = time(0);
 
 	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
@@ -139,8 +139,8 @@ void AppDelegate::applicationWillEnterForeground() {
 	Director::getInstance()->startAnimation();
 	AudioEngine::resumeAll();
 	TrackingEvent c_event;
-	c_event.from_scene = SceneManager::getStringFromSceneType(SceneManager::SceneType::PAUSE);
-	c_event.to_scene = SceneManager::getStringFromSceneType(manager->getCurrentSceneIndex());
+	c_event.from_scene = SceneFactory::getStringFromSceneType(SceneFactory::SceneType::PAUSE);
+	c_event.to_scene = SceneFactory::getStringFromSceneType(manager->getCurrentSceneIndex());
 	c_event.time = time(0);
 
 	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
@@ -169,8 +169,4 @@ void AppDelegate::setVolumeMusic(double volume) {
 
 AudioController* AppDelegate::getAudioController() {
 	return controller;
-}
-
-void AppDelegate::switchLanguage() {
-	manager->switchLanguage();
 }

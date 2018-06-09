@@ -150,7 +150,7 @@ bool StoryMenu::init() {
 	ui::Button* level_editor = ui::Button::create("res/buttons/menu_button_editor.png");
 	level_editor->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::EDITOR);
+			((SceneManager*)SceneManager::getInstance())->setScene(SceneFactory::SceneType::EDITOR);
 		}
 	});
 	level_editor->setScale(visibleSize.width / 8 / level_editor->getContentSize().width);
@@ -178,7 +178,7 @@ bool StoryMenu::init() {
 	ui::Button* skill_tree = ui::Button::create("res/buttons/menu_button_skill_tree.png");
 	skill_tree->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::SKILLS);
+			((SceneManager*)SceneManager::getInstance())->setScene(SceneFactory::SKILLS);
 		}
 	});
 	skill_tree->setScale(visibleSize.width / 8 / skill_tree->getContentSize().width);
@@ -190,7 +190,7 @@ bool StoryMenu::init() {
 	ui::Button* shop = ui::Button::create("res/buttons/menu_button_shop.png");
 	shop->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::SHOP);
+			((SceneManager*)SceneManager::getInstance())->setScene(SceneFactory::SHOP);
 		}
 	});
 	shop->setScale(visibleSize.width / 8 / skill_tree->getContentSize().width);
@@ -234,8 +234,7 @@ void StoryMenu::changeWorld(cocos2d::Ref* sender, cocos2d::ui::PageView::EventTy
 
 void StoryMenu::selectLevelCallBack(Ref* sender, ui::Widget::TouchEventType type, int level_id, int world_id) {
 	if (type == ui::Widget::TouchEventType::ENDED) {
-		SceneManager::getInstance()->getGame()->initLevel(level_id, world_id);
-		SceneManager::getInstance()->setScene(SceneManager::GAME);
+		SceneManager::getInstance()->startGameWithLevel(level_id, world_id);
 	}
 }
 
@@ -258,7 +257,7 @@ void StoryMenu::onEnterTransitionDidFinish() {
 }
 
 void StoryMenu::showCredit(Ref* sender) {
-	SceneManager::getInstance()->setScene(SceneManager::CREDIT);
+	SceneManager::getInstance()->setScene(SceneFactory::CREDIT);
 }
 
 void StoryMenu::initLevels(ui::Layout* page, int id_world) {
@@ -328,6 +327,10 @@ void StoryMenu::initLevels(ui::Layout* page, int id_world) {
 	}
 }
 
+StoryMenu::~StoryMenu()
+{
+}
+
 void StoryMenu::switchLanguage() {
 }
 
@@ -378,7 +381,7 @@ void StoryMenu::updateTutorial(float dt) {
 					this->removeChildByName("invisble_mask");
 					this->removeChildByName("hand");
 					tutorial_running = false;
-					((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::SKILLS);
+					((SceneManager*)SceneManager::getInstance())->setScene(SceneFactory::SKILLS);
 				});
 				hand->runAction(Sequence::create(
 					FadeIn::create(0.5f),

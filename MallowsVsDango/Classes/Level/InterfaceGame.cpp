@@ -768,7 +768,7 @@ void InterfaceGame::mainMenuCallBack(std::string id_menu) {
 	auto* hideAction = TargetedAction::create(getChildByName(id_menu),
 		EaseBackIn::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height * 1.5))));
 	auto callbackmainmenu = CallFunc::create([&]() {
-		SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+		SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 	});
 	getChildByName(id_menu)->runAction(Sequence::create(hideAction, callbackmainmenu, nullptr));
 }

@@ -10,6 +10,7 @@ class StoryMenu : public cocos2d::Scene, public Translationable
 	public:
 	virtual bool init();
 	CREATE_FUNC(StoryMenu);
+	virtual ~StoryMenu();
 	virtual void switchLanguage();
 	virtual void onEnterTransitionDidFinish();
 	

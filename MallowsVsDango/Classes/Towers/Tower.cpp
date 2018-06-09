@@ -4,6 +4,7 @@
 #include "../Towers/Attack.h"
 #include "../AppDelegate.h"
 #include "../Level/InterfaceGame.h"
+#include "../Scenes/Skills.h"
 #include <math.h>
 
 USING_NS_CC;

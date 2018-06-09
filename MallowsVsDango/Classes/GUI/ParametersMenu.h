@@ -6,6 +6,8 @@
 #include "../Config/Config.h"
 #include "../Config/Settings.h"
 
+typedef std::pair<AudioSlider*, cocos2d::ui::CheckBox*> SoundController;
+
 class ParametersMenu : public CentralMenu{
 public:
 	static ParametersMenu* create(MyGame* game);
@@ -18,6 +20,9 @@ protected:
 	MyGame* game;
 	cocos2d::Vec2 lastObjectPosition;
 	cocos2d::Size lastObjectSize;
+	cocos2d::ui::CheckBox* checkboxLoop;
+	std::vector<SoundController> soundControllers;
+	std::vector<cocos2d::ui::CheckBox*> settingsCheckboxes;
 	Settings* settings;
 
 protected:
@@ -27,7 +32,7 @@ protected:
 
 	void addBlackMask(const cocos2d::Size &visibleSize);
 	void addGlobalSettings(Json::Value &buttons, const cocos2d::Size &visibleSize);
-	void addSoundController(const std::string& title, cocos2d::Size visibleSize, AudioController::SOUNDTYPE type);
+	SoundController createSoundController(const std::string& title, cocos2d::Size visibleSize, AudioController::SOUNDTYPE type);
 	void addMusicLoopCheckBox(Json::Value &buttons, const cocos2d::Size &visibleSize, AudioController * audioController);
 	void addTitle(Json::Value &buttons, const cocos2d::Size &visibleSize);
 	cocos2d::ui::CheckBox* createNormalCheckBox(const cocos2d::Size& visibleSize, cocos2d::Vec2 position);

@@ -2,63 +2,37 @@
 #define SCENEMANAGER_HPP
 
 #include "cocos2d.h"
-#include "Scenes/MainMenu.h"
-#include "Scenes/StoryMenu.h"
-#include "Scenes/CreditScreen.h"
-#include "Scenes/LevelEditor.h"
-#include "Scenes/Skills.h"
-#include "Scenes/MyGame.h"
-#include "Scenes/Shop.h"
+#include "Scenes/SceneFactory.h"
 #include "Lib/Loader.h"
 #include <array>
 #include "Lib/Translationable.h"
+#include "Scenes/MyGame.h"
 
-class MyGame;
-
-class SceneManager: public Translationable
+class SceneManager
 {
 public:
-	// Define type of scene
-	enum SceneType
-	{
-		MENU = 0,
-		GAME = 1,
-		LEVELS = 2,
-		LOADING = 3,
-		CREDIT = 4,
-		EDITOR = 5,
-		SKILLS = 6,
-		SHOP = 7,
-		PAUSE = 8,
-		STOP = 9,
-		START = 10
-	};
 
 	//Constructor & destructor
 	SceneManager();
 	~SceneManager();
 
+	void startGameWithLevel(int worldID, int levelID);
+
 	//Add a scene
-	void setScene(SceneManager::SceneType type);
-	void addSceneTransitionTrackingEvent(SceneManager::SceneType type);
+	void setScene(SceneFactory::SceneType type);
+
 	MyGame* getGame();
-	void switchLanguage();
-	SceneManager::SceneType getCurrentSceneIndex();
+	SceneFactory::SceneType getCurrentSceneIndex();
 
-	static::std::string getStringFromSceneType(SceneManager::SceneType type);
+	static SceneManager* getInstance();
 
-	// Create a new Instance of SceneManager*
-	static SceneManager* getInstance()
-	{
-		if (!manager)
-			manager = new SceneManager();
-		return manager;
-	}
-	
+protected:
+	void replaceSceneWithCurrentScene(SceneFactory::SceneType type);
+	void switchMusic(SceneFactory::SceneType type);
+	void addSceneTransitionTrackingEvent(SceneFactory::SceneType type);
 	
 private:
 	static SceneManager *manager;
-	std::array<cocos2d::Scene*,8> cacheScene;
 	cocos2d::Scene* currentscene;
 	int c_index;
 };

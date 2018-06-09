@@ -25,7 +25,7 @@ bool Shop::init() {
 	back->setPosition(Vec2(visibleSize.width - visibleSize.width / 40, visibleSize.height - visibleSize.height / 40));
 	back->addTouchEventListener([back](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+			SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 		}
 	});
 	addChild(back, 2);

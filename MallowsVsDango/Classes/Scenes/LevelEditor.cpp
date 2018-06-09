@@ -60,7 +60,7 @@ bool LevelEditor::init() {
 	auto return_to_game_button = ui::Button::create("res/buttons/back.png");
 	return_to_game_button->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+			SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 		}
 	});
 	return_to_game_button->setPosition(Vec2(visibleSize.width, visibleSize.height));
@@ -987,7 +987,7 @@ void LevelEditor::onExitTransitionDidStart() {
 *	@param Ref sender : Scène qui va être changée.
 */
 void LevelEditor::returnToGame(Ref* sender) {
-	SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+	SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 }
 
 void LevelEditor::zoomIn(Ref* sender, cocos2d::ui::Widget::TouchEventType type) {

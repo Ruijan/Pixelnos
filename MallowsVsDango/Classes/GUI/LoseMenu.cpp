@@ -69,7 +69,7 @@ void LoseMenu::rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::T
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 		game->updateTracker("left");
 		auto callbackmainmenu = cocos2d::CallFunc::create([&]() {
-			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+			SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 		});
 		this->runAction(cocos2d::Sequence::create(createHideAction(this), callbackmainmenu, nullptr));
 	}

@@ -72,7 +72,7 @@ bool Skills::init() {
 	back->setPosition(Vec2(visibleSize.width, visibleSize.height));
 	back->addTouchEventListener([back](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+			SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 		}
 	});
 

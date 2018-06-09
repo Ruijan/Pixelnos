@@ -43,7 +43,7 @@ void StoryParametersMenu::rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 		auto callbackTitleScreen = cocos2d::CallFunc::create([&]() {
 			blackMask->setVisible(false);
-			SceneManager::getInstance()->setScene(SceneManager::MENU);
+			SceneManager::getInstance()->setScene(SceneFactory::MENU);
 		});
 		this->runAction(cocos2d::Sequence::create(createHideAction(this), callbackTitleScreen, nullptr));
 	}
@@ -54,7 +54,7 @@ void StoryParametersMenu::leftButtonCallback(cocos2d::Ref *pSender, cocos2d::ui:
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 		auto callbackCredits = cocos2d::CallFunc::create([&]() {
 			blackMask->setVisible(false);
-			SceneManager::getInstance()->setScene(SceneManager::CREDIT);
+			SceneManager::getInstance()->setScene(SceneFactory::CREDIT);
 		});
 		this->runAction(cocos2d::Sequence::create(createHideAction(this), callbackCredits, nullptr));
 	}
