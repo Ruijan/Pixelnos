@@ -34,7 +34,7 @@ Dialogue* Dialogue::createFromConfig(Json::Value config){
 	std::vector<std::string> heads;
 	std::vector<Direction> direction;
 	std::vector<Emotion> emotions;
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 
 	for(unsigned int i(0); i < config.size(); ++i){
 		for(unsigned int j(0); j < config[i]["text_" + language].size(); ++j){
@@ -74,7 +74,7 @@ void Dialogue::launch(){
 	start = std::chrono::system_clock::now();
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 
 	// The speech bubble is just a node. We add two sprites to this node. It becomes easier to switch
 	// from one image to another.

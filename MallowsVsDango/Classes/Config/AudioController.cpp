@@ -86,7 +86,7 @@ void AudioController::addMusicButton(cocos2d::ui::CheckBox* checkbox) {
 	checkbox->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		switch (type) {
 		case cocos2d::ui::Widget::TouchEventType::ENDED:
-			enableMusic(!((cocos2d::ui::CheckBox*)sender)->isSelected());
+			enableMusic(((cocos2d::ui::CheckBox*)sender)->isSelected());
 			break;
 		}
 	});
@@ -98,7 +98,7 @@ void AudioController::addEffectsButton(cocos2d::ui::CheckBox* checkbox) {
 	checkbox->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		switch (type) {
 		case cocos2d::ui::Widget::TouchEventType::ENDED:
-			enableEffects(!((cocos2d::ui::CheckBox*)sender)->isSelected());
+			enableEffects(((cocos2d::ui::CheckBox*)sender)->isSelected());
 			break;
 		}
 	});
@@ -114,12 +114,12 @@ void AudioController::addButton(cocos2d::ui::CheckBox* checkbox, SOUNDTYPE type)
 }
 
 void AudioController::addButtonLoop(cocos2d::ui::CheckBox* box) {
-	box->setSelected(loop_enabled);
+	box->setSelected(!loop_enabled);
 	loop_buttons.push_back(box);
 	box->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		switch (type) {
 		case cocos2d::ui::Widget::TouchEventType::ENDED:
-			enableLoop(!((cocos2d::ui::CheckBox*)sender)->isSelected());
+			enableLoop(((cocos2d::ui::CheckBox*)sender)->isSelected());
 			break;
 		}
 	});
@@ -157,8 +157,8 @@ double AudioController::getVolumeMusic() {
 void AudioController::enableMusic(bool playmusic) {
 	music_enabled = playmusic;
 	// Change all the checkbox selection to the new value
-	for (auto checkbox : music_buttons) {
-		checkbox->setSelected(!music_enabled);
+	for (auto* checkbox : music_buttons) {
+		checkbox->setSelected(music_enabled);
 	}
 	// Stop the music if the checkbox says to not play music else
 	// play the current music that should be played.
@@ -176,8 +176,8 @@ void AudioController::enableMusic(bool playmusic) {
 void AudioController::enableEffects(bool playeffects) {
 	effects_enabled = playeffects;
 	// Change all the checkbox selection to the new value
-	for (auto& checkbox : effects_buttons) {
-		checkbox->setSelected(!effects_enabled);
+	for (auto* checkbox : effects_buttons) {
+		checkbox->setSelected(effects_enabled);
 	}
 	// Stop the effects if the checkbox says to not play effects. Delete all the
 	// current sound effects.

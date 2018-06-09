@@ -1,5 +1,4 @@
-#ifndef INTERFACEGAME_HPP
-#define INTERFACEGAME_HPP
+#pragma once
 
 #include "cocos2d.h"
 #include <unordered_map>
@@ -12,7 +11,9 @@
 #include "../GUI/LoseMenu.h"
 #include "../Dangos/Dango.h"
 
+
 class MyGame;
+class Config;
 
 class InterfaceGame : public cocos2d::Layer
 {	
@@ -105,6 +106,8 @@ private:
 	Dialogue* dialogues;
 	ChallengeHandler* challenges;
 	bool tutorial_running;
+
+	Config* configClass;
 	
 protected:
 	void moveSelectedTurret(cocos2d::Vec2 pos);
@@ -132,5 +135,3 @@ protected:
 	std::pair<std::string, cocos2d::Sprite*> getTowerFromPoint(cocos2d::Vec2 location);
 	void endGame();
 };
-
-#endif

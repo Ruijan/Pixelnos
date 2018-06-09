@@ -109,7 +109,7 @@ bool Level::init()
 				row.push_back(cell);
 				cell->setPosition(Vec2((i - nb_cells_maxwidth / 2.0 + 0.5) * Cell::getCellWidth() + visibleSize.width * 3 / 8,
 					(nb_cells_maxheight - j - 1 + 0.5 - nb_cells_maxheight / 2.0) * Cell::getCellHeight() + visibleSize.height / 2));
-				if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isAlwaysGridEnabled()) {
+				if (!((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->isAlwaysGridEnabled()) {
 					cell->setVisible(false);
 				}
 				

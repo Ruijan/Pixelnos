@@ -7,7 +7,7 @@ USING_NS_CC;
 bool Skills::init() {
 
 	if (!Scene::init()) { return false; }
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 
 	tutorial_running = false;
 	c_talent = Json::Value::null;
@@ -296,7 +296,7 @@ void Skills::initTalents() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 
 	// create Page view for talents
@@ -378,7 +378,7 @@ void Skills::selectSkill(int id) {
 	Json::Value talent = getSkillFromID(id);
 	ui::Button* talent_btn = talents_button[id];
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
@@ -480,7 +480,7 @@ void Skills::hideValidationPanel() {
 
 void Skills::showValidationPanel() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);

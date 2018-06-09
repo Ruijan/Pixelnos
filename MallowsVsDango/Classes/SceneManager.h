@@ -44,6 +44,8 @@ public:
 	void switchLanguage();
 	SceneManager::SceneType getCurrentSceneIndex();
 
+	static::std::string getStringFromSceneType(SceneManager::SceneType type);
+
 	// Create a new Instance of SceneManager*
 	static SceneManager* getInstance()
 	{

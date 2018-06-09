@@ -10,7 +10,7 @@ RewardTower* RewardTower::create(std::string nfile, std::string towername, cocos
 	RewardTower* reward = new RewardTower(towername);
 	if (reward->init()) {
 		Size visibleSize = Director::getInstance()->getVisibleSize();
-		std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+		std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 		Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 
 		auto new_tower_title = Label::createWithTTF(

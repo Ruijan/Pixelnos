@@ -25,7 +25,7 @@ LoadingScreen::~LoadingScreen() {
 // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
 bool LoadingScreen::init() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 
 	//////////////////////////////
 	// 1. super init first

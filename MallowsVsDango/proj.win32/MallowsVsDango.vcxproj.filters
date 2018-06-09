@@ -213,6 +213,9 @@
     <ClCompile Include="..\Classes\GUI\CentralMenu.cpp">
       <Filter>src\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Config\Settings.cpp">
+      <Filter>src\Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -391,6 +394,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\GUI\CentralMenu.h">
       <Filter>src\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\Settings.h">
+      <Filter>src\Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

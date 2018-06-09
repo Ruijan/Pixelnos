@@ -67,6 +67,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LibraryPath>$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
@@ -111,6 +112,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
       <Outputs>$(TargetName).cab</Outputs>
       <Inputs>$(TargetFileName)</Inputs>
     </CustomBuildStep>
+    <ClCompile>
+      <EnablePREfast Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</EnablePREfast>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -152,6 +156,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Config\Config.cpp" />
     <ClCompile Include="..\Classes\Config\jsoncpp.cpp" />
     <ClCompile Include="..\Classes\Config\NetworkController.cpp" />
+    <ClCompile Include="..\Classes\Config\Settings.cpp" />
     <ClCompile Include="..\Classes\Dangos\Dango.cpp" />
     <ClCompile Include="..\Classes\Dangos\Dangobese.cpp" />
     <ClCompile Include="..\Classes\Dangos\Dangorille.cpp" />
@@ -212,6 +217,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Config\json-forwards.h" />
     <ClInclude Include="..\Classes\Config\json.h" />
     <ClInclude Include="..\Classes\Config\NetworkController.h" />
+    <ClInclude Include="..\Classes\Config\Settings.h" />
     <ClInclude Include="..\Classes\Dangos\Dango.h" />
     <ClInclude Include="..\Classes\Dangos\Dangobese.h" />
     <ClInclude Include="..\Classes\Dangos\Dangorille.h" />

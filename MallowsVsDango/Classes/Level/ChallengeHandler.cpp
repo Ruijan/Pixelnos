@@ -50,7 +50,7 @@ ChallengeHandler::ChallengeHandler(const Json::Value& value) {
 	progress_text->setPosition(Vec2(description_text->getPosition().x,
 		description_text->getPosition().y - description_text->getTextAreaSize().height / 2 - progress_text->getTextAreaSize().height / 2));
 	text_layout->addChild(progress_text, 0, "progress_text");
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 
 	// Challenges
 	for (unsigned int i(0); i < value.size(); ++i) {	
@@ -84,7 +84,7 @@ ChallengeHandler::ChallengeHandler(const Json::Value& value) {
 					auto action = ScaleTo::create(0.125f, 0.f);
 				}
 				auto updateText = CallFunc::create([&, challenge, text_layout, name, description, c_challenge]() {
-					std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+					std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 
 					std::string str_progress("");
 					if (c_challenge->getState() == Challenge::State::Running) {

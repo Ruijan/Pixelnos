@@ -1,4 +1,5 @@
 #include "StoryParametersMenu.h"
+#include "../SceneManager.h"
 
 StoryParametersMenu * StoryParametersMenu::create(MyGame* game)
 {

@@ -7,10 +7,10 @@
 #include <random>
 #include "extensions/cocos-ext.h"
 #include "network/HttpClient.h"
-#include "../SceneManager.h"
-#include "../Level/InterfaceGame.h"
+#include "Settings.h"
 
 class NetworkController;
+struct LevelTrackingEvent;
 
 struct TrackingEvent {
 	std::string from_scene;
@@ -45,28 +45,16 @@ private:
 	cocos2d::Scheduler* scheduler;
 
 	bool save_file;
-	bool always_grid_enabled;
-	bool moving_grid_enabled;
-	bool never_grid_enabled;
-	bool limit_enabled;
-	bool dialogues_enabled;
 	bool settings_need_save;
 	bool tracking_need_save;
 	bool progression_need_save;
 	bool user_need_creation;
 	bool user_need_save;
 	bool waiting_answer;
-	std::string language;
 	int c_tracking_index;
 	int c_level_tracking;
 
-	std::vector<cocos2d::ui::CheckBox*> always_grid_buttons;
-	std::vector<cocos2d::ui::CheckBox*> never_grid_buttons;
-	std::vector<cocos2d::ui::CheckBox*> moving_grid_buttons;
-	std::vector<cocos2d::ui::CheckBox*> limit_buttons;
-	std::vector<cocos2d::ui::CheckBox*> dialogues_buttons;
-
-
+	Settings* settings;
 
 public:
 	enum ConfigType {
@@ -122,118 +110,6 @@ public:
 
 
 	/// SETTINGS PART OF THE CONFIGURATION
-	/**
-	* @brief Add a checkbox to the vector of checkbox. It will add it to the update
-	* loop. The checkbox can be attributed to music or to effects. When the checkbox
-	* is selected (disabled), it will disable the sound for the sound type.
-	* @param CheckBox to add.
-	*/
-	void addGridButton(cocos2d::ui::CheckBox* box);
-	/**
-	* @brief Add a checkbox to the vector of checkbox. It will add it to the update
-	* loop. The checkbox can be attributed to music or to effects. When the checkbox
-	* is selected (disabled), it will disable the sound for the sound type.
-	* @param CheckBox to add.
-	*/
-	void addMovingGridButton(cocos2d::ui::CheckBox* box);
-	/**
-	* @brief Add a checkbox to the vector of checkbox. It will add it to the update
-	* loop. The checkbox can be attributed to music or to effects. When the checkbox
-	* is selected (disabled), it will disable the sound for the sound type.
-	* @param CheckBox to add.
-	*/
-	void addNeverGridButton(cocos2d::ui::CheckBox* box);
-	/**
-	* @brief Add a checkbox to the vector of checkbox. It will add it to the update
-	* loop. When the checkbox is selected (disabled), it will disable the automatic limit.
-	* @param CheckBox to add.
-	*/
-	void addLimitButton(cocos2d::ui::CheckBox* box);
-	/**
-	* @brief Add a checkbox to the vector of checkbox. It will add it to the update
-	* loop. When the checkbox is selected (disabled), it will disable the automatic limit.
-	* @param CheckBox to add.
-	*/
-	void addDialogueButton(cocos2d::ui::CheckBox* box);
-	/**
-	* @brief Add a checkbox to the vector of checkbox. It will add it to the update
-	* loop. The checkbox can be attributed to music or to effects. When the checkbox
-	* is selected (disabled), it will disable the sound for the sound type.
-	* @param CheckBox to add.
-	*/
-	void removeGridButton(cocos2d::ui::CheckBox* box);
-	/**
-	* @brief Add a checkbox to the vector of checkbox. It will add it to the update
-	* loop. The checkbox can be attributed to music or to effects. When the checkbox
-	* is selected (disabled), it will disable the sound for the sound type.
-	* @param CheckBox to add.
-	*/
-	void removeMovingGridButton(cocos2d::ui::CheckBox* box);
-	/**
-	* @brief Add a checkbox to the vector of checkbox. It will add it to the update
-	* loop. The checkbox can be attributed to music or to effects. When the checkbox
-	* is selected (disabled), it will disable the sound for the sound type.
-	* @param CheckBox to add.
-	*/
-	void removeNeverGridButton(cocos2d::ui::CheckBox* box);
-	/**
-	* @brief Add a checkbox to the vector of checkbox. It will add it to the update
-	* loop. When the checkbox is selected (disabled), it will disable the automatic limit.
-	* @param CheckBox to add.
-	*/
-	void removeLimitButton(cocos2d::ui::CheckBox* box);
-	/**
-	* @brief Add a checkbox to the vector of checkbox. It will add it to the update
-	* loop. When the checkbox is selected (disabled), it will disable the automatic limit.
-	* @param CheckBox to add.
-	*/
-	void removeDialogueButton(cocos2d::ui::CheckBox* box);
-
-	/**
-	* @brief Change the value of the settings regarding the display of the grid.
-	* it will save the new value in the save file and ask to the network to save it
-	* online at the next call. It changes also the value of all the grid checkbox
-	* @param true of false if you want to show the grid all the time.
-	*/
-	void enableAlwaysGrid(bool enable);
-
-	/**
-	* @brief Change the value of the settings regarding the display of the grid.
-	* it will save the new value in the save file and ask to the network to save it
-	* online at the next call. It changes also the value of all the grid checkbox
-	* @param true of false if you want to show the grid when a turret is about to
-	* be placed
-	*/
-	void enableMovingGrid(bool enable);
-
-	void updateGridSettings();
-
-	void updateGridCheckBoxes();
-
-	/**
-	* @brief Change the value of the settings regarding the display of the grid.
-	* it will save the new value in the save file and ask to the network to save it
-	* online at the next call. It changes also the value of all the grid checkbox
-	* @param true of false if you never want to show the grid
-	*/
-	void enableNeverGrid(bool enable);
-
-	/**
-	* @brief Change the value of the settings regarding the limit of the turrets.
-	* it will save the new value in the save file and ask to the network to save it
-	* online at the next call. It changes also the value of all the limit checkbox
-	* @param true of false if you want to automatically lunch the limits of the turrets
-	*/
-	void enableAutoLimit(bool enable);
-
-	/**
-	* @brief Change the value of the settings regarding the dialogues.
-	* it will save the new value in the save file and ask to the network to save it
-	* online at the next call. It changes also the value of all the dialogue checkbox
-	* @param true of false if you want to show the dialogues
-	*/
-	void enableDialogues(bool enable);
-
 	/**
 	* @brief Tells to save the settings online
 	* @param true of false if you want to save the settings of the user.
@@ -309,57 +185,9 @@ public:
 	Json::Value getLastLevelAction();
 
 	/**
-	* @brief check the state of the grid.
-	*/
-	bool isNeverGridEnabled();
-	/**
-	* @brief check the state of the grid.
-	*/
-	bool isAlwaysGridEnabled();
-	/**
-	* @brief check the state of the grid.
-	*/
-	bool isMovingGridEnabled();
-	/**
-	* @brief check the state of the auto limit.
-	*/
-	bool isLimitEnabled();
-	/**
-	* @brief check the state of the dialogues display.
-	*/
-	bool isDialoguesEnabled();
-
-	/**
 	* @brief return the current network controller to send new request.
 	*/
 	NetworkController* getNetworkController();
-
-	/**
-	* @brief return the string equivalent for a specific SceneType.
-	*/
-	static std::string getStringFromSceneType(SceneManager::SceneType type);
-	/**
-	* @brief return the string equivalent for a specific GameState.
-	*/
-	static std::string getStringFromGameState(InterfaceGame::GameState sate);
-
-	/**
-	* @brief return the current language:
-	*		"en" for english
-	*		"fr" for french
-	*/
-	std::string getLanguage();
-
-	/**
-	* @brief set the current language:
-	* @param lang should take only two values.
-	*		"en" for english
-	*		"fr" for french
-	* HAS TO BE CHANGED TO ONLY TAKE AN ENUM !!!
-	* RIGHT NOW THERE IS AN STRING CHECK !!!!
-	* AAAAAAAAAAAAAAAAH !!!!!
-	*/
-	void setLanguage(std::string lang);
 
 	/**
 	* @brief Load all the levels from the online database to the computer.
@@ -434,6 +262,7 @@ public:
 	* @brief Return the equivalent bdd id of a particular level (useful for keeping track of which level is played)
 	*/
 	int getLevelBDDID(int world_id, int level_id);
+	Settings* getSettings();
 
 };
 

@@ -57,10 +57,8 @@ void Tower::initFromConfig() {
 
 	});
 	skeleton->setCompleteListener([this](spTrackEntry* entry) {
-		std::string name = skeleton->getCurrent()->animation->name;
-		if (Value(skeleton->getCurrent()->animation->name).asString() == "blink" ||
-			Value(skeleton->getCurrent()->animation->name).asString() == "hello") {
-			skeleton->clearTracks();
+		std::string name = entry->animation->name;
+		if (name == "blink" || name == "hello") {
 			skeleton->setAnimation(0, "still", false);
 			skeleton->addAnimation(0, "blink", false);
 		}
@@ -364,9 +362,8 @@ SkeletonAnimation* Tower::getSkeletonAnimationFromName(std::string name) {
 	SkeletonAnimation* animated_skeleton = SkeletonAnimation::createWithJsonFile(config["skeleton"].asString(),
 		config["atlas"].asString(), 1.f);
 	animated_skeleton->setCompleteListener([animated_skeleton](spTrackEntry* entry) {
-		std::string name = animated_skeleton->getCurrent()->animation->name;
-		if (Value(animated_skeleton->getCurrent()->animation->name).asString() == "hello") {
-			animated_skeleton->clearTracks();
+		std::string name = entry->animation->name;
+		if (name == "hello") {
 			animated_skeleton->setAnimation(0, "still", false);
 			animated_skeleton->addAnimation(0, "blink", false);
 			animated_skeleton->addAnimation(0, "still", false);
@@ -385,7 +382,7 @@ SkeletonAnimation* Tower::getSkeletonAnimationFromName(std::string name) {
 
 void Tower::handleEnrageMode() {
 	if (target != nullptr) {
-		if (isLimitReached() && ((AppDelegate*)Application::getInstance())->getConfigClass()->isLimitEnabled() && limit_enabled) {
+		if (isLimitReached() && ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->isLimitEnabled() && limit_enabled) {
 			startLimit();
 		}
 		else if (isLimitReached() && !getChildByName("enrage_panel")->isVisible() && limit_enabled) {
@@ -697,7 +694,7 @@ void Tower::setSelected(bool select){
 
 ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 	const auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 	const auto spec_config = getSpecConfig();
 	auto layout = ui::Layout::create();
@@ -803,7 +800,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	nextlevel_button->addTouchEventListener([&, layout](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 			MyGame* game = SceneManager::getInstance()->getGame();
-			std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+			std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 
 			auto cost_size = costs.size();
 			if ((int)game->getLevel()->getQuantity() >= costs[level + 1] &&
@@ -949,7 +946,7 @@ ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
 	range_ni->setPosition(size_sprite, speed_n->getPosition().y - size_sprite / 2 - size_sprite / 2);
 
 	auto description_label = Label::createWithTTF(spec_config["last_level_description_" +
-		((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()].asString(),
+		((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage()].asString(),
 		"fonts/LICABOLD.ttf", 20 * visibleSize.width / 1280);
 	description_label->setColor(Color3B::BLACK);
 	description_label->setAlignment(cocos2d::TextHAlignment::CENTER);
@@ -1166,7 +1163,7 @@ void Tower::updateInformationLayout(ui::Layout* layout) {
 			layout->getChildByName("next_level_layout")->getChildByName("locked_label")->setVisible(true);
 			((ui::Button*)layout->getChildByName("next_level_button"))->setEnabled(false);
 		}
-		std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+		std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 		std::string s = Value(xp_levels[level + 1]).asString();
 		int dot_pos = s.find('.');
 		s = s.substr(0, dot_pos);

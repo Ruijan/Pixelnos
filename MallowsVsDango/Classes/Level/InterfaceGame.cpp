@@ -11,6 +11,7 @@
 #include <sstream>
 #include "../GUI/ParametersMenu.h"
 #include "../GUI/StartMenu.h"
+#include "../Config/Config.h"
 
 
 USING_NS_CC;
@@ -33,11 +34,11 @@ bool InterfaceGame::init() {
 
 	state = State::IDLE;
 	game_state = INTRO;
-	Config* configClass = ((AppDelegate*)Application::getInstance())->getConfigClass();
+	configClass = ((AppDelegate*)Application::getInstance())->getConfigClass();
 	Json::Value config = configClass->getConfigValues(Config::ConfigType::GENERAL);
 
 	initParametersMenu(config);
-	initLoseMenu(configClass->getLanguage(), configClass->getConfigValues(Config::ConfigType::BUTTON), configClass->getConfigValues(Config::ConfigType::ADVICE));
+	initLoseMenu(configClass->getSettings()->getLanguage(), configClass->getConfigValues(Config::ConfigType::BUTTON), configClass->getConfigValues(Config::ConfigType::ADVICE));
 	initWinMenu(config);
 	initRightPanel(config);
 	initLabels(config);
@@ -205,7 +206,7 @@ void InterfaceGame::onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) {
 	cocos2d::Vec2 p = touch->getLocation();
 	cocos2d::Rect rectrightpanel = getChildByName("menu_panel")->getChildByName("panel")->getBoundingBox();
 	rectrightpanel.origin += getChildByName("menu_panel")->getBoundingBox().origin;
-	if (((AppDelegate*)Application::getInstance())->getConfigClass()->isMovingGridEnabled()) {
+	if (configClass->getSettings()->isMovingGridEnabled()) {
 		game->getLevel()->showGrid(false);
 	}
 	if (state == TURRET_SELECTED) {
@@ -271,7 +272,7 @@ void InterfaceGame::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) {
 
 		double dist = touch->getLocation().distanceSquared(touch->getStartLocation());
 		if (touch->getLocation().x - visibleSize.width * 3 / 4 < 0) {
-			if (((AppDelegate*)Application::getInstance())->getConfigClass()->isMovingGridEnabled()) {
+			if (configClass->getSettings()->isMovingGridEnabled()) {
 				game->getLevel()->showGrid(true);
 			}
 			auto item = getTowerFromPoint(touch->getStartLocation());
@@ -299,7 +300,7 @@ void InterfaceGame::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) {
 			selected_turret->destroyCallback(nullptr);
 			selected_turret = nullptr;
 			state = TOUCHED;
-			if (((AppDelegate*)Application::getInstance())->getConfigClass()->isMovingGridEnabled()) {
+			if (configClass->getSettings()->isMovingGridEnabled()) {
 				game->getLevel()->showGrid(false);
 			}
 		}
@@ -450,7 +451,6 @@ void InterfaceGame::showWin() {
 
 void InterfaceGame::reset() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Config* configClass = ((AppDelegate*)Application::getInstance())->getConfigClass();
 	Json::Value config = configClass->getConfigValues(Config::ConfigType::GENERAL);
 
 
@@ -559,7 +559,7 @@ void InterfaceGame::initLabels(const Json::Value& config) {
 	loadingBarBackground->setScale(loadingBar->getScale());
 	loadingBarBackground->setVisible(false);
 	node_top->addChild(loadingBarBackground, 3, "loading_bar_background");
-	challenges = ChallengeHandler::create(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
+	challenges = ChallengeHandler::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
 		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["challenges"]);
 	challenges->setPosition(Vec2(sugar->getPosition().x + sugar->getContentSize().width * sugar->getScale() / 2,
 		node_top->getPosition().y + sugar->getPosition().y - sugar->getContentSize().height * sugar->getScale()));
@@ -739,7 +739,7 @@ void InterfaceGame::displayTowerInfos(std::string item_name) {
 			s);
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("description_tower"))->setString(
 			tower_config["description_" +
-			((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage()].asString());
+			configClass->getSettings()->getLanguage()].asString());
 		((Label*)getChildByName("menu_panel")->getChildByName("informations")->getChildByName("sugar_label"))->setString(
 			tower_config["cost"][0].asString());
 		required_quantity = tower_config["cost"][0].asDouble();
@@ -1014,9 +1014,9 @@ void InterfaceGame::generateHolySugar(Vec2 pos) {
 
 void InterfaceGame::startRewarding(Vec2 pos) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
-	Json::Value rootSave = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
-	Json::Value level_config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
+	std::string language = configClass->getSettings()->getLanguage();
+	Json::Value rootSave = configClass->getSaveValues();
+	Json::Value level_config = configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
 		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()];
 
 	challenges->endChallengeHandler();
@@ -1074,7 +1074,7 @@ void InterfaceGame::startRewarding(Vec2 pos) {
 
 			// Add a Tap to continue to inform the user what to do.
 			auto tapToContinue = Label::createWithTTF(
-				((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)
+				configClass->getConfigValues(Config::ConfigType::BUTTON)
 				["tap_continue"][language].asString(), "fonts/LICABOLD.ttf", 35.f * visibleSize.width / 1280);
 			tapToContinue->setPosition(Vec2(visibleSize.width * 3 / 8, visibleSize.height / 15 + tapToContinue->getContentSize().height / 2));
 			tapToContinue->setColor(Color3B::WHITE);
@@ -1100,10 +1100,10 @@ void InterfaceGame::initDialoguesFromLevel(const Json::Value& config) {
 	Json::Reader reader;
 	Json::Value dialogue_json;
 	bool parsingConfigSuccessful = reader.parse(fileUtils->getStringFromFile(
-		((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
+		configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
 		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["dialogues_file"].asString()), dialogue_json, false);
 
-	bool play_dialogue = ((AppDelegate*)Application::getInstance())->getConfigClass()->isDialoguesEnabled();
+	bool play_dialogue = configClass->getSettings()->isDialoguesEnabled();
 	if (dialogue_json["introDialogue"].size() != 0 && play_dialogue) {
 		dialogues = Dialogue::createFromConfig(dialogue_json["introDialogue"]);
 		addChild(dialogues, 1, "dialogue");

@@ -53,7 +53,7 @@ StartMenu::~StartMenu()
 void StartMenu::reset(int levelId)
 {
 	Config* config = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass();
-	std::string language = config->getLanguage();
+	std::string language = config->getSettings()->getLanguage();
 	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 	getChildByName("start")->setPosition(cocos2d::Vec2(getChildByName("start")->getPosition().x,
 		-getChildByName("start")->getContentSize().height * getChildByName("start")->getScaleY()));
@@ -72,7 +72,7 @@ bool StartMenu::init(InterfaceGame* interfaceGame, int levelId) {
 	bool initialized = cocos2d::ui::Layout::init();
 	this->interfaceGame = interfaceGame;
 	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getLanguage();
+	std::string language = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 	Json::Value buttons = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 
 	addTitleLabel(buttons, language, levelId, visibleSize);

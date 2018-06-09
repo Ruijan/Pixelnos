@@ -3,8 +3,7 @@
 #include "AppDelegate.h"
 #include "extensions/cocos-ext.h"
 #include "NetworkController.h"
-#include "../SceneManager.h"
-#include "../Level/InterfaceGame.h"
+#include "../Scenes/MyGame.h"
 #include <time.h>
 #include <stdio.h>
 
@@ -13,15 +12,18 @@ USING_NS_CC_EXT;
 using namespace cocos2d::network;
 
 Config::Config(std::string configfilename, std::string savename) :
-	config_filename(configfilename), save_filename(savename), save_file(false),
-	always_grid_enabled(false), never_grid_enabled(false), moving_grid_enabled(false),
-	limit_enabled(false), dialogues_enabled(false), settings_need_save(false),
+	config_filename(configfilename), 
+	save_filename(savename), 
+	save_file(false),
+	settings_need_save(false),
 	tracking_need_save(false), progression_need_save(false), user_need_creation(false),
 	user_need_save(false), waiting_answer(false), tracking_filename("temp_tracking.json"), c_tracking_index(0),
 	level_tracking_filename("temp_level_tracking.json"), c_level_tracking(-1) {
 
 	//network_controller = new NetworkController("http://127.0.0.1/mvd/");
 	network_controller = new NetworkController("http://pixelnos.com/app/");
+
+	settings = new Settings();
 
 	scheduler = Director::getInstance()->getScheduler();
 	scheduler->retain();
@@ -249,15 +251,10 @@ void Config::init() {
 	}
 
 	parsingSaveSuccessful = reader.parse(saveFile, rootSav, false);
+	settings->init(FileUtils::getInstance()->getWritablePath());
 	if (!parsingSaveSuccessful) {
 		// report to the user the failure and their locations in the document.
 		std::string error = reader.getFormattedErrorMessages();
-		rootSav["settings"]["always_grid"] = false;
-		rootSav["settings"]["moving_grid"] = true;
-		rootSav["settings"]["never_grid"] = false;
-		rootSav["settings"]["auto_limit"] = false;
-		rootSav["settings"]["dialogues"] = true;
-		rootSav["settings"]["language"] = Application::getInstance()->getCurrentLanguageCode();
 		rootSav["holy_sugar"] = 0;
 		rootSav["c_level"] = 0;
 		rootSav["c_world"] = 0;
@@ -314,176 +311,7 @@ void Config::init() {
 			updateUserInfo();
 		}
 	}
-	always_grid_enabled = rootSav["settings"]["always_grid"].asBool();
-	moving_grid_enabled = rootSav["settings"]["moving_grid"].asBool();
-	never_grid_enabled = rootSav["settings"]["never_grid"].asBool();
-	limit_enabled = rootSav["settings"]["auto_limit"].asBool();
-	dialogues_enabled = rootSav["settings"]["dialogues"].asBool();
-
-	language = rootSav["settings"]["language"].asString();
 	loadAllLevels();
-}
-
-void Config::addGridButton(cocos2d::ui::CheckBox* box) {
-	box->setSelected(always_grid_enabled);
-	always_grid_buttons.push_back(box);
-	box->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			enableAlwaysGrid(true);
-		}
-	});
-}
-
-void Config::addMovingGridButton(cocos2d::ui::CheckBox* box) {
-	box->setSelected(moving_grid_enabled);
-	moving_grid_buttons.push_back(box);
-	box->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			enableMovingGrid(true);
-		}
-	});
-}
-
-void Config::addNeverGridButton(cocos2d::ui::CheckBox* box) {
-	box->setSelected(never_grid_enabled);
-	never_grid_buttons.push_back(box);
-	box->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			enableNeverGrid(true);
-		}
-	});
-}
-
-
-void Config::addLimitButton(cocos2d::ui::CheckBox* box) {
-	box->setSelected(!limit_enabled);
-	limit_buttons.push_back(box);
-	box->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			enableAutoLimit(((cocos2d::ui::CheckBox*)sender)->isSelected());
-		}
-	});
-}
-
-void Config::addDialogueButton(cocos2d::ui::CheckBox* box) {
-	box->setSelected(!dialogues_enabled);
-	dialogues_buttons.push_back(box);
-	box->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			enableDialogues(((cocos2d::ui::CheckBox*)sender)->isSelected());
-		}
-	});
-}
-
-void Config::removeGridButton(cocos2d::ui::CheckBox* box) {
-	always_grid_buttons.erase(std::remove(always_grid_buttons.begin(), always_grid_buttons.end(), box),
-		always_grid_buttons.end());
-}
-
-void Config::removeMovingGridButton(cocos2d::ui::CheckBox* box) {
-	moving_grid_buttons.erase(std::remove(moving_grid_buttons.begin(), moving_grid_buttons.end(), box),
-		moving_grid_buttons.end());
-}
-
-void Config::removeNeverGridButton(cocos2d::ui::CheckBox* box) {
-	never_grid_buttons.erase(std::remove(never_grid_buttons.begin(), never_grid_buttons.end(), box),
-		never_grid_buttons.end());
-}
-
-void Config::removeLimitButton(cocos2d::ui::CheckBox* box) {
-	limit_buttons.erase(std::remove(limit_buttons.begin(), limit_buttons.end(), box),
-		limit_buttons.end());
-}
-
-void Config::removeDialogueButton(cocos2d::ui::CheckBox* box) {
-	dialogues_buttons.erase(std::remove(dialogues_buttons.begin(), dialogues_buttons.end(), box),
-		dialogues_buttons.end());
-}
-
-void Config::enableAlwaysGrid(bool enable) {
-	always_grid_enabled = enable;
-	moving_grid_enabled = false;
-	never_grid_enabled = enable ? false : true;
-	updateGridCheckBoxes();
-	updateGridSettings();
-}
-
-void Config::enableMovingGrid(bool enable) {
-	moving_grid_enabled = enable;
-	never_grid_enabled = enable ? false : true;
-	always_grid_enabled = false;
-	updateGridCheckBoxes();
-	updateGridSettings();
-}
-
-void Config::enableNeverGrid(bool enable) {
-	never_grid_enabled = enable;
-	always_grid_enabled = enable ? false : true;
-	moving_grid_enabled = false;
-	updateGridCheckBoxes();
-	updateGridSettings();
-}
-
-void Config::updateGridSettings() {
-	rootSav["settings"]["moving_grid"] = moving_grid_enabled;
-	rootSav["settings"]["never_grid"] = never_grid_enabled;
-	rootSav["settings"]["always_grid"] = always_grid_enabled;
-	save();
-	setSettingsNeedSave(true);
-}
-
-void Config::updateGridCheckBoxes() {
-	for (auto checkbox : moving_grid_buttons) {
-		checkbox->setSelected(moving_grid_enabled);
-	}
-	for (auto checkbox : always_grid_buttons) {
-		checkbox->setSelected(always_grid_enabled);
-	}
-	for (auto checkbox : never_grid_buttons) {
-		checkbox->setSelected(never_grid_enabled);
-	}
-}
-
-void Config::enableAutoLimit(bool enable) {
-	limit_enabled = enable;
-	// Change all the checkbox selection to the new value
-	for (auto checkbox : limit_buttons) {
-		checkbox->setSelected(limit_enabled);
-	}
-	rootSav["settings"]["auto_limit"] = limit_enabled;
-	save();
-	setSettingsNeedSave(true);
-}
-
-void Config::enableDialogues(bool enable) {
-	dialogues_enabled = enable;
-	// Change all the checkbox selection to the new value
-	for (auto checkbox : dialogues_buttons) {
-		checkbox->setSelected(dialogues_enabled);
-	}
-	rootSav["settings"]["dialogues"] = dialogues_enabled;
-	save();
-	setSettingsNeedSave(true);
-}
-
-bool Config::isAlwaysGridEnabled() {
-	return always_grid_enabled;
-}
-
-bool Config::isNeverGridEnabled() {
-	return never_grid_enabled;
-}
-
-bool Config::isMovingGridEnabled() {
-	return moving_grid_enabled;
-}
-
-bool Config::isLimitEnabled() {
-	return limit_enabled;
-}
-
-bool Config::isDialoguesEnabled() {
-	return dialogues_enabled;
 }
 
 NetworkController* Config::getNetworkController() {
@@ -509,14 +337,15 @@ void Config::serverUpdate(float dt) {
 	if (user_need_save) {
 		updateUserInfo();
 	}
-	if (settings_need_save) {
+	if (settings->doesNeedSave()) {
 		if (!waiting_answer) {
+			Json::Value settingsValue = settings->getSettingsSave();
 			std::string request = "action=updateUserSettings&id_game=" + rootSav["id_player"].asString() +
-				"&moving_grid=" + rootSav["settings"]["moving_grid"].asString() +
-				"&always_grid=" + rootSav["settings"]["always_grid"].asString() +
-				"&never_grid=" + rootSav["settings"]["never_grid"].asString() +
-				"&dialogues=" + rootSav["settings"]["dialogues"].asString() +
-				"&auto_limit=" + rootSav["settings"]["auto_limit"].asString() +
+				"&moving_grid=" + settingsValue["moving_grid"].asString() +
+				"&always_grid=" + settingsValue["always_grid"].asString() +
+				"&never_grid=" + settingsValue["never_grid"].asString() +
+				"&dialogues=" + settingsValue["dialogues"].asString() +
+				"&auto_limit=" + settingsValue["auto_limit"].asString() +
 				"&loopMusic=" + rootSav["sound"]["loopMusic"].asString() +
 				"&maxVolumeEffects=" + rootSav["sound"]["maxVolumeEffects"].asString() +
 				"&maxVolumeMusic=" + rootSav["sound"]["maxVolumeMusic"].asString() +
@@ -531,6 +360,7 @@ void Config::serverUpdate(float dt) {
 					log("Updating user settings %s", str == "" ? "ok" : str.c_str());
 					if (str == "") {
 						this->setSettingsNeedSave(false);
+						this->settings->setNeedSaving(false);
 					}
 				}
 				else {
@@ -692,56 +522,6 @@ Json::Value Config::getLastLevelAction() {
 	return level_tracking[c_level_tracking]["actions"][level_tracking[c_level_tracking]["actions"].size() - 1];
 }
 
-std::string Config::getStringFromSceneType(SceneManager::SceneType type) {
-	switch (type) {
-	case SceneManager::SceneType::CREDIT:
-		return "credit";
-	case SceneManager::SceneType::LEVELS:
-		return "levels";
-	case SceneManager::SceneType::MENU:
-		return "menu";
-	case SceneManager::SceneType::GAME:
-		return "game";
-	case SceneManager::SceneType::SKILLS:
-		return "skills";
-	case SceneManager::SceneType::SHOP:
-		return "shop";
-	case SceneManager::SceneType::EDITOR:
-		return "editor";
-	case SceneManager::SceneType::LOADING:
-		return "loading";
-	case SceneManager::SceneType::PAUSE:
-		return "pause";
-	case SceneManager::SceneType::STOP:
-		return "stop";
-	case SceneManager::SceneType::START:
-		return "start";
-	default:
-		return "error";
-	}
-}
-
-std::string Config::getStringFromGameState(InterfaceGame::GameState state) {
-	switch (state) {
-	case InterfaceGame::GameState::INTRO:
-		return "intro";
-	case InterfaceGame::GameState::TITLE:
-		return "title";
-	case InterfaceGame::GameState::STARTING:
-		return "starting";
-	case InterfaceGame::GameState::RUNNING:
-		return "running";
-	case InterfaceGame::GameState::ENDING:
-		return "ending";
-	case InterfaceGame::GameState::DONE:
-		return "done";
-	case InterfaceGame::GameState::NEXT_LEVEL:
-		return "next_level";
-	default:
-		return "error";
-	}
-}
-
 void Config::saveTrackingIntoDB(Json::Value tracking_conf, const cocos2d::network::ccHttpRequestCallback& callback) {
 	// Save the tracking information into the DB. It creates a new one 
 	// or update the current
@@ -867,19 +647,6 @@ void Config::updateUserInfo() {
 			log("request updateTowers error");
 		}
 	}, "POST updateTowers");
-}
-
-std::string Config::getLanguage() {
-	return language;
-}
-
-void Config::setLanguage(std::string lang) {
-	if (lang == "en" || lang == "fr") {
-		language = lang;
-		rootSav["settings"]["language"] = language;
-		save();
-		setSettingsNeedSave(true);
-	}
 }
 
 void Config::loadAllLevels() {
@@ -1091,4 +858,9 @@ int Config::getLevelBDDID(int world_id, int level_id) {
 	}
 	log("Couldn't find the level");
 	return 0;
+}
+
+Settings * Config::getSettings()
+{
+	return settings;
 }

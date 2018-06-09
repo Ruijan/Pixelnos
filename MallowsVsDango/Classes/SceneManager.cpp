@@ -36,8 +36,8 @@ SceneManager::SceneManager() {
 	currentscene = cacheScene[MENU];
 	c_index = 0;
 	TrackingEvent c_event;
-	c_event.from_scene = Config::getStringFromSceneType(SceneManager::SceneType::START);
-	c_event.to_scene = Config::getStringFromSceneType(getCurrentSceneIndex());
+	c_event.from_scene = getStringFromSceneType(SceneManager::SceneType::START);
+	c_event.to_scene = getStringFromSceneType(getCurrentSceneIndex());
 	c_event.time = time(0);
 
 	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
@@ -59,8 +59,8 @@ SceneManager::~SceneManager() {
 
 void SceneManager::setScene(SceneManager::SceneType type) {
 	TrackingEvent c_event;
-	c_event.from_scene = Config::getStringFromSceneType((SceneType)c_index);
-	c_event.to_scene = Config::getStringFromSceneType(type);
+	c_event.from_scene = getStringFromSceneType((SceneType)c_index);
+	c_event.to_scene = getStringFromSceneType(type);
 	c_event.time = time(0);
 
 	((AppDelegate*)Application::getInstance())->getConfigClass()->addTrackingEvent(c_event);
@@ -88,4 +88,33 @@ void SceneManager::switchLanguage() {
 
 SceneManager::SceneType SceneManager::getCurrentSceneIndex() {
 	return (SceneManager::SceneType)c_index;
+}
+
+std::string SceneManager::getStringFromSceneType(SceneManager::SceneType type) {
+	switch (type) {
+	case SceneManager::SceneType::CREDIT:
+		return "credit";
+	case SceneManager::SceneType::LEVELS:
+		return "levels";
+	case SceneManager::SceneType::MENU:
+		return "menu";
+	case SceneManager::SceneType::GAME:
+		return "game";
+	case SceneManager::SceneType::SKILLS:
+		return "skills";
+	case SceneManager::SceneType::SHOP:
+		return "shop";
+	case SceneManager::SceneType::EDITOR:
+		return "editor";
+	case SceneManager::SceneType::LOADING:
+		return "loading";
+	case SceneManager::SceneType::PAUSE:
+		return "pause";
+	case SceneManager::SceneType::STOP:
+		return "stop";
+	case SceneManager::SceneType::START:
+		return "start";
+	default:
+		return "error";
+	}
 }

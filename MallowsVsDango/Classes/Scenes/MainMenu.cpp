@@ -9,7 +9,7 @@ bool MainMenu::init()
 {
 	if (!Scene::init()) { return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 
 
@@ -117,7 +117,7 @@ bool MainMenu::init()
 		}
 	});
 	cocos2d::ui::Layout* layout = ui::Layout::create();
-	language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 	Action* username_show = DelayTime::create(0.01f);
 	if (((AppDelegate*)Application::getInstance())->getConfigClass()->getUsername() == "") {
 		addChild(ui::Layout::create(), 2, "black_mask");
@@ -285,7 +285,7 @@ void MainMenu::onEnterTransitionDidFinish() {
 void MainMenu::initLanguageList() {
 	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::GENERAL);
 
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 	int nb_languages = config["languages"].size();
 	ui::Button* language_button = ((ui::Button*)getChildByName("interface")->getChildByName("language"));
 	ui::Layout* list_languages_levels = (ui::Layout*)getChildByName("interface")->getChildByName("list_language");
@@ -309,7 +309,7 @@ void MainMenu::initLanguageList() {
 			n_language_button->addTouchEventListener([&, n_language, l, n_language_button, list_languages_levels]
 			(Ref* sender, ui::Widget::TouchEventType type) {
 				if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-					((AppDelegate*)Application::getInstance())->getConfigClass()->setLanguage(n_language);
+					((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->setLanguage(n_language);
 					((ui::Button*)getChildByName("interface")->getChildByName("language"))->setTitleText(l);
 					list_languages_levels->removeAllChildren();
 					initLanguageList();
@@ -329,7 +329,7 @@ void MainMenu::initLanguageList() {
 }
 
 void MainMenu::switchLanguage() {
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getLanguage();
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
 
