@@ -181,41 +181,9 @@ void Config::init() {
 			}
 		}
 		c_level_tracking = level_tracking.size() - 1;
-		for (unsigned int i(0); i < level_tracking.size(); ++i) {
-			saveLevelTrackingIntoDB(level_tracking[i], [&, this, i](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
-				waiting_answer = false;
-				if (response->isSucceed()) {
-					std::vector<char> *buffer = response->getResponseData();
-					std::string str(buffer->begin(), buffer->end());
-
-					if (this->level_tracking[i].isMember("tracking_id")) {
-						if (str != "") {
-							log("error while updating level tracking");
-						}
-						else {
-							this->level_tracking[i]["saved"] = true;
-							saveLevelTracking();
-							this->tracking_need_save = false;
-							log("Updating Level Tracking ok");
-						}
-					}
-					else {
-						if (Value(str).asInt() > 0) {
-							this->level_tracking[i]["tracking_id"] = Value(str).asInt();
-							this->level_tracking[i]["saved"] = true;
-							saveLevelTracking();
-							this->tracking_need_save = false;
-							log("Creating Level Tracking ok");
-						}
-						else {
-							log("error while creating level tracking");
-						}
-					}
-				}
-				else {
-					log("request handlingLevelTracking error");
-				}
-			});
+		for (unsigned int levelIndex(0); levelIndex < level_tracking.size(); ++levelIndex) {
+			saveLevel(levelIndex);
+			waiting_answer = true;
 		}
 	}
 
@@ -398,46 +366,51 @@ void Config::serverUpdate(float dt) {
 	}
 	if (progression_need_save) {
 		updateUserInfo();
-		for (unsigned int i(0); i < level_tracking.size(); ++i) {
-			if (!level_tracking[i]["saved"].asBool()) {
-				saveLevelTrackingIntoDB(level_tracking[i], [&, this, i](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
-					waiting_answer = false;
-					if (response->isSucceed()) {
-						std::vector<char> *buffer = response->getResponseData();
-						std::string str(buffer->begin(), buffer->end());
-
-						if (this->level_tracking[i].isMember("tracking_id")) {
-							if (str != "") {
-								log("error while updating level tracking");
-							}
-							else {
-								this->level_tracking[i]["saved"] = true;
-								saveLevelTracking();
-								this->tracking_need_save = false;
-								log("Updating Level Tracking ok");
-							}
-						}
-						else {
-							if (Value(str).asInt() > 0) {
-								this->level_tracking[i]["tracking_id"] = Value(str).asInt();
-								this->level_tracking[i]["saved"] = true;
-								saveLevelTracking();
-								this->tracking_need_save = false;
-								log("Creating Level Tracking ok");
-							}
-							else {
-								log("error while creating level tracking");
-							}
-						}
-					}
-					else {
-						log("request handlingLevelTracking error");
-					}
-				});
+		for (unsigned int levelIndex(0); levelIndex < level_tracking.size(); ++levelIndex) {
+			if (!level_tracking[levelIndex]["saved"].asBool()) {
+				saveLevel(levelIndex);
 				waiting_answer = true;
 			}
 		}
 	}
+}
+
+void Config::saveLevel(unsigned int levelIndex)
+{
+	saveLevelTrackingIntoDB(level_tracking[levelIndex], [&, this, levelIndex](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
+		waiting_answer = false;
+		if (response->isSucceed()) {
+			std::vector<char> *buffer = response->getResponseData();
+			std::string str(buffer->begin(), buffer->end());
+
+			if (this->level_tracking[levelIndex].isMember("tracking_id")) {
+				if (str != "") {
+					log("error while updating level tracking");
+				}
+				else {
+					this->level_tracking[levelIndex]["saved"] = true;
+					saveLevelTracking();
+					this->tracking_need_save = false;
+					log("Updating Level Tracking ok");
+				}
+			}
+			else {
+				if (Value(str).asInt() > 0) {
+					this->level_tracking[levelIndex]["tracking_id"] = Value(str).asInt();
+					this->level_tracking[levelIndex]["saved"] = true;
+					saveLevelTracking();
+					this->tracking_need_save = false;
+					log("Creating Level Tracking ok");
+				}
+				else {
+					log("error while creating level tracking");
+				}
+			}
+		}
+		else {
+			log("request handlingLevelTracking error");
+		}
+	});
 }
 
 void Config::addTrackingEvent(TrackingEvent n_event) {

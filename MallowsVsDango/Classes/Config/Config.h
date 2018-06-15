@@ -134,6 +134,8 @@ public:
 	*/
 	void serverUpdate(float dt);
 
+	void saveLevel(unsigned int i);
+
 	/**
 	* @brief Send the request to create a new user into the DB. It will also
 	* generate the towers for progression and its settings. It returns an id
