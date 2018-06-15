@@ -20,7 +20,6 @@ bool StoryMenu::init() {
 	tutorial_running = false;
 	configClass = ((AppDelegate*)Application::getInstance())->getConfigClass();
 	std::string language = configClass->getSettings()->getLanguage();
-	
 
 	addChild(ui::Layout::create(), 3, "black_mask");
 	ui::Button* mask = ui::Button::create("res/buttons/mask.png");

@@ -33,7 +33,7 @@ protected:
 	void replaceSceneWithCurrentScene(SceneFactory::SceneType type);
 	void switchMusic(SceneFactory::SceneType type);
 	void addSceneTransitionTrackingEvent(SceneFactory::SceneType type);
-	
+
 private:
 	static SceneManager *manager;
 	Config* configClass;

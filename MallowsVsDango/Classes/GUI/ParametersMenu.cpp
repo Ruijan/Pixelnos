@@ -24,7 +24,7 @@ bool ParametersMenu::init() {
 	setPosition(cocos2d::Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	Json::Value buttons = config->getConfigValues(Config::ConfigType::BUTTON);
 	AudioController* audioController = ((AppDelegate*)cocos2d::Application::getInstance())->getAudioController();
-	 
+
 	addBlackMask(visibleSize);
 	addPanel(visibleSize, 0.45);
 	addTitle(buttons, visibleSize);
