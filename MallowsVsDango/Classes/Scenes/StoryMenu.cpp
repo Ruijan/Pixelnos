@@ -18,8 +18,8 @@ bool StoryMenu::init() {
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 
 	tutorial_running = false;
-
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
+	configClass = ((AppDelegate*)Application::getInstance())->getConfigClass();
+	std::string language = configClass->getSettings()->getLanguage();
 
 	addChild(ui::Layout::create(), 3, "black_mask");
 	ui::Button* mask = ui::Button::create("res/buttons/mask.png");
@@ -59,8 +59,8 @@ bool StoryMenu::init() {
 		visibleSize.height / 2 - worlds->getContentSize().height / 2));
 	worlds->setCustomScrollThreshold(visibleSize.width * 0.1f);
 
-	Json::Value level_config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL);
-	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
+	Json::Value level_config = configClass->getConfigValues(Config::ConfigType::LEVEL);
+	Json::Value buttons = configClass->getConfigValues(Config::ConfigType::BUTTON);
 
 	int worlds_count = level_config["worlds"].size();
 
@@ -150,7 +150,7 @@ bool StoryMenu::init() {
 	ui::Button* level_editor = ui::Button::create("res/buttons/menu_button_editor.png");
 	level_editor->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::EDITOR);
+			((SceneManager*)SceneManager::getInstance())->setScene(SceneFactory::SceneType::EDITOR);
 		}
 	});
 	level_editor->setScale(visibleSize.width / 8 / level_editor->getContentSize().width);
@@ -178,7 +178,7 @@ bool StoryMenu::init() {
 	ui::Button* skill_tree = ui::Button::create("res/buttons/menu_button_skill_tree.png");
 	skill_tree->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::SKILLS);
+			((SceneManager*)SceneManager::getInstance())->setScene(SceneFactory::SKILLS);
 		}
 	});
 	skill_tree->setScale(visibleSize.width / 8 / skill_tree->getContentSize().width);
@@ -190,7 +190,7 @@ bool StoryMenu::init() {
 	ui::Button* shop = ui::Button::create("res/buttons/menu_button_shop.png");
 	shop->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::SHOP);
+			((SceneManager*)SceneManager::getInstance())->setScene(SceneFactory::SHOP);
 		}
 	});
 	shop->setScale(visibleSize.width / 8 / skill_tree->getContentSize().width);
@@ -199,7 +199,7 @@ bool StoryMenu::init() {
 	shop->setAnchorPoint(Vec2(1.f, 0.f));
 	getChildByName("interface")->addChild(shop);
 
-	auto settings = StoryParametersMenu::create(nullptr);
+	auto settings = StoryParametersMenu::create(nullptr, configClass);
 	addChild(settings, 3, "settings");
 
 	ui::Button* show_setting = ui::Button::create("res/buttons/settings2.png");
@@ -234,8 +234,7 @@ void StoryMenu::changeWorld(cocos2d::Ref* sender, cocos2d::ui::PageView::EventTy
 
 void StoryMenu::selectLevelCallBack(Ref* sender, ui::Widget::TouchEventType type, int level_id, int world_id) {
 	if (type == ui::Widget::TouchEventType::ENDED) {
-		SceneManager::getInstance()->getGame()->initLevel(level_id, world_id);
-		SceneManager::getInstance()->setScene(SceneManager::GAME);
+		SceneManager::getInstance()->startGameWithLevel(world_id, level_id);
 	}
 }
 
@@ -244,7 +243,7 @@ void StoryMenu::onEnterTransitionDidFinish() {
 	scheduleUpdate();
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	for (unsigned int i(0); i < ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"].size(); ++i) {
+	for (unsigned int i(0); i < configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"].size(); ++i) {
 		((ui::PageView*)getChildByName("worlds"))->getItem(i)->getChildByName("layout")->getChildByName("world")->
 			getChildByName("levels")->removeAllChildren();
 		initLevels((ui::Layout*)((ui::PageView*)getChildByName("worlds"))->getItem(i)->getChildByName("layout")->getChildByName("world")->
@@ -258,7 +257,7 @@ void StoryMenu::onEnterTransitionDidFinish() {
 }
 
 void StoryMenu::showCredit(Ref* sender) {
-	SceneManager::getInstance()->setScene(SceneManager::CREDIT);
+	SceneManager::getInstance()->setScene(SceneFactory::CREDIT);
 }
 
 void StoryMenu::initLevels(ui::Layout* page, int id_world) {
@@ -266,9 +265,9 @@ void StoryMenu::initLevels(ui::Layout* page, int id_world) {
 
 	double ratioX = visibleSize.width / 1280;
 	double ratioY = visibleSize.height / 720;
-	Json::Value levels = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"][id_world]["levels"];
-	int cLevel = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues()["c_level"].asInt();
-	int cWorld = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues()["c_world"].asInt();
+	Json::Value levels = configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"][id_world]["levels"];
+	int cLevel = configClass->getSaveValues()["c_level"].asInt();
+	int cWorld = configClass->getSaveValues()["c_world"].asInt();
 
 	for (unsigned int i(0); i < levels.size(); ++i) {
 		std::string filename;
@@ -299,7 +298,7 @@ void StoryMenu::initLevels(ui::Layout* page, int id_world) {
 		level_layout->addChild(level);
 		level_layout->setPosition(pos_level);
 
-		int nb_challenges = ((AppDelegate*)Application::getInstance())->getConfigClass()->getNbLevelChallenges(id_world, i);
+		int nb_challenges = configClass->getNbLevelChallenges(id_world, i);
 		int side = (1 - 2 * (i % 2));
 
 		Sprite* star_left = Sprite::create(nb_challenges >= 1 ? "res/buttons/small_star_full.png" : "res/buttons/small_star_empty.png");
@@ -328,6 +327,10 @@ void StoryMenu::initLevels(ui::Layout* page, int id_world) {
 	}
 }
 
+StoryMenu::~StoryMenu()
+{
+}
+
 void StoryMenu::switchLanguage() {
 }
 
@@ -336,22 +339,22 @@ void StoryMenu::update(float dt) {
 }
 
 void StoryMenu::updateTutorial(float dt) {
-	auto save = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
-	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::SKILLTUTORIAL);
+	auto save = configClass->getSaveValues();
+	auto config = configClass->getConfigValues(Config::ConfigType::SKILLTUTORIAL);
 
-	if (!((AppDelegate*)Application::getInstance())->getConfigClass()->isSkillTutorialComplete("skills") &&
+	if (!configClass->isSkillTutorialComplete("skills") &&
 		save["c_level"].asInt() >= config["skills"]["level"].asInt() &&
 		save["c_world"].asInt() >= config["skills"]["world"].asInt()) {
 
 		if (getChildByName("dialogue") == nullptr && !tutorial_running &&
-			!((AppDelegate*)Application::getInstance())->getConfigClass()->isSkillTutorialRunning("skills")) {
+			!configClass->isSkillTutorialRunning("skills")) {
 			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
 			addChild(Dialogue::createFromConfig(config["skills"]["dialogue"]), 3, "dialogue");
 			((Dialogue*)getChildByName("dialogue"))->launch();
 			tutorial_running = true;
 			Size visibleSize = Director::getInstance()->getVisibleSize();
 
-			((AppDelegate*)Application::getInstance())->getConfigClass()->startSkillTutorial("skills");
+			configClass->startSkillTutorial("skills");
 
 			// mask to prevent any action from the player
 			addChild(ui::Layout::create(), 2, "invisble_mask");
@@ -378,7 +381,7 @@ void StoryMenu::updateTutorial(float dt) {
 					this->removeChildByName("invisble_mask");
 					this->removeChildByName("hand");
 					tutorial_running = false;
-					((SceneManager*)SceneManager::getInstance())->setScene(SceneManager::SceneType::SKILLS);
+					((SceneManager*)SceneManager::getInstance())->setScene(SceneFactory::SKILLS);
 				});
 				hand->runAction(Sequence::create(
 					FadeIn::create(0.5f),

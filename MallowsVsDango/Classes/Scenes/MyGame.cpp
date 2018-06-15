@@ -150,7 +150,7 @@ void MyGame::switchLevel()
 		loadTutorials();
 	}
 	else {
-		SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+		SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 	}
 }
 

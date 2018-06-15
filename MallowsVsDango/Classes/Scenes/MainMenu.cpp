@@ -266,7 +266,7 @@ void MainMenu::menuContinueCallback(cocos2d::Ref* sender, cocos2d::ui::Widget::T
 		getChildByName("vs")->runAction(FadeIn::create(0.125f));
 		getChildByName("interface")->getChildByName("start")->runAction(FadeIn::create(0.125f));
 		auto switchScenes = CallFunc::create([]() {
-			SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+			SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 		});
 		runAction(Sequence::createWithTwoActions(DelayTime::create(0.200f), switchScenes));
 	}
@@ -313,7 +313,6 @@ void MainMenu::initLanguageList() {
 					((ui::Button*)getChildByName("interface")->getChildByName("language"))->setTitleText(l);
 					list_languages_levels->removeAllChildren();
 					initLanguageList();
-					((AppDelegate*)Application::getInstance())->switchLanguage();
 				}
 			});
 			Label* language_name = Label::createWithTTF(l, "fonts/arial.ttf", 35);

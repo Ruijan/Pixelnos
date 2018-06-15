@@ -16,7 +16,7 @@
 
 The reason for implement as private inheritance is to hide some interface call by Director.
 */
-class  AppDelegate : private cocos2d::Application, public Translationable
+class  AppDelegate : private cocos2d::Application
 {
 public:
     AppDelegate();
@@ -50,7 +50,6 @@ public:
 	AudioController* getAudioController();
 	void addAudioSlider(AudioSlider* slider, AudioController::SOUNDTYPE type);
 	void setVolumeMusic(double volume);
-	virtual void switchLanguage();
 	//ScreenLog* g_screenLog;
 
 

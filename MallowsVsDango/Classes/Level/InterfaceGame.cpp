@@ -25,6 +25,7 @@ InterfaceGame::~InterfaceGame() {
 		delete dialogues;
 		log("deleted dialogue");
 	}
+	cocos2d::Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
 }
 
 bool InterfaceGame::init() {
@@ -490,7 +491,7 @@ void InterfaceGame::reset() {
 }
 
 void InterfaceGame::initParametersMenu(const Json::Value& config) {
-	ui::Layout* menu_pause = ParametersMenu::create(game);
+	ui::Layout* menu_pause = ParametersMenu::create(game, configClass);
 	addChild(menu_pause, 4, "menu_pause");
 }
 
@@ -768,7 +769,7 @@ void InterfaceGame::mainMenuCallBack(std::string id_menu) {
 	auto* hideAction = TargetedAction::create(getChildByName(id_menu),
 		EaseBackIn::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height * 1.5))));
 	auto callbackmainmenu = CallFunc::create([&]() {
-		SceneManager::getInstance()->setScene(SceneManager::LEVELS);
+		SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 	});
 	getChildByName(id_menu)->runAction(Sequence::create(hideAction, callbackmainmenu, nullptr));
 }

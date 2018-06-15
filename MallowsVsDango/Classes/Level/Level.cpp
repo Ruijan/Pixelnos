@@ -3,6 +3,7 @@
 #include "../Config/json.h"
 #include "../Lib/Functions.h"
 #include "../SceneManager.h"
+#include "../Scenes/Skills.h"
 #include "../Dangos/Dango.h"
 #include "../Scenes/MyGame.h"
 #include "Wall.h"

@@ -7,12 +7,12 @@
 #include "Config/json.h"
 #include "ui/CocosGUI.h"
 
-class AudioController: public cocos2d::Node{
+class AudioController : public cocos2d::Node {
 public:
 	/**
 	* @brief Help to differentiate between music and effect for the sliders.
 	*/
-	enum SOUNDTYPE{
+	enum SOUNDTYPE {
 		MUSIC = 0,
 		EFFECT = 1
 	};
@@ -28,7 +28,7 @@ public:
 	void init(std::vector<std::pair<AudioSlider*, SOUNDTYPE>> sliders);
 
 	/**
-	* @brief Initiate the audio controller parameters from a previous saved 
+	* @brief Initiate the audio controller parameters from a previous saved
 	* configuration file. It will load the maximum volume for music and effects,
 	* if the game plays sound and effects and if the main music is in looped mode.
 	* @param Json value obtained by reading a json file. It is usually the save
@@ -45,7 +45,7 @@ public:
 
 	/**
 	* @brief Play a music from a string file name. It puts automatically the sound
-	* to max sound and plays it looped as saved in parameters. It will stop 
+	* to max sound and plays it looped as saved in parameters. It will stop
 	* the previous music played.
 	* @param Where the file is located. Usually: music/something.mp3
 	*/
@@ -68,7 +68,7 @@ public:
 	* @param Where the file is located. Usually: music/something.mp3
 	*/
 	void playEffect(std::string filename);
-	
+
 	/**
 	* @brief Play a music from a string file name. You can choose to play it with
 	* a loop and at a specific volume. It can play multiple sounds effects at the same time.
@@ -78,7 +78,7 @@ public:
 	* that is 1 by default.
 	*/
 	void playEffect(std::string filename, double volume);
-	
+
 	/**
 	* @brief Set the volume of the current music to a value between 0 and 1.
 	* It cannot exceed maxMusicValue. If above maxMusicValue, it will set it to
@@ -119,8 +119,8 @@ public:
 	* @brief Add a slider to the vector of slider. It will add it to the update
 	* loop. The slider can be attributed to music or to effects. The slider
 	* should be between 0 and 1.
-	* @param Slider to add. Usually [min max] = [0.0f 1.0f]. 
-	* @param Define the type of sound the slider will be linked to. 
+	* @param Slider to add. Usually [min max] = [0.0f 1.0f].
+	* @param Define the type of sound the slider will be linked to.
 	* Ex: AudioController::SOUNDTYPE::MUSIC.
 	*/
 	void addSlider(AudioSlider* slider, SOUNDTYPE type);
@@ -132,15 +132,15 @@ public:
 	* @param Define the type of sound the checkbox will be linked to.
 	* Ex: AudioController::SOUNDTYPE::EFFECTS.
 	*/
-	void addButton(cocos2d::ui::CheckBox* box, SOUNDTYPE type);
-	void addMusicButton(cocos2d::ui::CheckBox* box);
-	void addEffectsButton(cocos2d::ui::CheckBox* box);
+	void addCheckBox(cocos2d::ui::CheckBox* box, SOUNDTYPE type);
+	void addMusicCheckBox(cocos2d::ui::CheckBox* box);
+	void addEffectsCheckBox(cocos2d::ui::CheckBox* box);
 	/**
 	* @brief Add a checkbox to the vector of checkbox. It will add it to the update
 	* loop. When the checkbox is selected (disabled), it will disable the loop for music.
 	* @param CheckBox to add.
 	*/
-	void addButtonLoop(cocos2d::ui::CheckBox* box);
+	void addCheckBoxLoop(cocos2d::ui::CheckBox* box);
 
 	/**
 	* @brief Remove the given slider from the vector.
@@ -151,7 +151,7 @@ public:
 	* @brief Remove the given checkbox from the vector.
 	* @param checkbox to remove.
 	*/
-	void removeButton(cocos2d::ui::CheckBox* box);
+	void removeCheckBox(cocos2d::ui::CheckBox* box);
 
 	/**
 	* @brief Update all the sliders value to the max volume from one slider.
@@ -177,22 +177,22 @@ public:
 
 
 private:
-	std::vector<AudioSlider*> sliders_music;
-	std::vector<AudioSlider*> sliders_effects;
-	std::vector<cocos2d::ui::CheckBox*> music_buttons;
-	std::vector<cocos2d::ui::CheckBox*> effects_buttons;
-	std::vector<cocos2d::ui::CheckBox*> loop_buttons;
+	std::vector<AudioSlider*> musicSliders;
+	std::vector<AudioSlider*> effectsSliders;
+	std::vector<cocos2d::ui::CheckBox*> musicCheckBoxes;
+	std::vector<cocos2d::ui::CheckBox*> effectsCheckBoxes;
+	std::vector<cocos2d::ui::CheckBox*> loopCheckBoxes;
 
-	double max_music_volume;
-	double max_effects_volume;
+	double maxVolumeMusic;
+	double maxVolumeEffects;
 
-	int music_ID;
-	std::string current_music;
-	std::vector<int> effects_ID;
+	int musicID;
+	std::string currentMusic;
+	std::vector<int> effectsID;
 
-	bool loop_enabled;
-	bool music_enabled;
-	bool effects_enabled;
+	bool loopEnabled;
+	bool musicEnabled;
+	bool effectsEnabled;
 };
 
 #endif

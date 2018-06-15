@@ -26,12 +26,14 @@
           "tileset": [
             "res/levels/objects/ground.plist",
             "res/levels/objects/trees.plist",
-            "res/levels/objects/forest.plist"
+            "res/levels/objects/forest.plist",
+            "res/levels/objects/mushroom.plist"
           ],
           "tilesetpng": [
             "res/levels/objects/ground.png",
             "res/levels/objects/trees.png",
-            "res/levels/objects/forest.png"
+            "res/levels/objects/forest.png",
+            "res/levels/objects/mushroom.png"
           ],
           "x": -0.45,
           "y": 0.085,
