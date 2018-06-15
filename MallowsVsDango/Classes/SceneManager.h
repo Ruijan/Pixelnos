@@ -12,7 +12,6 @@
 class SceneManager
 {
 public:
-
 	//Constructor & destructor
 	SceneManager(Config* config);
 	~SceneManager();
