@@ -1,10 +1,10 @@
 #include "StoryParametersMenu.h"
 #include "../SceneManager.h"
 
-StoryParametersMenu * StoryParametersMenu::create(MyGame* game)
+StoryParametersMenu * StoryParametersMenu::create(MyGame* game, Config* config)
 {
-	StoryParametersMenu* menu = new (std::nothrow) StoryParametersMenu();
-	if (menu && menu->init(game))
+	StoryParametersMenu* menu = new (std::nothrow) StoryParametersMenu(game, config);
+	if (menu && menu->init())
 	{
 		menu->autorelease();
 		return menu;
@@ -13,8 +13,11 @@ StoryParametersMenu * StoryParametersMenu::create(MyGame* game)
 	return nullptr;
 }
 
-bool StoryParametersMenu::init(MyGame* game) {
-	bool initialized = ParametersMenu::init(game);
+StoryParametersMenu::StoryParametersMenu(MyGame* game, Config* config) :
+	ParametersMenu(game, config) {}
+
+bool StoryParametersMenu::init() {
+	bool initialized = ParametersMenu::init();
 	cocos2d::ui::Button* close = cocos2d::ui::Button::create("res/buttons/close2.png");
 	close->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
@@ -34,8 +37,8 @@ bool StoryParametersMenu::init(MyGame* game) {
 
 void StoryParametersMenu::addBottomButtons(Json::Value & buttons)
 {
-	addLeftButton(buttons["credits"][settings->getLanguage()].asString());
-	addRightButton(buttons["title_menu"][settings->getLanguage()].asString());
+	addLeftButton(buttons["credits"][config->getSettings()->getLanguage()].asString());
+	addRightButton(buttons["title_menu"][config->getSettings()->getLanguage()].asString());
 }
 
 void StoryParametersMenu::rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type)

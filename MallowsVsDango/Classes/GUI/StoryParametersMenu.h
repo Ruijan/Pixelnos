@@ -1,11 +1,13 @@
 #pragma once
 #include "ParametersMenu.h"
+#include "../Config/Config.h"
 
 class StoryParametersMenu : public ParametersMenu {
 public:
-	static StoryParametersMenu* create(MyGame* game);
+	StoryParametersMenu(MyGame* game, Config* config);
+	static StoryParametersMenu* create(MyGame* game, Config* config);
 	virtual ~StoryParametersMenu();
-	virtual bool init(MyGame* game);
+	virtual bool init();
 
 protected:
 	virtual void rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type);

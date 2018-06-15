@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 #include "../Lib/Translationable.h"
+#include "../Config/Config.h"
 
 class StoryMenu : public cocos2d::Scene, public Translationable
 {
@@ -24,6 +25,7 @@ class StoryMenu : public cocos2d::Scene, public Translationable
 
 private:
 	bool tutorial_running;
+	Config* configClass;
 	
 };
 

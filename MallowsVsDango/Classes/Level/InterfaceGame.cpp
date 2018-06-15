@@ -25,6 +25,7 @@ InterfaceGame::~InterfaceGame() {
 		delete dialogues;
 		log("deleted dialogue");
 	}
+	cocos2d::Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
 }
 
 bool InterfaceGame::init() {
@@ -490,7 +491,7 @@ void InterfaceGame::reset() {
 }
 
 void InterfaceGame::initParametersMenu(const Json::Value& config) {
-	ui::Layout* menu_pause = ParametersMenu::create(game);
+	ui::Layout* menu_pause = ParametersMenu::create(game, configClass);
 	addChild(menu_pause, 4, "menu_pause");
 }
 

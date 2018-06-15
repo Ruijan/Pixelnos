@@ -10,8 +10,9 @@ typedef std::pair<AudioSlider*, cocos2d::ui::CheckBox*> SoundController;
 
 class ParametersMenu : public CentralMenu{
 public:
-	static ParametersMenu* create(MyGame* game);
-	virtual bool init(MyGame* game);
+	static ParametersMenu* create(MyGame* game, Config* config);
+	ParametersMenu(MyGame * game, Config * config);
+	virtual bool init();
 	void displayWithAnimation();
 	virtual ~ParametersMenu();
 
@@ -23,7 +24,8 @@ protected:
 	cocos2d::ui::CheckBox* checkboxLoop;
 	std::vector<SoundController> soundControllers;
 	std::vector<cocos2d::ui::CheckBox*> settingsCheckboxes;
-	Settings* settings;
+	Config* config;
+	AudioController* audioController;
 
 protected:
 	virtual void addBottomButtons(Json::Value &buttons);
