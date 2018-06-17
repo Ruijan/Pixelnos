@@ -40,6 +40,9 @@
     <Filter Include="src\Level\Tutorials\DialogueTutorials">
       <UniqueIdentifier>{30805d16-c90f-4f49-b359-5c90a73b03ab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Config\Settings">
+      <UniqueIdentifier>{0b1d3ec2-8cac-4723-b3d6-d7dfb3263b37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -213,11 +216,11 @@
     <ClCompile Include="..\Classes\GUI\CentralMenu.cpp">
       <Filter>src\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Config\Settings.cpp">
-      <Filter>src\Config</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\Scenes\SceneFactory.cpp">
       <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Config\Settings\GameSettings.cpp">
+      <Filter>src\Config\Settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -398,11 +401,17 @@
     <ClInclude Include="..\Classes\GUI\CentralMenu.h">
       <Filter>src\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Config\Settings.h">
-      <Filter>src\Config</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\Scenes\SceneFactory.h">
       <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\Settings\TutorialSettings.h">
+      <Filter>src\Config\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\Settings\GameSettings.h">
+      <Filter>src\Config\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\RequestToJsonException.h">
+      <Filter>src\Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

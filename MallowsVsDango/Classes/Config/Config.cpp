@@ -4,6 +4,7 @@
 #include "extensions/cocos-ext.h"
 #include "NetworkController.h"
 #include "../Scenes/MyGame.h"
+#include "RequestToJsonException.h"
 #include <time.h>
 #include <stdio.h>
 
@@ -12,8 +13,8 @@ USING_NS_CC_EXT;
 using namespace cocos2d::network;
 
 Config::Config(std::string configfilename, std::string savename) :
-	config_filename(configfilename), 
-	save_filename(savename), 
+	config_filename(configfilename),
+	save_filename(savename),
 	save_file(false),
 	settings_need_save(false),
 	tracking_need_save(false), progression_need_save(false), user_need_creation(false),
@@ -23,7 +24,7 @@ Config::Config(std::string configfilename, std::string savename) :
 	//network_controller = new NetworkController("http://127.0.0.1/mvd/");
 	network_controller = new NetworkController("http://pixelnos.com/app/");
 
-	settings = new Settings();
+	settings = new GameSettings();
 
 	scheduler = Director::getInstance()->getScheduler();
 	scheduler->retain();
@@ -626,120 +627,136 @@ void Config::loadAllLevels() {
 	NetworkController* network = ((AppDelegate*)Application::getInstance())->getConfigClass()->getNetworkController();
 	network->sendNewRequest(NetworkController::Request::LEVEL_EDITOR, "action=get_list_level",
 		[&](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
-		if (!response || !response->isSucceed()) {
-			log("response failed");
-			log("error buffer: %s", response->getErrorBuffer());
-			return;
-		}
-		else {
-			std::vector<char> *buffer = response->getResponseData();
-			std::string str(buffer->begin(), buffer->end());
-			Json::Reader reader;
-			Json::Value root;
-			bool parsingConfigSuccessful = reader.parse(str, root, false);
-			if (!parsingConfigSuccessful) {
-				// report to the user the failure and their locations in the document.
-				std::string error = reader.getFormattedErrorMessages();
+		if(requestSucceeded(response)) {
+			Json::Value levels;
+			try {
+				levels = createJsonFromRequestResponse(response);
+				levels = levels["levels"];
 			}
-			else {
-				root = root["levels"];
-				for (unsigned int i(0); i < root.size(); ++i) {
-					Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave();
-					int pos = -1;
-					bool should_download = false;
-					for (unsigned int j(0); j < save_root["local_editor_levels"].size(); ++j) {
-						if (save_root["local_editor_levels"][j]["id_bdd"].asInt() == root[i]["id"].asInt()) {
-							pos = j;
-							break;
+			catch (std::exception* e) {
+				log(e->what());
+				return;
+			}
+			for (unsigned int levelIndex(0); levelIndex < levels.size(); ++levelIndex) {
+				if (shouldDownloadLevel(levels, levelIndex)) {
+					NetworkController* network = ((AppDelegate*)Application::getInstance())->getConfigClass()->getNetworkController();
+
+					network->sendNewRequest(NetworkController::Request::LEVEL_EDITOR, "action=get_level&id=" + levels[levelIndex]["id"].asString(),
+						[&, levelIndex, levels](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
+						if(requestSucceeded(response)) {
+							saveLevelFromRequest(response, levels, levelIndex);
 						}
-					}
-					if (pos != -1) {
-						struct tm t1, t2;
-						std::string date1 = save_root["local_editor_levels"][pos]["last_update"].asString();
-						std::string date2 = root[i]["last_update"].asString();
-						t1 = getTimeFromString(date1);
-						t2 = getTimeFromString(date2);
-						if (difftime(mktime(&t2), mktime(&t1)) > 0) {
-							should_download = true;
-						}
-						if (difftime(mktime(&t2), mktime(&t1)) < 0) {
-
-						}
-					}
-					else {
-						should_download = true;
-					}
-					if (should_download) {
-						NetworkController* network = ((AppDelegate*)Application::getInstance())->getConfigClass()->getNetworkController();
-
-						network->sendNewRequest(NetworkController::Request::LEVEL_EDITOR, "action=get_level&id=" + root[i]["id"].asString(),
-							[&, i, root](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
-							if (!response || !response->isSucceed()) {
-								log("response failed");
-								log("error buffer: %s", response->getErrorBuffer());
-								return;
-							}
-							else {
-								std::vector<char> *buffer = response->getResponseData();
-								std::string str(buffer->begin(), buffer->end());
-								Json::Reader reader;
-								Json::Value root_level;
-								Json::Value level_settings;
-								level_settings["id_bdd"] = root[i]["id"];
-								level_settings["name"] = root[i]["name"];
-								level_settings["last_update"] = root[i]["last_update"];
-
-								bool parsingConfigSuccessful = reader.parse(str, root_level, false);
-								if (!parsingConfigSuccessful) {
-									// report to the user the failure and their locations in the document.
-									std::string error = reader.getFormattedErrorMessages();
-								}
-								else {
-									bool level_folder_exist = FileUtils::getInstance()->isDirectoryExist(FileUtils::getInstance()->getWritablePath() + "Levels/");
-									if (!level_folder_exist) {
-										FileUtils::getInstance()->createDirectory(FileUtils::getInstance()->getWritablePath() + "Levels/");
-									}
-									std::string path = FileUtils::getInstance()->getWritablePath() + "Levels/" + root[i]["name"].asString() + ".json";
-									bool succeed = FileUtils::getInstance()->writeStringToFile(str, path);
-									if (succeed) {
-										Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave();
-										if (save_root.isMember("local_editor_levels")) {
-											int pos = -1;
-											for (unsigned int j(0); j < save_root["local_editor_levels"].size(); ++j) {
-												if (save_root["local_editor_levels"][j]["id_bdd"].asInt() == root[i]["id"].asInt()) {
-													pos = j;
-													break;
-												}
-											}
-											if (pos != -1) {
-												level_settings["id"] = save_root["local_editor_levels"][pos]["id"];
-												save_root["local_editor_levels"][pos] = level_settings;
-											}
-											else {
-												level_settings["id"] = save_root["local_editor_levels"][save_root["local_editor_levels"].size() - 1]["id"].asInt() - 1;
-												save_root["local_editor_levels"][save_root["local_editor_levels"].size()] = level_settings;
-											}
-										}
-										else {
-											level_settings["id"] = -2;
-											save_root["local_editor_levels"][0] = level_settings;
-										}
-										((AppDelegate*)Application::getInstance())->getConfigClass()->setSave(save_root);
-										((AppDelegate*)Application::getInstance())->getConfigClass()->save();
-
-										log("Saved File in %s", path.c_str());
-									}
-									else {
-										log("error saving file %s", path.c_str());
-									}
-								}
-							}
-						}, "POST getLevel");
-					}
+					}, "POST getLevel");
 				}
 			}
 		}
 	}, "POST getListLevels");
+}
+
+Json::Value Config::createJsonFromRequestResponse(cocos2d::network::HttpResponse * response)
+{
+	Json::Value jsonMap;
+	std::vector<char> *buffer = response->getResponseData();
+	std::string str(buffer->begin(), buffer->end());
+	Json::Reader reader;
+	bool parsingConfigSuccessful = reader.parse(str, jsonMap, false);
+	if (!parsingConfigSuccessful) {
+		throw new RequestToJsonException(reader.getFormattedErrorMessages());
+	}
+	return jsonMap;
+}
+
+bool Config::requestSucceeded(cocos2d::network::HttpResponse * response)
+{
+	if (!response || !response->isSucceed()) {
+		log("response failed");
+		log("error buffer: %s", response->getErrorBuffer());
+		return false;
+	}
+	return true;
+}
+
+void Config::saveLevelFromRequest(cocos2d::network::HttpResponse * response, const Json::Value &existingLevels, unsigned int levelIndex)
+{
+	std::vector<char> *buffer = response->getResponseData();
+	std::string str(buffer->begin(), buffer->end());
+	Json::Reader reader;
+	Json::Value root_level;
+	bool parsingConfigSuccessful = reader.parse(str, root_level, false);
+	if (!parsingConfigSuccessful) {
+		// report to the user the failure and their locations in the document.
+		std::string error = reader.getFormattedErrorMessages();
+	}
+	else {
+		Json::Value level_settings;
+		level_settings["id_bdd"] = existingLevels[levelIndex]["id"];
+		level_settings["name"] = existingLevels[levelIndex]["name"];
+		level_settings["last_update"] = existingLevels[levelIndex]["last_update"];
+		bool level_folder_exist = FileUtils::getInstance()->isDirectoryExist(FileUtils::getInstance()->getWritablePath() + "Levels/");
+		if (!level_folder_exist) {
+			FileUtils::getInstance()->createDirectory(FileUtils::getInstance()->getWritablePath() + "Levels/");
+		}
+		std::string path = FileUtils::getInstance()->getWritablePath() + "Levels/" + existingLevels[levelIndex]["name"].asString() + ".json";
+		bool succeed = FileUtils::getInstance()->writeStringToFile(str, path);
+		if (succeed) {
+			if (rootSav.isMember("local_editor_levels")) {
+				int pos = -1;
+				for (unsigned int j(0); j < rootSav["local_editor_levels"].size(); ++j) {
+					if (rootSav["local_editor_levels"][j]["id_bdd"].asInt() == existingLevels[levelIndex]["id"].asInt()) {
+						pos = j;
+						break;
+					}
+				}
+				if (pos != -1) {
+					level_settings["id"] = rootSav["local_editor_levels"][pos]["id"];
+					rootSav["local_editor_levels"][pos] = level_settings;
+				}
+				else {
+					level_settings["id"] = rootSav["local_editor_levels"][rootSav["local_editor_levels"].size() - 1]["id"].asInt() - 1;
+					rootSav["local_editor_levels"][rootSav["local_editor_levels"].size()] = level_settings;
+				}
+			}
+			else {
+				level_settings["id"] = -2;
+				rootSav["local_editor_levels"][0] = level_settings;
+			}
+			save();
+
+			log("Saved File in %s", path.c_str());
+		}
+		else {
+			log("error saving file %s", path.c_str());
+		}
+	}
+}
+
+bool Config::shouldDownloadLevel(Json::Value &levelConfigs, unsigned int levelIndex)
+{
+	int pos = -1;
+	bool should_download = false;
+	for (unsigned int j(0); j < rootSav["local_editor_levels"].size(); ++j) {
+		if (rootSav["local_editor_levels"][j]["id_bdd"].asInt() == levelConfigs[levelIndex]["id"].asInt()) {
+			pos = j;
+			break;
+		}
+	}
+	if (pos != -1) {
+		struct tm t1, t2;
+		std::string date1 = rootSav["local_editor_levels"][pos]["last_update"].asString();
+		std::string date2 = levelConfigs[levelIndex]["last_update"].asString();
+		t1 = getTimeFromString(date1);
+		t2 = getTimeFromString(date2);
+		if (difftime(mktime(&t2), mktime(&t1)) > 0) {
+			should_download = true;
+		}
+		if (difftime(mktime(&t2), mktime(&t1)) < 0) {
+
+		}
+	}
+	else {
+		should_download = true;
+	}
+	return should_download;
 }
 
 void Config::completeTutorial(std::string name) {
@@ -833,7 +850,7 @@ int Config::getLevelBDDID(int world_id, int level_id) {
 	return 0;
 }
 
-Settings * Config::getSettings()
+GameSettings * Config::getSettings()
 {
 	return settings;
 }

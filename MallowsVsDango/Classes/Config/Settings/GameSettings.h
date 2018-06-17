@@ -2,11 +2,11 @@
 #include <iostream>
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
-#include "json.h"
+#include "../json.h"
 
-class Settings {
+class GameSettings {
 public:
-	Settings();
+	GameSettings();
 	void init(std::string saveFolder);
 
 	void addAlwaysGridCheckbox(cocos2d::ui::CheckBox* box);

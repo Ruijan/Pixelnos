@@ -4,7 +4,7 @@
 #include "../Scenes/MyGame.h"
 #include "../Config/AudioController.h"
 #include "../Config/Config.h"
-#include "../Config/Settings.h"
+#include "../Config/Settings/GameSettings.h"
 
 typedef std::pair<AudioSlider*, cocos2d::ui::CheckBox*> SoundController;
 

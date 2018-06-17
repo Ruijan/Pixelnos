@@ -304,7 +304,6 @@ void Skills::initTalents() {
 	talent_pages->setContentSize(Size(visibleSize.width * 3 / 4, visibleSize.height));
 	talent_pages->setPosition(Vec2(visibleSize.width * 5 / 8 - talent_pages->getContentSize().width / 2,
 		visibleSize.height / 2 - talent_pages->getContentSize().height / 2));
-	talent_pages->setCustomScrollThreshold(visibleSize.width * 0.1f);
 
 	int row = 0;
 	int column = 0;

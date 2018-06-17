@@ -1,13 +1,13 @@
-#include "Settings.h"
+#include "GameSettings.h"
 
-Settings::Settings():
+GameSettings::GameSettings():
 	needSave(false), 
 	saveFolder(""),
 	fileName("settings.json")
 {
 }
 
-void Settings::init(std::string saveFolder)
+void GameSettings::init(std::string saveFolder)
 {
 	this->saveFolder = saveFolder;
 	auto fileUtils = cocos2d::FileUtils::getInstance();
@@ -31,7 +31,7 @@ void Settings::init(std::string saveFolder)
 	language = settingsSave["language"].asString();
 }
 
-void Settings::addAlwaysGridCheckbox(cocos2d::ui::CheckBox* box) {
+void GameSettings::addAlwaysGridCheckbox(cocos2d::ui::CheckBox* box) {
 	box->setSelected(alwaysGridEnabled);
 	alwaysGridCheckboxes.push_back(box);
 	box->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
@@ -41,7 +41,7 @@ void Settings::addAlwaysGridCheckbox(cocos2d::ui::CheckBox* box) {
 	});
 }
 
-void Settings::addMovingGridButton(cocos2d::ui::CheckBox* box) {
+void GameSettings::addMovingGridButton(cocos2d::ui::CheckBox* box) {
 	box->setSelected(movingGridEnabled);
 	movingGridCheckboxes.push_back(box);
 	box->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
@@ -51,7 +51,7 @@ void Settings::addMovingGridButton(cocos2d::ui::CheckBox* box) {
 	});
 }
 
-void Settings::addNeverGridButton(cocos2d::ui::CheckBox* box) {
+void GameSettings::addNeverGridButton(cocos2d::ui::CheckBox* box) {
 	box->setSelected(neverGridEnabled);
 	neverGridCheckboxes.push_back(box);
 	box->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
@@ -62,7 +62,7 @@ void Settings::addNeverGridButton(cocos2d::ui::CheckBox* box) {
 }
 
 
-void Settings::addLimitButton(cocos2d::ui::CheckBox* box) {
+void GameSettings::addLimitButton(cocos2d::ui::CheckBox* box) {
 	box->setSelected(!limit_enabled);
 	limitCheckboxes.push_back(box);
 	box->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
@@ -72,7 +72,7 @@ void Settings::addLimitButton(cocos2d::ui::CheckBox* box) {
 	});
 }
 
-void Settings::addDialogueButton(cocos2d::ui::CheckBox* box) {
+void GameSettings::addDialogueButton(cocos2d::ui::CheckBox* box) {
 	box->setSelected(!dialoguesEnabled);
 	dialoguesCheckboxes.push_back(box);
 	box->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
@@ -82,7 +82,7 @@ void Settings::addDialogueButton(cocos2d::ui::CheckBox* box) {
 	});
 }
 
-void Settings::removeCheckbox(cocos2d::ui::CheckBox * box)
+void GameSettings::removeCheckbox(cocos2d::ui::CheckBox * box)
 {
 	alwaysGridCheckboxes.erase(std::remove(alwaysGridCheckboxes.begin(), alwaysGridCheckboxes.end(), box), alwaysGridCheckboxes.end());
 	movingGridCheckboxes.erase(std::remove(movingGridCheckboxes.begin(), movingGridCheckboxes.end(), box), movingGridCheckboxes.end());
@@ -91,7 +91,7 @@ void Settings::removeCheckbox(cocos2d::ui::CheckBox * box)
 	dialoguesCheckboxes.erase(std::remove(dialoguesCheckboxes.begin(), dialoguesCheckboxes.end(), box), dialoguesCheckboxes.end());
 }
 
-void Settings::enableAlwaysGrid(bool enable) {
+void GameSettings::enableAlwaysGrid(bool enable) {
 	alwaysGridEnabled = enable;
 	movingGridEnabled = false;
 	neverGridEnabled = enable ? false : true;
@@ -99,7 +99,7 @@ void Settings::enableAlwaysGrid(bool enable) {
 	updateGridSettings();
 }
 
-void Settings::enableMovingGrid(bool enable) {
+void GameSettings::enableMovingGrid(bool enable) {
 	movingGridEnabled = enable;
 	neverGridEnabled = enable ? false : true;
 	alwaysGridEnabled = false;
@@ -107,7 +107,7 @@ void Settings::enableMovingGrid(bool enable) {
 	updateGridSettings();
 }
 
-void Settings::enableNeverGrid(bool enable) {
+void GameSettings::enableNeverGrid(bool enable) {
 	neverGridEnabled = enable;
 	alwaysGridEnabled = enable ? false : true;
 	movingGridEnabled = false;
@@ -115,7 +115,7 @@ void Settings::enableNeverGrid(bool enable) {
 	updateGridSettings();
 }
 
-void Settings::updateGridSettings() {
+void GameSettings::updateGridSettings() {
 	settingsSave["grid"]["moving"] = movingGridEnabled;
 	settingsSave["grid"]["never"] = neverGridEnabled;
 	settingsSave["grid"]["always"] = alwaysGridEnabled;
@@ -123,7 +123,7 @@ void Settings::updateGridSettings() {
 	needSave = true;
 }
 
-void Settings::updateGridCheckBoxes() {
+void GameSettings::updateGridCheckBoxes() {
 	for (cocos2d::ui::CheckBox* checkbox : movingGridCheckboxes) {
 		checkbox->setSelected(false);
 	}
@@ -135,7 +135,7 @@ void Settings::updateGridCheckBoxes() {
 	}
 }
 
-void Settings::enableAutoLimit(bool enable) {
+void GameSettings::enableAutoLimit(bool enable) {
 	limit_enabled = enable;
 	// Change all the checkbox selection to the new value
 	for (auto checkbox : limitCheckboxes) {
@@ -146,7 +146,7 @@ void Settings::enableAutoLimit(bool enable) {
 	needSave = true;
 }
 
-void Settings::enableDialogues(bool enable) {
+void GameSettings::enableDialogues(bool enable) {
 	dialoguesEnabled = enable;
 	// Change all the checkbox selection to the new value
 	for (auto checkbox : dialoguesCheckboxes) {
@@ -157,7 +157,7 @@ void Settings::enableDialogues(bool enable) {
 	needSave = true;
 }
 
-void Settings::setLanguage(std::string lang) {
+void GameSettings::setLanguage(std::string lang) {
 	if (lang == "en" || lang == "fr") {
 		language = lang;
 		settingsSave["language"] = language;
@@ -167,45 +167,45 @@ void Settings::setLanguage(std::string lang) {
 }
 
 
-bool Settings::isAlwaysGridEnabled() {
+bool GameSettings::isAlwaysGridEnabled() {
 	return alwaysGridEnabled;
 }
 
-bool Settings::isNeverGridEnabled() {
+bool GameSettings::isNeverGridEnabled() {
 	return neverGridEnabled;
 }
 
-bool Settings::isMovingGridEnabled() {
+bool GameSettings::isMovingGridEnabled() {
 	return movingGridEnabled;
 }
 
-bool Settings::isLimitEnabled() {
+bool GameSettings::isLimitEnabled() {
 	return limit_enabled;
 }
 
-bool Settings::isDialoguesEnabled() {
+bool GameSettings::isDialoguesEnabled() {
 	return dialoguesEnabled;
 }
 
-const std::string& Settings::getLanguage() {
+const std::string& GameSettings::getLanguage() {
 	return language;
 }
 
-Json::Value Settings::getSettingsSave(){
+Json::Value GameSettings::getSettingsSave(){
 	return settingsSave;
 }
 
-bool Settings::doesNeedSave()
+bool GameSettings::doesNeedSave()
 {
 	return needSave;
 }
 
-void Settings::setNeedSaving(bool value)
+void GameSettings::setNeedSaving(bool value)
 {
 	needSave = value;
 }
 
-void Settings::save()
+void GameSettings::save()
 {
 	Json::StyledWriter writer;
 	std::string outputSave = writer.write(settingsSave);
