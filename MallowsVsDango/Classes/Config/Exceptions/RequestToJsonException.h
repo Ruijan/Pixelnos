@@ -6,9 +6,7 @@
 class RequestToJsonException : public std::exception
 {
 public:
-	RequestToJsonException(std::string error): error(error) {
-
-	}
+	RequestToJsonException(std::string error) : error(error) {}
 
 	virtual const char* what() const throw()
 	{

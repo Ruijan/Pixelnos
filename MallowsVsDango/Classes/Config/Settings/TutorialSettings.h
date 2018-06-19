@@ -3,7 +3,7 @@
 #include "cocos2d.h"
 #include <iostream>
 
-class TutorialSettings: public Settings {
+class TutorialSettings : public Settings {
 public:
 	void init(std::string configFilename, std::string saveFilename);
 	void save();
@@ -12,7 +12,6 @@ public:
 
 	bool isTutorialRunning(std::string name);
 	bool isTutorialComplete(std::string name);
-	
 
 protected:
 	void tryReadingTutoSaveFile();
@@ -22,5 +21,4 @@ protected:
 private:
 	Json::Value tutorialStates;
 	std::string saveFilename;
-	
 };
