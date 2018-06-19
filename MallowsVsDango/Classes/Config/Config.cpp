@@ -4,7 +4,7 @@
 #include "extensions/cocos-ext.h"
 #include "NetworkController.h"
 #include "../Scenes/MyGame.h"
-#include "RequestToJsonException.h"
+#include "Exceptions/RequestToJsonException.h"
 #include <time.h>
 #include <stdio.h>
 
@@ -25,6 +25,8 @@ Config::Config(std::string configfilename, std::string savename) :
 	network_controller = new NetworkController("http://pixelnos.com/app/");
 
 	settings = new GameSettings();
+	gameTutorialSettings = new TutorialSettings();
+	skillTutorialSettings = new TutorialSettings();
 
 	scheduler = Director::getInstance()->getScheduler();
 	scheduler->retain();
@@ -39,10 +41,10 @@ const Json::Value& Config::getConfigValues(ConfigType type) const {
 		return conf_general;
 		break;
 	case GAMETUTORIAL:
-		return conf_game_tutorial;
+		return gameTutorialSettings->getSettingsMap();
 		break;
 	case SKILLTUTORIAL:
-		return conf_skills_tutorial;
+		return skillTutorialSettings->getSettingsMap();
 		break;
 	case ADVICE:
 		return conf_advice;
@@ -128,6 +130,7 @@ void Config::saveLevelTracking() {
 
 void Config::init() {
 	auto fileUtils = FileUtils::getInstance();
+	settings->init(FileUtils::getInstance()->getWritablePath());
 
 	std::string configFile = fileUtils->getStringFromFile(config_filename);
 	std::string saveFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + save_filename);
@@ -142,18 +145,18 @@ void Config::init() {
 
 	parsingConfigSuccessful = reader.parse(configFile, conf_general, false);
 	if (parsingConfigSuccessful) {
+		gameTutorialSettings->init(conf_general["configuration_files"]["gameTutorial"].asString(), "gameTutorialProgress.json");
+		skillTutorialSettings->init(conf_general["configuration_files"]["skillsTutorial"].asString(), "skillTutorialProgress.json");
 		bool parsing_conf_towers = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tower"].asString()), conf_tower, false);
 		bool parsing_conf_advice = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["advice"].asString()), conf_advice, false);
 		bool parsing_conf_dangos = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["dango"].asString()), conf_dango, false);
 		bool parsing_conf_challenges = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["challenge"].asString()), conf_challenge, false);
-		bool parsing_conf_game_tutorials = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["gameTutorial"].asString()), conf_game_tutorial, false);
-		bool parsing_conf_skills_tutorials = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["skillsTutorial"].asString()), conf_skills_tutorial, false);
 		bool parsing_conf_talents = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["talent"].asString()), conf_talent, false);
 		bool parsing_conf_levels = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["level"].asString()), conf_level, false);
 		std::string buttons = fileUtils->getStringFromFile(conf_general["configuration_files"]["button"].asString());
 		bool parsing_conf_buttons = reader.parse(buttons, conf_button, false);
 		if (!parsing_conf_towers || !parsing_conf_advice || !parsing_conf_dangos ||
-			!parsing_conf_challenges || !parsing_conf_game_tutorials || !parsing_conf_skills_tutorials || !parsing_conf_talents ||
+			!parsing_conf_challenges ||  !parsing_conf_talents ||
 			!parsing_conf_levels || !parsing_conf_buttons) {
 			std::string error = reader.getFormattedErrorMessages();
 			throw std::invalid_argument("ERROR : loading configuration files. " + error);
@@ -220,7 +223,7 @@ void Config::init() {
 	}
 
 	parsingSaveSuccessful = reader.parse(saveFile, rootSav, false);
-	settings->init(FileUtils::getInstance()->getWritablePath());
+	
 	if (!parsingSaveSuccessful) {
 		// report to the user the failure and their locations in the document.
 		std::string error = reader.getFormattedErrorMessages();
@@ -229,14 +232,7 @@ void Config::init() {
 		rootSav["c_world"] = 0;
 		rootSav["username"] = "";
 		//rootSav["gameTutorials"] = conf_game_tutorial;
-		std::vector<std::string> tuto_names = conf_game_tutorial.getMemberNames();
-		for (unsigned int i(0); i < tuto_names.size(); ++i) {
-			rootSav["gameTutorials"][tuto_names[i]]["state"] = conf_game_tutorial[tuto_names[i]]["state"];
-		}
-		tuto_names = conf_skills_tutorial.getMemberNames();
-		for (unsigned int i(0); i < tuto_names.size(); ++i) {
-			rootSav["skillsTutorials"][tuto_names[i]]["state"] = conf_skills_tutorial[tuto_names[i]]["state"];
-		}
+
 		for (unsigned int i(0); i < conf_tower.size(); ++i) {
 			rootSav["towers"][conf_tower.getMemberNames()[i]]["exp"] = 0;
 
@@ -759,51 +755,6 @@ bool Config::shouldDownloadLevel(Json::Value &levelConfigs, unsigned int levelIn
 	return should_download;
 }
 
-void Config::completeTutorial(std::string name) {
-	rootSav["gameTutorials"][name]["state"] = "complete";
-	save();
-}
-
-void Config::startTutorial(std::string name) {
-	rootSav["gameTutorials"][name]["state"] = "running";
-	save();
-}
-
-bool Config::isGameTutorialComplete(std::string name) {
-	return rootSav["gameTutorials"][name]["state"].asString() == "complete";
-}
-
-
-bool Config::isTutorialUncompleted(std::string name) {
-	return rootSav["gameTutorials"][name]["state"].asString() == "uncompleted";
-}
-
-bool Config::isTutorialRunning(std::string name) {
-	return rootSav["gameTutorials"][name]["state"].asString() == "running";
-}
-
-void Config::completeSkillTutorial(std::string name) {
-	rootSav["skillsTutorials"][name]["state"] = "complete";
-	save();
-}
-
-void Config::startSkillTutorial(std::string name) {
-	rootSav["skillsTutorials"][name]["state"] = "running";
-	save();
-}
-
-bool Config::isSkillTutorialComplete(std::string name) {
-	return rootSav["skillsTutorials"][name]["state"].asString() == "complete";
-}
-
-bool Config::isSkillTutorialUncompleted(std::string name) {
-	return rootSav["gameTutorials"][name]["state"].asString() == "uncompleted";
-}
-
-bool Config::isSkillTutorialRunning(std::string name) {
-	return rootSav["gameTutorials"][name]["state"].asString() == "running";
-}
-
 tm Config::getTimeFromString(std::string date1) {
 	struct tm t1;
 	t1.tm_year = Value(date1.substr(0, 4)).asInt();
@@ -853,4 +804,14 @@ int Config::getLevelBDDID(int world_id, int level_id) {
 GameSettings * Config::getSettings()
 {
 	return settings;
+}
+
+TutorialSettings * Config::getGameTutorialSettings()
+{
+	return gameTutorialSettings;
+}
+
+TutorialSettings * Config::getSkillTutorialSettings()
+{
+	return skillTutorialSettings;
 }

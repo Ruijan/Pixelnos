@@ -1,10 +1,10 @@
 #pragma once
 #include "DialogueTutorial.h"
 #include "../Level.h"
-#include "../InterfaceGame.h"
 
 class InterfaceGame;
 class Level;
+class Config;
 class SaucerTutorial : public DialogueTutorial {
 public:
 	SaucerTutorial(Config* config, InterfaceGame* interfaceGame, Level* level);
@@ -20,4 +20,5 @@ protected:
 protected:
 	InterfaceGame* interfaceGame;
 	Level* level;
+	Config* config;
 };

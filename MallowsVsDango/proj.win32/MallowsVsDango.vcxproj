@@ -157,6 +157,8 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Config\jsoncpp.cpp" />
     <ClCompile Include="..\Classes\Config\NetworkController.cpp" />
     <ClCompile Include="..\Classes\Config\Settings\GameSettings.cpp" />
+    <ClCompile Include="..\Classes\Config\Settings\Settings.cpp" />
+    <ClCompile Include="..\Classes\Config\Settings\TutorialSettings.cpp" />
     <ClCompile Include="..\Classes\Dangos\Dango.cpp" />
     <ClCompile Include="..\Classes\Dangos\Dangobese.cpp" />
     <ClCompile Include="..\Classes\Dangos\Dangorille.cpp" />
@@ -215,11 +217,13 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\Config\AudioController.h" />
     <ClInclude Include="..\Classes\Config\Config.h" />
+    <ClInclude Include="..\Classes\Config\Exceptions\JsonContentException.h" />
+    <ClInclude Include="..\Classes\Config\Exceptions\RequestToJsonException.h" />
     <ClInclude Include="..\Classes\Config\json-forwards.h" />
     <ClInclude Include="..\Classes\Config\json.h" />
     <ClInclude Include="..\Classes\Config\NetworkController.h" />
-    <ClInclude Include="..\Classes\Config\RequestToJsonException.h" />
     <ClInclude Include="..\Classes\Config\Settings\GameSettings.h" />
+    <ClInclude Include="..\Classes\Config\Settings\Settings.h" />
     <ClInclude Include="..\Classes\Config\Settings\TutorialSettings.h" />
     <ClInclude Include="..\Classes\Dangos\Dango.h" />
     <ClInclude Include="..\Classes\Dangos\Dangobese.h" />

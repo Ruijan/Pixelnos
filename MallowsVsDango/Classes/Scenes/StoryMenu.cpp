@@ -341,19 +341,19 @@ void StoryMenu::updateTutorial(float dt) {
 	auto save = configClass->getSaveValues();
 	auto config = configClass->getConfigValues(Config::ConfigType::SKILLTUTORIAL);
 
-	if (!configClass->isSkillTutorialComplete("skills") &&
+	if (!configClass->getSkillTutorialSettings()->isTutorialComplete("skills") &&
 		save["c_level"].asInt() >= config["skills"]["level"].asInt() &&
 		save["c_world"].asInt() >= config["skills"]["world"].asInt()) {
 
 		if (getChildByName("dialogue") == nullptr && !tutorial_running &&
-			!configClass->isSkillTutorialRunning("skills")) {
+			!configClass->getSkillTutorialSettings()->isTutorialRunning("skills")) {
 			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
 			addChild(Dialogue::createFromConfig(config["skills"]["dialogue"]), 3, "dialogue");
 			((Dialogue*)getChildByName("dialogue"))->launch();
 			tutorial_running = true;
 			Size visibleSize = Director::getInstance()->getVisibleSize();
 
-			configClass->startSkillTutorial("skills");
+			configClass->getSkillTutorialSettings()->startTutorial("skills");
 
 			// mask to prevent any action from the player
 			addChild(ui::Layout::create(), 2, "invisble_mask");

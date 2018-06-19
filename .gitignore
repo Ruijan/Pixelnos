@@ -13,4 +13,5 @@
 /MallowsVsDango/proj.win32/.vs/*
 /MallowsVsDango/proj.win32/.sonarqube/*
 /MallowsVsDango/proj.win32/bw-output/*
+/MallowsVsDango/proj.win32/packages/*
 /.project

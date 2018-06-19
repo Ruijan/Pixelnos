@@ -1,6 +1,7 @@
 #pragma once
 #include "Tutorial.h"
 
+class Config;
 class InterfaceGame;
 class TowerPositioningTutorial : public Tutorial {
 public:
@@ -13,4 +14,5 @@ public:
 
 private:
 	InterfaceGame* interfaceGame;
+	Config* config;
 };

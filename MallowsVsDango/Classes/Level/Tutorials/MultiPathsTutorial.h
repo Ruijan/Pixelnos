@@ -8,7 +8,7 @@ class InterfaceGame;
 class Level;
 class MultiPathsTutorial : public DialogueTutorial {
 public:
-	MultiPathsTutorial(Config* config, InterfaceGame* interfaceGame, Level* level);
+	MultiPathsTutorial(TutorialSettings* settings, InterfaceGame* interfaceGame, Level* level);
 	bool isDone();
 	bool areConditionsMet();
 	virtual ~MultiPathsTutorial();

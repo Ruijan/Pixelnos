@@ -8,6 +8,7 @@
 #include "extensions/cocos-ext.h"
 #include "network/HttpClient.h"
 #include "Settings/GameSettings.h"
+#include "Settings/TutorialSettings.h"
 
 class NetworkController;
 struct LevelTrackingEvent;
@@ -142,26 +143,6 @@ public:
 	bool shouldDownloadLevel(Json::Value &levelConfigs, unsigned int levelIndex);
 
 	/**
-	* @brief Set the state value of a tutorial to complete
-	*	Save everithin in the writable folder (AppData/local/MvD)
-	*/
-	void completeTutorial(std::string name);
-
-	/**
-	* @brief Set the state value of a tutorial to running
-	*	Save everithin in the writable folder (AppData/local/MvD)
-	*/
-	void startTutorial(std::string name);
-	bool isGameTutorialComplete(std::string name);
-	bool isSkillTutorialComplete(std::string name);
-	void completeSkillTutorial(std::string name);
-	void startSkillTutorial(std::string name);
-	bool isSkillTutorialUncompleted(std::string name);
-	bool isSkillTutorialRunning(std::string name);
-	bool isTutorialUncompleted(std::string name);
-	bool isTutorialRunning(std::string name);
-
-	/**
 	* @brief Convert a date in string at format "%Y-%m-%d %H:%M:%S" to time
 	*/
 	static tm getTimeFromString(std::string date1);
@@ -179,11 +160,11 @@ public:
 	*/
 	int getLevelBDDID(int world_id, int level_id);
 	GameSettings* getSettings();
+	TutorialSettings* getGameTutorialSettings();
+	TutorialSettings* getSkillTutorialSettings();
 
 private:
 	Json::Value conf_general;
-	Json::Value conf_game_tutorial;
-	Json::Value conf_skills_tutorial;
 	Json::Value conf_advice;
 	Json::Value conf_challenge;
 	Json::Value conf_button;
@@ -214,6 +195,8 @@ private:
 	int c_level_tracking;
 
 	GameSettings* settings;
+	TutorialSettings* gameTutorialSettings;
+	TutorialSettings* skillTutorialSettings;
 };
 
 #endif

@@ -4,7 +4,7 @@
 class InterfaceGame;
 class LifeTutorial : public DialogueTutorial {
 public:
-	LifeTutorial(Config* config, InterfaceGame* interfaceGame);
+	LifeTutorial(TutorialSettings* settings, InterfaceGame* interfaceGame);
 	bool isDone();
 	virtual ~LifeTutorial();
 

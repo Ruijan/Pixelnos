@@ -5,8 +5,9 @@
 
 
 TowerPositioningTutorial::TowerPositioningTutorial(Config* config, InterfaceGame * nInterfaceGame):
-	Tutorial(config),
-	interfaceGame(nInterfaceGame)
+	Tutorial(config->getGameTutorialSettings()),
+	interfaceGame(nInterfaceGame),
+	config(config)
 {
 }
 
@@ -43,7 +44,7 @@ void TowerPositioningTutorial::update(float dt)
 }
 
 void TowerPositioningTutorial::endTutorial() {
-	config->completeTutorial("tower_positioning");
+	settings->completeTutorial("tower_positioning");
 	interfaceGame->removeChildByName("hand");
 	interfaceGame->resetTowerMenu();
 	interfaceGame->displayStartMenuIfInTitleState();
@@ -52,7 +53,7 @@ void TowerPositioningTutorial::endTutorial() {
 
 bool TowerPositioningTutorial::isDone()
 {
-	return config->isGameTutorialComplete("tower_positioning");
+	return settings->isTutorialComplete("tower_positioning");
 }
 
 bool TowerPositioningTutorial::isLastTowerCreatedABomber() {

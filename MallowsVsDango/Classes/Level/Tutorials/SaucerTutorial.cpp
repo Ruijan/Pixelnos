@@ -4,9 +4,10 @@
 #include "../../Config/Config.h"
 
 SaucerTutorial::SaucerTutorial(Config* config, InterfaceGame* interfaceGame, Level* level) :
-	DialogueTutorial(config),
+	DialogueTutorial(config->getGameTutorialSettings()),
 	interfaceGame(interfaceGame),
-	level(level)
+	level(level),
+	config(config)
 {
 }
 
@@ -32,18 +33,18 @@ void SaucerTutorial::update(float dt)
 }
 
 bool SaucerTutorial::areConditionsMet() {
-	return level->getLevelId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["saucer"]["level"].asInt() &&
-		level->getWorldId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["saucer"]["world"].asInt() &&
+	return level->getLevelId() == settings->getSettingsMap()["saucer"]["level"].asInt() &&
+		level->getWorldId() == settings->getSettingsMap()["saucer"]["world"].asInt() &&
 		interfaceGame->getGameState() == InterfaceGame::GameState::TITLE;
 }
 
 bool SaucerTutorial::isDone() {
-	return config->isGameTutorialComplete("saucer");
+	return settings->isTutorialComplete("saucer");
 }
 
 void SaucerTutorial::startDialogues() {
 	interfaceGame->pauseLevel();
-	dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["saucer"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["saucer"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	interfaceGame->hideStartMenu();
@@ -51,7 +52,7 @@ void SaucerTutorial::startDialogues() {
 }
 
 void SaucerTutorial::endTutorial() {
-	config->completeTutorial("saucer");
+	settings->completeTutorial("saucer");
 	interfaceGame->removeChildByName("hand");
 	interfaceGame->resetTowerMenu();
 	interfaceGame->resumeLevel();

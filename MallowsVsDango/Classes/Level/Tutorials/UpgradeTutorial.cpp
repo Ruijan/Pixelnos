@@ -1,11 +1,10 @@
 #include "UpgradeTutorial.h"
 #include "../Level.h"
 #include "../InterfaceGame.h"
-#include "../../Config/Config.h"
 
 
-UpgradeTutorial::UpgradeTutorial(Config* config, InterfaceGame* interfaceGame, Level* level) :
-	DialogueTutorial(config),
+UpgradeTutorial::UpgradeTutorial(TutorialSettings* settings, InterfaceGame* interfaceGame, Level* level) :
+	DialogueTutorial(settings),
 	interfaceGame(interfaceGame),
 	level(level),
 	selectedTower(nullptr)
@@ -31,7 +30,7 @@ void UpgradeTutorial::update(float dt)
 
 bool UpgradeTutorial::isDone()
 {
-	return config->isGameTutorialComplete("upgrade");
+	return settings->isTutorialComplete("upgrade");
 }
 
 UpgradeTutorial::~UpgradeTutorial()
@@ -49,7 +48,7 @@ void UpgradeTutorial::startDialogues()
 	if (selectedTower != nullptr) {
 		interfaceGame->pauseLevel();
 		interfaceGame->setSelectedTower(selectedTower);
-		dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["upgrade"]["dialogue"]);
+		dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["upgrade"]["dialogue"]);
 		interfaceGame->addChild(dialogues, 1, "dialogue");
 		dialogues->launch();
 		interfaceGame->hideStartMenu();
@@ -95,7 +94,7 @@ void UpgradeTutorial::showHand() {
 void UpgradeTutorial::endTutorial()
 {
 	interfaceGame->resumeLevel();
-	config->completeTutorial("upgrade");
+	settings->completeTutorial("upgrade");
 	interfaceGame->hideTowerInfo();
 	interfaceGame->setSelectedTower(nullptr);
 	interfaceGame->removeChildByName("invisble_mask");
@@ -104,6 +103,6 @@ void UpgradeTutorial::endTutorial()
 
 bool UpgradeTutorial::areConditionsMet()
 {
-	return level->getLevelId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["upgrade"]["level"].asInt() &&
-		level->getWorldId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["upgrade"]["world"].asInt();
+	return level->getLevelId() == settings->getSettingsMap()["upgrade"]["level"].asInt() &&
+		level->getWorldId() == settings->getSettingsMap()["upgrade"]["world"].asInt();
 }

@@ -43,6 +43,9 @@
     <Filter Include="src\Config\Settings">
       <UniqueIdentifier>{0b1d3ec2-8cac-4723-b3d6-d7dfb3263b37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Config\Exceptions">
+      <UniqueIdentifier>{b0a15a94-ed98-4ea3-b60a-be15d5ae0531}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -220,6 +223,12 @@
       <Filter>src\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Config\Settings\GameSettings.cpp">
+      <Filter>src\Config\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Config\Settings\TutorialSettings.cpp">
+      <Filter>src\Config\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Config\Settings\Settings.cpp">
       <Filter>src\Config\Settings</Filter>
     </ClCompile>
   </ItemGroup>
@@ -410,8 +419,14 @@
     <ClInclude Include="..\Classes\Config\Settings\GameSettings.h">
       <Filter>src\Config\Settings</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Config\RequestToJsonException.h">
-      <Filter>src\Config</Filter>
+    <ClInclude Include="..\Classes\Config\Exceptions\RequestToJsonException.h">
+      <Filter>src\Config\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\Exceptions\JsonContentException.h">
+      <Filter>src\Config\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\Settings\Settings.h">
+      <Filter>src\Config\Settings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

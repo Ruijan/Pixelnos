@@ -1,15 +1,14 @@
 #include "LifeTutorial.h"
 #include "../InterfaceGame.h"
-#include "../../Config/Config.h"
 
-LifeTutorial::LifeTutorial(Config* config, InterfaceGame * nInterfaceGame):
-	DialogueTutorial(config),
+LifeTutorial::LifeTutorial(TutorialSettings* settings, InterfaceGame * nInterfaceGame):
+	DialogueTutorial(settings),
 	interfaceGame(nInterfaceGame)
 {
 }
 
 bool LifeTutorial::isDone() {
-	return config->isGameTutorialComplete("life");
+	return settings->isTutorialComplete("life");
 }
 
 LifeTutorial::~LifeTutorial()
@@ -18,7 +17,7 @@ LifeTutorial::~LifeTutorial()
 
 void LifeTutorial::startDialogues() {
 	interfaceGame->pauseLevel();
-	dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["life"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["life"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	shakeScaleElement(interfaceGame->getChildByName("label_information")->getChildByName("life"), true);
@@ -28,7 +27,7 @@ void LifeTutorial::endTutorial() {
 	interfaceGame->removeChild(dialogues);
 	dialogues = nullptr;
 	interfaceGame->resumeLevel();
-	config->completeTutorial("life");
+	settings->completeTutorial("life");
 	interfaceGame->getChildByName("label_information")->getChildByName("life")->stopAllActions();
 	interfaceGame->getChildByName("label_information")->getChildByName("life")->setRotation(0);
 	interfaceGame->getChildByName("label_information")->getChildByName("life")->setScale(1.f);

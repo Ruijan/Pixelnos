@@ -4,7 +4,7 @@
 class InterfaceGame;
 class SugarTutorial : public DialogueTutorial {
 public:
-	SugarTutorial(Config* config, InterfaceGame* interfaceGame);
+	SugarTutorial(TutorialSettings* settings, InterfaceGame* interfaceGame);
 	bool isDone();
 
 protected:

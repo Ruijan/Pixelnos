@@ -4,7 +4,7 @@
 
 class DialogueTutorial : public Tutorial {
 public:
-	DialogueTutorial(Config* config);
+	DialogueTutorial(TutorialSettings* settings);
 	virtual void update(float dt);
 	virtual bool isDone() = 0;
 	virtual bool areConditionsMet() = 0;

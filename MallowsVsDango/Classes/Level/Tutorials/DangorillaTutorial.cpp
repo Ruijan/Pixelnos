@@ -1,11 +1,10 @@
 #include "DangorillaTutorial.h"
 #include "../Level.h"
 #include "../InterfaceGame.h"
-#include "../../Config/Config.h"
 
 
-DangorillaTutorial::DangorillaTutorial(Config* config, InterfaceGame * interfaceGame, Level* level) :
-	DialogueTutorial(config),
+DangorillaTutorial::DangorillaTutorial(TutorialSettings* settings, InterfaceGame * interfaceGame, Level* level) :
+	DialogueTutorial(settings),
 	level(level),
 	interfaceGame(interfaceGame)
 {
@@ -13,13 +12,13 @@ DangorillaTutorial::DangorillaTutorial(Config* config, InterfaceGame * interface
 
 bool DangorillaTutorial::isDone()
 {
-	return config->isGameTutorialComplete("dangorilla");
+	return settings->isTutorialComplete("dangorilla");
 }
 
 bool DangorillaTutorial::areConditionsMet()
 {
-	return level->getLevelId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangorilla"]["level"].asInt() &&
-		level->getWorldId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangorilla"]["world"].asInt() &&
+	return level->getLevelId() == settings->getSettingsMap()["dangorilla"]["level"].asInt() &&
+		level->getWorldId() == settings->getSettingsMap()["dangorilla"]["world"].asInt() &&
 		level->getLastEnemy() != nullptr &&
 		level->getLastEnemy()->getSpecConfig()["name"].asString() == "Dangorille";
 }
@@ -31,7 +30,7 @@ DangorillaTutorial::~DangorillaTutorial()
 void DangorillaTutorial::startDialogues()
 {
 	level->pause();
-	dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangorilla"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["dangorilla"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	interfaceGame->hideStartMenu();
@@ -42,7 +41,7 @@ void DangorillaTutorial::endTutorial()
 	interfaceGame->removeChild(dialogues);
 	dialogues = nullptr;
 	level->resume();
-	config->completeTutorial("dangorilla");
+	settings->completeTutorial("dangorilla");
 	interfaceGame->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
 }

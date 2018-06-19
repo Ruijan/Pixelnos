@@ -9,6 +9,10 @@ public:
 	GameSettings();
 	void init(std::string saveFolder);
 
+	void loadPreviousSettings();
+
+	void createNewSettings();
+
 	void addAlwaysGridCheckbox(cocos2d::ui::CheckBox* box);
 	void addMovingGridButton(cocos2d::ui::CheckBox* box);
 	void addNeverGridButton(cocos2d::ui::CheckBox* box);

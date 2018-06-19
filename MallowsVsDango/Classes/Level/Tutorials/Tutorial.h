@@ -1,12 +1,12 @@
 #pragma once
 #include "cocos2d.h"
+#include "../../Config/Settings/TutorialSettings.h"
 
 class InterfaceGame;
-class Config;
 
 class Tutorial {
 public:
-	Tutorial(Config* config);
+	Tutorial(TutorialSettings* settings);
 	virtual void update(float dt) = 0;
 	void shakeElement(cocos2d::Node * element, bool loop);
 	void shakeScaleElement(cocos2d::Node * element, bool loop);
@@ -18,5 +18,5 @@ protected:
 
 protected:
 	bool running;
-	Config* config;
+	TutorialSettings* settings;
 };

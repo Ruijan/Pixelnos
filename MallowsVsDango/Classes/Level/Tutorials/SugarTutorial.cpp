@@ -1,21 +1,20 @@
 #include "SugarTutorial.h"
 #include "../InterfaceGame.h"
-#include "../../Config/Config.h"
 
-SugarTutorial::SugarTutorial(Config* config, InterfaceGame* nInterfaceGame) :
-	DialogueTutorial(config),
+SugarTutorial::SugarTutorial(TutorialSettings* settings, InterfaceGame* nInterfaceGame) :
+	DialogueTutorial(settings),
 	interfaceGame(nInterfaceGame)
 {
 }
 
 bool SugarTutorial::isDone() {
-	return config->isGameTutorialComplete("sugar");
+	return settings->isTutorialComplete("sugar");
 }
 
 void SugarTutorial::startDialogues() {
 	interfaceGame->hideStartMenu();
 	interfaceGame->pauseLevel();
-	dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["sugar"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["sugar"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	shakeScaleElement(interfaceGame->getChildByName("label_information")->getChildByName("sugar"), true);
@@ -25,7 +24,7 @@ void SugarTutorial::endTutorial() {
 	interfaceGame->removeChild(dialogues);
 	dialogues = nullptr;
 	interfaceGame->resumeLevel();
-	config->completeTutorial("sugar");
+	settings->completeTutorial("sugar");
 	interfaceGame->resetSugarLabel();
 	interfaceGame->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();

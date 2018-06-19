@@ -15,20 +15,30 @@ void GameSettings::init(std::string saveFolder)
 	std::string saveFile = fileUtils->getStringFromFile(cocos2d::FileUtils::getInstance()->getWritablePath() + fileName);
 	bool parsingSaveSuccessful = reader.parse(saveFile, settingsSave, false);
 	if (!parsingSaveSuccessful) {
-		settingsSave["grid"]["always"] = false;
-		settingsSave["grid"]["moving"] = true;
-		settingsSave["grid"]["never"] = false;
-		settingsSave["auto_limit"] = false;
-		settingsSave["dialogues"] = true;
-		settingsSave["language"] = cocos2d::Application::getInstance()->getCurrentLanguageCode();
-		save();
+		createNewSettings();
 	}
+	loadPreviousSettings();
+}
+
+void GameSettings::loadPreviousSettings()
+{
 	alwaysGridEnabled = settingsSave["grid"]["always"].asBool();
 	movingGridEnabled = settingsSave["grid"]["moving"].asBool();
 	neverGridEnabled = settingsSave["grid"]["never"].asBool();
 	limit_enabled = settingsSave["auto_limit"].asBool();
 	dialoguesEnabled = settingsSave["dialogues"].asBool();
 	language = settingsSave["language"].asString();
+}
+
+void GameSettings::createNewSettings()
+{
+	settingsSave["grid"]["always"] = false;
+	settingsSave["grid"]["moving"] = true;
+	settingsSave["grid"]["never"] = false;
+	settingsSave["auto_limit"] = false;
+	settingsSave["dialogues"] = true;
+	settingsSave["language"] = cocos2d::Application::getInstance()->getCurrentLanguageCode();
+	save();
 }
 
 void GameSettings::addAlwaysGridCheckbox(cocos2d::ui::CheckBox* box) {

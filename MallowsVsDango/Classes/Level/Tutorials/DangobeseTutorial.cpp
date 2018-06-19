@@ -1,10 +1,9 @@
 #include "DangobeseTutorial.h"
 #include "../Level.h"
 #include "../InterfaceGame.h"
-#include "../../Config/Config.h"
 
-DangobeseTutorial::DangobeseTutorial(Config* config, InterfaceGame * interfaceGame, Level * level) :
-	DialogueTutorial(config),
+DangobeseTutorial::DangobeseTutorial(TutorialSettings* settings, InterfaceGame* interfaceGame, Level* level) :
+	DialogueTutorial(settings),
 	level(level),
 	interfaceGame(interfaceGame)
 {
@@ -12,13 +11,13 @@ DangobeseTutorial::DangobeseTutorial(Config* config, InterfaceGame * interfaceGa
 
 bool DangobeseTutorial::isDone()
 {
-	return config->isGameTutorialComplete("dangobese");
+	return settings->isTutorialComplete("dangobese");
 }
 
 bool DangobeseTutorial::areConditionsMet()
 {
-	return level->getLevelId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangobese"]["level"].asInt() &&
-		level->getWorldId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangobese"]["world"].asInt();
+	return level->getLevelId() == settings->getSettingsMap()["dangobese"]["level"].asInt() &&
+		level->getWorldId() == settings->getSettingsMap()["dangobese"]["world"].asInt();
 }
 
 DangobeseTutorial::~DangobeseTutorial()
@@ -28,7 +27,7 @@ DangobeseTutorial::~DangobeseTutorial()
 void DangobeseTutorial::startDialogues()
 {
 	level->pause();
-	dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangobese"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["dangobese"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	interfaceGame->hideStartMenu();
@@ -39,7 +38,7 @@ void DangobeseTutorial::endTutorial()
 	interfaceGame->removeChild(dialogues);
 	dialogues = nullptr;
 	level->resume();
-	config->completeTutorial("dangobese");
+	settings->completeTutorial("dangobese");
 	interfaceGame->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
 }
