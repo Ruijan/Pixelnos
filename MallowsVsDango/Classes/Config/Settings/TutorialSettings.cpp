@@ -46,7 +46,7 @@ bool TutorialSettings::isTutorialComplete(std::string name)
 
 void TutorialSettings::tryReadingTutoSaveFile()
 {
-	bool parsingSaveSuccessful = reader->parse(fileUtils->getStringFromFile(saveFilename), tutorialStates, false);
+	bool parsingSaveSuccessful = reader->parse(fileUtils->getStringFromFile(cocos2d::FileUtils::getInstance()->getWritablePath() + saveFilename), tutorialStates, false);
 	if (!parsingSaveSuccessful) {
 		createNewTutorialSave();
 	}
