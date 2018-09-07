@@ -11,6 +11,13 @@ SaucerTutorial::SaucerTutorial(Config* config, InterfaceGame* interfaceGame, Lev
 {
 }
 
+SaucerTutorial::~SaucerTutorial() {
+	if (running) {
+		interfaceGame->removeChild(dialogues);
+		interfaceGame->removeChildByName("hand");
+	}
+}
+
 void SaucerTutorial::update(float dt)
 {
 	if (!isDone() && areConditionsMet()) {
@@ -43,12 +50,13 @@ bool SaucerTutorial::isDone() {
 }
 
 void SaucerTutorial::startDialogues() {
+	running = true;
 	interfaceGame->pauseLevel();
 	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["saucer"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	interfaceGame->hideStartMenu();
-	running = true;
+	interfaceGame->lockStartMenu();
 }
 
 void SaucerTutorial::endTutorial() {
@@ -56,8 +64,10 @@ void SaucerTutorial::endTutorial() {
 	interfaceGame->removeChildByName("hand");
 	interfaceGame->resetTowerMenu();
 	interfaceGame->resumeLevel();
+	interfaceGame->unlockStartMenu();
 	interfaceGame->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
+	running = false;
 }
 
 void SaucerTutorial::showTower()

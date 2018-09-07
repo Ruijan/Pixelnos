@@ -442,6 +442,7 @@ bool InterfaceGame::isOnTower(Vec2 pos) {
 
 void InterfaceGame::showLose() {
 	loseMenu->showLose();
+	setGameState(GameState::ENDING);
 	getChildByName("black_mask")->setVisible(true);
 }
 
@@ -610,7 +611,7 @@ void InterfaceGame::initRightPanel(const Json::Value& config) {
 	auto speed_up = ui::CheckBox::create("res/buttons/speed_up.png", "res/buttons/normal_speed.png", ui::Widget::TextureResType::LOCAL);
 	speed_up->addTouchEventListener([&, speed_up](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			if (speed_up->isSelected()) {
+			if (!speed_up->isSelected()) {
 				game->increaseSpeed();
 			}
 			else {
@@ -771,6 +772,7 @@ void InterfaceGame::mainMenuCallBack(std::string id_menu) {
 	auto callbackmainmenu = CallFunc::create([&]() {
 		SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 	});
+	
 	getChildByName(id_menu)->runAction(Sequence::create(hideAction, callbackmainmenu, nullptr));
 }
 
@@ -880,6 +882,16 @@ void InterfaceGame::hideTowerInfo() {
 void InterfaceGame::hideStartMenu()
 {
 	startMenu->hide();
+}
+
+void InterfaceGame::lockStartMenu()
+{
+	startMenu->lock(true);
+}
+
+void InterfaceGame::unlockStartMenu()
+{
+	startMenu->lock(false);
 }
 
 void InterfaceGame::updateButtonDisplay() {

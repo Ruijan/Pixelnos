@@ -25,15 +25,20 @@ bool DangorillaTutorial::areConditionsMet()
 
 DangorillaTutorial::~DangorillaTutorial()
 {
+	if (running) {
+		interfaceGame->removeChild(dialogues);
+	}
 }
 
 void DangorillaTutorial::startDialogues()
 {
+	running = true;
 	level->pause();
 	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["dangorilla"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	interfaceGame->hideStartMenu();
+	interfaceGame->lockStartMenu();
 }
 
 void DangorillaTutorial::endTutorial()
@@ -42,6 +47,8 @@ void DangorillaTutorial::endTutorial()
 	dialogues = nullptr;
 	level->resume();
 	settings->completeTutorial("dangorilla");
+	interfaceGame->unlockStartMenu();
 	interfaceGame->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
+	running = false;
 }

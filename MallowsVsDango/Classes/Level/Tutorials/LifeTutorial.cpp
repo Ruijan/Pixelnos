@@ -13,9 +13,13 @@ bool LifeTutorial::isDone() {
 
 LifeTutorial::~LifeTutorial()
 {
+	if (running) {
+		interfaceGame->removeChild(dialogues);
+	}
 }
 
 void LifeTutorial::startDialogues() {
+	running = true;
 	interfaceGame->pauseLevel();
 	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["life"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
@@ -32,6 +36,7 @@ void LifeTutorial::endTutorial() {
 	interfaceGame->getChildByName("label_information")->getChildByName("life")->setRotation(0);
 	interfaceGame->getChildByName("label_information")->getChildByName("life")->setScale(1.f);
 	Tutorial::endTutorial();
+	running = false;
 }
 
 bool LifeTutorial::areConditionsMet() {

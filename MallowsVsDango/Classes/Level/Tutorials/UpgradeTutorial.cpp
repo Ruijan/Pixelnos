@@ -35,6 +35,10 @@ bool UpgradeTutorial::isDone()
 
 UpgradeTutorial::~UpgradeTutorial()
 {
+	if (running) {
+		interfaceGame->removeChild(dialogues);
+		interfaceGame->removeChildByName("hand");
+	}
 }
 
 void UpgradeTutorial::startDialogues()
@@ -52,6 +56,7 @@ void UpgradeTutorial::startDialogues()
 		interfaceGame->addChild(dialogues, 1, "dialogue");
 		dialogues->launch();
 		interfaceGame->hideStartMenu();
+		interfaceGame->lockStartMenu();
 		running = true;
 	}
 }
@@ -88,6 +93,7 @@ void UpgradeTutorial::showHand() {
 		validate_tutorial,
 		nullptr)
 	);
+	interfaceGame->unlockStartMenu();
 	interfaceGame->displayStartMenuIfInTitleState();
 }
 
@@ -99,6 +105,7 @@ void UpgradeTutorial::endTutorial()
 	interfaceGame->setSelectedTower(nullptr);
 	interfaceGame->removeChildByName("invisble_mask");
 	Tutorial::endTutorial();
+	running = false;
 }
 
 bool UpgradeTutorial::areConditionsMet()

@@ -8,6 +8,7 @@ class Config;
 class SaucerTutorial : public DialogueTutorial {
 public:
 	SaucerTutorial(Config* config, InterfaceGame* interfaceGame, Level* level);
+	virtual ~SaucerTutorial();
 	void update(float dt);
 	bool isDone();
 protected:

@@ -132,98 +132,24 @@ void Config::init() {
 	auto fileUtils = FileUtils::getInstance();
 	settings->init(FileUtils::getInstance()->getWritablePath());
 
-	std::string configFile = fileUtils->getStringFromFile(config_filename);
+	
 	std::string saveFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + save_filename);
 	std::string trackingFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + tracking_filename);
 	std::string levelTrackingFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + level_tracking_filename);
 
 	Json::Reader reader;
-	bool parsingConfigSuccessful(false);
-	bool parsingSaveSuccessful(false);
-	bool parsingTrackingSuccessful(false);
-	bool parsingLevelTrackingSuccessful(false);
-
-	parsingConfigSuccessful = reader.parse(configFile, conf_general, false);
-	if (parsingConfigSuccessful) {
-		gameTutorialSettings->init(conf_general["configuration_files"]["gameTutorial"].asString(), "gameTutorialProgress.json");
-		skillTutorialSettings->init(conf_general["configuration_files"]["skillsTutorial"].asString(), "skillTutorialProgress.json");
-		bool parsing_conf_towers = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tower"].asString()), conf_tower, false);
-		bool parsing_conf_advice = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["advice"].asString()), conf_advice, false);
-		bool parsing_conf_dangos = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["dango"].asString()), conf_dango, false);
-		bool parsing_conf_challenges = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["challenge"].asString()), conf_challenge, false);
-		bool parsing_conf_talents = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["talent"].asString()), conf_talent, false);
-		bool parsing_conf_levels = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["level"].asString()), conf_level, false);
-		std::string buttons = fileUtils->getStringFromFile(conf_general["configuration_files"]["button"].asString());
-		bool parsing_conf_buttons = reader.parse(buttons, conf_button, false);
-		if (!parsing_conf_towers || !parsing_conf_advice || !parsing_conf_dangos ||
-			!parsing_conf_challenges ||  !parsing_conf_talents ||
-			!parsing_conf_levels || !parsing_conf_buttons) {
-			std::string error = reader.getFormattedErrorMessages();
-			throw std::invalid_argument("ERROR : loading configuration files. " + error);
-			return;
-		}
-	}
-	else {
-		std::string error = reader.getFormattedErrorMessages();
-		return;
-	}
-
-	parsingLevelTrackingSuccessful = reader.parse(levelTrackingFile, level_tracking, false);
-	if (parsingLevelTrackingSuccessful) {
-		progression_need_save = true;
-		Json::Value tracking_to_remove;
-		std::vector<int> index_to_remove;
-		for (unsigned int i(0); i < level_tracking.size(); ++i) {
-			if (level_tracking[i]["saved"].asBool()) {
-				index_to_remove.push_back(i);
-			}
-		}
-		for (unsigned int i(0); i < index_to_remove.size(); ++i) {
-			level_tracking.removeIndex(index_to_remove[i], &tracking_to_remove);
-			for (unsigned int j(0); j < index_to_remove.size(); ++j) {
-				--index_to_remove[j];
-			}
-		}
-		c_level_tracking = level_tracking.size() - 1;
-		for (unsigned int levelIndex(0); levelIndex < level_tracking.size(); ++levelIndex) {
-			saveLevel(levelIndex);
-			waiting_answer = true;
-		}
-	}
-
-	parsingTrackingSuccessful = reader.parse(trackingFile, tracking, false);
-	if (parsingTrackingSuccessful) {
-		tracking_need_save = true;
-		Json::Value tracking_to_remove;
-		std::vector<int> index_to_remove;
-		for (unsigned int i(0); i < tracking.size(); ++i) {
-			if (tracking[i]["saved"].asBool()) {
-				index_to_remove.push_back(i);
-			}
-		}
-		for (unsigned int i(0); i < index_to_remove.size(); ++i) {
-			tracking.removeIndex(index_to_remove[i], &tracking_to_remove);
-			for (unsigned int j(0); j < index_to_remove.size(); ++j) {
-				--index_to_remove[j];
-			}
-		}
-		c_tracking_index = tracking.size();
-		for (unsigned int i(0); i < tracking.size(); ++i) {
-			saveTrackingIntoDB(tracking[i], [&, this, i](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
-				waiting_answer = false;
-				if (response->isSucceed()) {
-					std::vector<char> *buffer = response->getResponseData();
-					std::string str(buffer->begin(), buffer->end());
-					log("Updating Tracking ok");
-					this->tracking[i]["saved"] = true;
-					saveTracking();
-				}
-			});
-		}
-	}
-
-	parsingSaveSuccessful = reader.parse(saveFile, rootSav, false);
 	
+	extractGeneralConfiguration(fileUtils, reader);
+	extractLevelTracker(reader, levelTrackingFile);
+	extractTracker(reader, trackingFile);
+	extractSaveFile(reader, saveFile);
+	loadAllLevels();
+}
+
+void Config::extractSaveFile(Json::Reader &reader, std::string &saveFile)
+{
+	bool parsingSaveSuccessful(false);
+	parsingSaveSuccessful = reader.parse(saveFile, rootSav, false);
 	if (!parsingSaveSuccessful) {
 		// report to the user the failure and their locations in the document.
 		std::string error = reader.getFormattedErrorMessages();
@@ -276,7 +202,98 @@ void Config::init() {
 			updateUserInfo();
 		}
 	}
-	loadAllLevels();
+}
+
+void Config::extractTracker(Json::Reader &reader, std::string &trackingFile)
+{
+	bool parsingTrackingSuccessful(false);
+	parsingTrackingSuccessful = reader.parse(trackingFile, tracking, false);
+	if (parsingTrackingSuccessful) {
+		tracking_need_save = true;
+		Json::Value tracking_to_remove;
+		std::vector<int> index_to_remove;
+		for (unsigned int i(0); i < tracking.size(); ++i) {
+			if (tracking[i]["saved"].asBool()) {
+				index_to_remove.push_back(i);
+			}
+		}
+		for (unsigned int i(0); i < index_to_remove.size(); ++i) {
+			tracking.removeIndex(index_to_remove[i], &tracking_to_remove);
+			for (unsigned int j(0); j < index_to_remove.size(); ++j) {
+				--index_to_remove[j];
+			}
+		}
+		c_tracking_index = tracking.size();
+		for (unsigned int i(0); i < tracking.size(); ++i) {
+			saveTrackingIntoDB(tracking[i], [&, this, i](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
+				waiting_answer = false;
+				if (response->isSucceed()) {
+					std::vector<char> *buffer = response->getResponseData();
+					std::string str(buffer->begin(), buffer->end());
+					log("Updating Tracking ok");
+					this->tracking[i]["saved"] = true;
+					saveTracking();
+				}
+			});
+		}
+	}
+}
+
+void Config::extractLevelTracker(Json::Reader &reader, std::string &levelTrackingFile)
+{
+	bool parsingLevelTrackingSuccessful(false);
+	parsingLevelTrackingSuccessful = reader.parse(levelTrackingFile, level_tracking, false);
+	if (parsingLevelTrackingSuccessful) {
+		progression_need_save = true;
+		Json::Value tracking_to_remove;
+		std::vector<int> index_to_remove;
+		for (unsigned int i(0); i < level_tracking.size(); ++i) {
+			if (level_tracking[i]["saved"].asBool()) {
+				index_to_remove.push_back(i);
+			}
+		}
+		for (unsigned int i(0); i < index_to_remove.size(); ++i) {
+			level_tracking.removeIndex(index_to_remove[i], &tracking_to_remove);
+			for (unsigned int j(0); j < index_to_remove.size(); ++j) {
+				--index_to_remove[j];
+			}
+		}
+		c_level_tracking = level_tracking.size() - 1;
+		for (unsigned int levelIndex(0); levelIndex < level_tracking.size(); ++levelIndex) {
+			saveLevel(levelIndex);
+			waiting_answer = true;
+		}
+	}
+}
+
+void Config::extractGeneralConfiguration(cocos2d::FileUtils * fileUtils, Json::Reader &reader)
+{
+	std::string configFile = fileUtils->getStringFromFile(config_filename);
+	bool parsingConfigSuccessful(false);
+	parsingConfigSuccessful = reader.parse(configFile, conf_general, false);
+	if (parsingConfigSuccessful) {
+		gameTutorialSettings->init(conf_general["configuration_files"]["gameTutorial"].asString(), "gameTutorialProgress.json");
+		skillTutorialSettings->init(conf_general["configuration_files"]["skillsTutorial"].asString(), "skillTutorialProgress.json");
+		bool parsing_conf_towers = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tower"].asString()), conf_tower, false);
+		bool parsing_conf_advice = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["advice"].asString()), conf_advice, false);
+		bool parsing_conf_dangos = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["dango"].asString()), conf_dango, false);
+		bool parsing_conf_challenges = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["challenge"].asString()), conf_challenge, false);
+		bool parsing_conf_talents = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["talent"].asString()), conf_talent, false);
+		bool parsing_conf_levels = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["level"].asString()), conf_level, false);
+		std::string buttons = fileUtils->getStringFromFile(conf_general["configuration_files"]["button"].asString());
+		bool parsing_conf_buttons = reader.parse(buttons, conf_button, false);
+		if (!parsing_conf_towers || !parsing_conf_advice || !parsing_conf_dangos ||
+			!parsing_conf_challenges || !parsing_conf_talents ||
+			!parsing_conf_levels || !parsing_conf_buttons) {
+			std::string error = reader.getFormattedErrorMessages();
+			throw std::invalid_argument("ERROR : loading configuration files. " + error);
+			return;
+		}
+	}
+	else {
+		std::string error = reader.getFormattedErrorMessages();
+		return;
+	}
 }
 
 NetworkController* Config::getNetworkController() {

@@ -9,6 +9,13 @@ DangobeseTutorial::DangobeseTutorial(TutorialSettings* settings, InterfaceGame* 
 {
 }
 
+DangobeseTutorial::~DangobeseTutorial() {
+	if (running) {
+		interfaceGame->removeChild(dialogues);
+	}
+	
+}
+
 bool DangobeseTutorial::isDone()
 {
 	return settings->isTutorialComplete("dangobese");
@@ -20,17 +27,16 @@ bool DangobeseTutorial::areConditionsMet()
 		level->getWorldId() == settings->getSettingsMap()["dangobese"]["world"].asInt();
 }
 
-DangobeseTutorial::~DangobeseTutorial()
-{
-}
 
 void DangobeseTutorial::startDialogues()
 {
+	running = true;
 	level->pause();
 	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["dangobese"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	interfaceGame->hideStartMenu();
+	interfaceGame->lockStartMenu();
 }
 
 void DangobeseTutorial::endTutorial()
@@ -39,6 +45,8 @@ void DangobeseTutorial::endTutorial()
 	dialogues = nullptr;
 	level->resume();
 	settings->completeTutorial("dangobese");
+	interfaceGame->unlockStartMenu();
 	interfaceGame->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
+	running = false;
 }

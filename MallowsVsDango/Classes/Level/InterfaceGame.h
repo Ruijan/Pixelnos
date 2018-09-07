@@ -80,6 +80,8 @@ public:
 	void showTowerInfo();
 	void hideTowerInfo();
 	void hideStartMenu();
+	void lockStartMenu();
+	void unlockStartMenu();
 
 	void showLabelInformation();
 

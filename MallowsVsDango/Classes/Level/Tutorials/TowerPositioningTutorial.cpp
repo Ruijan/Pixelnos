@@ -18,6 +18,7 @@ void TowerPositioningTutorial::update(float dt)
 		running = true;
 		shakeElement(interfaceGame->getMenuTower("bomber"), false);
 		interfaceGame->hideStartMenu();
+		interfaceGame->lockStartMenu();
 		cocos2d::Sprite* hand = cocos2d::Sprite::create("res/buttons/hand.png");
 		hand->setAnchorPoint(cocos2d::Vec2(0.15f, 0.5f));
 		hand->setScale(visibleSize.width / 10 / hand->getContentSize().width);
@@ -47,8 +48,10 @@ void TowerPositioningTutorial::endTutorial() {
 	settings->completeTutorial("tower_positioning");
 	interfaceGame->removeChildByName("hand");
 	interfaceGame->resetTowerMenu();
+	interfaceGame->unlockStartMenu();
 	interfaceGame->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
+	running = false;
 }
 
 bool TowerPositioningTutorial::isDone()
@@ -63,4 +66,7 @@ bool TowerPositioningTutorial::isLastTowerCreatedABomber() {
 
 TowerPositioningTutorial::~TowerPositioningTutorial()
 {
+	if (running) {
+		interfaceGame->removeChildByName("hand");
+	}
 }

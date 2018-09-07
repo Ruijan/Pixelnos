@@ -13,10 +13,12 @@ public:
 	virtual void hide();
 	virtual ~StartMenu();
 	virtual void reset(int levelId);
+	void lock(bool locked);
 
 protected:
 	InterfaceGame* interfaceGame;
 	bool hidden;
+	bool locked;
 
 protected:
 	void startButtonCallback(Ref* sender, cocos2d::ui::Widget::TouchEventType type);

@@ -38,6 +38,14 @@ public:
 	Config(std::string configfilename, std::string savename);
 	void init();
 
+	void extractSaveFile(Json::Reader &reader, std::string &saveFile);
+
+	void extractTracker(Json::Reader &reader, std::string &trackingFile);
+
+	void extractLevelTracker(Json::Reader &reader, std::string &levelTrackingFile);
+
+	void extractGeneralConfiguration(cocos2d::FileUtils * fileUtils, Json::Reader &reader);
+
 	const Json::Value& getConfigValues(ConfigType type) const;
 	bool isSaveFile() const;
 	const Json::Value&  getSaveValues() const;

@@ -6,6 +6,9 @@ DialogueTutorial::DialogueTutorial(TutorialSettings * settings):
 {
 }
 
+DialogueTutorial::~DialogueTutorial() {
+}
+
 void DialogueTutorial::update(float dt)
 {
 	if (!isDone() && areConditionsMet()) {

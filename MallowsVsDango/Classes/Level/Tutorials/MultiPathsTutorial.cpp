@@ -10,11 +10,13 @@ MultiPathsTutorial::MultiPathsTutorial(TutorialSettings* settings, InterfaceGame
 }
 
 void MultiPathsTutorial::startDialogues() {
+	running = true;
 	interfaceGame->pauseLevel();
 	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["multi_paths"]["dialogue"]);
 	interfaceGame->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	interfaceGame->hideStartMenu();
+	interfaceGame->lockStartMenu();
 }
 
 void MultiPathsTutorial::endTutorial() {
@@ -22,8 +24,10 @@ void MultiPathsTutorial::endTutorial() {
 	dialogues = nullptr;
 	interfaceGame->resumeLevel();
 	settings->completeTutorial("multi_paths");
+	interfaceGame->unlockStartMenu();
 	interfaceGame->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
+	running = false;
 }
 
 bool MultiPathsTutorial::isDone()
@@ -40,4 +44,7 @@ bool MultiPathsTutorial::areConditionsMet()
 
 MultiPathsTutorial::~MultiPathsTutorial()
 {
+	if (running) {
+		interfaceGame->removeChild(dialogues);
+	}
 }

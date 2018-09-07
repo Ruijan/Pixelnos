@@ -6,7 +6,8 @@
 
 StartMenu::StartMenu() :
 	interfaceGame(nullptr),
-	hidden(false)
+	hidden(false),
+	locked(false)
 {
 
 }
@@ -24,26 +25,34 @@ StartMenu* StartMenu::create(InterfaceGame* interfaceGame, int levelId) {
 
 void StartMenu::displayWithAnimation()
 {
-	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-	getChildByName("start")->setVisible(true);
-	getChildByName("title")->setVisible(true);
-	getChildByName("advice")->setVisible(true);
-	getChildByName("title")->runAction(cocos2d::Sequence::create(
-		cocos2d::EaseBackOut::create(
-			cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(getChildByName("title")->getPosition().x, visibleSize.height / 2))),
-		cocos2d::DelayTime::create(1.f),
-		cocos2d::FadeOut::create(0.5f), nullptr));
-	getChildByName("start")->runAction(cocos2d::EaseBackOut::create(
-		cocos2d::MoveTo::create(0.5f,
-			cocos2d::Vec2(getChildByName("start")->getPosition().x, getChildByName("start")->getContentSize().height * getChildByName("start")->getScaleY()))));
+	if (!locked) {
+		cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+		getChildByName("start")->setVisible(true);
+		getChildByName("title")->setVisible(true);
+		getChildByName("advice")->setVisible(true);
+		getChildByName("title")->runAction(cocos2d::Sequence::create(
+			cocos2d::EaseBackOut::create(
+				cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(getChildByName("title")->getPosition().x, visibleSize.height / 2))),
+			cocos2d::DelayTime::create(1.f),
+			cocos2d::FadeOut::create(0.5f), nullptr));
+		getChildByName("start")->runAction(cocos2d::EaseBackOut::create(
+			cocos2d::MoveTo::create(0.5f,
+				cocos2d::Vec2(getChildByName("start")->getPosition().x, getChildByName("start")->getContentSize().height * getChildByName("start")->getScaleY()))));
+	}
 }
 
 void StartMenu::hide() {
-	if (!hidden) {
-		getChildByName("start")->setVisible(false);
-		getChildByName("title")->setVisible(false);
-		getChildByName("advice")->setVisible(false);
+	if (!locked) {
+		if (!hidden) {
+			getChildByName("start")->setVisible(false);
+			getChildByName("title")->setVisible(false);
+			getChildByName("advice")->setVisible(false);
+		}
 	}
+}
+
+void StartMenu::lock(bool locked) {
+	this->locked = locked;
 }
 
 StartMenu::~StartMenu()
@@ -66,6 +75,8 @@ void StartMenu::reset(int levelId)
 	getChildByName("advice")->setVisible(false);
 	getChildByName("advice")->runAction(cocos2d::RepeatForever::create(cocos2d::Sequence::create(
 		cocos2d::FadeIn::create(1.f), cocos2d::FadeOut::create(0.5f), cocos2d::DelayTime::create(1.f), NULL)));
+	locked = false;
+	hidden = false;
 }
 
 bool StartMenu::init(InterfaceGame* interfaceGame, int levelId) {

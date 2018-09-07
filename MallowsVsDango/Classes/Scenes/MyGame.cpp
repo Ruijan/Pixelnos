@@ -165,6 +165,8 @@ InterfaceGame* MyGame::getMenu() {
 void MyGame::reload() {
 	cLevel->reset();
 	menu->reset();
+	removeTutorials();
+	loadTutorials();
 	acceleration = 1.0;
 }
 
