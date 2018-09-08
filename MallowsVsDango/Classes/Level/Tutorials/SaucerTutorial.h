@@ -2,12 +2,12 @@
 #include "DialogueTutorial.h"
 #include "../Level.h"
 
-class InterfaceGame;
+class LevelInterface;
 class Level;
 class Config;
 class SaucerTutorial : public DialogueTutorial {
 public:
-	SaucerTutorial(Config* config, InterfaceGame* interfaceGame, Level* level);
+	SaucerTutorial(Config* config, LevelInterface* levelInterface, Level* level);
 	virtual ~SaucerTutorial();
 	void update(float dt);
 	bool isDone();
@@ -19,7 +19,7 @@ protected:
 	bool areConditionsMet();
 
 protected:
-	InterfaceGame* interfaceGame;
+	LevelInterface* levelInterface;
 	Level* level;
 	Config* config;
 };

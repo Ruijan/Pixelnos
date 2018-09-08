@@ -1,6 +1,6 @@
 #include "WinMenu.h"
-#include "../AppDelegate.h"
-#include "../Scenes/MyGame.h"
+#include "../../AppDelegate.h"
+#include "../../Scenes/MyGame.h"
 
 
 WinMenu * WinMenu::create(MyGame* game)

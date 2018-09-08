@@ -3,7 +3,7 @@
 
 #include "cocos2d.h"
 #include "Level/Level.h"
-#include "../Level/InterfaceGame.h"
+#include "../Level/Interface/LevelInterface.h"
 #include "Lib/Loader.h"
 #include "LoadingScreen.h"
 #include "../Lib/Translationable.h"
@@ -33,7 +33,7 @@ private:
 	int id_level;
 	int id_world;
 	Level* cLevel;
-	InterfaceGame* menu;
+	LevelInterface* menu;
 	LoadingScreen* loadingScreen;
 	double acceleration; // not used right now.
 	bool paused;
@@ -75,7 +75,7 @@ public:
 	bool save();
 	
 	Level* getLevel();
-	InterfaceGame* getMenu();
+	LevelInterface* getMenu();
 
 	void addActionToTracker(Json::Value action);
 	void createNewTracker();

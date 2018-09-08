@@ -1,12 +1,12 @@
 #include "DangorillaTutorial.h"
 #include "../Level.h"
-#include "../InterfaceGame.h"
+#include "../Interface/LevelInterface.h"
 
 
-DangorillaTutorial::DangorillaTutorial(TutorialSettings* settings, InterfaceGame * interfaceGame, Level* level) :
+DangorillaTutorial::DangorillaTutorial(TutorialSettings* settings, LevelInterface * levelInterface, Level* level) :
 	DialogueTutorial(settings),
 	level(level),
-	interfaceGame(interfaceGame)
+	levelInterface(levelInterface)
 {
 }
 
@@ -26,7 +26,7 @@ bool DangorillaTutorial::areConditionsMet()
 DangorillaTutorial::~DangorillaTutorial()
 {
 	if (running) {
-		interfaceGame->removeChild(dialogues);
+		levelInterface->removeChild(dialogues);
 	}
 }
 
@@ -35,20 +35,20 @@ void DangorillaTutorial::startDialogues()
 	running = true;
 	level->pause();
 	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["dangorilla"]["dialogue"]);
-	interfaceGame->addChild(dialogues, 1, "dialogue");
+	levelInterface->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
-	interfaceGame->hideStartMenu();
-	interfaceGame->lockStartMenu();
+	levelInterface->hideStartMenu();
+	levelInterface->lockStartMenu();
 }
 
 void DangorillaTutorial::endTutorial()
 {
-	interfaceGame->removeChild(dialogues);
+	levelInterface->removeChild(dialogues);
 	dialogues = nullptr;
 	level->resume();
 	settings->completeTutorial("dangorilla");
-	interfaceGame->unlockStartMenu();
-	interfaceGame->displayStartMenuIfInTitleState();
+	levelInterface->unlockStartMenu();
+	levelInterface->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
 	running = false;
 }

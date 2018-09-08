@@ -1,9 +1,9 @@
 #include "LifeTutorial.h"
-#include "../InterfaceGame.h"
+#include "../Interface/LevelInterface.h"
 
-LifeTutorial::LifeTutorial(TutorialSettings* settings, InterfaceGame * nInterfaceGame):
+LifeTutorial::LifeTutorial(TutorialSettings* settings, LevelInterface * nInterfaceGame):
 	DialogueTutorial(settings),
-	interfaceGame(nInterfaceGame)
+	levelInterface(nInterfaceGame)
 {
 }
 
@@ -14,31 +14,31 @@ bool LifeTutorial::isDone() {
 LifeTutorial::~LifeTutorial()
 {
 	if (running) {
-		interfaceGame->removeChild(dialogues);
+		levelInterface->removeChild(dialogues);
 	}
 }
 
 void LifeTutorial::startDialogues() {
 	running = true;
-	interfaceGame->pauseLevel();
+	levelInterface->pauseLevel();
 	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["life"]["dialogue"]);
-	interfaceGame->addChild(dialogues, 1, "dialogue");
+	levelInterface->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
-	shakeScaleElement(interfaceGame->getChildByName("label_information")->getChildByName("life"), true);
+	shakeScaleElement(levelInterface->getChildByName("label_information")->getChildByName("life"), true);
 }
 
 void LifeTutorial::endTutorial() {
-	interfaceGame->removeChild(dialogues);
+	levelInterface->removeChild(dialogues);
 	dialogues = nullptr;
-	interfaceGame->resumeLevel();
+	levelInterface->resumeLevel();
 	settings->completeTutorial("life");
-	interfaceGame->getChildByName("label_information")->getChildByName("life")->stopAllActions();
-	interfaceGame->getChildByName("label_information")->getChildByName("life")->setRotation(0);
-	interfaceGame->getChildByName("label_information")->getChildByName("life")->setScale(1.f);
+	levelInterface->getChildByName("label_information")->getChildByName("life")->stopAllActions();
+	levelInterface->getChildByName("label_information")->getChildByName("life")->setRotation(0);
+	levelInterface->getChildByName("label_information")->getChildByName("life")->setScale(1.f);
 	Tutorial::endTutorial();
 	running = false;
 }
 
 bool LifeTutorial::areConditionsMet() {
-	return interfaceGame->getLifeQuantity() < 3;
+	return levelInterface->getLifeQuantity() < 3;
 }

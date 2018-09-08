@@ -1,20 +1,20 @@
 #include "StartMenu.h"
-#include "../Config/json.h"
-#include "../AppDelegate.h"
-#include "../Level/InterfaceGame.h"
+#include "../../Config/json.h"
+#include "../../AppDelegate.h"
+#include "LevelInterface.h"
 
 
 StartMenu::StartMenu() :
-	interfaceGame(nullptr),
+	levelInterface(nullptr),
 	hidden(false),
 	locked(false)
 {
 
 }
 
-StartMenu* StartMenu::create(InterfaceGame* interfaceGame, int levelId) {
+StartMenu* StartMenu::create(LevelInterface* levelInterface, int levelId) {
 	StartMenu* menu = new (std::nothrow) StartMenu();
-	if (menu && menu->init(interfaceGame, levelId))
+	if (menu && menu->init(levelInterface, levelId))
 	{
 		menu->autorelease();
 		return menu;
@@ -79,9 +79,9 @@ void StartMenu::reset(int levelId)
 	hidden = false;
 }
 
-bool StartMenu::init(InterfaceGame* interfaceGame, int levelId) {
+bool StartMenu::init(LevelInterface* levelInterface, int levelId) {
 	bool initialized = cocos2d::ui::Layout::init();
-	this->interfaceGame = interfaceGame;
+	this->levelInterface = levelInterface;
 	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 	Json::Value buttons = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
@@ -134,12 +134,12 @@ void StartMenu::addStartButton(cocos2d::Size &visibleSize, Json::Value &buttons,
 
 void StartMenu::startButtonCallback(Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-		interfaceGame->setListening(true);
+		levelInterface->setListening(true);
 		getChildByName("start")->runAction(cocos2d::EaseBackIn::create(cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(getChildByName("start")->getPosition().x,
 			-getChildByName("start")->getContentSize().height * getChildByName("start")->getScaleY()))));
 		getChildByName("title")->setVisible(false);
 		getChildByName("advice")->setVisible(false);
-		interfaceGame->showLabelInformation();
-		interfaceGame->setGameState(InterfaceGame::RUNNING);
+		levelInterface->showLabelInformation();
+		levelInterface->setGameState(LevelInterface::RUNNING);
 	}
 }

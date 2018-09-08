@@ -2,7 +2,7 @@
 #include "cocos2d.h"
 #include "../../Config/Settings/TutorialSettings.h"
 
-class InterfaceGame;
+class LevelInterface;
 
 class Tutorial {
 public:

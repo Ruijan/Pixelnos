@@ -8,7 +8,7 @@
 #include <spine/spine-cocos2dx.h>
 
 class Cell;
-class InterfaceGame;
+class LevelInterface;
 class Tower;
 class Attack;
 
@@ -74,7 +74,7 @@ public:
 	void changeSpeedAnimation(float speed);
 
 
-	cocos2d::ui::Layout* getInformationLayout(InterfaceGame* interface_game);
+	cocos2d::ui::Layout* getInformationLayout(LevelInterface* interface_game);
 	virtual void updateInformationLayout(cocos2d::ui::Layout* layout);
 
 	void addTargetingTower(Tower* tower);

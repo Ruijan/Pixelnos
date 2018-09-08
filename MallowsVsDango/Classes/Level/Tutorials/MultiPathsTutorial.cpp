@@ -1,31 +1,31 @@
 #include "MultiPathsTutorial.h"
 #include "../Level.h"
-#include "../InterfaceGame.h"
+#include "../Interface/LevelInterface.h"
 
-MultiPathsTutorial::MultiPathsTutorial(TutorialSettings* settings, InterfaceGame* interfaceGame, Level* level) :
+MultiPathsTutorial::MultiPathsTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level) :
 	DialogueTutorial(settings),
-	interfaceGame(interfaceGame),
+	levelInterface(levelInterface),
 	level(level)
 {
 }
 
 void MultiPathsTutorial::startDialogues() {
 	running = true;
-	interfaceGame->pauseLevel();
+	levelInterface->pauseLevel();
 	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["multi_paths"]["dialogue"]);
-	interfaceGame->addChild(dialogues, 1, "dialogue");
+	levelInterface->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
-	interfaceGame->hideStartMenu();
-	interfaceGame->lockStartMenu();
+	levelInterface->hideStartMenu();
+	levelInterface->lockStartMenu();
 }
 
 void MultiPathsTutorial::endTutorial() {
-	interfaceGame->removeChild(dialogues);
+	levelInterface->removeChild(dialogues);
 	dialogues = nullptr;
-	interfaceGame->resumeLevel();
+	levelInterface->resumeLevel();
 	settings->completeTutorial("multi_paths");
-	interfaceGame->unlockStartMenu();
-	interfaceGame->displayStartMenuIfInTitleState();
+	levelInterface->unlockStartMenu();
+	levelInterface->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
 	running = false;
 }
@@ -39,12 +39,12 @@ bool MultiPathsTutorial::areConditionsMet()
 {
 	return level->getLevelId() == settings->getSettingsMap()["multi_paths"]["level"].asInt() &&
 		level->getWorldId() == settings->getSettingsMap()["multi_paths"]["world"].asInt() &&
-		interfaceGame->getGameState() == InterfaceGame::GameState::TITLE;
+		levelInterface->getGameState() == LevelInterface::GameState::TITLE;
 }
 
 MultiPathsTutorial::~MultiPathsTutorial()
 {
 	if (running) {
-		interfaceGame->removeChild(dialogues);
+		levelInterface->removeChild(dialogues);
 	}
 }

@@ -1,15 +1,15 @@
 #include "SugarTutorial.h"
-#include "../InterfaceGame.h"
+#include "../Interface/LevelInterface.h"
 
-SugarTutorial::SugarTutorial(TutorialSettings* settings, InterfaceGame* nInterfaceGame) :
+SugarTutorial::SugarTutorial(TutorialSettings* settings, LevelInterface* nInterfaceGame) :
 	DialogueTutorial(settings),
-	interfaceGame(nInterfaceGame)
+	levelInterface(nInterfaceGame)
 {
 }
 
 SugarTutorial::~SugarTutorial() {
 	if (running) {
-		interfaceGame->removeChild(dialogues);
+		levelInterface->removeChild(dialogues);
 	}
 }
 
@@ -19,36 +19,36 @@ bool SugarTutorial::isDone() {
 
 void SugarTutorial::startDialogues() {
 	running = true;
-	interfaceGame->hideStartMenu();
-	interfaceGame->lockStartMenu();
-	interfaceGame->pauseLevel();
+	levelInterface->hideStartMenu();
+	levelInterface->lockStartMenu();
+	levelInterface->pauseLevel();
 	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["sugar"]["dialogue"]);
-	interfaceGame->addChild(dialogues, 1, "dialogue");
+	levelInterface->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
-	shakeScaleElement(interfaceGame->getChildByName("label_information")->getChildByName("sugar"), true);
+	shakeScaleElement(levelInterface->getChildByName("label_information")->getChildByName("sugar"), true);
 }
 
 void SugarTutorial::update(float dt) {
 	DialogueTutorial::update(dt);
 	if (!isDone() && areConditionsMet()) {
-		interfaceGame->hideStartMenu();
-		interfaceGame->lockStartMenu();
+		levelInterface->hideStartMenu();
+		levelInterface->lockStartMenu();
 	}
 }
 
 void SugarTutorial::endTutorial() {
-	interfaceGame->removeChild(dialogues);
+	levelInterface->removeChild(dialogues);
 	dialogues = nullptr;
-	interfaceGame->resumeLevel();
+	levelInterface->resumeLevel();
 	settings->completeTutorial("sugar");
-	interfaceGame->resetSugarLabel();
-	interfaceGame->unlockStartMenu();
-	interfaceGame->displayStartMenuIfInTitleState();
+	levelInterface->resetSugarLabel();
+	levelInterface->unlockStartMenu();
+	levelInterface->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
 	running = true;
 }
 
 bool SugarTutorial::areConditionsMet() {
-	return interfaceGame->getSugarQuantity() < 90;
+	return levelInterface->getSugarQuantity() < 90;
 }
 

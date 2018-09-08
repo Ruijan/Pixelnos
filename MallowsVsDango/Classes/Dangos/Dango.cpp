@@ -4,7 +4,7 @@
 #include "../Level/Wall.h"
 #include "../AppDelegate.h"
 #include "../SceneManager.h"
-#include "../Level/InterfaceGame.h"
+#include "../Level/Interface/LevelInterface.h"
 #include "../Towers/Tower.h"
 #include "../Towers/Attack.h"
 #include <random>
@@ -449,7 +449,7 @@ int Dango::addDamagesModifier(std::pair<double, Effect*> dmg_modifier) {
 	return modifier_id - 1;
 }
 
-ui::Layout* Dango::getInformationLayout(InterfaceGame* interface_game) {
+ui::Layout* Dango::getInformationLayout(LevelInterface* interface_game) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	auto layout = ui::Layout::create();

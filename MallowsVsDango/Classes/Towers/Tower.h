@@ -9,7 +9,7 @@
 
 class Cell;
 class Dango;
-class InterfaceGame;
+class LevelInterface;
 
 using namespace spine;
 
@@ -66,7 +66,7 @@ public:
 	void setTarget(Dango* dango);
 	void displayRange(bool disp);
 	virtual bool isSameType(std::string type) = 0;
-	cocos2d::ui::Layout* getInformationLayout(InterfaceGame* interface_game);
+	cocos2d::ui::Layout* getInformationLayout(LevelInterface* interface_game);
 	static TowerType getTowerTypeFromString(std::string type);
 	cocos2d::Vector<cocos2d::SpriteFrame*> getAnimation(Tower::State animState);
 	static SkeletonAnimation* getSkeletonAnimationFromName(std::string name);

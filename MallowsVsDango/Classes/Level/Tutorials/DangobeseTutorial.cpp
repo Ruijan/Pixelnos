@@ -1,17 +1,17 @@
 #include "DangobeseTutorial.h"
 #include "../Level.h"
-#include "../InterfaceGame.h"
+#include "../Interface/LevelInterface.h"
 
-DangobeseTutorial::DangobeseTutorial(TutorialSettings* settings, InterfaceGame* interfaceGame, Level* level) :
+DangobeseTutorial::DangobeseTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level) :
 	DialogueTutorial(settings),
 	level(level),
-	interfaceGame(interfaceGame)
+	levelInterface(levelInterface)
 {
 }
 
 DangobeseTutorial::~DangobeseTutorial() {
 	if (running) {
-		interfaceGame->removeChild(dialogues);
+		levelInterface->removeChild(dialogues);
 	}
 	
 }
@@ -33,20 +33,20 @@ void DangobeseTutorial::startDialogues()
 	running = true;
 	level->pause();
 	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["dangobese"]["dialogue"]);
-	interfaceGame->addChild(dialogues, 1, "dialogue");
+	levelInterface->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
-	interfaceGame->hideStartMenu();
-	interfaceGame->lockStartMenu();
+	levelInterface->hideStartMenu();
+	levelInterface->lockStartMenu();
 }
 
 void DangobeseTutorial::endTutorial()
 {
-	interfaceGame->removeChild(dialogues);
+	levelInterface->removeChild(dialogues);
 	dialogues = nullptr;
 	level->resume();
 	settings->completeTutorial("dangobese");
-	interfaceGame->unlockStartMenu();
-	interfaceGame->displayStartMenuIfInTitleState();
+	levelInterface->unlockStartMenu();
+	levelInterface->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
 	running = false;
 }

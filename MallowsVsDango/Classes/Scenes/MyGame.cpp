@@ -109,21 +109,21 @@ void MyGame::update(float delta) {
 	}
 	// If it has been asked to go to the next level then we delete the current level,
 	// we reset the interface and the parameters and let's go !
-	if (menu->getGameState() == InterfaceGame::GameState::TITLE) {
+	if (menu->getGameState() == LevelInterface::GameState::TITLE) {
 		cLevel->updateTowers(delta);
 		cLevel->removeElements();
 	}
-	else if (menu->getGameState() == InterfaceGame::GameState::NEXT_LEVEL) {
+	else if (menu->getGameState() == LevelInterface::GameState::NEXT_LEVEL) {
 		switchLevel();
 	}
-	else if (menu->getGameState() == InterfaceGame::GameState::RUNNING) {
+	else if (menu->getGameState() == LevelInterface::GameState::RUNNING) {
 		cLevel->update(delta * acceleration);
 		// update tracking event of the level
 		if (cLevel->getHolySugar() != l_event.holy_sugar) {
 			updateTracker("running");
 		}
 	}
-	else if (menu->getGameState() == InterfaceGame::GameState::DONE && !cLevel->isPaused()) {
+	else if (menu->getGameState() == LevelInterface::GameState::DONE && !cLevel->isPaused()) {
 		menu->showWin();
 		cLevel->pause();
 		updateTracker("completed");
@@ -158,7 +158,7 @@ Level* MyGame::getLevel() {
 	return cLevel;
 }
 
-InterfaceGame* MyGame::getMenu() {
+LevelInterface* MyGame::getMenu() {
 	return menu;
 }
 
@@ -243,7 +243,7 @@ void MyGame::initAttributes() {
 	cLevel = Level::create(id_level, id_world);
 	addChild(cLevel, 0);
 	if (menu == nullptr) {
-		menu = InterfaceGame::create(this);
+		menu = LevelInterface::create(this);
 		addChild(menu, 2);
 	}
 	else {

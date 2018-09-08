@@ -1,10 +1,10 @@
 #pragma once
 #include "DialogueTutorial.h"
 
-class InterfaceGame;
+class LevelInterface;
 class LifeTutorial : public DialogueTutorial {
 public:
-	LifeTutorial(TutorialSettings* settings, InterfaceGame* interfaceGame);
+	LifeTutorial(TutorialSettings* settings, LevelInterface* levelInterface);
 	bool isDone();
 	virtual ~LifeTutorial();
 
@@ -15,5 +15,5 @@ protected:
 	bool areConditionsMet();
 
 protected:
-	InterfaceGame* interfaceGame;
+	LevelInterface* levelInterface;
 };

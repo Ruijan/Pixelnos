@@ -1,6 +1,6 @@
 #include "LoseMenu.h"
-#include "../AppDelegate.h"
-#include "../Scenes/MyGame.h"
+#include "../../AppDelegate.h"
+#include "../../Scenes/MyGame.h"
 
 
 LoseMenu* LoseMenu::create(MyGame * game, const std::string& language, const Json::Value& buttons, const Json::Value& advice)
