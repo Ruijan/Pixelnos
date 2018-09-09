@@ -127,7 +127,7 @@ bool LevelInterface::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) 
 					hideTowerInfo();
 					selected_turret = nullptr;
 				}
-				getChildByName("menu_panel")->getChildByName("informations")->setVisible(false);
+				pauseMenu->getChildByName("informations")->setVisible(false);
 				state = State::IDLE;
 			}
 		}
@@ -440,8 +440,9 @@ void LevelInterface::reset() {
 	rightPanel->reset();
 	removeChildByName("menu_win");
 	initWinMenu(config);
-	removeChild(challenges);
-	levelInfo->reset();
+	challenges = ChallengeHandler::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
+		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["challenges"]);
+	levelInfo->reset(challenges);
 }
 
 void LevelInterface::initParametersMenu(const Json::Value& config) {
@@ -742,20 +743,15 @@ void LevelInterface::startRewarding(Vec2 pos) {
 
 void LevelInterface::initDialoguesFromLevel(const Json::Value& config) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	auto fileUtils = FileUtils::getInstance();
-
-	Json::Reader reader;
-	Json::Value dialogue_json;
-	bool parsingConfigSuccessful = reader.parse(fileUtils->getStringFromFile(
-		configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
-		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["dialogues_file"].asString()), dialogue_json, false);
-
-	bool play_dialogue = configClass->getSettings()->isDialoguesEnabled();
-	if (dialogue_json["introDialogue"].size() != 0 && play_dialogue) {
-		dialogues = Dialogue::createFromConfig(dialogue_json["introDialogue"]);
-		addChild(dialogues, 1, "dialogue");
-		dialogues->launch();
-		game_state = INTRO;
+	if (configClass->getSettings()->isDialoguesEnabled()) {
+		Settings* dialgouesSettings = Settings::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
+		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["dialogues_file"].asString());
+		if (dialgouesSettings->getSettingsMap()["introDialogue"].size() != 0) {
+			dialogues = Dialogue::createFromConfig(dialgouesSettings->getSettingsMap()["introDialogue"]);
+			addChild(dialogues, 1, "dialogue");
+			dialogues->launch();
+			game_state = INTRO;
+		}
 	}
 	else {
 		game_state = TITLE;

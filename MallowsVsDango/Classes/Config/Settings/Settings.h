@@ -4,6 +4,7 @@
 
 class Settings {
 public:
+	static Settings* create(const std::string& settingsFilename);
 	Settings();
 	void init(const std::string& settingsFilename);
 	const Json::Value& getSettingsMap();

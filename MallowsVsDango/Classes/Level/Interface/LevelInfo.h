@@ -8,7 +8,7 @@ class LevelInfo : public cocos2d::ui::Layout {
 public:
 	static LevelInfo * create(ChallengeHandler* challenges);
 	void resetAnimations();
-	void reset();
+	void reset(ChallengeHandler* challenges);
 	void update(int sugarQuantity, int lifeQuantity, double progress);
 	void showProgress();
 

@@ -9,8 +9,8 @@
 class StoryMenu : public cocos2d::Scene, public Translationable
 {
 	public:
-	virtual bool init();
-	CREATE_FUNC(StoryMenu);
+	static StoryMenu* create(Config* config);
+	virtual bool init(Config * config);
 	virtual ~StoryMenu();
 	virtual void switchLanguage();
 	virtual void onEnterTransitionDidFinish();

@@ -12,13 +12,23 @@
 
 USING_NS_CC;
 
-bool StoryMenu::init() {
+StoryMenu * StoryMenu::create(Config * config)
+{
+	StoryMenu* storyMenu = new StoryMenu();
+	if (storyMenu->init(config)) {
+		return storyMenu;
+	}
+	delete storyMenu;
+	return nullptr;
+}
+
+bool StoryMenu::init(Config * config) {
 	if (!Scene::init()) { return false; }
+	configClass = config;
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 
 	tutorial_running = false;
-	configClass = ((AppDelegate*)Application::getInstance())->getConfigClass();
 	std::string language = configClass->getSettings()->getLanguage();
 
 	addChild(ui::Layout::create(), 3, "black_mask");

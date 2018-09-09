@@ -154,7 +154,6 @@ void RightPanel::createTowerInfo() {
 	informations->setPosition(cocos2d::Vec2(towerLayout->getPosition().x + towerLayout->getContentSize().width / 0.9 / 2,
 		towerLayout->getPosition().y - towerLayout->getContentSize().height));
 	informations->setVisible(false);
-	cocos2d::SpriteFrameCache* cache = cocos2d::SpriteFrameCache::getInstance();
 
 	cocos2d::Node* animation = cocos2d::Node::create();
 	informations->addChild(animation, 1, "animation");

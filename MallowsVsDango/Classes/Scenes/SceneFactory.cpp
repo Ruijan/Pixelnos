@@ -13,13 +13,13 @@ cocos2d::Scene * SceneFactory::createScene(SceneType type, Config* config)
 	cocos2d::Scene * scene(nullptr);
 	switch (type) {
 	case MENU:
-		scene = MainMenu::create();
+		scene = MainMenu::create(config);
 		break;
 	case GAME:
 		scene = MyGame::create(config);
 		break;
 	case LEVELS:
-		scene = StoryMenu::create();
+		scene = StoryMenu::create(config);
 		break;
 	case CREDIT:
 		scene = CreditScreen::create();

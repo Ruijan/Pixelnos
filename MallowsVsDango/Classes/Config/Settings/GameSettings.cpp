@@ -3,7 +3,13 @@
 GameSettings::GameSettings() :
 	needSave(false),
 	saveFolder(""),
-	fileName("settings.json")
+	fileName("settings.json"),
+	alwaysGridEnabled(false),
+	movingGridEnabled(true),
+	neverGridEnabled(false),
+	limit_enabled(false),
+	dialoguesEnabled(true),
+	language("en")
 {
 }
 

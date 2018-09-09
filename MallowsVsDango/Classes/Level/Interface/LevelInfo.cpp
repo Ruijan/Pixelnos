@@ -24,7 +24,7 @@ bool LevelInfo::init(ChallengeHandler* challenges) {
 	sugar->setPosition(cocos2d::Point(sizeButton * 0.125,
 		-sugar->getContentSize().height * sugar->getScale()));
 	sugar->setAnchorPoint(cocos2d::Vec2(0, 0.5f));
-	addChild(sugar, 3);
+	addChild(sugar, 3, "sugarImage");
 
 	sugarLabel = cocos2d::Label::createWithTTF("x3000", "fonts/LICABOLD.ttf", 42 * visibleSize.width / 1280);
 	addChild(sugarLabel, 3, "sugar");
@@ -73,7 +73,6 @@ bool LevelInfo::init(ChallengeHandler* challenges) {
 	cocos2d::Vec2 position = cocos2d::Vec2(sugar->getPosition().x + sugar->getContentSize().width * sugar->getScale() / 2,
 		sugar->getPosition().y - sugar->getContentSize().height * sugar->getScale());
 	challenges->setPosition(position);
-
 	addChild(challenges, 1, "challenges");
 
 	return true;
@@ -100,10 +99,17 @@ void LevelInfo::update(int sugarQuantity, int lifeQuantity, double progress) {
 	}
 }
 
-void LevelInfo::reset() {
+void LevelInfo::reset(ChallengeHandler* challenges) {
+	removeChild(getChildByName("challenges"));
 	getChildByName("dango_head")->setVisible(false);
 	getChildByName("loading_bar_background")->setVisible(false);
 	loadingBar->setVisible(false);
+
+	cocos2d::Node* sugar = getChildByName("sugarImage");
+	cocos2d::Vec2 position = cocos2d::Vec2(sugar->getPosition().x + sugar->getContentSize().width * sugar->getScale() / 2,
+		sugar->getPosition().y - sugar->getContentSize().height * sugar->getScale());
+	challenges->setPosition(position);
+	addChild(challenges, 1, "challenges");
 }
 
 void LevelInfo::resetAnimations() {

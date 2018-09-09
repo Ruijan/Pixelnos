@@ -1,6 +1,13 @@
 #include "Settings.h"
 #include "../Exceptions/JsonContentException.h"
 
+Settings * Settings::create(const std::string & settingsFilename)
+{
+	Settings* settings = new Settings();
+	settings->init(settingsFilename);
+	return settings;
+}
+
 Settings::Settings() :
 	reader(new Json::Reader()),
 	fileUtils(cocos2d::FileUtils::getInstance())
