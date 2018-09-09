@@ -4,6 +4,7 @@
 #include "extensions/cocos-ext.h"
 #include "NetworkController.h"
 #include "../Scenes/MyGame.h"
+#include "Exceptions/RequestToJsonException.h"
 #include <time.h>
 #include <stdio.h>
 
@@ -12,8 +13,8 @@ USING_NS_CC_EXT;
 using namespace cocos2d::network;
 
 Config::Config(std::string configfilename, std::string savename) :
-	config_filename(configfilename), 
-	save_filename(savename), 
+	config_filename(configfilename),
+	save_filename(savename),
 	save_file(false),
 	settings_need_save(false),
 	tracking_need_save(false), progression_need_save(false), user_need_creation(false),
@@ -23,7 +24,9 @@ Config::Config(std::string configfilename, std::string savename) :
 	//network_controller = new NetworkController("http://127.0.0.1/mvd/");
 	network_controller = new NetworkController("http://pixelnos.com/app/");
 
-	settings = new Settings();
+	settings = new GameSettings();
+	gameTutorialSettings = new TutorialSettings();
+	skillTutorialSettings = new TutorialSettings();
 
 	scheduler = Director::getInstance()->getScheduler();
 	scheduler->retain();
@@ -38,10 +41,10 @@ const Json::Value& Config::getConfigValues(ConfigType type) const {
 		return conf_general;
 		break;
 	case GAMETUTORIAL:
-		return conf_game_tutorial;
+		return gameTutorialSettings->getSettingsMap();
 		break;
 	case SKILLTUTORIAL:
-		return conf_skills_tutorial;
+		return skillTutorialSettings->getSettingsMap();
 		break;
 	case ADVICE:
 		return conf_advice;
@@ -127,131 +130,26 @@ void Config::saveLevelTracking() {
 
 void Config::init() {
 	auto fileUtils = FileUtils::getInstance();
+	settings->init(FileUtils::getInstance()->getWritablePath());
 
-	std::string configFile = fileUtils->getStringFromFile(config_filename);
+	
 	std::string saveFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + save_filename);
 	std::string trackingFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + tracking_filename);
 	std::string levelTrackingFile = fileUtils->getStringFromFile(FileUtils::getInstance()->getWritablePath() + level_tracking_filename);
 
 	Json::Reader reader;
-	bool parsingConfigSuccessful(false);
+	
+	extractGeneralConfiguration(fileUtils, reader);
+	extractLevelTracker(reader, levelTrackingFile);
+	extractTracker(reader, trackingFile);
+	extractSaveFile(reader, saveFile);
+	loadAllLevels();
+}
+
+void Config::extractSaveFile(Json::Reader &reader, std::string &saveFile)
+{
 	bool parsingSaveSuccessful(false);
-	bool parsingTrackingSuccessful(false);
-	bool parsingLevelTrackingSuccessful(false);
-
-	parsingConfigSuccessful = reader.parse(configFile, conf_general, false);
-	if (parsingConfigSuccessful) {
-		bool parsing_conf_towers = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tower"].asString()), conf_tower, false);
-		bool parsing_conf_advice = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["advice"].asString()), conf_advice, false);
-		bool parsing_conf_dangos = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["dango"].asString()), conf_dango, false);
-		bool parsing_conf_challenges = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["challenge"].asString()), conf_challenge, false);
-		bool parsing_conf_game_tutorials = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["gameTutorial"].asString()), conf_game_tutorial, false);
-		bool parsing_conf_skills_tutorials = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["skillsTutorial"].asString()), conf_skills_tutorial, false);
-		bool parsing_conf_talents = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["talent"].asString()), conf_talent, false);
-		bool parsing_conf_levels = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["level"].asString()), conf_level, false);
-		std::string buttons = fileUtils->getStringFromFile(conf_general["configuration_files"]["button"].asString());
-		bool parsing_conf_buttons = reader.parse(buttons, conf_button, false);
-		if (!parsing_conf_towers || !parsing_conf_advice || !parsing_conf_dangos ||
-			!parsing_conf_challenges || !parsing_conf_game_tutorials || !parsing_conf_skills_tutorials || !parsing_conf_talents ||
-			!parsing_conf_levels || !parsing_conf_buttons) {
-			std::string error = reader.getFormattedErrorMessages();
-			throw std::invalid_argument("ERROR : loading configuration files. " + error);
-			return;
-		}
-	}
-	else {
-		std::string error = reader.getFormattedErrorMessages();
-		return;
-	}
-
-	parsingLevelTrackingSuccessful = reader.parse(levelTrackingFile, level_tracking, false);
-	if (parsingLevelTrackingSuccessful) {
-		progression_need_save = true;
-		Json::Value tracking_to_remove;
-		std::vector<int> index_to_remove;
-		for (unsigned int i(0); i < level_tracking.size(); ++i) {
-			if (level_tracking[i]["saved"].asBool()) {
-				index_to_remove.push_back(i);
-			}
-		}
-		for (unsigned int i(0); i < index_to_remove.size(); ++i) {
-			level_tracking.removeIndex(index_to_remove[i], &tracking_to_remove);
-			for (unsigned int j(0); j < index_to_remove.size(); ++j) {
-				--index_to_remove[j];
-			}
-		}
-		c_level_tracking = level_tracking.size() - 1;
-		for (unsigned int i(0); i < level_tracking.size(); ++i) {
-			saveLevelTrackingIntoDB(level_tracking[i], [&, this, i](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
-				waiting_answer = false;
-				if (response->isSucceed()) {
-					std::vector<char> *buffer = response->getResponseData();
-					std::string str(buffer->begin(), buffer->end());
-
-					if (this->level_tracking[i].isMember("tracking_id")) {
-						if (str != "") {
-							log("error while updating level tracking");
-						}
-						else {
-							this->level_tracking[i]["saved"] = true;
-							saveLevelTracking();
-							this->tracking_need_save = false;
-							log("Updating Level Tracking ok");
-						}
-					}
-					else {
-						if (Value(str).asInt() > 0) {
-							this->level_tracking[i]["tracking_id"] = Value(str).asInt();
-							this->level_tracking[i]["saved"] = true;
-							saveLevelTracking();
-							this->tracking_need_save = false;
-							log("Creating Level Tracking ok");
-						}
-						else {
-							log("error while creating level tracking");
-						}
-					}
-				}
-				else {
-					log("request handlingLevelTracking error");
-				}
-			});
-		}
-	}
-
-	parsingTrackingSuccessful = reader.parse(trackingFile, tracking, false);
-	if (parsingTrackingSuccessful) {
-		tracking_need_save = true;
-		Json::Value tracking_to_remove;
-		std::vector<int> index_to_remove;
-		for (unsigned int i(0); i < tracking.size(); ++i) {
-			if (tracking[i]["saved"].asBool()) {
-				index_to_remove.push_back(i);
-			}
-		}
-		for (unsigned int i(0); i < index_to_remove.size(); ++i) {
-			tracking.removeIndex(index_to_remove[i], &tracking_to_remove);
-			for (unsigned int j(0); j < index_to_remove.size(); ++j) {
-				--index_to_remove[j];
-			}
-		}
-		c_tracking_index = tracking.size();
-		for (unsigned int i(0); i < tracking.size(); ++i) {
-			saveTrackingIntoDB(tracking[i], [&, this, i](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
-				waiting_answer = false;
-				if (response->isSucceed()) {
-					std::vector<char> *buffer = response->getResponseData();
-					std::string str(buffer->begin(), buffer->end());
-					log("Updating Tracking ok");
-					this->tracking[i]["saved"] = true;
-					saveTracking();
-				}
-			});
-		}
-	}
-
 	parsingSaveSuccessful = reader.parse(saveFile, rootSav, false);
-	settings->init(FileUtils::getInstance()->getWritablePath());
 	if (!parsingSaveSuccessful) {
 		// report to the user the failure and their locations in the document.
 		std::string error = reader.getFormattedErrorMessages();
@@ -260,14 +158,7 @@ void Config::init() {
 		rootSav["c_world"] = 0;
 		rootSav["username"] = "";
 		//rootSav["gameTutorials"] = conf_game_tutorial;
-		std::vector<std::string> tuto_names = conf_game_tutorial.getMemberNames();
-		for (unsigned int i(0); i < tuto_names.size(); ++i) {
-			rootSav["gameTutorials"][tuto_names[i]]["state"] = conf_game_tutorial[tuto_names[i]]["state"];
-		}
-		tuto_names = conf_skills_tutorial.getMemberNames();
-		for (unsigned int i(0); i < tuto_names.size(); ++i) {
-			rootSav["skillsTutorials"][tuto_names[i]]["state"] = conf_skills_tutorial[tuto_names[i]]["state"];
-		}
+
 		for (unsigned int i(0); i < conf_tower.size(); ++i) {
 			rootSav["towers"][conf_tower.getMemberNames()[i]]["exp"] = 0;
 
@@ -311,7 +202,98 @@ void Config::init() {
 			updateUserInfo();
 		}
 	}
-	loadAllLevels();
+}
+
+void Config::extractTracker(Json::Reader &reader, std::string &trackingFile)
+{
+	bool parsingTrackingSuccessful(false);
+	parsingTrackingSuccessful = reader.parse(trackingFile, tracking, false);
+	if (parsingTrackingSuccessful) {
+		tracking_need_save = true;
+		Json::Value tracking_to_remove;
+		std::vector<int> index_to_remove;
+		for (unsigned int i(0); i < tracking.size(); ++i) {
+			if (tracking[i]["saved"].asBool()) {
+				index_to_remove.push_back(i);
+			}
+		}
+		for (unsigned int i(0); i < index_to_remove.size(); ++i) {
+			tracking.removeIndex(index_to_remove[i], &tracking_to_remove);
+			for (unsigned int j(0); j < index_to_remove.size(); ++j) {
+				--index_to_remove[j];
+			}
+		}
+		c_tracking_index = tracking.size();
+		for (unsigned int i(0); i < tracking.size(); ++i) {
+			saveTrackingIntoDB(tracking[i], [&, this, i](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
+				waiting_answer = false;
+				if (response->isSucceed()) {
+					std::vector<char> *buffer = response->getResponseData();
+					std::string str(buffer->begin(), buffer->end());
+					log("Updating Tracking ok");
+					this->tracking[i]["saved"] = true;
+					saveTracking();
+				}
+			});
+		}
+	}
+}
+
+void Config::extractLevelTracker(Json::Reader &reader, std::string &levelTrackingFile)
+{
+	bool parsingLevelTrackingSuccessful(false);
+	parsingLevelTrackingSuccessful = reader.parse(levelTrackingFile, level_tracking, false);
+	if (parsingLevelTrackingSuccessful) {
+		progression_need_save = true;
+		Json::Value tracking_to_remove;
+		std::vector<int> index_to_remove;
+		for (unsigned int i(0); i < level_tracking.size(); ++i) {
+			if (level_tracking[i]["saved"].asBool()) {
+				index_to_remove.push_back(i);
+			}
+		}
+		for (unsigned int i(0); i < index_to_remove.size(); ++i) {
+			level_tracking.removeIndex(index_to_remove[i], &tracking_to_remove);
+			for (unsigned int j(0); j < index_to_remove.size(); ++j) {
+				--index_to_remove[j];
+			}
+		}
+		c_level_tracking = level_tracking.size() - 1;
+		for (unsigned int levelIndex(0); levelIndex < level_tracking.size(); ++levelIndex) {
+			saveLevel(levelIndex);
+			waiting_answer = true;
+		}
+	}
+}
+
+void Config::extractGeneralConfiguration(cocos2d::FileUtils * fileUtils, Json::Reader &reader)
+{
+	std::string configFile = fileUtils->getStringFromFile(config_filename);
+	bool parsingConfigSuccessful(false);
+	parsingConfigSuccessful = reader.parse(configFile, conf_general, false);
+	if (parsingConfigSuccessful) {
+		gameTutorialSettings->init(conf_general["configuration_files"]["gameTutorial"].asString(), "gameTutorialProgress.json");
+		skillTutorialSettings->init(conf_general["configuration_files"]["skillsTutorial"].asString(), "skillTutorialProgress.json");
+		bool parsing_conf_towers = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tower"].asString()), conf_tower, false);
+		bool parsing_conf_advice = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["advice"].asString()), conf_advice, false);
+		bool parsing_conf_dangos = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["dango"].asString()), conf_dango, false);
+		bool parsing_conf_challenges = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["challenge"].asString()), conf_challenge, false);
+		bool parsing_conf_talents = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["talent"].asString()), conf_talent, false);
+		bool parsing_conf_levels = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["level"].asString()), conf_level, false);
+		std::string buttons = fileUtils->getStringFromFile(conf_general["configuration_files"]["button"].asString());
+		bool parsing_conf_buttons = reader.parse(buttons, conf_button, false);
+		if (!parsing_conf_towers || !parsing_conf_advice || !parsing_conf_dangos ||
+			!parsing_conf_challenges || !parsing_conf_talents ||
+			!parsing_conf_levels || !parsing_conf_buttons) {
+			std::string error = reader.getFormattedErrorMessages();
+			throw std::invalid_argument("ERROR : loading configuration files. " + error);
+			return;
+		}
+	}
+	else {
+		std::string error = reader.getFormattedErrorMessages();
+		return;
+	}
 }
 
 NetworkController* Config::getNetworkController() {
@@ -398,46 +380,51 @@ void Config::serverUpdate(float dt) {
 	}
 	if (progression_need_save) {
 		updateUserInfo();
-		for (unsigned int i(0); i < level_tracking.size(); ++i) {
-			if (!level_tracking[i]["saved"].asBool()) {
-				saveLevelTrackingIntoDB(level_tracking[i], [&, this, i](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
-					waiting_answer = false;
-					if (response->isSucceed()) {
-						std::vector<char> *buffer = response->getResponseData();
-						std::string str(buffer->begin(), buffer->end());
-
-						if (this->level_tracking[i].isMember("tracking_id")) {
-							if (str != "") {
-								log("error while updating level tracking");
-							}
-							else {
-								this->level_tracking[i]["saved"] = true;
-								saveLevelTracking();
-								this->tracking_need_save = false;
-								log("Updating Level Tracking ok");
-							}
-						}
-						else {
-							if (Value(str).asInt() > 0) {
-								this->level_tracking[i]["tracking_id"] = Value(str).asInt();
-								this->level_tracking[i]["saved"] = true;
-								saveLevelTracking();
-								this->tracking_need_save = false;
-								log("Creating Level Tracking ok");
-							}
-							else {
-								log("error while creating level tracking");
-							}
-						}
-					}
-					else {
-						log("request handlingLevelTracking error");
-					}
-				});
+		for (unsigned int levelIndex(0); levelIndex < level_tracking.size(); ++levelIndex) {
+			if (!level_tracking[levelIndex]["saved"].asBool()) {
+				saveLevel(levelIndex);
 				waiting_answer = true;
 			}
 		}
 	}
+}
+
+void Config::saveLevel(unsigned int levelIndex)
+{
+	saveLevelTrackingIntoDB(level_tracking[levelIndex], [&, this, levelIndex](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
+		waiting_answer = false;
+		if (response->isSucceed()) {
+			std::vector<char> *buffer = response->getResponseData();
+			std::string str(buffer->begin(), buffer->end());
+
+			if (this->level_tracking[levelIndex].isMember("tracking_id")) {
+				if (str != "") {
+					log("error while updating level tracking");
+				}
+				else {
+					this->level_tracking[levelIndex]["saved"] = true;
+					saveLevelTracking();
+					this->tracking_need_save = false;
+					log("Updating Level Tracking ok");
+				}
+			}
+			else {
+				if (Value(str).asInt() > 0) {
+					this->level_tracking[levelIndex]["tracking_id"] = Value(str).asInt();
+					this->level_tracking[levelIndex]["saved"] = true;
+					saveLevelTracking();
+					this->tracking_need_save = false;
+					log("Creating Level Tracking ok");
+				}
+				else {
+					log("error while creating level tracking");
+				}
+			}
+		}
+		else {
+			log("request handlingLevelTracking error");
+		}
+	});
 }
 
 void Config::addTrackingEvent(TrackingEvent n_event) {
@@ -653,165 +640,136 @@ void Config::loadAllLevels() {
 	NetworkController* network = ((AppDelegate*)Application::getInstance())->getConfigClass()->getNetworkController();
 	network->sendNewRequest(NetworkController::Request::LEVEL_EDITOR, "action=get_list_level",
 		[&](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
-		if (!response || !response->isSucceed()) {
-			log("response failed");
-			log("error buffer: %s", response->getErrorBuffer());
-			return;
-		}
-		else {
-			std::vector<char> *buffer = response->getResponseData();
-			std::string str(buffer->begin(), buffer->end());
-			Json::Reader reader;
-			Json::Value root;
-			bool parsingConfigSuccessful = reader.parse(str, root, false);
-			if (!parsingConfigSuccessful) {
-				// report to the user the failure and their locations in the document.
-				std::string error = reader.getFormattedErrorMessages();
+		if(requestSucceeded(response)) {
+			Json::Value levels;
+			try {
+				levels = createJsonFromRequestResponse(response);
+				levels = levels["levels"];
 			}
-			else {
-				root = root["levels"];
-				for (unsigned int i(0); i < root.size(); ++i) {
-					Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave();
-					int pos = -1;
-					bool should_download = false;
-					for (unsigned int j(0); j < save_root["local_editor_levels"].size(); ++j) {
-						if (save_root["local_editor_levels"][j]["id_bdd"].asInt() == root[i]["id"].asInt()) {
-							pos = j;
-							break;
+			catch (std::exception* e) {
+				log(e->what());
+				return;
+			}
+			for (unsigned int levelIndex(0); levelIndex < levels.size(); ++levelIndex) {
+				if (shouldDownloadLevel(levels, levelIndex)) {
+					NetworkController* network = ((AppDelegate*)Application::getInstance())->getConfigClass()->getNetworkController();
+
+					network->sendNewRequest(NetworkController::Request::LEVEL_EDITOR, "action=get_level&id=" + levels[levelIndex]["id"].asString(),
+						[&, levelIndex, levels](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
+						if(requestSucceeded(response)) {
+							saveLevelFromRequest(response, levels, levelIndex);
 						}
-					}
-					if (pos != -1) {
-						struct tm t1, t2;
-						std::string date1 = save_root["local_editor_levels"][pos]["last_update"].asString();
-						std::string date2 = root[i]["last_update"].asString();
-						t1 = getTimeFromString(date1);
-						t2 = getTimeFromString(date2);
-						if (difftime(mktime(&t2), mktime(&t1)) > 0) {
-							should_download = true;
-						}
-						if (difftime(mktime(&t2), mktime(&t1)) < 0) {
-
-						}
-					}
-					else {
-						should_download = true;
-					}
-					if (should_download) {
-						NetworkController* network = ((AppDelegate*)Application::getInstance())->getConfigClass()->getNetworkController();
-
-						network->sendNewRequest(NetworkController::Request::LEVEL_EDITOR, "action=get_level&id=" + root[i]["id"].asString(),
-							[&, i, root](cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
-							if (!response || !response->isSucceed()) {
-								log("response failed");
-								log("error buffer: %s", response->getErrorBuffer());
-								return;
-							}
-							else {
-								std::vector<char> *buffer = response->getResponseData();
-								std::string str(buffer->begin(), buffer->end());
-								Json::Reader reader;
-								Json::Value root_level;
-								Json::Value level_settings;
-								level_settings["id_bdd"] = root[i]["id"];
-								level_settings["name"] = root[i]["name"];
-								level_settings["last_update"] = root[i]["last_update"];
-
-								bool parsingConfigSuccessful = reader.parse(str, root_level, false);
-								if (!parsingConfigSuccessful) {
-									// report to the user the failure and their locations in the document.
-									std::string error = reader.getFormattedErrorMessages();
-								}
-								else {
-									bool level_folder_exist = FileUtils::getInstance()->isDirectoryExist(FileUtils::getInstance()->getWritablePath() + "Levels/");
-									if (!level_folder_exist) {
-										FileUtils::getInstance()->createDirectory(FileUtils::getInstance()->getWritablePath() + "Levels/");
-									}
-									std::string path = FileUtils::getInstance()->getWritablePath() + "Levels/" + root[i]["name"].asString() + ".json";
-									bool succeed = FileUtils::getInstance()->writeStringToFile(str, path);
-									if (succeed) {
-										Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave();
-										if (save_root.isMember("local_editor_levels")) {
-											int pos = -1;
-											for (unsigned int j(0); j < save_root["local_editor_levels"].size(); ++j) {
-												if (save_root["local_editor_levels"][j]["id_bdd"].asInt() == root[i]["id"].asInt()) {
-													pos = j;
-													break;
-												}
-											}
-											if (pos != -1) {
-												level_settings["id"] = save_root["local_editor_levels"][pos]["id"];
-												save_root["local_editor_levels"][pos] = level_settings;
-											}
-											else {
-												level_settings["id"] = save_root["local_editor_levels"][save_root["local_editor_levels"].size() - 1]["id"].asInt() - 1;
-												save_root["local_editor_levels"][save_root["local_editor_levels"].size()] = level_settings;
-											}
-										}
-										else {
-											level_settings["id"] = -2;
-											save_root["local_editor_levels"][0] = level_settings;
-										}
-										((AppDelegate*)Application::getInstance())->getConfigClass()->setSave(save_root);
-										((AppDelegate*)Application::getInstance())->getConfigClass()->save();
-
-										log("Saved File in %s", path.c_str());
-									}
-									else {
-										log("error saving file %s", path.c_str());
-									}
-								}
-							}
-						}, "POST getLevel");
-					}
+					}, "POST getLevel");
 				}
 			}
 		}
 	}, "POST getListLevels");
 }
 
-void Config::completeTutorial(std::string name) {
-	rootSav["gameTutorials"][name]["state"] = "complete";
-	save();
+Json::Value Config::createJsonFromRequestResponse(cocos2d::network::HttpResponse * response)
+{
+	Json::Value jsonMap;
+	std::vector<char> *buffer = response->getResponseData();
+	std::string str(buffer->begin(), buffer->end());
+	Json::Reader reader;
+	bool parsingConfigSuccessful = reader.parse(str, jsonMap, false);
+	if (!parsingConfigSuccessful) {
+		throw new RequestToJsonException(reader.getFormattedErrorMessages());
+	}
+	return jsonMap;
 }
 
-void Config::startTutorial(std::string name) {
-	rootSav["gameTutorials"][name]["state"] = "running";
-	save();
+bool Config::requestSucceeded(cocos2d::network::HttpResponse * response)
+{
+	if (!response || !response->isSucceed()) {
+		log("response failed");
+		log("error buffer: %s", response->getErrorBuffer());
+		return false;
+	}
+	return true;
 }
 
-bool Config::isGameTutorialComplete(std::string name) {
-	return rootSav["gameTutorials"][name]["state"].asString() == "complete";
+void Config::saveLevelFromRequest(cocos2d::network::HttpResponse * response, const Json::Value &existingLevels, unsigned int levelIndex)
+{
+	std::vector<char> *buffer = response->getResponseData();
+	std::string str(buffer->begin(), buffer->end());
+	Json::Reader reader;
+	Json::Value root_level;
+	bool parsingConfigSuccessful = reader.parse(str, root_level, false);
+	if (!parsingConfigSuccessful) {
+		// report to the user the failure and their locations in the document.
+		std::string error = reader.getFormattedErrorMessages();
+	}
+	else {
+		Json::Value level_settings;
+		level_settings["id_bdd"] = existingLevels[levelIndex]["id"];
+		level_settings["name"] = existingLevels[levelIndex]["name"];
+		level_settings["last_update"] = existingLevels[levelIndex]["last_update"];
+		bool level_folder_exist = FileUtils::getInstance()->isDirectoryExist(FileUtils::getInstance()->getWritablePath() + "Levels/");
+		if (!level_folder_exist) {
+			FileUtils::getInstance()->createDirectory(FileUtils::getInstance()->getWritablePath() + "Levels/");
+		}
+		std::string path = FileUtils::getInstance()->getWritablePath() + "Levels/" + existingLevels[levelIndex]["name"].asString() + ".json";
+		bool succeed = FileUtils::getInstance()->writeStringToFile(str, path);
+		if (succeed) {
+			if (rootSav.isMember("local_editor_levels")) {
+				int pos = -1;
+				for (unsigned int j(0); j < rootSav["local_editor_levels"].size(); ++j) {
+					if (rootSav["local_editor_levels"][j]["id_bdd"].asInt() == existingLevels[levelIndex]["id"].asInt()) {
+						pos = j;
+						break;
+					}
+				}
+				if (pos != -1) {
+					level_settings["id"] = rootSav["local_editor_levels"][pos]["id"];
+					rootSav["local_editor_levels"][pos] = level_settings;
+				}
+				else {
+					level_settings["id"] = rootSav["local_editor_levels"][rootSav["local_editor_levels"].size() - 1]["id"].asInt() - 1;
+					rootSav["local_editor_levels"][rootSav["local_editor_levels"].size()] = level_settings;
+				}
+			}
+			else {
+				level_settings["id"] = -2;
+				rootSav["local_editor_levels"][0] = level_settings;
+			}
+			save();
+
+			log("Saved File in %s", path.c_str());
+		}
+		else {
+			log("error saving file %s", path.c_str());
+		}
+	}
 }
 
+bool Config::shouldDownloadLevel(Json::Value &levelConfigs, unsigned int levelIndex)
+{
+	int pos = -1;
+	bool should_download = false;
+	for (unsigned int j(0); j < rootSav["local_editor_levels"].size(); ++j) {
+		if (rootSav["local_editor_levels"][j]["id_bdd"].asInt() == levelConfigs[levelIndex]["id"].asInt()) {
+			pos = j;
+			break;
+		}
+	}
+	if (pos != -1) {
+		struct tm t1, t2;
+		std::string date1 = rootSav["local_editor_levels"][pos]["last_update"].asString();
+		std::string date2 = levelConfigs[levelIndex]["last_update"].asString();
+		t1 = getTimeFromString(date1);
+		t2 = getTimeFromString(date2);
+		if (difftime(mktime(&t2), mktime(&t1)) > 0) {
+			should_download = true;
+		}
+		if (difftime(mktime(&t2), mktime(&t1)) < 0) {
 
-bool Config::isTutorialUncompleted(std::string name) {
-	return rootSav["gameTutorials"][name]["state"].asString() == "uncompleted";
-}
-
-bool Config::isTutorialRunning(std::string name) {
-	return rootSav["gameTutorials"][name]["state"].asString() == "running";
-}
-
-void Config::completeSkillTutorial(std::string name) {
-	rootSav["skillsTutorials"][name]["state"] = "complete";
-	save();
-}
-
-void Config::startSkillTutorial(std::string name) {
-	rootSav["skillsTutorials"][name]["state"] = "running";
-	save();
-}
-
-bool Config::isSkillTutorialComplete(std::string name) {
-	return rootSav["skillsTutorials"][name]["state"].asString() == "complete";
-}
-
-bool Config::isSkillTutorialUncompleted(std::string name) {
-	return rootSav["gameTutorials"][name]["state"].asString() == "uncompleted";
-}
-
-bool Config::isSkillTutorialRunning(std::string name) {
-	return rootSav["gameTutorials"][name]["state"].asString() == "running";
+		}
+	}
+	else {
+		should_download = true;
+	}
+	return should_download;
 }
 
 tm Config::getTimeFromString(std::string date1) {
@@ -860,7 +818,17 @@ int Config::getLevelBDDID(int world_id, int level_id) {
 	return 0;
 }
 
-Settings * Config::getSettings()
+GameSettings * Config::getSettings()
 {
 	return settings;
+}
+
+TutorialSettings * Config::getGameTutorialSettings()
+{
+	return gameTutorialSettings;
+}
+
+TutorialSettings * Config::getSkillTutorialSettings()
+{
+	return skillTutorialSettings;
 }

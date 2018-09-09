@@ -1,10 +1,11 @@
 #pragma once
 #include "Tutorial.h"
 
-class InterfaceGame;
+class Config;
+class LevelInterface;
 class TowerPositioningTutorial : public Tutorial {
 public:
-	TowerPositioningTutorial(Config* config, InterfaceGame* interfaceGame);
+	TowerPositioningTutorial(Config* config, LevelInterface* levelInterface);
 	virtual void update(float dt);
 	virtual bool isDone();
 	bool isLastTowerCreatedABomber();
@@ -12,5 +13,6 @@ public:
 	virtual void endTutorial();
 
 private:
-	InterfaceGame* interfaceGame;
+	LevelInterface* levelInterface;
+	Config* config;
 };

@@ -1,17 +1,19 @@
 #pragma once
 #include "DialogueTutorial.h"
 
-class InterfaceGame;
+class LevelInterface;
 class SugarTutorial : public DialogueTutorial {
 public:
-	SugarTutorial(Config* config, InterfaceGame* interfaceGame);
+	SugarTutorial(TutorialSettings* settings, LevelInterface* levelInterface);
+	virtual ~SugarTutorial();
 	bool isDone();
 
 protected:
 	void startDialogues();
 	virtual void endTutorial();
 	virtual bool areConditionsMet();
+	virtual void update(float dt);
 
 protected:
-	InterfaceGame* interfaceGame;
+	LevelInterface* levelInterface;
 };

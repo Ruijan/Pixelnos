@@ -12,13 +12,23 @@
 
 USING_NS_CC;
 
-bool StoryMenu::init() {
+StoryMenu * StoryMenu::create(Config * config)
+{
+	StoryMenu* storyMenu = new StoryMenu();
+	if (storyMenu->init(config)) {
+		return storyMenu;
+	}
+	delete storyMenu;
+	return nullptr;
+}
+
+bool StoryMenu::init(Config * config) {
 	if (!Scene::init()) { return false; }
+	configClass = config;
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 
 	tutorial_running = false;
-	configClass = ((AppDelegate*)Application::getInstance())->getConfigClass();
 	std::string language = configClass->getSettings()->getLanguage();
 
 	addChild(ui::Layout::create(), 3, "black_mask");
@@ -57,7 +67,6 @@ bool StoryMenu::init() {
 	worlds->setContentSize(Size(visibleSize.width, visibleSize.height));
 	worlds->setPosition(Vec2(visibleSize.width / 2 - worlds->getContentSize().width / 2,
 		visibleSize.height / 2 - worlds->getContentSize().height / 2));
-	worlds->setCustomScrollThreshold(visibleSize.width * 0.1f);
 
 	Json::Value level_config = configClass->getConfigValues(Config::ConfigType::LEVEL);
 	Json::Value buttons = configClass->getConfigValues(Config::ConfigType::BUTTON);
@@ -342,19 +351,19 @@ void StoryMenu::updateTutorial(float dt) {
 	auto save = configClass->getSaveValues();
 	auto config = configClass->getConfigValues(Config::ConfigType::SKILLTUTORIAL);
 
-	if (!configClass->isSkillTutorialComplete("skills") &&
+	if (!configClass->getSkillTutorialSettings()->isTutorialComplete("skills") &&
 		save["c_level"].asInt() >= config["skills"]["level"].asInt() &&
 		save["c_world"].asInt() >= config["skills"]["world"].asInt()) {
 
 		if (getChildByName("dialogue") == nullptr && !tutorial_running &&
-			!configClass->isSkillTutorialRunning("skills")) {
+			!configClass->getSkillTutorialSettings()->isTutorialRunning("skills")) {
 			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
 			addChild(Dialogue::createFromConfig(config["skills"]["dialogue"]), 3, "dialogue");
 			((Dialogue*)getChildByName("dialogue"))->launch();
 			tutorial_running = true;
 			Size visibleSize = Director::getInstance()->getVisibleSize();
 
-			configClass->startSkillTutorial("skills");
+			configClass->getSkillTutorialSettings()->startTutorial("skills");
 
 			// mask to prevent any action from the player
 			addChild(ui::Layout::create(), 2, "invisble_mask");

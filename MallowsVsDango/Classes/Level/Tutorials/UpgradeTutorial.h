@@ -2,12 +2,12 @@
 #include "DialogueTutorial.h"
 
 
-class InterfaceGame;
+class LevelInterface;
 class Level;
 class Tower;
 class UpgradeTutorial : public DialogueTutorial {
 public:
-	UpgradeTutorial(Config* config, InterfaceGame* interfaceGame, Level* level);
+	UpgradeTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level);
 	virtual void update(float dt);
 	bool isDone();
 	virtual ~UpgradeTutorial();
@@ -20,6 +20,6 @@ protected:
 
 protected:
 	Tower* selectedTower;
-	InterfaceGame* interfaceGame;
+	LevelInterface* levelInterface;
 	Level* level;
 };

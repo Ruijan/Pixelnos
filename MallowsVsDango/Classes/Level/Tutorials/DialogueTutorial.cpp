@@ -1,9 +1,12 @@
 #include "DialogueTutorial.h"
 
-DialogueTutorial::DialogueTutorial(Config * config):
-	Tutorial(config),
+DialogueTutorial::DialogueTutorial(TutorialSettings * settings):
+	Tutorial(settings),
 	dialogues(nullptr)
 {
+}
+
+DialogueTutorial::~DialogueTutorial() {
 }
 
 void DialogueTutorial::update(float dt)

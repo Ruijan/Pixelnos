@@ -7,7 +7,8 @@
 #include <random>
 #include "extensions/cocos-ext.h"
 #include "network/HttpClient.h"
-#include "Settings.h"
+#include "Settings/GameSettings.h"
+#include "Settings/TutorialSettings.h"
 
 class NetworkController;
 struct LevelTrackingEvent;
@@ -21,41 +22,6 @@ struct TrackingEvent {
 
 
 class Config : public cocos2d::Ref {
-private:
-	Json::Value conf_general;
-	Json::Value conf_game_tutorial;
-	Json::Value conf_skills_tutorial;
-	Json::Value conf_advice;
-	Json::Value conf_challenge;
-	Json::Value conf_button;
-	Json::Value conf_tower;
-	Json::Value conf_dango;
-	Json::Value conf_level;
-	Json::Value conf_talent;
-
-	std::string config_filename;
-	Json::Value rootSav;   // will contains the root value after parsing.
-	std::string save_filename;
-	Json::Value tracking;   // will contains the root value after parsing.
-	std::string tracking_filename;
-	Json::Value level_tracking;   // will contains the root value after parsing.
-	std::string level_tracking_filename;
-
-	NetworkController* network_controller;
-	cocos2d::Scheduler* scheduler;
-
-	bool save_file;
-	bool settings_need_save;
-	bool tracking_need_save;
-	bool progression_need_save;
-	bool user_need_creation;
-	bool user_need_save;
-	bool waiting_answer;
-	int c_tracking_index;
-	int c_level_tracking;
-
-	Settings* settings;
-
 public:
 	enum ConfigType {
 		GENERAL,
@@ -72,36 +38,19 @@ public:
 	Config(std::string configfilename, std::string savename);
 	void init();
 
-	/**
-	* @brief Return the current configuration json value.
-	*/
+	void extractSaveFile(Json::Reader &reader, std::string &saveFile);
+
+	void extractTracker(Json::Reader &reader, std::string &trackingFile);
+
+	void extractLevelTracker(Json::Reader &reader, std::string &levelTrackingFile);
+
+	void extractGeneralConfiguration(cocos2d::FileUtils * fileUtils, Json::Reader &reader);
+
 	const Json::Value& getConfigValues(ConfigType type) const;
-
-
-	/**
-	* @brief Return the current save json value.
-	*/
 	bool isSaveFile() const;
-
-	/**
-	* @brief Return the current save json value.
-	*/
 	const Json::Value&  getSaveValues() const;
-
-	/**
-	* @brief Save the configuration, the skills and so on.
-	* @param nroot. Set the json map of the saving file.
-	*/
 	void setSave(Json::Value nroot);
-
-	/**
-	* @brief Save the configuration, the skills and so on.
-	*/
 	void save();
-
-	/**
-	* @brief Save the tracking json file.
-	*/
 	void saveTracking();
 	void saveLevelTracking();
 
@@ -133,6 +82,8 @@ public:
 	* @param float timestep. not used in the function.
 	*/
 	void serverUpdate(float dt);
+
+	void saveLevel(unsigned int i);
 
 	/**
 	* @brief Send the request to create a new user into the DB. It will also
@@ -194,44 +145,10 @@ public:
 	*	Save everithin in the writable folder (AppData/local/MvD)
 	*/
 	void loadAllLevels();
-
-	/**
-	* @brief Set the state value of a tutorial to complete
-	*	Save everithin in the writable folder (AppData/local/MvD)
-	*/
-	void completeTutorial(std::string name);
-
-	/**
-	* @brief Set the state value of a tutorial to running
-	*	Save everithin in the writable folder (AppData/local/MvD)
-	*/
-	void startTutorial(std::string name);
-
-	/**
-	* @brief Check if a tutorial has been completed
-	*/
-	bool isGameTutorialComplete(std::string name);
-
-	bool isSkillTutorialComplete(std::string name);
-
-	void completeSkillTutorial(std::string name);
-
-	void startSkillTutorial(std::string name);
-
-	bool isSkillTutorialUncompleted(std::string name);
-
-	bool isSkillTutorialRunning(std::string name);
-
-
-	/**
-	* @brief Check if a tutorial has not been completed
-	*/
-	bool isTutorialUncompleted(std::string name);
-
-	/**
-	* @brief Check if a tutorial is running
-	*/
-	bool isTutorialRunning(std::string name);
+	Json::Value createJsonFromRequestResponse(cocos2d::network::HttpResponse * response);
+	bool requestSucceeded(cocos2d::network::HttpResponse * response);
+	void saveLevelFromRequest(cocos2d::network::HttpResponse * response, const Json::Value &root, unsigned int levelIndex);
+	bool shouldDownloadLevel(Json::Value &levelConfigs, unsigned int levelIndex);
 
 	/**
 	* @brief Convert a date in string at format "%Y-%m-%d %H:%M:%S" to time
@@ -242,28 +159,52 @@ public:
 	* @brief Change save file for tower so it's now available
 	*/
 	void activateTower(std::string name);
-
-	/**
-	* @brief Return the number of challenges done for the specific level
-	*/
 	int getNbLevelChallenges(int world_id, int level_id) const;
-
-	/**
-	* @brief Return the username
-	*/
 	std::string getUsername() const;
-
-	/**
-	* @brief Set and save username
-	*/
 	void setUsername(std::string username);
 
 	/**
 	* @brief Return the equivalent bdd id of a particular level (useful for keeping track of which level is played)
 	*/
 	int getLevelBDDID(int world_id, int level_id);
-	Settings* getSettings();
+	GameSettings* getSettings();
+	TutorialSettings* getGameTutorialSettings();
+	TutorialSettings* getSkillTutorialSettings();
 
+private:
+	Json::Value conf_general;
+	Json::Value conf_advice;
+	Json::Value conf_challenge;
+	Json::Value conf_button;
+	Json::Value conf_tower;
+	Json::Value conf_dango;
+	Json::Value conf_level;
+	Json::Value conf_talent;
+
+	std::string config_filename;
+	Json::Value rootSav;   // will contains the root value after parsing.
+	std::string save_filename;
+	Json::Value tracking;   // will contains the root value after parsing.
+	std::string tracking_filename;
+	Json::Value level_tracking;   // will contains the root value after parsing.
+	std::string level_tracking_filename;
+
+	NetworkController* network_controller;
+	cocos2d::Scheduler* scheduler;
+
+	bool save_file;
+	bool settings_need_save;
+	bool tracking_need_save;
+	bool progression_need_save;
+	bool user_need_creation;
+	bool user_need_save;
+	bool waiting_answer;
+	int c_tracking_index;
+	int c_level_tracking;
+
+	GameSettings* settings;
+	TutorialSettings* gameTutorialSettings;
+	TutorialSettings* skillTutorialSettings;
 };
 
 #endif

@@ -1,40 +1,44 @@
 #include "LifeTutorial.h"
-#include "../InterfaceGame.h"
-#include "../../Config/Config.h"
+#include "../Interface/LevelInterface.h"
 
-LifeTutorial::LifeTutorial(Config* config, InterfaceGame * nInterfaceGame):
-	DialogueTutorial(config),
-	interfaceGame(nInterfaceGame)
+LifeTutorial::LifeTutorial(TutorialSettings* settings, LevelInterface * nInterfaceGame) :
+	DialogueTutorial(settings),
+	levelInterface(nInterfaceGame)
 {
 }
 
 bool LifeTutorial::isDone() {
-	return config->isGameTutorialComplete("life");
+	return settings->isTutorialComplete("life");
 }
 
 LifeTutorial::~LifeTutorial()
 {
+	if (running) {
+		levelInterface->removeChild(dialogues);
+	}
 }
 
 void LifeTutorial::startDialogues() {
-	interfaceGame->pauseLevel();
-	dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["life"]["dialogue"]);
-	interfaceGame->addChild(dialogues, 1, "dialogue");
+	running = true;
+	levelInterface->pauseLevel();
+	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["life"]["dialogue"]);
+	levelInterface->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
-	shakeScaleElement(interfaceGame->getChildByName("label_information")->getChildByName("life"), true);
+	shakeScaleElement(levelInterface->getChildByName("label_information")->getChildByName("life"), true);
 }
 
 void LifeTutorial::endTutorial() {
-	interfaceGame->removeChild(dialogues);
+	levelInterface->removeChild(dialogues);
 	dialogues = nullptr;
-	interfaceGame->resumeLevel();
-	config->completeTutorial("life");
-	interfaceGame->getChildByName("label_information")->getChildByName("life")->stopAllActions();
-	interfaceGame->getChildByName("label_information")->getChildByName("life")->setRotation(0);
-	interfaceGame->getChildByName("label_information")->getChildByName("life")->setScale(1.f);
+	levelInterface->resumeLevel();
+	settings->completeTutorial("life");
+	levelInterface->getChildByName("label_information")->getChildByName("life")->stopAllActions();
+	levelInterface->getChildByName("label_information")->getChildByName("life")->setRotation(0);
+	levelInterface->getChildByName("label_information")->getChildByName("life")->setScale(1.f);
 	Tutorial::endTutorial();
+	running = false;
 }
 
 bool LifeTutorial::areConditionsMet() {
-	return interfaceGame->getLifeQuantity() < 3;
+	return levelInterface->getLifeQuantity() < 3;
 }

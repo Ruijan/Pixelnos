@@ -3,7 +3,7 @@
 #include "../Dangos/Dango.h"
 #include "../Towers/Attack.h"
 #include "../AppDelegate.h"
-#include "../Level/InterfaceGame.h"
+#include "../Level/Interface/LevelInterface.h"
 #include "../Scenes/Skills.h"
 #include <math.h>
 
@@ -693,7 +693,7 @@ void Tower::setSelected(bool select){
 	selected = select;
 }
 
-ui::Layout* Tower::getInformationLayout(InterfaceGame* interface_game) {
+ui::Layout* Tower::getInformationLayout(LevelInterface* interface_game) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 	const auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);

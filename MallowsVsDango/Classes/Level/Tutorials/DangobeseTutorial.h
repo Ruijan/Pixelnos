@@ -2,11 +2,11 @@
 #include "DialogueTutorial.h"
 
 
-class InterfaceGame;
+class LevelInterface;
 class Level;
 class DangobeseTutorial : public DialogueTutorial {
 public:
-	DangobeseTutorial(Config* config, InterfaceGame* interfaceGame, Level* level);
+	DangobeseTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level);
 	bool isDone();
 	bool areConditionsMet();
 	virtual ~DangobeseTutorial ();
@@ -16,6 +16,6 @@ protected:
 	void endTutorial();
 
 protected:
-	InterfaceGame* interfaceGame;
+	LevelInterface* levelInterface;
 	Level* level;
 };

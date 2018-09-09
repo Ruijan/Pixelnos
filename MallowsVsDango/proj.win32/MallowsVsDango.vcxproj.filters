@@ -40,6 +40,15 @@
     <Filter Include="src\Level\Tutorials\DialogueTutorials">
       <UniqueIdentifier>{30805d16-c90f-4f49-b359-5c90a73b03ab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Config\Settings">
+      <UniqueIdentifier>{0b1d3ec2-8cac-4723-b3d6-d7dfb3263b37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Config\Exceptions">
+      <UniqueIdentifier>{b0a15a94-ed98-4ea3-b60a-be15d5ae0531}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Level\Interface">
+      <UniqueIdentifier>{c3bffcbd-d4e7-48b2-bf1f-5a6262db3b8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -135,9 +144,6 @@
     <ClCompile Include="..\Classes\Level\Dialogue.cpp">
       <Filter>src\Level</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Level\InterfaceGame.cpp">
-      <Filter>src\Level</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\Scenes\Shop.cpp">
       <Filter>src\Scenes</Filter>
     </ClCompile>
@@ -166,9 +172,6 @@
       <Filter>src\GUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GUI\StoryParametersMenu.cpp">
-      <Filter>src\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\GUI\StartMenu.cpp">
       <Filter>src\GUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Level\Tutorials\Tutorial.cpp">
@@ -204,20 +207,38 @@
     <ClCompile Include="..\Classes\Level\Tutorials\TutorialFactory.cpp">
       <Filter>src\Level\Tutorials</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\GUI\WinMenu.cpp">
-      <Filter>src\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\GUI\LoseMenu.cpp">
-      <Filter>src\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\GUI\CentralMenu.cpp">
       <Filter>src\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Config\Settings.cpp">
-      <Filter>src\Config</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\Scenes\SceneFactory.cpp">
       <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Config\Settings\GameSettings.cpp">
+      <Filter>src\Config\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Config\Settings\TutorialSettings.cpp">
+      <Filter>src\Config\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Config\Settings\Settings.cpp">
+      <Filter>src\Config\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Interface\LoseMenu.cpp">
+      <Filter>src\Level\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Interface\StartMenu.cpp">
+      <Filter>src\Level\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Interface\WinMenu.cpp">
+      <Filter>src\Level\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Interface\LevelInterface.cpp">
+      <Filter>src\Level\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Interface\RightPanel.cpp">
+      <Filter>src\Level\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Level\Interface\LevelInfo.cpp">
+      <Filter>src\Level\Interface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -317,9 +338,6 @@
     <ClInclude Include="..\Classes\Level\Dialogue.h">
       <Filter>src\Level</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Level\InterfaceGame.h">
-      <Filter>src\Level</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\Scenes\Shop.h">
       <Filter>src\Scenes</Filter>
     </ClInclude>
@@ -351,9 +369,6 @@
       <Filter>src\GUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GUI\StoryParametersMenu.h">
-      <Filter>src\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\GUI\StartMenu.h">
       <Filter>src\GUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Level\Tutorials\Tutorial.h">
@@ -389,20 +404,44 @@
     <ClInclude Include="..\Classes\Level\Tutorials\TutorialFactory.h">
       <Filter>src\Level\Tutorials</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\GUI\WinMenu.h">
-      <Filter>src\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\GUI\LoseMenu.h">
-      <Filter>src\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\GUI\CentralMenu.h">
       <Filter>src\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Config\Settings.h">
-      <Filter>src\Config</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\Scenes\SceneFactory.h">
       <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\Settings\TutorialSettings.h">
+      <Filter>src\Config\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\Settings\GameSettings.h">
+      <Filter>src\Config\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\Exceptions\RequestToJsonException.h">
+      <Filter>src\Config\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\Exceptions\JsonContentException.h">
+      <Filter>src\Config\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\Settings\Settings.h">
+      <Filter>src\Config\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Interface\LoseMenu.h">
+      <Filter>src\Level\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Interface\StartMenu.h">
+      <Filter>src\Level\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Interface\WinMenu.h">
+      <Filter>src\Level\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Interface\LevelInterface.h">
+      <Filter>src\Level\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Interface\RightPanel.h">
+      <Filter>src\Level\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Level\Interface\LevelInfo.h">
+      <Filter>src\Level\Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

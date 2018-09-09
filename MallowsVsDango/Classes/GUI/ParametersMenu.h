@@ -4,11 +4,11 @@
 #include "../Scenes/MyGame.h"
 #include "../Config/AudioController.h"
 #include "../Config/Config.h"
-#include "../Config/Settings.h"
+#include "../Config/Settings/GameSettings.h"
 
 typedef std::pair<AudioSlider*, cocos2d::ui::CheckBox*> SoundController;
 
-class ParametersMenu : public CentralMenu{
+class ParametersMenu : public CentralMenu {
 public:
 	static ParametersMenu* create(MyGame* game, Config* config);
 	ParametersMenu(MyGame * game, Config * config);

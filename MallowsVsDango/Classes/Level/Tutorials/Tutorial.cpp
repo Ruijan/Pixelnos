@@ -1,8 +1,8 @@
 #include "Tutorial.h"
 
-Tutorial::Tutorial(Config* config) :
+Tutorial::Tutorial(TutorialSettings* settings) :
 	running(false),
-	config(config)
+	settings(settings)
 {
 }
 

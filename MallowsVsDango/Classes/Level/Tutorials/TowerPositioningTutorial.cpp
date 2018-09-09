@@ -1,28 +1,30 @@
 #include "TowerPositioningTutorial.h"
-#include "../InterfaceGame.h"
+#include "../Interface/LevelInterface.h"
 #include "../../Config/Config.h"
 
 
 
-TowerPositioningTutorial::TowerPositioningTutorial(Config* config, InterfaceGame * nInterfaceGame):
-	Tutorial(config),
-	interfaceGame(nInterfaceGame)
+TowerPositioningTutorial::TowerPositioningTutorial(Config* config, LevelInterface * nInterfaceGame):
+	Tutorial(config->getGameTutorialSettings()),
+	levelInterface(nInterfaceGame),
+	config(config)
 {
 }
 
 void TowerPositioningTutorial::update(float dt)
 {
-	if (!isDone() && !running && interfaceGame->getGameState() == InterfaceGame::GameState::TITLE) {
+	if (!isDone() && !running && levelInterface->getGameState() == LevelInterface::GameState::TITLE) {
 		cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 		running = true;
-		shakeElement(interfaceGame->getMenuTower("bomber"), false);
-		interfaceGame->hideStartMenu();
+		shakeElement(levelInterface->getTowerFromMenu("bomber"), false);
+		levelInterface->hideStartMenu();
+		levelInterface->lockStartMenu();
 		cocos2d::Sprite* hand = cocos2d::Sprite::create("res/buttons/hand.png");
 		hand->setAnchorPoint(cocos2d::Vec2(0.15f, 0.5f));
 		hand->setScale(visibleSize.width / 10 / hand->getContentSize().width);
-		hand->setPosition(interfaceGame->getAbsoluteMenuTowerPosition("bomber"));
+		hand->setPosition(levelInterface->getAbsoluteMenuTowerPosition("bomber"));
 		hand->setOpacity(0.0f);
-		interfaceGame->addChild(hand, 3, "hand");
+		levelInterface->addChild(hand, 3, "hand");
 		hand->runAction(cocos2d::RepeatForever::create(cocos2d::Sequence::create(
 			cocos2d::DelayTime::create(1.f),
 			cocos2d::FadeIn::create(0.5f),
@@ -33,7 +35,7 @@ void TowerPositioningTutorial::update(float dt)
 					cocos2d::MoveBy::create(1.5f, cocos2d::Vec2(0, -visibleSize.height / 3)))),
 			cocos2d::DelayTime::create(0.5f),
 			cocos2d::FadeOut::create(0.5f),
-			cocos2d::MoveTo::create(0.f, interfaceGame->getAbsoluteMenuTowerPosition("bomber")),
+			cocos2d::MoveTo::create(0.f, levelInterface->getAbsoluteMenuTowerPosition("bomber")),
 			nullptr))
 		);
 	}
@@ -43,16 +45,18 @@ void TowerPositioningTutorial::update(float dt)
 }
 
 void TowerPositioningTutorial::endTutorial() {
-	config->completeTutorial("tower_positioning");
-	interfaceGame->removeChildByName("hand");
-	interfaceGame->resetTowerMenu();
-	interfaceGame->displayStartMenuIfInTitleState();
+	settings->completeTutorial("tower_positioning");
+	levelInterface->removeChildByName("hand");
+	levelInterface->resetTowerMenu();
+	levelInterface->unlockStartMenu();
+	levelInterface->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
+	running = false;
 }
 
 bool TowerPositioningTutorial::isDone()
 {
-	return config->isGameTutorialComplete("tower_positioning");
+	return settings->isTutorialComplete("tower_positioning");
 }
 
 bool TowerPositioningTutorial::isLastTowerCreatedABomber() {
@@ -62,4 +66,7 @@ bool TowerPositioningTutorial::isLastTowerCreatedABomber() {
 
 TowerPositioningTutorial::~TowerPositioningTutorial()
 {
+	if (running) {
+		levelInterface->removeChildByName("hand");
+	}
 }

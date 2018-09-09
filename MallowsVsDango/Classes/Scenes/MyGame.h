@@ -3,7 +3,7 @@
 
 #include "cocos2d.h"
 #include "Level/Level.h"
-#include "../Level/InterfaceGame.h"
+#include "../Level/Interface/LevelInterface.h"
 #include "Lib/Loader.h"
 #include "LoadingScreen.h"
 #include "../Lib/Translationable.h"
@@ -33,7 +33,7 @@ private:
 	int id_level;
 	int id_world;
 	Level* cLevel;
-	InterfaceGame* menu;
+	LevelInterface* menu;
 	LoadingScreen* loadingScreen;
 	double acceleration; // not used right now.
 	bool paused;
@@ -41,6 +41,7 @@ private:
 	int experience;
 	LevelTrackingEvent l_event;
 	std::vector<Tutorial*> tutorials;
+	Config* config;
 
 protected:
 	virtual void onEnterTransitionDidFinish();
@@ -54,8 +55,12 @@ public:
 	MyGame();
 	virtual ~MyGame();
 
-	virtual bool init();
+	virtual bool init(Config* nconfig);
 	virtual bool initLevel(int level_id, int world_id);
+
+	void loadNewLevel(int level_id, int world_id);
+	void resetGame();
+	void addLoadingElementsToQueue();
 
 	void removeTutorials();
 
@@ -75,7 +80,7 @@ public:
 	bool save();
 	
 	Level* getLevel();
-	InterfaceGame* getMenu();
+	LevelInterface* getMenu();
 
 	void addActionToTracker(Json::Value action);
 	void createNewTracker();
@@ -83,7 +88,7 @@ public:
 	virtual void switchLanguage();
 	void unlockTowers();
 
-	CREATE_FUNC(MyGame);
+	static MyGame* create(Config* config);
 };
 
 #endif // __Game_SCENE_H__

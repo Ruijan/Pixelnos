@@ -1,6 +1,6 @@
 #pragma once
-#include "CentralMenu.h"
-#include "../Config/json.h"
+#include "../../GUI/CentralMenu.h"
+#include "../../Config/json.h"
 
 
 class MyGame;

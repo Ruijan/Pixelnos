@@ -1,12 +1,11 @@
 #include "UpgradeTutorial.h"
 #include "../Level.h"
-#include "../InterfaceGame.h"
-#include "../../Config/Config.h"
+#include "../Interface/LevelInterface.h"
 
 
-UpgradeTutorial::UpgradeTutorial(Config* config, InterfaceGame* interfaceGame, Level* level) :
-	DialogueTutorial(config),
-	interfaceGame(interfaceGame),
+UpgradeTutorial::UpgradeTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level) :
+	DialogueTutorial(settings),
+	levelInterface(levelInterface),
 	level(level),
 	selectedTower(nullptr)
 {
@@ -21,7 +20,7 @@ void UpgradeTutorial::update(float dt)
 		else if (dialogues != nullptr) {
 			dialogues->update();
 			if (dialogues->hasFinished()) {
-				interfaceGame->removeChild(dialogues);
+				levelInterface->removeChild(dialogues);
 				dialogues = nullptr;
 				showHand();
 			}
@@ -31,11 +30,15 @@ void UpgradeTutorial::update(float dt)
 
 bool UpgradeTutorial::isDone()
 {
-	return config->isGameTutorialComplete("upgrade");
+	return settings->isTutorialComplete("upgrade");
 }
 
 UpgradeTutorial::~UpgradeTutorial()
 {
+	if (running) {
+		levelInterface->removeChild(dialogues);
+		levelInterface->removeChildByName("hand");
+	}
 }
 
 void UpgradeTutorial::startDialogues()
@@ -47,32 +50,33 @@ void UpgradeTutorial::startDialogues()
 		}
 	}
 	if (selectedTower != nullptr) {
-		interfaceGame->pauseLevel();
-		interfaceGame->setSelectedTower(selectedTower);
-		dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["upgrade"]["dialogue"]);
-		interfaceGame->addChild(dialogues, 1, "dialogue");
+		levelInterface->pauseLevel();
+		levelInterface->setSelectedTower(selectedTower);
+		dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["upgrade"]["dialogue"]);
+		levelInterface->addChild(dialogues, 1, "dialogue");
 		dialogues->launch();
-		interfaceGame->hideStartMenu();
+		levelInterface->hideStartMenu();
+		levelInterface->lockStartMenu();
 		running = true;
 	}
 }
 
 void UpgradeTutorial::showHand() {
 	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-	interfaceGame->addChild(cocos2d::ui::Layout::create(), 2, "invisble_mask");
+	levelInterface->addChild(cocos2d::ui::Layout::create(), 2, "invisble_mask");
 	cocos2d::ui::Button* mask = cocos2d::ui::Button::create("res/buttons/tranparent_mask.png");
 	mask->setScaleX(visibleSize.width / mask->getContentSize().width);
 	mask->setScaleY(visibleSize.height / mask->getContentSize().height);
 	mask->setPosition(cocos2d::Vec2(visibleSize.width / 2, visibleSize.height / 2));
-	interfaceGame->getChildByName("invisble_mask")->addChild(mask);
+	levelInterface->getChildByName("invisble_mask")->addChild(mask);
 	cocos2d::Sprite* hand = cocos2d::Sprite::create("res/buttons/hand.png");
 	hand->setAnchorPoint(cocos2d::Vec2(0.15f, 0.85f));
 	hand->setScale(visibleSize.width / 10 / hand->getContentSize().width);
 	hand->setPosition(cocos2d::Vec2(visibleSize.width / 2, 0));
-	interfaceGame->addChild(hand, 3, "hand");
+	levelInterface->addChild(hand, 3, "hand");
 
 	auto display_menu = cocos2d::CallFunc::create([this]() {
-		interfaceGame->showTowerInfo();
+		levelInterface->showTowerInfo();
 	});
 	auto validate_tutorial = cocos2d::CallFunc::create([this]() {
 		endTutorial();
@@ -89,21 +93,23 @@ void UpgradeTutorial::showHand() {
 		validate_tutorial,
 		nullptr)
 	);
-	interfaceGame->displayStartMenuIfInTitleState();
+	levelInterface->unlockStartMenu();
+	levelInterface->displayStartMenuIfInTitleState();
 }
 
 void UpgradeTutorial::endTutorial()
 {
-	interfaceGame->resumeLevel();
-	config->completeTutorial("upgrade");
-	interfaceGame->hideTowerInfo();
-	interfaceGame->setSelectedTower(nullptr);
-	interfaceGame->removeChildByName("invisble_mask");
+	levelInterface->resumeLevel();
+	settings->completeTutorial("upgrade");
+	levelInterface->hideTowerInfo();
+	levelInterface->setSelectedTower(nullptr);
+	levelInterface->removeChildByName("invisble_mask");
 	Tutorial::endTutorial();
+	running = false;
 }
 
 bool UpgradeTutorial::areConditionsMet()
 {
-	return level->getLevelId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["upgrade"]["level"].asInt() &&
-		level->getWorldId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["upgrade"]["world"].asInt();
+	return level->getLevelId() == settings->getSettingsMap()["upgrade"]["level"].asInt() &&
+		level->getWorldId() == settings->getSettingsMap()["upgrade"]["world"].asInt();
 }

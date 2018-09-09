@@ -23,6 +23,6 @@ enum TutorialType {
 
 class TutorialFactory {
 public:
-	static Tutorial* createTutorial(TutorialType tutorialType, Config* config, MyGame* game);
+	static Tutorial* createTutorial(TutorialType tutorialType, Config* settings, MyGame* game);
 	static TutorialType getTutorialTypeFromString(const std::string& tutorialName);
 };

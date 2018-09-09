@@ -2,12 +2,16 @@
 #include <iostream>
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
-#include "json.h"
+#include "../json.h"
 
-class Settings {
+class GameSettings {
 public:
-	Settings();
-	void init(std::string saveFolder);
+	GameSettings();
+	void init(std::string& saveFolder);
+
+	void loadPreviousSettings();
+
+	void createNewSettings();
 
 	void addAlwaysGridCheckbox(cocos2d::ui::CheckBox* box);
 	void addMovingGridButton(cocos2d::ui::CheckBox* box);
@@ -33,11 +37,12 @@ public:
 	bool isDialoguesEnabled();
 	const std::string& getLanguage();
 
-	void setLanguage(std::string lang);
+	void setLanguage(const std::string& lang);
 
 	Json::Value getSettingsSave();
 	bool doesNeedSave();
 	void setNeedSaving(bool value);
+
 protected:
 	void save();
 

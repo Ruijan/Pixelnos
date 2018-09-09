@@ -2,11 +2,11 @@
 #include "DialogueTutorial.h"
 #include "../Level.h"
 
-class InterfaceGame;
+class LevelInterface;
 class Level;
 class DangorillaTutorial : public DialogueTutorial {
 public:
-	DangorillaTutorial(Config* config, InterfaceGame* interfaceGame, Level* level);
+	DangorillaTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level);
 	bool isDone();
 	bool areConditionsMet();
 	virtual ~DangorillaTutorial();
@@ -17,6 +17,6 @@ protected:
 	void endTutorial();
 
 protected:
-	InterfaceGame* interfaceGame;
+	LevelInterface* levelInterface;
 	Level* level;
 };

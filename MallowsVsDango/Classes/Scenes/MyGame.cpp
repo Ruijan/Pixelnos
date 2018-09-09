@@ -13,11 +13,27 @@ MyGame::~MyGame()
 {
 }
 
-// on "init" you need to initialize your instance
-bool MyGame::init()
-{
-	Size visibleSize = Director::getInstance()->getVisibleSize();
 
+MyGame* MyGame::create(Config* config) {
+
+	MyGame* game = new MyGame();
+
+	if (game->init(config))
+	{
+		game->autorelease();
+		return game;
+	}
+	else
+	{
+		delete game;
+		game = NULL;
+		return NULL;
+	}
+}
+// on "init" you need to initialize your instance
+bool MyGame::init(Config* nconfig)
+{
+	config = nconfig;
 	// 1. super init first of the Mother Fucking Class
 	if (!CCScene::init())
 	{
@@ -33,6 +49,25 @@ bool MyGame::init()
 }
 
 bool MyGame::initLevel(int level_id, int world_id) {
+	resetGame();
+	loadNewLevel(level_id, world_id);
+	return true;
+}
+
+void MyGame::loadNewLevel(int level_id, int world_id)
+{
+	id_level = level_id;
+	id_world = world_id;
+	addLoadingElementsToQueue();
+	unload();
+	schedule(CC_SCHEDULE_SELECTOR(MyGame::updateLoading));
+
+	loadingScreen->setVisible(true);
+	loadingScreen->start();
+}
+
+void MyGame::resetGame()
+{
 	// reset the game just in case.
 	reset();
 	removeTutorials();
@@ -44,28 +79,23 @@ bool MyGame::initLevel(int level_id, int world_id) {
 	if (menu != nullptr) {
 		menu->setVisible(false);
 	}
+}
 
-	id_level = level_id;
-	id_world = world_id;
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"][id_world]["levels"][id_level];
-	for (unsigned int i(0); i < config["animations"].size(); ++i) {
-		addAnimation(config["animations"][i].asString());
+void MyGame::addLoadingElementsToQueue()
+{
+	Json::Value settings = config->getConfigValues(Config::ConfigType::LEVEL)["worlds"][id_world]["levels"][id_level];
+	for (unsigned int i(0); i < settings["animations"].size(); ++i) {
+		addAnimation(settings["animations"][i].asString());
 	}
-	for (unsigned int i(0); i < config["musics"].size(); ++i) {
-		addMusic(config["musics"][i].asString());
+	for (unsigned int i(0); i < settings["musics"].size(); ++i) {
+		addMusic(settings["musics"][i].asString());
 	}
-	for (unsigned int i(0); i < config["effects"].size(); ++i) {
-		addEffect(config["effects"][i].asString());
+	for (unsigned int i(0); i < settings["effects"].size(); ++i) {
+		addEffect(settings["effects"][i].asString());
 	}
-	for (unsigned int i(0); i < config["tileset"].size(); ++i) {
-		addTileset(config["tileset"][i].asString());
+	for (unsigned int i(0); i < settings["tileset"].size(); ++i) {
+		addTileset(settings["tileset"][i].asString());
 	}
-	unload();
-	schedule(CC_SCHEDULE_SELECTOR(MyGame::updateLoading));
-
-	loadingScreen->setVisible(true);
-	loadingScreen->start();
-	return true;
 }
 
 void MyGame::removeTutorials()
@@ -109,21 +139,21 @@ void MyGame::update(float delta) {
 	}
 	// If it has been asked to go to the next level then we delete the current level,
 	// we reset the interface and the parameters and let's go !
-	if (menu->getGameState() == InterfaceGame::GameState::TITLE) {
+	if (menu->getGameState() == LevelInterface::GameState::TITLE) {
 		cLevel->updateTowers(delta);
 		cLevel->removeElements();
 	}
-	else if (menu->getGameState() == InterfaceGame::GameState::NEXT_LEVEL) {
+	else if (menu->getGameState() == LevelInterface::GameState::NEXT_LEVEL) {
 		switchLevel();
 	}
-	else if (menu->getGameState() == InterfaceGame::GameState::RUNNING) {
+	else if (menu->getGameState() == LevelInterface::GameState::RUNNING) {
 		cLevel->update(delta * acceleration);
 		// update tracking event of the level
 		if (cLevel->getHolySugar() != l_event.holy_sugar) {
 			updateTracker("running");
 		}
 	}
-	else if (menu->getGameState() == InterfaceGame::GameState::DONE && !cLevel->isPaused()) {
+	else if (menu->getGameState() == LevelInterface::GameState::DONE && !cLevel->isPaused()) {
 		menu->showWin();
 		cLevel->pause();
 		updateTracker("completed");
@@ -158,13 +188,15 @@ Level* MyGame::getLevel() {
 	return cLevel;
 }
 
-InterfaceGame* MyGame::getMenu() {
+LevelInterface* MyGame::getMenu() {
 	return menu;
 }
 
 void MyGame::reload() {
 	cLevel->reset();
 	menu->reset();
+	removeTutorials();
+	loadTutorials();
 	acceleration = 1.0;
 }
 
@@ -241,7 +273,7 @@ void MyGame::initAttributes() {
 	cLevel = Level::create(id_level, id_world);
 	addChild(cLevel, 0);
 	if (menu == nullptr) {
-		menu = InterfaceGame::create(this);
+		menu = LevelInterface::create(this, config);
 		addChild(menu, 2);
 	}
 	else {

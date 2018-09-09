@@ -1,48 +1,54 @@
 #include "DangorillaTutorial.h"
 #include "../Level.h"
-#include "../InterfaceGame.h"
-#include "../../Config/Config.h"
+#include "../Interface/LevelInterface.h"
 
 
-DangorillaTutorial::DangorillaTutorial(Config* config, InterfaceGame * interfaceGame, Level* level) :
-	DialogueTutorial(config),
+DangorillaTutorial::DangorillaTutorial(TutorialSettings* settings, LevelInterface * levelInterface, Level* level) :
+	DialogueTutorial(settings),
 	level(level),
-	interfaceGame(interfaceGame)
+	levelInterface(levelInterface)
 {
 }
 
 bool DangorillaTutorial::isDone()
 {
-	return config->isGameTutorialComplete("dangorilla");
+	return settings->isTutorialComplete("dangorilla");
 }
 
 bool DangorillaTutorial::areConditionsMet()
 {
-	return level->getLevelId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangorilla"]["level"].asInt() &&
-		level->getWorldId() == config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangorilla"]["world"].asInt() &&
+	return level->getLevelId() == settings->getSettingsMap()["dangorilla"]["level"].asInt() &&
+		level->getWorldId() == settings->getSettingsMap()["dangorilla"]["world"].asInt() &&
 		level->getLastEnemy() != nullptr &&
 		level->getLastEnemy()->getSpecConfig()["name"].asString() == "Dangorille";
 }
 
 DangorillaTutorial::~DangorillaTutorial()
 {
+	if (running) {
+		levelInterface->removeChild(dialogues);
+	}
 }
 
 void DangorillaTutorial::startDialogues()
 {
+	running = true;
 	level->pause();
-	dialogues = Dialogue::createFromConfig(config->getConfigValues(Config::ConfigType::GAMETUTORIAL)["dangorilla"]["dialogue"]);
-	interfaceGame->addChild(dialogues, 1, "dialogue");
+	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["dangorilla"]["dialogue"]);
+	levelInterface->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
-	interfaceGame->hideStartMenu();
+	levelInterface->hideStartMenu();
+	levelInterface->lockStartMenu();
 }
 
 void DangorillaTutorial::endTutorial()
 {
-	interfaceGame->removeChild(dialogues);
+	levelInterface->removeChild(dialogues);
 	dialogues = nullptr;
 	level->resume();
-	config->completeTutorial("dangorilla");
-	interfaceGame->displayStartMenuIfInTitleState();
+	settings->completeTutorial("dangorilla");
+	levelInterface->unlockStartMenu();
+	levelInterface->displayStartMenuIfInTitleState();
 	Tutorial::endTutorial();
+	running = false;
 }
