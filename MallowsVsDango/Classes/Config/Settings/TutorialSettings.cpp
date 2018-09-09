@@ -1,7 +1,7 @@
 #include "TutorialSettings.h"
 #include "../Exceptions/JsonContentException.h"
 
-void TutorialSettings::init(std::string configFilename, std::string saveFilename)
+void TutorialSettings::init(const std::string& configFilename, const std::string& saveFilename)
 {
 	Settings::init(configFilename);
 	this->saveFilename = saveFilename;
@@ -24,22 +24,22 @@ void TutorialSettings::save()
 	}
 }
 
-void TutorialSettings::startTutorial(std::string name) {
+void TutorialSettings::startTutorial(const std::string& name) {
 	tutorialStates[name]["state"] = "running";
 	save();
 }
 
-void TutorialSettings::completeTutorial(std::string name) {
+void TutorialSettings::completeTutorial(const std::string& name) {
 	tutorialStates[name]["state"] = "complete";
 	save();
 }
 
-bool TutorialSettings::isTutorialRunning(std::string name)
+bool TutorialSettings::isTutorialRunning(const std::string& name)
 {
 	return tutorialStates[name]["state"].asString() == "running";
 }
 
-bool TutorialSettings::isTutorialComplete(std::string name)
+bool TutorialSettings::isTutorialComplete(const std::string& name)
 {
 	return tutorialStates[name]["state"].asString() == "complete";
 }

@@ -26,8 +26,8 @@ LevelInterface::~LevelInterface() {
 	cocos2d::Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
 }
 
-bool LevelInterface::init() {
-
+bool LevelInterface::init(MyGame* ngame) {
+	game = ngame;
 	if (!Layer::init()) { return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
@@ -74,9 +74,8 @@ void LevelInterface::addBlackMask(cocos2d::Size &visibleSize)
 LevelInterface* LevelInterface::create(MyGame* ngame) {
 
 	LevelInterface* interface_game = new LevelInterface();
-	interface_game->setGame(ngame);
 
-	if (interface_game->init())
+	if (interface_game->init(ngame))
 	{
 		interface_game->autorelease();
 		return interface_game;
@@ -212,7 +211,6 @@ void LevelInterface::onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) 
 		Tower* tower = game->getLevel()->touchingTower(p);
 		if (tower != nullptr) {
 			selected_turret = tower;
-			std::string name = tower->getSpecConfig()["name"].asString();
 			rightPanel->displayTowerInfos(tower->getSpecConfig()["name"].asString(), configClass->getSettings()->getLanguage());
 			selected_turret->displayRange(true);
 			showTowerInfo();
@@ -269,7 +267,6 @@ void LevelInterface::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) 
 	if (state == State::TOUCHED) {
 		Size visibleSize = Director::getInstance()->getVisibleSize();
 
-		double dist = touch->getLocation().distanceSquared(touch->getStartLocation());
 		if (touch->getLocation().x - visibleSize.width * 3 / 4 < 0) {
 			if (configClass->getSettings()->isMovingGridEnabled()) {
 				game->getLevel()->showGrid(true);
@@ -278,7 +275,6 @@ void LevelInterface::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) 
 			if (item.first != "nullptr") {
 				if (game->getLevel()->getQuantity() >= Tower::getConfig()[item.first]["cost"][0].asDouble()) {
 					state = TURRET_CHOSEN;
-					Tower::TowerType tape = Tower::getTowerTypeFromString(item.first);
 					menuTurretTouchCallback(Tower::getTowerTypeFromString(item.first));
 					moveSelectedTurret(touch->getLocation());
 					selected_turret->displayRange(true);
@@ -313,7 +309,6 @@ void LevelInterface::resetSugarLabel() {
 	levelInfo->resetAnimations();
 }
 
-
 void LevelInterface::resetTowerMenu() {
 	rightPanel->resetAnimations();
 }
@@ -329,21 +324,6 @@ void LevelInterface::addEvents()
 
 	//cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 30);
-}
-
-void LevelInterface::setGame(MyGame* ngame) {
-	game = ngame;
-}
-
-void LevelInterface::accelerateOnOffCallback(Ref* sender) {
-	if (game->isAccelerated()) {
-		game->pause();
-		game->setNormalSpeed();
-	}
-	else {
-		game->resume();
-		game->increaseSpeed();
-	}
 }
 
 void LevelInterface::update(float dt) {
@@ -477,12 +457,10 @@ void LevelInterface::showLabelInformation() {
 }
 
 void LevelInterface::initLabels(const Json::Value& config) {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
 	challenges = ChallengeHandler::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
 		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["challenges"]);
 
 	levelInfo = LevelInfo::create(challenges);
-	levelInfo->setPosition(Vec2(0, visibleSize.height));
 	addChild(levelInfo, 2, "label_information");
 }
 
@@ -504,11 +482,6 @@ void LevelInterface::initRightPanel(const std::string& language, const Json::Val
 void LevelInterface::removeTower() {
 	selected_turret = nullptr;
 	state = State::IDLE;
-}
-
-void LevelInterface::destroyCallback(Ref* sender) {
-
-	game->getLevel()->increaseQuantity(selected_turret->getCost() * 0.5 * (selected_turret->getLevel() + 1));
 }
 
 void LevelInterface::builtCallback(Ref* sender) {

@@ -39,15 +39,13 @@ public:
 	
 	LevelInterface();
 	~LevelInterface();
-	virtual bool init();
+	virtual bool init(MyGame* ngame);
 	void addRewardLayout();
 	void addBlackMask(cocos2d::Size &visibleSize);
 	void addEvents();
 	static LevelInterface* create(MyGame* ngame);
 	
-	void setGame(MyGame* ngame);
 	void menuTurretTouchCallback(Tower::TowerType turret);
-	void accelerateOnOffCallback(Ref* sender);
 	void setListening(bool listening);
 	
 	void showWin();
@@ -128,7 +126,6 @@ protected:
 	void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
 
 
-	void destroyCallback(Ref* sender);
 	void builtCallback(Ref* sender);
 	std::pair<std::string, cocos2d::Sprite*> getTowerFromPoint(cocos2d::Vec2 location);
 	void endGame();

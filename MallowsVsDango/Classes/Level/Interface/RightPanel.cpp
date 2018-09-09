@@ -237,7 +237,7 @@ void RightPanel::reset()
 {
 	getChildByName("informations")->setVisible(false);
 	((cocos2d::ui::CheckBox*)getChildByName("speed_up"))->setSelected(false);
-	towers.empty();
+	towers.clear();
 	towerLayout->removeAllChildren();
 	createTowersLayout();
 }

@@ -5,7 +5,7 @@
 class Settings {
 public:
 	Settings();
-	void init(std::string settingsFilename);
+	void init(const std::string& settingsFilename);
 	const Json::Value& getSettingsMap();
 
 protected:

@@ -7,7 +7,7 @@ GameSettings::GameSettings():
 {
 }
 
-void GameSettings::init(std::string saveFolder)
+void GameSettings::init(std::string& saveFolder)
 {
 	this->saveFolder = saveFolder;
 	auto fileUtils = cocos2d::FileUtils::getInstance();
@@ -167,7 +167,7 @@ void GameSettings::enableDialogues(bool enable) {
 	needSave = true;
 }
 
-void GameSettings::setLanguage(std::string lang) {
+void GameSettings::setLanguage(const std::string& lang) {
 	if (lang == "en" || lang == "fr") {
 		language = lang;
 		settingsSave["language"] = language;

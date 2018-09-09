@@ -5,13 +5,13 @@
 
 class TutorialSettings : public Settings {
 public:
-	void init(std::string configFilename, std::string saveFilename);
+	void init(const std::string& configFilename, const std::string& saveFilename);
 	void save();
-	void startTutorial(std::string name);
-	void completeTutorial(std::string name);
+	void startTutorial(const std::string& name);
+	void completeTutorial(const std::string& name);
 
-	bool isTutorialRunning(std::string name);
-	bool isTutorialComplete(std::string name);
+	bool isTutorialRunning(const std::string& name);
+	bool isTutorialComplete(const std::string& name);
 
 protected:
 	void tryReadingTutoSaveFile();

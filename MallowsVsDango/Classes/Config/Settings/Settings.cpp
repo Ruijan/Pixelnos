@@ -7,7 +7,7 @@ Settings::Settings() :
 {
 }
 
-void Settings::init(std::string settingsFilename)
+void Settings::init(const std::string& settingsFilename)
 {
 	this->settingsFilename = settingsFilename;
 	tryReadingSettingsFile();

@@ -7,7 +7,7 @@
 class GameSettings {
 public:
 	GameSettings();
-	void init(std::string saveFolder);
+	void init(std::string& saveFolder);
 
 	void loadPreviousSettings();
 
@@ -37,7 +37,7 @@ public:
 	bool isDialoguesEnabled();
 	const std::string& getLanguage();
 
-	void setLanguage(std::string lang);
+	void setLanguage(const std::string& lang);
 
 	Json::Value getSettingsSave();
 	bool doesNeedSave();
