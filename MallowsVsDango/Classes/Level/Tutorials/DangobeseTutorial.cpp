@@ -13,7 +13,6 @@ DangobeseTutorial::~DangobeseTutorial() {
 	if (running) {
 		levelInterface->removeChild(dialogues);
 	}
-	
 }
 
 bool DangobeseTutorial::isDone()

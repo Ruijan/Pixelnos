@@ -4,19 +4,19 @@
 
 USING_NS_CC;
 
-bool Skills::init() {
-
+bool Skills::init(Config* config) {
+	configClass = config;
 	if (!Scene::init()) { return false; }
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
+	std::string language = configClass->getSettings()->getLanguage();
 
 	tutorial_running = false;
 	c_talent = Json::Value::null;
 	c_button = nullptr;
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
+	Json::Value talents = configClass->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
-	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
+	Json::Value buttons = configClass->getConfigValues(Config::ConfigType::BUTTON);
 
 	if (!save_root.isMember("holy_sugar")) {
 		save_root["holy_sugar"] = 0;
@@ -49,8 +49,8 @@ bool Skills::init() {
 		}
 	}
 	save_root = root2;
-	((AppDelegate*)Application::getInstance())->getConfigClass()->setSave(save_root);
-	((AppDelegate*)Application::getInstance())->getConfigClass()->save();
+	configClass->setSave(save_root);
+	configClass->save();
 
 	//generating a background for skills 
 	Sprite* loading_background = Sprite::create("res/background/space.png");
@@ -185,7 +185,7 @@ bool Skills::init() {
 
 	//add buy validation button
 	auto validate_button = ui::Button::create("res/buttons/yellow_button.png");
-	validate_button->setTitleText(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)
+	validate_button->setTitleText(configClass->getConfigValues(Config::ConfigType::BUTTON)
 		["validate"][language].asString());
 	validate_button->setTitleFontName("fonts/LICABOLD.ttf");
 	validate_button->setTitleFontSize(60.f);
@@ -203,8 +203,8 @@ bool Skills::init() {
 			save_root["holy_sugar"] = save_root["holy_sugar"].asInt() - c_talent["cost"].asInt();
 			save_root["holy_sugar_spent"] = save_root["holy_sugar_spent"].asInt() + c_talent["cost"].asInt();
 			((Label*)getChildByName("sugar_amount"))->setString("X " + save_root["holy_sugar"].asString());
-			((AppDelegate*)Application::getInstance())->getConfigClass()->setSave(save_root);
-			((AppDelegate*)Application::getInstance())->getConfigClass()->save();
+			configClass->setSave(save_root);
+			configClass->save();
 
 			//update skill panels, check box
 			removeChildByName("talent_page");
@@ -262,6 +262,22 @@ bool Skills::init() {
 	return true;
 }
 
+Skills * Skills::create(Config * config)
+{
+	Skills* skillScene = new Skills();
+
+	if (skillScene->init(config))
+	{
+		skillScene->autorelease();
+		return skillScene;
+	}
+	else
+	{
+		delete skillScene;
+		return NULL;
+	}
+}
+
 Json::Value Skills::getSkillFromID(int id) {
 	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	for (auto& talent : talents) {
@@ -283,7 +299,7 @@ Json::Value Skills::getSavedSkillFromID(int id) {
 }
 
 int Skills::getSavedSkillPosFromID(int id) {
-	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues()["talents"]; //load data file
+	Json::Value talents = configClass->getSaveValues()["talents"]; //load data file
 	for (unsigned int i(0); i < talents.size(); ++i) {
 		if (talents[i]["id"] == id) {
 			return i;
@@ -294,10 +310,10 @@ int Skills::getSavedSkillPosFromID(int id) {
 
 void Skills::initTalents() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
+	Json::Value talents = configClass->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
-	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
+	std::string language = configClass->getSettings()->getLanguage();
+	Json::Value buttons = configClass->getConfigValues(Config::ConfigType::BUTTON);
 
 	// create Page view for talents
 	ui::PageView* talent_pages = ui::PageView::create();
@@ -377,10 +393,10 @@ void Skills::selectSkill(int id) {
 	Json::Value talent = getSkillFromID(id);
 	ui::Button* talent_btn = talents_button[id];
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
-	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
+	std::string language = configClass->getSettings()->getLanguage();
+	Json::Value talents = configClass->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
-	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
+	Json::Value buttons = configClass->getConfigValues(Config::ConfigType::BUTTON);
 
 	((Label*)getChildByName("skill_name"))->setString(talent["name_" + language].asString());
 	((Label*)getChildByName("skill_description"))->stopAllActions();
@@ -479,10 +495,10 @@ void Skills::hideValidationPanel() {
 
 void Skills::showValidationPanel() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
-	Json::Value talents = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
+	std::string language = configClass->getSettings()->getLanguage();
+	Json::Value talents = configClass->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
-	Json::Value buttons = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
+	Json::Value buttons = configClass->getConfigValues(Config::ConfigType::BUTTON);
 	Node* validate_buy = getChildByName("validate_buy");
 	Node* panel = getChildByName("validate_buy")->getChildByName("panel");
 	getChildByName("black_mask")->setVisible(true);
@@ -519,8 +535,8 @@ void Skills::update(float dt) {
 
 void Skills::updateTutorial(float dt) {
 	auto save = ((AppDelegate*)Application::getInstance())->getSave();
-	auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::SKILLTUTORIAL);
-	if (((AppDelegate*)Application::getInstance())->getConfigClass()->getSkillTutorialSettings()->isTutorialRunning("skills") &&
+	auto config = configClass->getConfigValues(Config::ConfigType::SKILLTUTORIAL);
+	if (configClass->getSkillTutorialSettings()->isTutorialRunning("skills") &&
 		save["c_level"].asInt() >= config["skills"]["level"].asInt() &&
 		save["c_world"].asInt() >= config["skills"]["world"].asInt()) {
 
@@ -561,7 +577,7 @@ void Skills::updateTutorial(float dt) {
 						this->removeChildByName("invisble_mask");
 						this->removeChildByName("hand");
 						this->hideValidationPanel();
-						((AppDelegate*)Application::getInstance())->getConfigClass()->getSkillTutorialSettings()->completeTutorial("skills");
+						configClass->getSkillTutorialSettings()->completeTutorial("skills");
 						tutorial_running = false;
 					});
 					Size visibleSize = Director::getInstance()->getVisibleSize();

@@ -2,10 +2,10 @@
 #include "../../AppDelegate.h"
 #include "../../GUI/ParametersMenu.h"
 
-RightPanel * RightPanel::create(MyGame * game, const std::string & language, const Json::Value & buttons)
+RightPanel * RightPanel::create(MyGame * game, Config* config)
 {
 	RightPanel* rightPanel = new (std::nothrow) RightPanel();
-	if (rightPanel && rightPanel->init(game, language, buttons))
+	if (rightPanel && rightPanel->init(game, config))
 	{
 		rightPanel->autorelease();
 		return rightPanel;
@@ -14,8 +14,9 @@ RightPanel * RightPanel::create(MyGame * game, const std::string & language, con
 	return nullptr;
 }
 
-bool RightPanel::init(MyGame * myGame, const std::string& language, const Json::Value& buttons){
+bool RightPanel::init(MyGame * myGame, Config* config) {
 	this->game = myGame;
+	configClass = config;
 	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 	setPosition(cocos2d::Vec2(visibleSize.width * (3 / 4.0 + 1 / 8.0), visibleSize.height / 2));
 
@@ -43,7 +44,7 @@ void RightPanel::createButtons() {
 	auto parameters = cocos2d::ui::Button::create("res/buttons/parameters_button.png");
 	parameters->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			((ParametersMenu*)game->getMenu()->getChildByName("menu_pause"))->displayWithAnimation();
+			game->getMenu()->getPauseMenu()->displayWithAnimation();
 			game->pause();
 		}
 	});
@@ -92,9 +93,9 @@ void RightPanel::createTowersLayout() {
 		getChildByName("reload")->getContentSize().height * getChildByName("reload")->getScaleY() * 2 / 3));
 	towerLayout->setAnchorPoint(cocos2d::Vec2(0.5, 0.5));
 	addChild(towerLayout, 2, "towers");
-	
+
 	towerSize = cocos2d::Director::getInstance()->getVisibleSize().width / 10;
-	auto save = ((AppDelegate*)cocos2d::Application::getInstance())->getSave()["towers"];
+	auto save = configClass->getSaveValues()["towers"];
 
 	int j(0);
 	std::vector<std::string> tower_names = Tower::getConfig().getMemberNames();

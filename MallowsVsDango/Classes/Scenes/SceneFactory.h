@@ -1,6 +1,7 @@
 #pragma once
 #include "cocos2d.h"
 
+class Config;
 
 class SceneFactory {
 public:
@@ -19,6 +20,6 @@ public:
 		START = 10
 	};
 
-	static cocos2d::Scene * createScene(SceneType type);
+	static cocos2d::Scene * createScene(SceneType type, Config* config);
 	static std::string getStringFromSceneType(SceneFactory::SceneType type);
 };

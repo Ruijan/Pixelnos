@@ -2,12 +2,13 @@
 #include "ui/CocosGUI.h"
 #include "cocos2d.h"
 #include "../../Config/json.h"
-
+#include "../../Config/Config.h"
 
 class MyGame;
 class RightPanel : public cocos2d::ui::Layout {
 public:
-	static RightPanel* create(MyGame *game, const std::string& language, const Json::Value& buttons);
+	static RightPanel* create(MyGame *game, Config* config);
+	virtual bool init(MyGame* game, Config* config);
 	void resetAnimations();
 	void reset();
 	void update();
@@ -18,7 +19,6 @@ public:
 	cocos2d::Sprite* getTower(std::string towerName);
 
 protected:
-	virtual bool init(MyGame* game, const std::string& language, const Json::Value& buttons);
 	void createPanel();
 	void createButtons();
 	void createTowersLayout();
@@ -30,4 +30,5 @@ protected:
 	std::unordered_map<std::string, std::pair<cocos2d::Sprite*, double>> towers;
 	cocos2d::Layer* towerLayout;
 	double towerSize;
+	Config* configClass;
 };

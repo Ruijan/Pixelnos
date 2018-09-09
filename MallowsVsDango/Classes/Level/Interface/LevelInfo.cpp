@@ -17,7 +17,6 @@ bool LevelInfo::init(ChallengeHandler* challenges) {
 	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 	const double sizeButton = visibleSize.width / 15;
 
-	cocos2d::ui::Layout* node_top = cocos2d::ui::Layout::create();
 	setPosition(cocos2d::Vec2(0, visibleSize.height));
 
 	cocos2d::Sprite* sugar = cocos2d::Sprite::create("res/buttons/sugar.png");
@@ -70,10 +69,11 @@ bool LevelInfo::init(ChallengeHandler* challenges) {
 	loadingBarBackground->setScale(loadingBar->getScale());
 	loadingBarBackground->setVisible(false);
 	addChild(loadingBarBackground, 3, "loading_bar_background");
-	/*challenges = ChallengeHandler::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
-		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["challenges"]);*/
-	challenges->setPosition(cocos2d::Vec2(sugar->getPosition().x + sugar->getContentSize().width * sugar->getScale() / 2,
-		getPosition().y + sugar->getPosition().y - sugar->getContentSize().height * sugar->getScale()));
+
+	cocos2d::Vec2 position = cocos2d::Vec2(sugar->getPosition().x + sugar->getContentSize().width * sugar->getScale() / 2,
+		sugar->getPosition().y - sugar->getContentSize().height * sugar->getScale());
+	challenges->setPosition(position);
+
 	addChild(challenges, 1, "challenges");
 
 	return true;

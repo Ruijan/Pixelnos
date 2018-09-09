@@ -26,20 +26,37 @@ LevelInterface::~LevelInterface() {
 	cocos2d::Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
 }
 
-bool LevelInterface::init(MyGame* ngame) {
+LevelInterface* LevelInterface::create(MyGame* ngame, Config* config) {
+
+	LevelInterface* interface_game = new LevelInterface();
+
+	if (interface_game->init(ngame, config))
+	{
+		interface_game->autorelease();
+		return interface_game;
+	}
+	else
+	{
+		delete interface_game;
+		interface_game = NULL;
+		return NULL;
+	}
+}
+
+bool LevelInterface::init(MyGame* ngame, Config* nConfig) {
 	game = ngame;
 	if (!Layer::init()) { return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	state = State::IDLE;
 	game_state = INTRO;
-	configClass = ((AppDelegate*)Application::getInstance())->getConfigClass();
+	configClass = nConfig; // ((AppDelegate*)Application::getInstance())->getConfigClass();
 	Json::Value config = configClass->getConfigValues(Config::ConfigType::GENERAL);
 
 	initParametersMenu(config);
 	initLoseMenu(configClass->getSettings()->getLanguage(), configClass->getConfigValues(Config::ConfigType::BUTTON), configClass->getConfigValues(Config::ConfigType::ADVICE));
 	initWinMenu(config);
-	initRightPanel(configClass->getSettings()->getLanguage(), configClass->getConfigValues(Config::ConfigType::BUTTON));
+	initRightPanel();
 	initLabels(config);
 	initStartMenu(config);
 	initDialoguesFromLevel(config);
@@ -71,22 +88,7 @@ void LevelInterface::addBlackMask(cocos2d::Size &visibleSize)
 	getChildByName("black_mask")->setVisible(false);
 }
 
-LevelInterface* LevelInterface::create(MyGame* ngame) {
 
-	LevelInterface* interface_game = new LevelInterface();
-
-	if (interface_game->init(ngame))
-	{
-		interface_game->autorelease();
-		return interface_game;
-	}
-	else
-	{
-		delete interface_game;
-		interface_game = NULL;
-		return NULL;
-	}
-}
 
 
 bool LevelInterface::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
@@ -111,7 +113,7 @@ bool LevelInterface::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) 
 					selected_turret = nullptr;
 				}
 				state = State::TOUCHED;
-				rightPanel->displayTowerInfos(item.first,configClass->getSettings()->getLanguage());
+				rightPanel->displayTowerInfos(item.first, configClass->getSettings()->getLanguage());
 				if (game_state == TITLE) {
 					hideStartMenu();
 				}
@@ -328,7 +330,7 @@ void LevelInterface::addEvents()
 
 void LevelInterface::update(float dt) {
 	levelInfo->update(game->getLevel()->getQuantity(), game->getLevel()->getLife(), game->getLevel()->getProgress());
-	
+
 	if (getChildByName("information_tower") != nullptr && selected_turret != nullptr) {
 		selected_turret->updateInformationLayout((ui::Layout*)getChildByName("information_tower"));
 	}
@@ -420,7 +422,7 @@ void LevelInterface::reset() {
 	selected_turret = nullptr;
 	selected_dango = nullptr;
 
-	
+
 	loseMenu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	winMenu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	//startMenu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
@@ -443,8 +445,8 @@ void LevelInterface::reset() {
 }
 
 void LevelInterface::initParametersMenu(const Json::Value& config) {
-	ui::Layout* menu_pause = ParametersMenu::create(game, configClass);
-	addChild(menu_pause, 4, "menu_pause");
+	pauseMenu = ParametersMenu::create(game, configClass);
+	addChild(pauseMenu, 4, "menu_pause");
 }
 
 void LevelInterface::initStartMenu(const Json::Value& config) {
@@ -474,8 +476,8 @@ void LevelInterface::initWinMenu(const Json::Value& config) {
 	addChild(winMenu, 4, "menu_win");
 }
 
-void LevelInterface::initRightPanel(const std::string& language, const Json::Value& buttons) {
-	rightPanel = RightPanel::create(game, language, buttons);
+void LevelInterface::initRightPanel() {
+	rightPanel = RightPanel::create(game, configClass);
 	addChild(rightPanel, 2, "menup_panel");
 }
 

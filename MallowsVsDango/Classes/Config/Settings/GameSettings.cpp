@@ -1,7 +1,7 @@
 #include "GameSettings.h"
 
-GameSettings::GameSettings():
-	needSave(false), 
+GameSettings::GameSettings() :
+	needSave(false),
 	saveFolder(""),
 	fileName("settings.json")
 {
@@ -201,7 +201,7 @@ const std::string& GameSettings::getLanguage() {
 	return language;
 }
 
-Json::Value GameSettings::getSettingsSave(){
+Json::Value GameSettings::getSettingsSave() {
 	return settingsSave;
 }
 

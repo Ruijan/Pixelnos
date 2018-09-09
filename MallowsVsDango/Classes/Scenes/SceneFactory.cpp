@@ -6,8 +6,9 @@
 #include "Skills.h"
 #include "MyGame.h"
 #include "Shop.h"
+#include "../Config/Config.h"
 
-cocos2d::Scene * SceneFactory::createScene(SceneType type)
+cocos2d::Scene * SceneFactory::createScene(SceneType type, Config* config)
 {
 	cocos2d::Scene * scene(nullptr);
 	switch (type) {
@@ -15,7 +16,7 @@ cocos2d::Scene * SceneFactory::createScene(SceneType type)
 		scene = MainMenu::create();
 		break;
 	case GAME:
-		scene = MyGame::create();
+		scene = MyGame::create(config);
 		break;
 	case LEVELS:
 		scene = StoryMenu::create();
@@ -27,7 +28,7 @@ cocos2d::Scene * SceneFactory::createScene(SceneType type)
 		scene = LevelEditor::create();
 		break;
 	case SKILLS:
-		scene = Skills::create();
+		scene = Skills::create(config);
 		break;
 	case SHOP:
 		scene = Shop::create();

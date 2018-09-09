@@ -2461,15 +2461,15 @@ void LevelEditor::drawResolutions(DrawNode* node, double resolution, Color4F col
 		Vec2(width * sqrt(resolution / ratio) / 2, -height * sqrt(ratio / resolution) / 2), color);
 	node->drawLine(Vec2(-width * sqrt(resolution / ratio) / 2, height *  sqrt(ratio / resolution) / 2),
 		Vec2(width *  sqrt(resolution / ratio) / 2, height *  sqrt(ratio / resolution) / 2), color);
-	node->drawLine(Vec2(width *  sqrt(resolution / ratio) / 2, -height *  sqrt(ratio / resolution) / 2),
+	node->drawLine(Vec2(width *  sqrt(resolution / ratio) / 2, -height * sqrt(ratio / resolution) / 2),
 		Vec2(width *  sqrt(resolution / ratio) / 2, height *  sqrt(ratio / resolution) / 2), color);
-	node->drawLine(Vec2(-width *  sqrt(resolution / ratio) / 2, height *  sqrt(ratio / resolution) / 2),
-		Vec2(-width * sqrt(resolution / ratio) / 2, -height *  sqrt(ratio / resolution) / 2), color);
+	node->drawLine(Vec2(-width * sqrt(resolution / ratio) / 2, height *  sqrt(ratio / resolution) / 2),
+		Vec2(-width * sqrt(resolution / ratio) / 2, -height * sqrt(ratio / resolution) / 2), color);
 }
 
 Vec2 LevelEditor::getPositionInGrid(Vec2 pos, bool half) {
 	Vec2 grid_pos = pos;
-	int x_index = round(grid_pos.x / size_cell *  (2 - !half));
+	int x_index = round(grid_pos.x / size_cell * (2 - !half));
 	int y_index = -round(grid_pos.y / size_cell * (2 - !half));
 	int width = 12 / (2 - half);
 	int height = 10 / (2 - half);
@@ -2570,8 +2570,8 @@ void LevelEditor::addPath(Vec2 p) {
 			for (int i(-1); i <= 1; i += 1) {
 				for (int j(-1); j <= 1; j += 1) {
 					if ((i == 0 && j != 0) || (i != 0 && j == 0)) {
-						if (abs(grid_pos.x - paths[path_selected].first[paths[path_selected].first.size() - 1]->getPosition().x + i*size_cell) < 1 &&
-							abs(grid_pos.y - paths[path_selected].first[paths[path_selected].first.size() - 1]->getPosition().y + j*size_cell) < 1) {
+						if (abs(grid_pos.x - paths[path_selected].first[paths[path_selected].first.size() - 1]->getPosition().x + i * size_cell) < 1 &&
+							abs(grid_pos.y - paths[path_selected].first[paths[path_selected].first.size() - 1]->getPosition().y + j * size_cell) < 1) {
 							is_next_cell = true;
 						}
 					}
@@ -2853,8 +2853,8 @@ double getNodeHeight(Node* node) {
 		if (child->getChildrenCount() != 0) {
 			//child_height = getNodeHeight(child);
 		}
-		Vec2 c_height = Vec2(child->getPosition().y - child_height*(1 - child->getAnchorPoint().y) * child->getScaleY(),
-			child->getPosition().y + child_height*(1 - child->getAnchorPoint().y) * child->getScaleY());
+		Vec2 c_height = Vec2(child->getPosition().y - child_height * (1 - child->getAnchorPoint().y) * child->getScaleY(),
+			child->getPosition().y + child_height * (1 - child->getAnchorPoint().y) * child->getScaleY());
 		if (c_height.x < height.x) {
 			height.x = c_height.x;
 		}

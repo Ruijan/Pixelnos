@@ -42,6 +42,7 @@ public:
 	Json::Value getSettingsSave();
 	bool doesNeedSave();
 	void setNeedSaving(bool value);
+
 protected:
 	void save();
 

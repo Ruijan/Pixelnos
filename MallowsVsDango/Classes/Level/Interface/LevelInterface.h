@@ -16,16 +16,17 @@
 
 class MyGame;
 class Config;
+class ParametersMenu;
 
 class LevelInterface : public cocos2d::Layer
-{	
+{
 public:
-	enum State{
-		IDLE=0,
-		TOUCHED=1,
-		TURRET_CHOSEN=2,
-		TURRET_SELECTED=3,
-		DANGO_SELECTED=4,
+	enum State {
+		IDLE = 0,
+		TOUCHED = 1,
+		TURRET_CHOSEN = 2,
+		TURRET_SELECTED = 3,
+		DANGO_SELECTED = 4,
 	};
 	enum GameState {
 		INTRO,
@@ -36,21 +37,21 @@ public:
 		DONE,
 		NEXT_LEVEL
 	};
-	
+
 	LevelInterface();
 	~LevelInterface();
-	virtual bool init(MyGame* ngame);
+	virtual bool init(MyGame* ngame, Config* config);
 	void addRewardLayout();
 	void addBlackMask(cocos2d::Size &visibleSize);
 	void addEvents();
-	static LevelInterface* create(MyGame* ngame);
-	
+	static LevelInterface* create(MyGame* ngame, Config* config);
+
 	void menuTurretTouchCallback(Tower::TowerType turret);
 	void setListening(bool listening);
-	
+
 	void showWin();
 	void showLose();
-	
+
 	void update(float dt);
 
 	void pauseLevel();
@@ -66,6 +67,8 @@ public:
 	Dango* getCurrentDango();
 	int getSugarQuantity();
 	int getLifeQuantity();
+	ParametersMenu* getPauseMenu() { return pauseMenu; };
+
 
 	void setGameState(GameState g_state);
 	void setSelectedTower(Tower* tower);
@@ -102,21 +105,22 @@ private:
 	LoseMenu* loseMenu;
 	RightPanel* rightPanel;
 	LevelInfo* levelInfo;
+	ParametersMenu* pauseMenu;
 
 	const double sizeButton;
 	Dialogue* dialogues;
 	ChallengeHandler* challenges;
 
 	Config* configClass;
-	
+
 protected:
 	void moveSelectedTurret(cocos2d::Vec2 pos);
 	bool isOnTower(cocos2d::Vec2 pos);
-	
+
 	void initParametersMenu(const Json::Value& config);
 	void initLoseMenu(const std::string& language, const Json::Value& buttons, const Json::Value& advice);
 	void initWinMenu(const Json::Value& config);
-	void initRightPanel(const std::string& language, const Json::Value& buttons);
+	void initRightPanel();
 	void initLabels(const Json::Value& config);
 	void initStartMenu(const Json::Value& config);
 	void initDialoguesFromLevel(const Json::Value& config);

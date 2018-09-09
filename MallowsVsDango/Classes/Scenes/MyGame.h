@@ -41,6 +41,7 @@ private:
 	int experience;
 	LevelTrackingEvent l_event;
 	std::vector<Tutorial*> tutorials;
+	Config* config;
 
 protected:
 	virtual void onEnterTransitionDidFinish();
@@ -54,8 +55,12 @@ public:
 	MyGame();
 	virtual ~MyGame();
 
-	virtual bool init();
+	virtual bool init(Config* nconfig);
 	virtual bool initLevel(int level_id, int world_id);
+
+	void loadNewLevel(int level_id, int world_id);
+	void resetGame();
+	void addLoadingElementsToQueue();
 
 	void removeTutorials();
 
@@ -83,7 +88,7 @@ public:
 	virtual void switchLanguage();
 	void unlockTowers();
 
-	CREATE_FUNC(MyGame);
+	static MyGame* create(Config* config);
 };
 
 #endif // __Game_SCENE_H__

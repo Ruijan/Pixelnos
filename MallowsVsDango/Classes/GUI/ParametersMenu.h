@@ -8,7 +8,7 @@
 
 typedef std::pair<AudioSlider*, cocos2d::ui::CheckBox*> SoundController;
 
-class ParametersMenu : public CentralMenu{
+class ParametersMenu : public CentralMenu {
 public:
 	static ParametersMenu* create(MyGame* game, Config* config);
 	ParametersMenu(MyGame * game, Config * config);

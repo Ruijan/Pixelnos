@@ -1,7 +1,7 @@
 #include "LifeTutorial.h"
 #include "../Interface/LevelInterface.h"
 
-LifeTutorial::LifeTutorial(TutorialSettings* settings, LevelInterface * nInterfaceGame):
+LifeTutorial::LifeTutorial(TutorialSettings* settings, LevelInterface * nInterfaceGame) :
 	DialogueTutorial(settings),
 	levelInterface(nInterfaceGame)
 {

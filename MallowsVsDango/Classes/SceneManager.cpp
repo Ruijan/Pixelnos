@@ -14,14 +14,14 @@ SceneManager* SceneManager::createInstance(Config* config) {
 	return manager;
 }
 
-SceneManager* SceneManager::getInstance(){
+SceneManager* SceneManager::getInstance() {
 	return manager;
 }
 
-SceneManager::SceneManager(Config* config):
+SceneManager::SceneManager(Config* config) :
 	configClass(config)
 {
-	currentscene = SceneFactory::createScene(SceneFactory::SceneType::MENU);
+	currentscene = SceneFactory::createScene(SceneFactory::SceneType::MENU, configClass);
 	c_index = 0;
 	TrackingEvent c_event;
 	c_event.from_scene = SceneFactory::getStringFromSceneType(SceneFactory::SceneType::START);
@@ -43,7 +43,7 @@ SceneManager::SceneManager(Config* config):
 SceneManager::~SceneManager() {}
 
 void SceneManager::startGameWithLevel(int worldID, int levelID) {
-	MyGame* game = MyGame::create();
+	MyGame* game = MyGame::create(configClass);
 	game->initLevel(levelID, worldID);
 	currentscene = game;
 	replaceSceneWithCurrentScene(SceneFactory::GAME);
@@ -51,7 +51,7 @@ void SceneManager::startGameWithLevel(int worldID, int levelID) {
 
 void SceneManager::setScene(SceneFactory::SceneType type) {
 	addSceneTransitionTrackingEvent(type);
-	currentscene = SceneFactory::createScene(type);
+	currentscene = SceneFactory::createScene(type, configClass);
 	replaceSceneWithCurrentScene(type);
 }
 
