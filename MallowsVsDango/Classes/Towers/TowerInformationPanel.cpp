@@ -266,8 +266,8 @@ void TowerInformationPanel::createCurrentLevelPanel() {
 	currentSpeedLabel->setAnchorPoint(cocos2d::Vec2(0.f, 0.5f));
 	currentLevelInfos->addChild(currentSpeedLabel, 1, "currentSpeedLabel");
 
-	double position_x = getPosition().x;
-	double position_y = getPosition().y + mainPanel->getContentSize().height * mainPanel->getScaleY() / 2 +
+	double position_x = tower->getPosition().x;
+	double position_y = tower->getPosition().y + mainPanel->getContentSize().height * mainPanel->getScaleY() / 2 +
 		Cell::getCellHeight() / 2;
 	if (position_x >= visibleSize.width * 3 / 8) {
 		position_x = mainPanel->getContentSize().width * mainPanel->getScaleX() / 2;
@@ -402,7 +402,6 @@ void TowerInformationPanel::createLockLayout() {
 
 void TowerInformationPanel::createDescriptionLayout() {
 	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-	std::string language = configClass->getSettings()->getLanguage();
 	const auto config = configClass->getConfigValues(Config::ConfigType::BUTTON);
 	const auto spec_config = tower->getSpecConfig();
 
