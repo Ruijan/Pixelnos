@@ -115,34 +115,8 @@ bool Saucer::isSameType(std::string type) {
 	return Tower::getTowerTypeFromString(type) == Tower::TowerType::SAUCER;
 }
 
-void Saucer::chooseTarget(std::vector<Dango*> targets) {
-	double bestScore(1000);
-	bool chosen = false;
-	for (auto& cTarget : targets) {
-		if (cTarget != nullptr) {
-			int first = cTarget->getNbCellsToPath();
-			double dist = cTarget->getPosition().distanceSquared(this->getPosition());
-			double minDist = pow(getRange(), 2);
-			/*((AppDelegate*)Application::getInstance())->g_screenLog->log(LL_DEBUG, ("first: " + Value(first).asString() + " bestscore: " + Value(bestScore).asString()).c_str());
-			((AppDelegate*)Application::getInstance())->g_screenLog->log(LL_DEBUG, ("speed: " + Value(abs(cTarget->getSpeedRedtuctionRatio())).asString() + " slow: " + Value(abs(slow_percent)).asString()).c_str());
-			((AppDelegate*)Application::getInstance())->g_screenLog->log(LL_DEBUG, ("speed: " + Value(abs(cTarget->getSpeedRedtuctionRatio())).asString() + " slow: " + Value(abs(-0.5)).asString()).c_str());
-			*/
-			if (first < bestScore && dist <= minDist && cTarget->willBeAlive() &&
-				cTarget->getSpeedRedtuctionRatio() > slow_percent) {
-				bestScore = first;
-				if (target != nullptr) {
-					target->removeTargetingTower(this);
-				}
-				target = cTarget;
-				target->addTargetingTower(this);
-				chosen = true;
-			}
-		}
-	}
-	if (!chosen) {
-		if (target != nullptr) {
-			target->removeTargetingTower(this);
-		}
-		target = nullptr;
-	}
+bool Saucer::isPotentialTarget(Dango* cTarget) {
+	double dist = cTarget->getPosition().distanceSquared(this->getPosition());
+	double minDist = pow(getRange(), 2);
+	return   dist <= minDist && cTarget->willBeAlive() && cTarget->getSpeedRedtuctionRatio() > slow_percent;
 }

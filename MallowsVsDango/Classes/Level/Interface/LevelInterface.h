@@ -11,6 +11,7 @@
 #include "LoseMenu.h"
 #include "RightPanel.h"
 #include "LevelInfo.h"
+#include "../../Towers/TowerInformationPanel.h"
 #include "../../Dangos/Dango.h"
 
 
@@ -106,6 +107,7 @@ private:
 	RightPanel* rightPanel;
 	LevelInfo* levelInfo;
 	ParametersMenu* pauseMenu;
+	TowerInformationPanel* towerPanel;
 
 	const double sizeButton;
 	Dialogue* dialogues;

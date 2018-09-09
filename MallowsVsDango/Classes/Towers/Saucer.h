@@ -18,7 +18,7 @@ public:
 	virtual void startLimit();
 	virtual void handleEndEnrageAnimation();
 	virtual bool isSameType(std::string type);
-	virtual void chooseTarget(std::vector<Dango*> targets);
+	virtual bool isPotentialTarget(Dango * cTarget);
 
 
 private:

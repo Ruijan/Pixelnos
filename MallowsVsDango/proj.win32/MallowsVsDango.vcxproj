@@ -213,6 +213,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Towers\Saucer.cpp" />
     <ClCompile Include="..\Classes\Towers\Tower.cpp" />
     <ClCompile Include="..\Classes\Towers\TowerFactory.cpp" />
+    <ClCompile Include="..\Classes\Towers\TowerInformationPanel.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -282,6 +283,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Towers\Saucer.h" />
     <ClInclude Include="..\Classes\Towers\Tower.h" />
     <ClInclude Include="..\Classes\Towers\TowerFactory.h" />
+    <ClInclude Include="..\Classes\Towers\TowerInformationPanel.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
