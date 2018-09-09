@@ -18,188 +18,27 @@ bool TowerInformationPanel::init(MyGame* cGame, Tower * cTower, Config* cConfig)
 	game = cGame;
 	tower = cTower;
 	configClass = cConfig;
+
+	createMainPanel();
+	createCurrentLevelPanel();
+	createNextLevelPanel();
+	createLockLayout();
+	createDescriptionLayout();
+	createNextLevelButton();
+	createSellButton();
+	createMaxLevelLabel();
+
+	return true;
+}
+
+void TowerInformationPanel::createMainPanel() {
 	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-	std::string language = configClass->getSettings()->getLanguage();
-	const auto config = configClass->getConfigValues(Config::ConfigType::BUTTON);
-	const auto spec_config = tower->getSpecConfig();
 	mainPanel = cocos2d::ui::Button::create("res/buttons/centralMenuPanel2.png");
 	mainPanel->setScaleX(visibleSize.width / 4 / mainPanel->getContentSize().width);
 	mainPanel->setScaleY(visibleSize.width * 0.25 / mainPanel->getContentSize().width);
 	mainPanel->setZoomScale(0);
 	addChild(mainPanel, 0);
 	spriteSize = mainPanel->getContentSize().width * mainPanel->getScaleX() / 10;
-
-	createCurrentLevelPanel();
-	createNextLevelPanel();
-	createLockLayout();
-	createDescriptionLayout();
-	
-
-	
-
-	auto nextlevel_button = cocos2d::ui::Button::create("res/buttons/upgrade.png");
-	nextlevel_button->setScaleX(mainPanel->getContentSize().width * mainPanel->getScaleX() * .95f /
-		nextlevel_button->getContentSize().width * 0.55f);
-	nextlevel_button->setScaleY(mainPanel->getContentSize().height * mainPanel->getScaleY() /
-		nextlevel_button->getContentSize().height * 0.85);
-	nextlevel_button->setPosition(cocos2d::Vec2(mainPanel->getContentSize().width * mainPanel->getScaleX() / 6,
-		0));
-	addChild(nextlevel_button, 1, "next_level_button");
-	nextlevel_button->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			std::string language = configClass->getSettings()->getLanguage();
-
-			auto cost_size = tower->getCosts().size();
-			if ((int)game->getLevel()->getQuantity() >= tower->getCosts()[tower->getLevel() + 1] &&
-				tower->getLevel() < (int)cost_size)
-			{
-				Json::Value action;
-				action["tower_name"] = tower->getName();
-				action["time"] = (int)time(0);
-				cocos2d::Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(getPosition());
-				action["position"]["x"] = turret_position.x;
-				action["position"]["y"] = turret_position.y;
-				action["action"] = "upgrade_tower";
-				game->addActionToTracker(action);
-				game->getLevel()->decreaseQuantity(tower->getCosts()[tower->getLevel() + 1]);
-				tower->upgradeCallback(sender);
-
-				if ((int)game->getLevel()->getQuantity() < tower->getCosts()[tower->getLevel() + 1]) {
-					((cocos2d::ui::Button*)getChildByName("next_level_button"))->setEnabled(false);
-					nextCostLabel->setColor(cocos2d::Color3B::RED);
-				}
-				else {
-					((cocos2d::ui::Button*)getChildByName("next_level_button"))->setEnabled(true);
-					nextCostLabel->setColor(cocos2d::Color3B::YELLOW);
-				}
-				nextLevelLabel->setString(configClass->getConfigValues(Config::ConfigType::BUTTON)
-						["level"][language].asString() + " " + Json::Value(tower->getLevel() + 2).asString());
-				if (tower->getLevel() < (int)cost_size - 2) {
-					std::string s("");
-					s = Json::Value(tower->getDamages()[tower->getLevel() + 1]).asString();
-					s.resize(4);
-					nextAttackLabel->setString(s);
-					s = Json::Value(tower->getAttackSpeeds()[tower->getLevel() + 1]).asString();
-					s.resize(4);
-					nextSpeedLabel->setString(s);
-					s = Json::Value(round(tower->getRanges()[tower->getLevel() + 1] / Cell::getCellWidth() * 100) / 100).asString();
-					s.resize(4);
-					nextRangeLabel->setString(s);
-					nextCostLabel->setString(Json::Value(tower->getCosts()[tower->getLevel() + 1]).asString());
-				}
-				else if (tower->getLevel() == (int)cost_size - 2) {
-					nextCostLabel->setString(Json::Value(tower->getCosts()[tower->getLevel() + 1]).asString());
-					nextLevelInfos->setVisible(false);
-					descriptionLayout->setVisible(true);
-				}
-				else {
-					getChildByName("next_level_layout")->setVisible(false);
-					((cocos2d::ui::Button*)getChildByName("next_level_button"))->setEnabled(false);
-					getChildByName("max_level_label")->setVisible(true);
-				}
-				if (tower->getLevel() >= tower->getMaxLevel() && tower->getLevel() < (int)cost_size - 1) {
-					nextLevelInfos->setVisible(false);
-					descriptionLayout->setVisible(false);
-					lockedLayout->setVisible(false);
-					((cocos2d::ui::Button*)getChildByName("next_level_button"))->setEnabled(false);
-				}
-				std::string s("");
-				currentLevelLabel->setString(configClass->getConfigValues(Config::ConfigType::BUTTON)
-						["level"][language].asString() + " " + Json::Value(tower->getLevel() + 1).asString());
-				s = Json::Value(tower->getDamages()[tower->getLevel()]).asString();
-				s.resize(4);
-				currentAttackLabel->setString(s);
-				s = Json::Value(tower->getAttackSpeeds()[tower->getLevel()]).asString();
-				s.resize(4);
-				currentSpeedLabel->setString(s);
-				s = Json::Value(round(tower->getRanges()[tower->getLevel()] / Cell::getCellWidth() * 100) / 100).asString();
-				s.resize(4);
-				currentRangeLabel->setString(s);
-				((cocos2d::Label*)getChildByName("sell_label"))->setString(Json::Value(tower->getSells()[tower->getLevel()]).asString());
-			}
-		}
-	});
-
-	cocos2d::Label* max_level_label = cocos2d::Label::createWithTTF("Max. Level Reached", "fonts/LICABOLD.ttf", 35 * visibleSize.width / 1280);
-	max_level_label->setColor(cocos2d::Color3B::BLACK);
-	max_level_label->setAlignment(cocos2d::TextHAlignment::CENTER);
-	max_level_label->setDimensions(nextLevelInfos->getContentSize().width, nextLevelInfos->getContentSize().height * 0.6);
-	max_level_label->setAnchorPoint(cocos2d::Vec2(0, 0.5));
-	max_level_label->setPosition(0, 0);
-	addChild(max_level_label, 3, "max_level_label");
-
-	if (tower->getLevel() < tower->getMaxLevel()) {
-		lockedLayout->setVisible(false);
-		if (tower->getLevel() < (int)tower->getDamages().size()) {
-			max_level_label->setVisible(false);
-			nextLevelInfos->setVisible(true);
-			descriptionLayout->setVisible(false);
-		}
-		else {
-			nextLevelInfos->setVisible(false);
-			nextlevel_button->setEnabled(false);
-		}
-		if (tower->getLevel() == tower->getDamages().size() - 2) {
-			nextLevelInfos->setVisible(false);
-			descriptionLayout->setVisible(true);
-		}
-		MyGame* game = SceneManager::getInstance()->getGame();
-		if ((int)game->getLevel()->getQuantity() < tower->getCosts()[tower->getLevel() + 1]) {
-			nextlevel_button->setEnabled(false);
-		}
-	}
-	else {
-		max_level_label->setVisible(false);
-		nextLevelInfos->setVisible(false);
-		descriptionLayout->setVisible(false);
-		lockedLayout->setVisible(true);
-		nextlevel_button->setEnabled(false);
-	}
-	auto sell = cocos2d::ui::Button::create("res/buttons/sell.png");
-	sell->setScaleX(mainPanel->getContentSize().width * mainPanel->getScaleX() / sell->getContentSize().width * 0.3);
-	sell->setScaleY(mainPanel->getContentSize().height * mainPanel->getScaleY() / sell->getContentSize().height * 0.3);
-	sell->setPosition(cocos2d::Vec2(-mainPanel->getContentSize().width * mainPanel->getScaleX() * 0.3,
-		currentLevelInfos->getPosition().y + currentRangeLabel->getPosition().y - spriteSize / 2 -
-		sell->getContentSize().height* sell->getScaleY() / 2));
-	sell->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			MyGame* game = SceneManager::getInstance()->getGame();
-			game->getLevel()->increaseQuantity(tower->getSells()[tower->getLevel()]);
-			tower->destroyCallback(sender);
-			SceneManager::getInstance()->getGame()->getMenu()->hideTowerInfo();
-			Json::Value action;
-			action["tower_name"] = tower->getName();
-			action["time"] = (int)time(0);
-			cocos2d::Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(getPosition());
-			action["position"]["x"] = turret_position.x;
-			action["position"]["y"] = turret_position.y;
-			action["action"] = "sell_tower";
-			game->addActionToTracker(action);
-		}
-	});
-	addChild(sell, 1);
-
-	auto sell_label = cocos2d::Label::createWithTTF(config["sell"][language].asString(),
-		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	sell_label->enableOutline(cocos2d::Color4B::BLACK, 2);
-	sell_label->setAlignment(cocos2d::TextHAlignment::CENTER);
-	sell_label->setPosition(sell->getPosition().x, sell->getPosition().y + sell_label->getContentSize().height / 2);
-	addChild(sell_label, 1);
-
-	auto sell_cost = cocos2d::Label::createWithTTF(Json::Value(tower->getCosts()[tower->getLevel()]).asString(),
-		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	sell_cost->enableOutline(cocos2d::Color4B::BLACK, 2);
-	sell_cost->setAlignment(cocos2d::TextHAlignment::CENTER);
-	sell_cost->setPosition(sell->getPosition().x + sell_cost->getContentSize().width / 2, sell_label->getPosition().y -
-		sell_label->getContentSize().height / 2 - spriteSize / 2);
-	addChild(sell_cost, 1, "sell_label");
-
-	cocos2d::Sprite* cost_sugar = cocos2d::Sprite::create("res/buttons/sugar.png");
-	cost_sugar->setScale(spriteSize / cost_sugar->getContentSize().width);
-	cost_sugar->setPosition(sell_cost->getPosition().x - spriteSize,
-		sell_cost->getPosition().y);
-	addChild(cost_sugar, 1);
-	return true;
 }
 
 void TowerInformationPanel::createCurrentLevelPanel() {
@@ -373,7 +212,7 @@ void TowerInformationPanel::createNextLevelPanel() {
 }
 
 void TowerInformationPanel::createLockLayout() {
-	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize(); 
+	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 	std::string language = configClass->getSettings()->getLanguage();
 	const auto config = configClass->getConfigValues(Config::ConfigType::BUTTON);
 
@@ -423,48 +262,198 @@ void TowerInformationPanel::createDescriptionLayout() {
 	addChild(descriptionLayout, 2, "descriptionLayout");
 }
 
-void TowerInformationPanel::update() {
-	const auto config = tower->getSpecConfig();
-	if (tower->getLevel() < tower->getMaxLevel()) {
-		if (lockedLayout->isVisible()) {
-			lockedLayout->setVisible(false);
+void TowerInformationPanel::createNextLevelButton() {
+	nextLevelButton = cocos2d::ui::Button::create("res/buttons/upgrade.png");
+	nextLevelButton->setScaleX(mainPanel->getContentSize().width * mainPanel->getScaleX() * .95f /
+		nextLevelButton->getContentSize().width * 0.55f);
+	nextLevelButton->setScaleY(mainPanel->getContentSize().height * mainPanel->getScaleY() /
+		nextLevelButton->getContentSize().height * 0.85);
+	nextLevelButton->setPosition(cocos2d::Vec2(mainPanel->getContentSize().width * mainPanel->getScaleX() / 6,
+		0));
+	addChild(nextLevelButton, 1, "next_level_button");
+	nextLevelButton->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+			std::string language = configClass->getSettings()->getLanguage();
 
-			if (tower->getLevel() < (int)config["damages"].size()) {
+			auto cost_size = tower->getCosts().size();
+			if ((int)game->getLevel()->getQuantity() >= tower->getCosts()[tower->getLevel() + 1] &&
+				tower->getLevel() < (int)cost_size)
+			{
+				Json::Value action;
+				action["tower_name"] = tower->getName();
+				action["time"] = (int)time(0);
+				cocos2d::Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(getPosition());
+				action["position"]["x"] = turret_position.x;
+				action["position"]["y"] = turret_position.y;
+				action["action"] = "upgrade_tower";
+				game->addActionToTracker(action);
+				game->getLevel()->decreaseQuantity(tower->getCosts()[tower->getLevel() + 1]);
+				tower->upgradeCallback(sender);
 
-				nextLevelInfos->setVisible(true);
-				descriptionLayout->setVisible(false);
-			}
-			else {
-				nextLevelInfos->setVisible(false);
-				((cocos2d::ui::Button*)getChildByName("next_level_button"))->setEnabled(false);
-			}
-			if (tower->getLevel() == (int)config["damages"].size() - 2) {
-				nextLevelInfos->setVisible(false);
-				descriptionLayout->setVisible(true);
+				if ((int)game->getLevel()->getQuantity() < tower->getCosts()[tower->getLevel() + 1]) {
+					((cocos2d::ui::Button*)getChildByName("next_level_button"))->setEnabled(false);
+					nextCostLabel->setColor(cocos2d::Color3B::RED);
+				}
+				else {
+					((cocos2d::ui::Button*)getChildByName("next_level_button"))->setEnabled(true);
+					nextCostLabel->setColor(cocos2d::Color3B::YELLOW);
+				}
+				nextLevelLabel->setString(configClass->getConfigValues(Config::ConfigType::BUTTON)
+					["level"][language].asString() + " " + Json::Value(tower->getLevel() + 2).asString());
+				if (tower->getLevel() < (int)cost_size - 2) {
+					std::string s("");
+					s = Json::Value(tower->getDamages()[tower->getLevel() + 1]).asString();
+					s.resize(4);
+					nextAttackLabel->setString(s);
+					s = Json::Value(tower->getAttackSpeeds()[tower->getLevel() + 1]).asString();
+					s.resize(4);
+					nextSpeedLabel->setString(s);
+					s = Json::Value(round(tower->getRanges()[tower->getLevel() + 1] / Cell::getCellWidth() * 100) / 100).asString();
+					s.resize(4);
+					nextRangeLabel->setString(s);
+					nextCostLabel->setString(Json::Value(tower->getCosts()[tower->getLevel() + 1]).asString());
+				}
+				else if (tower->getLevel() == (int)cost_size - 2) {
+					nextCostLabel->setString(Json::Value(tower->getCosts()[tower->getLevel() + 1]).asString());
+					nextLevelInfos->setVisible(false);
+					descriptionLayout->setVisible(true);
+				}
+				else {
+					getChildByName("next_level_layout")->setVisible(false);
+					((cocos2d::ui::Button*)getChildByName("next_level_button"))->setEnabled(false);
+					getChildByName("maxLevelLabel")->setVisible(true);
+				}
+				if (tower->getLevel() >= tower->getMaxLevel() && tower->getLevel() < (int)cost_size - 1) {
+					nextLevelInfos->setVisible(false);
+					descriptionLayout->setVisible(false);
+					lockedLayout->setVisible(false);
+					((cocos2d::ui::Button*)getChildByName("next_level_button"))->setEnabled(false);
+				}
+				std::string s("");
+				currentLevelLabel->setString(configClass->getConfigValues(Config::ConfigType::BUTTON)
+					["level"][language].asString() + " " + Json::Value(tower->getLevel() + 1).asString());
+				s = Json::Value(tower->getDamages()[tower->getLevel()]).asString();
+				s.resize(4);
+				currentAttackLabel->setString(s);
+				s = Json::Value(tower->getAttackSpeeds()[tower->getLevel()]).asString();
+				s.resize(4);
+				currentSpeedLabel->setString(s);
+				s = Json::Value(round(tower->getRanges()[tower->getLevel()] / Cell::getCellWidth() * 100) / 100).asString();
+				s.resize(4);
+				currentRangeLabel->setString(s);
+				((cocos2d::Label*)getChildByName("sell_label"))->setString(Json::Value(tower->getSells()[tower->getLevel()]).asString());
 			}
 		}
-		if ((int)game->getLevel()->getQuantity() < config["cost"][tower->getLevel() + 1].asInt()) {
-			((cocos2d::ui::Button*)getChildByName("next_level_button"))->setEnabled(false);
+	});
+}
+
+void TowerInformationPanel::createSellButton() {
+	std::string language = configClass->getSettings()->getLanguage();
+	const auto config = configClass->getConfigValues(Config::ConfigType::BUTTON);
+	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+
+	auto sell = cocos2d::ui::Button::create("res/buttons/sell.png");
+	sell->setScaleX(mainPanel->getContentSize().width * mainPanel->getScaleX() / sell->getContentSize().width * 0.3);
+	sell->setScaleY(mainPanel->getContentSize().height * mainPanel->getScaleY() / sell->getContentSize().height * 0.3);
+	sell->setPosition(cocos2d::Vec2(-mainPanel->getContentSize().width * mainPanel->getScaleX() * 0.3,
+		currentLevelInfos->getPosition().y + currentRangeLabel->getPosition().y - spriteSize / 2 -
+		sell->getContentSize().height* sell->getScaleY() / 2));
+	sell->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+			MyGame* game = SceneManager::getInstance()->getGame();
+			game->getLevel()->increaseQuantity(tower->getSells()[tower->getLevel()]);
+			tower->destroyCallback(sender);
+			SceneManager::getInstance()->getGame()->getMenu()->hideTowerInfo();
+			Json::Value action;
+			action["tower_name"] = tower->getName();
+			action["time"] = (int)time(0);
+			cocos2d::Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(getPosition());
+			action["position"]["x"] = turret_position.x;
+			action["position"]["y"] = turret_position.y;
+			action["action"] = "sell_tower";
+			game->addActionToTracker(action);
+		}
+	});
+	addChild(sell, 1);
+
+	auto sell_label = cocos2d::Label::createWithTTF(config["sell"][language].asString(),
+		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
+	sell_label->enableOutline(cocos2d::Color4B::BLACK, 2);
+	sell_label->setAlignment(cocos2d::TextHAlignment::CENTER);
+	sell_label->setPosition(sell->getPosition().x, sell->getPosition().y + sell_label->getContentSize().height / 2);
+	addChild(sell_label, 1);
+
+	auto sell_cost = cocos2d::Label::createWithTTF(Json::Value(tower->getCosts()[tower->getLevel()]).asString(),
+		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
+	sell_cost->enableOutline(cocos2d::Color4B::BLACK, 2);
+	sell_cost->setAlignment(cocos2d::TextHAlignment::CENTER);
+	sell_cost->setPosition(sell->getPosition().x + sell_cost->getContentSize().width / 2, sell_label->getPosition().y -
+		sell_label->getContentSize().height / 2 - spriteSize / 2);
+	addChild(sell_cost, 1, "sell_label");
+
+	cocos2d::Sprite* cost_sugar = cocos2d::Sprite::create("res/buttons/sugar.png");
+	cost_sugar->setScale(spriteSize / cost_sugar->getContentSize().width);
+	cost_sugar->setPosition(sell_cost->getPosition().x - spriteSize,
+		sell_cost->getPosition().y);
+	addChild(cost_sugar, 1);
+}
+
+void TowerInformationPanel::createMaxLevelLabel() {
+	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+	maxLevelLabel = cocos2d::Label::createWithTTF("Max. Level Reached", "fonts/LICABOLD.ttf", 35 * visibleSize.width / 1280);
+	maxLevelLabel->setColor(cocos2d::Color3B::BLACK);
+	maxLevelLabel->setAlignment(cocos2d::TextHAlignment::CENTER);
+	maxLevelLabel->setDimensions(nextLevelInfos->getContentSize().width, nextLevelInfos->getContentSize().height * 0.6);
+	maxLevelLabel->setAnchorPoint(cocos2d::Vec2(0, 0.5));
+	maxLevelLabel->setPosition(0, 0);
+	addChild(maxLevelLabel, 3, "maxLevelLabel");
+}
+
+void TowerInformationPanel::updateDisplay() {
+	if (tower->getLevel() < tower->getMaxLevel()) {
+		lockedLayout->setVisible(false);
+		if (tower->getLevel() < (int)tower->getDamages().size()) {
+			maxLevelLabel->setVisible(false);
+			nextLevelInfos->setVisible(true);
+			descriptionLayout->setVisible(false);
+		}
+		else {
+			nextLevelInfos->setVisible(false);
+			nextLevelButton->setEnabled(false);
+		}
+		if (tower->getLevel() == tower->getDamages().size() - 2) {
+			nextLevelInfos->setVisible(false);
+			descriptionLayout->setVisible(true);
+		}
+		if ((int)game->getLevel()->getQuantity() < tower->getCosts()[tower->getLevel() + 1]) {
+			nextLevelButton->setEnabled(false);
 			nextCostLabel->setColor(cocos2d::Color3B::RED);
 		}
 		else {
-			if (tower->getLevel() + 1 < (int)config["cost"].size() && !((cocos2d::ui::Button*)getChildByName("next_level_button"))->isEnabled()) {
-				((cocos2d::ui::Button*)getChildByName("next_level_button"))->setEnabled(true);
+			if (tower->getLevel() + 1 < (int)tower->getCosts().size() && !nextLevelButton->isEnabled()) {
+				nextLevelButton->setEnabled(true);
 			}
-			else if (tower->getLevel() + 1 >= (int)config["cost"].size() && (((cocos2d::ui::Button*)getChildByName("next_level_button"))->isEnabled()
+			else if (tower->getLevel() + 1 >= (int)tower->getCosts().size() && (nextLevelButton->isEnabled()
 				|| nextLevelInfos->isVisible())) {
-				((cocos2d::ui::Button*)getChildByName("next_level_button"))->setEnabled(false);
+				nextLevelButton->setEnabled(false);
 				nextLevelInfos->setVisible(false);
-				getChildByName("max_level_label")->setVisible(true);
+				maxLevelLabel->setVisible(true);
 			}
 			nextCostLabel->setColor(cocos2d::Color3B::YELLOW);
 		}
 	}
 	else {
-		if (!lockedLayout->isVisible()) {
-			lockedLayout->setVisible(true);
-			((cocos2d::ui::Button*)getChildByName("next_level_button"))->setEnabled(false);
-		}
+		maxLevelLabel->setVisible(false);
+		nextLevelInfos->setVisible(false);
+		descriptionLayout->setVisible(false);
+		lockedLayout->setVisible(true);
+		nextLevelButton->setEnabled(false);
+	}
+}
+
+void TowerInformationPanel::update() {
+	updateDisplay();
+	if(tower->getLevel() < tower->getMaxLevel()) {
 		std::string language = configClass->getSettings()->getLanguage();
 		std::string s = Json::Value(tower->getXPLevels()[tower->getLevel() + 1]).asString();
 		int dot_pos = s.find('.');

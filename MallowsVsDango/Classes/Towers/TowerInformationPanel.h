@@ -11,6 +11,7 @@ class TowerInformationPanel: public cocos2d::ui::Layout {
 public:
 	static TowerInformationPanel* create(MyGame* game, Tower* tower, Config* config);
 	bool init(MyGame* game, Tower* tower, Config* config);
+	void createMainPanel();
 	void update();
 
 protected:
@@ -18,6 +19,10 @@ protected:
 	void createNextLevelPanel();
 	void createLockLayout();
 	void createDescriptionLayout();
+	void createNextLevelButton();
+	void createSellButton();
+	void createMaxLevelLabel();
+	void updateDisplay();
 
 protected:
 	Tower * tower;
@@ -42,4 +47,7 @@ protected:
 
 	cocos2d::Layer* descriptionLayout;
 	cocos2d::Layer* lockedLayout;
+
+	cocos2d::ui::Button* nextLevelButton;
+	cocos2d::Label* maxLevelLabel;
 };

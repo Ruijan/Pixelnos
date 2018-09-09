@@ -417,12 +417,10 @@ void LevelInterface::reset() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Json::Value config = configClass->getConfigValues(Config::ConfigType::GENERAL);
 
-
 	state = IDLE;
 	game_state = TITLE;
 	selected_turret = nullptr;
 	selected_dango = nullptr;
-
 
 	loseMenu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	winMenu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
@@ -432,6 +430,7 @@ void LevelInterface::reset() {
 	startMenu->reset(game->getLevel()->getLevelId());
 	getChildByName("reward_layout")->removeAllChildren();
 	removeChild(towerPanel);
+	towerPanel = nullptr;
 	removeChildByName("information_dango");
 	if (dialogues != nullptr) {
 		removeChild(dialogues, 1);
