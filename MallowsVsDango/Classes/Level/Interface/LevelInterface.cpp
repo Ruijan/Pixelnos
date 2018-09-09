@@ -15,7 +15,7 @@
 
 USING_NS_CC;
 
-LevelInterface::LevelInterface() : sizeButton(cocos2d::Director::getInstance()->getVisibleSize().width / 15)
+LevelInterface::LevelInterface() : sizeButton(cocos2d::Director::getInstance()->getVisibleSize().width / 15), towerPanel(nullptr)
 {}
 
 LevelInterface::~LevelInterface() {
@@ -331,8 +331,9 @@ void LevelInterface::addEvents()
 void LevelInterface::update(float dt) {
 	levelInfo->update(game->getLevel()->getQuantity(), game->getLevel()->getLife(), game->getLevel()->getProgress());
 
-	if (getChildByName("information_tower") != nullptr && selected_turret != nullptr) {
-		selected_turret->updateInformationLayout((ui::Layout*)getChildByName("information_tower"));
+	if (towerPanel != nullptr && selected_turret != nullptr) {
+		towerPanel->update();
+		//selected_turret->updateInformationLayout((ui::Layout*)getChildByName("information_tower"));
 	}
 	if (getChildByName("information_dango") != nullptr && selected_dango != nullptr) {
 		selected_dango->updateInformationLayout((ui::Layout*)getChildByName("information_dango"));
@@ -430,7 +431,7 @@ void LevelInterface::reset() {
 
 	startMenu->reset(game->getLevel()->getLevelId());
 	getChildByName("reward_layout")->removeAllChildren();
-	removeChildByName("information_tower");
+	removeChild(towerPanel);
 	removeChildByName("information_dango");
 	if (dialogues != nullptr) {
 		removeChild(dialogues, 1);
@@ -546,36 +547,37 @@ void LevelInterface::hideDangoInfo() {
 }
 
 void LevelInterface::showTowerInfo() {
-	if (getChildByName("information_tower") != nullptr) {
+	if (towerPanel != nullptr) {
 		auto scale_to = ScaleTo::create(0.125f, 0.f);
 		auto removeAndCreateLayout = CallFunc::create([&]() {
-			removeChildByName("information_tower");
+			removeChild(towerPanel);
 			if (selected_turret != nullptr) {
-				auto layout = selected_turret->getInformationLayout(this);
-				addChild(layout, 1, "information_tower");
-				layout->setScale(0);
+				towerPanel = TowerInformationPanel::create(game, selected_turret, configClass);//selected_turret->getInformationLayout(this);
+				addChild(towerPanel, 1, "information_tower");
+				towerPanel->setScale(0);
 				auto scale_to = ScaleTo::create(0.125f, 1.f);
-				layout->runAction(scale_to);
+				towerPanel->runAction(scale_to);
 			}
 		});
-		getChildByName("information_tower")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
+		towerPanel->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
 	}
 	else {
-		auto layout = selected_turret->getInformationLayout(this);
-		addChild(layout, 1, "information_tower");
-		layout->setScale(0);
+		towerPanel = TowerInformationPanel::create(game, selected_turret, configClass);
+		addChild(towerPanel, 1, "information_tower");
+		towerPanel->setScale(0);
 		auto scale_to = ScaleTo::create(0.125f, 1.f);
-		layout->runAction(scale_to);
+		towerPanel->runAction(scale_to);
 	}
 }
 
 void LevelInterface::hideTowerInfo() {
-	if (getChildByName("information_tower") != nullptr) {
+	if (towerPanel != nullptr) {
 		auto scale_to = ScaleTo::create(0.125f, 0.f);
 		auto removeAndCreateLayout = CallFunc::create([&]() {
-			removeChildByName("information_tower");
+			removeChild(towerPanel);
+			towerPanel = nullptr;
 		});
-		getChildByName("information_tower")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
+		towerPanel->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
 	}
 	displayStartMenuIfInTitleState();
 }

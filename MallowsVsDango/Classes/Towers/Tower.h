@@ -66,7 +66,6 @@ public:
 	void setTarget(Dango* dango);
 	void displayRange(bool disp);
 	virtual bool isSameType(std::string type) = 0;
-	cocos2d::ui::Layout* getInformationLayout(LevelInterface* interface_game);
 	static TowerType getTowerTypeFromString(std::string type);
 	cocos2d::Vector<cocos2d::SpriteFrame*> getAnimation(Tower::State animState);
 	static SkeletonAnimation* getSkeletonAnimationFromName(std::string name);
@@ -77,15 +76,30 @@ public:
 	bool isTowerBlocked();
 	virtual void stopAttacking();
 	void changeSpeedAnimation(float speed);
+
+	std::vector<int>& getSells();
+	std::vector<int>& getCosts();
+	std::vector<double>& getXPLevels();
+	std::vector<double>& getRanges();
+	std::vector<double>& getDamages();
+	std::vector<double>& getAttackSpeeds();
+	int getMaxLevel();
+	int getCurrentXP();
 	
 	// Updates
 	virtual void update(float dt);
+	void updateState(float dt);
+	void updateReloading();
+	void updateAttacking(float dt);
+	void updateBlocked();
+	void updateAware(float dt);
+	void updateIDLE();
 	virtual void updateDisplay(float dt);
-	virtual void updateInformationLayout(cocos2d::ui::Layout* layout);
 	virtual void updateEnrageLayout();
 	virtual void handleEnrageMode();
 	virtual void handleEndEnrageAnimation() = 0;
 	virtual void chooseTarget(std::vector<Dango*> targets);
+	virtual bool isPotentialTarget(Dango *);
 	virtual void givePDamages(double damage);
 	virtual void reload();
 	
@@ -125,7 +139,7 @@ protected:
 	std::vector<int> sells;
 	std::vector<int> costs;
 	std::vector<double> damages;
-	std::vector<double> attack_speeds;
+	std::vector<double> attackSpeeds;
 	std::vector<double> ranges;
 	std::vector<double> xp_levels;
 
@@ -146,6 +160,7 @@ protected:
 	//methods
 	virtual void attack() = 0;
 	void startAnimation(float speed = 1);
+	void setOrientedAnimation();
 	void updateDirection();
 };
 

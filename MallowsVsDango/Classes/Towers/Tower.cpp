@@ -28,12 +28,12 @@ void Tower::initFromConfig() {
 		sells.push_back(config["sell"][i].asInt());
 		damages.push_back(config["damages"][i].asDouble());
 		ranges.push_back(config["range"][i].asDouble());
-		attack_speeds.push_back(config["attack_speed"][i].asDouble());
+		attackSpeeds.push_back(config["attack_speed"][i].asDouble());
 		xp_levels.push_back(config["xp_level"][i].asDouble());
 	}
 	
 	cost = costs[0];
-	attack_speed = attack_speeds[0];
+	attack_speed = attackSpeeds[0];
 	damage = damages[0];
 	range = ranges[0];
 	animation_duration = config["animation_attack_time"].asDouble();
@@ -54,9 +54,7 @@ void Tower::initFromConfig() {
 		const char* animationName = (entry && entry->animation) ? entry->animation->name : 0;
 		//log("%d start: %s", trackIndex, animationName);
 	});
-	skeleton->setEndListener([this](spTrackEntry* entry) {
-
-	});
+	skeleton->setEndListener([this](spTrackEntry* entry) {});
 	skeleton->setCompleteListener([this](spTrackEntry* entry) {
 		std::string name = entry->animation->name;
 		if (name == "blink" || name == "hello") {
@@ -78,7 +76,6 @@ void Tower::initFromConfig() {
 				attack();
 			}
 		}
-
 		//log("%d event: %s, %d, %f, %s", trackIndex, event->data->name, event->intValue, event->floatValue, event->stringValue);
 	});
 
@@ -212,7 +209,7 @@ void Tower::upgradeCallback(Ref* sender){
 		++level;
 		range = ranges[level];
 		damage = damages[level];
-		attack_speed = attack_speeds[level];
+		attack_speed = attackSpeeds[level];
 		if (target != nullptr) {
 			stopAttacking();
 		}
@@ -246,13 +243,10 @@ void Tower::removeTarget(Dango* dango) {
 void Tower::chooseTarget(std::vector<Dango*> targets){
 	double bestScore(1000);
 	bool chosen = false;
-
 	for (auto& cTarget : targets) {
 		if (cTarget != nullptr) {
 			int first = cTarget->getNbCellsToPath();
-			double dist = cTarget->getPosition().distanceSquared(this->getPosition());
-			double minDist = pow(getRange(), 2);
-			if (first < bestScore && dist <= minDist && cTarget->willBeAlive()){
+			if (first < bestScore && isPotentialTarget(cTarget)){
 				bestScore = first;
 				if (target != nullptr) {
 					target->removeTargetingTower(this);
@@ -270,6 +264,13 @@ void Tower::chooseTarget(std::vector<Dango*> targets){
 		target = nullptr;
 	}
 }
+
+bool Tower::isPotentialTarget(Dango* cTarget) {
+	double dist = cTarget->getPosition().distanceSquared(this->getPosition());
+	double minDist = pow(getRange(), 2);
+	return  dist <= minDist && cTarget->willBeAlive();
+}
+
 void Tower::givePDamages(double damage){
 	if (target != nullptr) {
 		attacked_enemies[target] = target->takePDamages(damage, animation_duration);
@@ -421,100 +422,108 @@ void Tower::handleEnrageMode() {
 }
 
 void Tower::update(float dt) {
-	// display update
-	
 	updateDisplay(dt);
 	if (isLimitReached() && getChildByName("enrage_panel")->isVisible() && limit_enabled) {
 		updateEnrageLayout();
 	}
-	
 	if(fixed){
-		timer += dt;
-		switch(state){
-			case State::BLOCKED:
-				if (!blocked) {
-					state = IDLE;
-					((Label*)getChildByName("label_state"))->setString("IDLE");
-				}
-				break;
-			case State::IDLE:
-				if (blocked) {
-					state = BLOCKED;
-					((Label*)getChildByName("label_state"))->setString("BLOCKED");
+		updateState(dt);
+	}
+}
 
-				}
-				else {
-					chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
-					if (target != nullptr) {
-						state = State::AWARE;
-						((Label*)getChildByName("label_state"))->setString("AWARE");
-						handleEnrageMode();
-					}
-				}
-				break;
-			case State::AWARE:
-				if (blocked) {
-					state = BLOCKED;
-					((Label*)getChildByName("label_state"))->setString("BLOCKED");
-				}
-				else {
-					timerIDLE += dt;
-					chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
-					if (target != nullptr) {
-						handleEnrageMode();
-						/*cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(state);
-						double delay = animation_duration / nb_frames_anim;
-						auto callbackAttack = CallFunc::create([&]() {
-							state = State::RELOADING;
-							//((Label*)getChildByName("label_state"))->setString("RELOADING");
-							/*std::string frameName = name + "_attack_movement_000.png";
-							SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-							setSpriteFrame(cache->getSpriteFrameByName(frameName.c_str()));
-							timer = 0;
-							timerIDLE = 0;
-							if (target != nullptr) {
-								attack();
-							}
-						});*/
-						//runAction(Sequence::create(Animate::create(Animation::createWithSpriteFrames(animFrames, delay)), callbackAttack, nullptr));
-						//((Label*)getChildByName("label_state"))->setString("ATTACKING");
-						if (state != LIMIT_BURSTING) {
-							state = State::ATTACKING;
-							((Label*)getChildByName("label_state"))->setString("ATTACKING");
-							givePDamages(damage);
-							startAnimation();
-							timerIDLE = 0;
-						}
-					}
-				}
-				if(timerIDLE > 2){
-					state = State::IDLE;
-					((Label*)getChildByName("label_state"))->setString("IDLE");
-					timerIDLE = 0;
-					startAnimation();
-				}
-				break;
-			case State::ATTACKING:
-				timerIDLE += dt;
-				if(timerIDLE > 2){
-					log("ERROR WITH TIMER !!!");
-				}
-				break;
-			case State::RELOADING:
-				chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
-				reload();
-				handleEnrageMode();
-				break;
-			case State::LIMIT_BURSTING:
-				break;
-			default:
-				state = IDLE;
-				((Label*)getChildByName("label_state"))->setString("IDLE");
-				break;
+void Tower::updateState(float dt)
+{
+	timer += dt;
+	switch (state) {
+	case State::BLOCKED:
+		updateBlocked();
+		break;
+	case State::IDLE:
+		updateIDLE();
+		break;
+	case State::AWARE:
+		updateAware(dt);
+		break;
+	case State::ATTACKING:
+		updateAttacking(dt);
+		break;
+	case State::RELOADING:
+		updateReloading();
+		break;
+	case State::LIMIT_BURSTING:
+		break;
+	default:
+		state = IDLE;
+		((Label*)getChildByName("label_state"))->setString("IDLE");
+		break;
+	}
+}
+
+void Tower::updateReloading()
+{
+	chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
+	reload();
+	handleEnrageMode();
+}
+
+void Tower::updateAttacking(float dt)
+{
+	timerIDLE += dt;
+	if (timerIDLE > 2) {
+		log("ERROR WITH TIMER !!!");
+	}
+}
+
+void Tower::updateBlocked()
+{
+	if (!blocked) {
+		state = IDLE;
+		((Label*)getChildByName("label_state"))->setString("IDLE");
+	}
+}
+
+void Tower::updateAware(float dt)
+{
+	if (blocked) {
+		state = BLOCKED;
+		((Label*)getChildByName("label_state"))->setString("BLOCKED");
+	}
+	else {
+		timerIDLE += dt;
+		chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
+		if (target != nullptr) {
+			handleEnrageMode();
+			if (state != LIMIT_BURSTING) {
+				state = State::ATTACKING;
+				((Label*)getChildByName("label_state"))->setString("ATTACKING");
+				givePDamages(damage);
+				startAnimation();
+				timerIDLE = 0;
+			}
 		}
 	}
-	else{
-		
+	if (timerIDLE > 2) {
+		state = State::IDLE;
+		((Label*)getChildByName("label_state"))->setString("IDLE");
+		timerIDLE = 0;
+		startAnimation();
+	}
+}
+
+void Tower::updateIDLE()
+{
+	if (blocked) {
+		state = BLOCKED;
+		((Label*)getChildByName("label_state"))->setString("BLOCKED");
+
+	}
+	else {
+		chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
+		if (target != nullptr) {
+			state = State::AWARE;
+			((Label*)getChildByName("label_state"))->setString("AWARE");
+			handleEnrageMode();
+		}
 	}
 }
 
@@ -586,48 +595,14 @@ void Tower::startAnimation(float speed){
 		skeleton->setAnimation(1, "blink", false);
 		break;
 	case ATTACKING:
-		skeleton->setTimeScale(1.5f * speed * game_speed);
 		skeleton->setSkin("normal_" + Value(level + 1).asString());
-		updateDirection();
-		switch (direction) {
-		case DOWN:
-			skeleton->setAnimation(0, "attackfront", false);
-			break;
-		case UP:
-			skeleton->setAnimation(0, "attacktop", false);
-			break;
-		case RIGHT:
-			skeleton->setAnimation(0, "attackright", false);
-			break;
-		case LEFT:
-			skeleton->setAnimation(0, "attackleft", false);
-			break;
-		default:
-			skeleton->setAnimation(0, "attackfront", false);
-			break;
-		}
+		skeleton->setTimeScale(1.5f * speed * game_speed);
+		setOrientedAnimation();
 		break;
 	case LIMIT_BURSTING:
-		skeleton->setTimeScale(1.5f * speed * game_speed);
 		skeleton->setSkin("enraged_" + Value(level + 1).asString());
-		updateDirection();
-		switch (direction) {
-		case DOWN:
-			skeleton->setAnimation(0, "attackfront", false);
-			break;
-		case UP:
-			skeleton->setAnimation(0, "attacktop", false);
-			break;
-		case RIGHT:
-			skeleton->setAnimation(0, "attackright", false);
-			break;
-		case LEFT:
-			skeleton->setAnimation(0, "attackleft", false);
-			break;
-		default:
-			skeleton->setAnimation(0, "attackfront", false);
-			break;
-		}
+		skeleton->setTimeScale(1.5f * speed * game_speed);
+		setOrientedAnimation();
 		break;
 	default:
 		std::cerr << "No animation found for this state.";
@@ -638,12 +613,33 @@ void Tower::startAnimation(float speed){
 	
 }
 
+void Tower::setOrientedAnimation()
+{
+	updateDirection();
+	switch (direction) {
+	case DOWN:
+		skeleton->setAnimation(0, "attackfront", false);
+		break;
+	case UP:
+		skeleton->setAnimation(0, "attacktop", false);
+		break;
+	case RIGHT:
+		skeleton->setAnimation(0, "attackright", false);
+		break;
+	case LEFT:
+		skeleton->setAnimation(0, "attackleft", false);
+		break;
+	default:
+		skeleton->setAnimation(0, "attackfront", false);
+		break;
+	}
+}
+
 const Json::Value& Tower::getConfig(){
 	return ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER);
 }
 
 void Tower::reload(){
-	
 	if (timer > attack_speed){
 		state = State::AWARE;
 		((Label*)getChildByName("label_state"))->setString("AWARE");
@@ -691,489 +687,6 @@ void Tower::setTarget(Dango* dango){
 
 void Tower::setSelected(bool select){
 	selected = select;
-}
-
-ui::Layout* Tower::getInformationLayout(LevelInterface* interface_game) {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
-	const auto config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
-	const auto spec_config = getSpecConfig();
-	auto layout = ui::Layout::create();
-
-	auto panel = ui::Button::create("res/buttons/centralMenuPanel2.png");
-	panel->setScaleX(visibleSize.width / 4 / panel->getContentSize().width);
-	panel->setScaleY(visibleSize.width * 0.25 / panel->getContentSize().width);
-	panel->setZoomScale(0);
-	layout->addChild(panel, 0);
-
-	auto current_level_layout = ui::Layout::create();
-	current_level_layout->setContentSize(Size(panel->getContentSize().width * panel->getScaleX() / 3,
-		panel->getContentSize().height * panel->getScaleY() * 3 / 4));
-	current_level_layout->setPosition(Vec2(-panel->getContentSize().width * panel->getScaleX() * 0.3,
-		current_level_layout->getContentSize().height / 2));
-
-	Label* level_label = Label::createWithTTF(config["level"][language].asString() + " " + Value(level + 1).asString(), 
-		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	level_label->setColor(Color3B::BLACK);
-	level_label->setPosition(Vec2(0,
-		-level_label->getContentSize().height / 2));
-	current_level_layout->addChild(level_label, 1, "level_label");
-
-	Sprite* attack = Sprite::create("res/buttons/attack.png");
-	Sprite* speed = Sprite::create("res/buttons/speed.png");
-	Sprite* range_i = Sprite::create("res/buttons/range.png");
-	current_level_layout->addChild(attack, 1, "attack");
-	current_level_layout->addChild(speed, 1, "speed");
-	current_level_layout->addChild(range_i, 1, "range");
-
-	double size_sprite = panel->getContentSize().width * panel->getScaleX() / 10;
-
-	attack->setScale(size_sprite / attack->getContentSize().width);
-	speed->setScale(size_sprite / speed->getContentSize().width);
-	range_i->setScale(size_sprite / range_i->getContentSize().width);
-	
-	attack->setPosition(-size_sprite / 2, level_label->getPosition().y -
-		level_label->getContentSize().height / 2
-		-attack->getContentSize().height*attack->getScaleY() / 2);
-	speed->setPosition(-size_sprite / 2, attack->getPosition().y - attack->getContentSize().height*
-		attack->getScaleY() / 2 - speed->getContentSize().height * speed->getScaleY() * 3 / 4);
-	range_i->setPosition(-size_sprite / 2, speed->getPosition().y - speed->getContentSize().height*
-		speed->getScaleY() / 2 - range_i->getContentSize().height * range_i->getScaleY() * 3 / 4);
-
-	std::string s = Value(damage).asString();
-	s.resize(4);
-	Label* attack_label = Label::createWithTTF(s, "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	attack_label->setColor(Color3B::BLACK);
-	attack_label->setPosition(Vec2(attack->getPosition().x + size_sprite,
-		attack->getPosition().y));
-	attack_label->setAnchorPoint(Vec2(0.f, 0.5f));
-	current_level_layout->addChild(attack_label, 1, "attack_label");
-
-	s = Value(round(range / Cell::getCellWidth() * 100) / 100).asString();
-	s.resize(4);
-	Label* range_label = Label::createWithTTF(s, "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	range_label->setColor(Color3B::BLACK);
-	range_label->setPosition(Vec2(range_i->getPosition().x + size_sprite,
-		range_i->getPosition().y));
-	range_label->setAnchorPoint(Vec2(0.f, 0.5f));
-	current_level_layout->addChild(range_label, 1, "range_label");
-
-	s = Value(attack_speed).asString();
-	s.resize(4);
-	Label* speed_label = Label::createWithTTF(s, "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	speed_label->setColor(Color3B::BLACK);
-	speed_label->setPosition(Vec2(speed->getPosition().x + size_sprite,
-		speed->getPosition().y));
-	speed_label->setAnchorPoint(Vec2(0.f, 0.5f));
-	current_level_layout->addChild(speed_label, 1, "speed_label");
-	
-	double position_x = getPosition().x;
-	double position_y = getPosition().y + panel->getContentSize().height * panel->getScaleY() / 2 +
-		Cell::getCellHeight() / 2;
-	/*if (position_x - panel->getContentSize().width * panel->getScaleX() / 2 < 0) {
-		position_x += abs(position_x - panel->getContentSize().width * panel->getScaleX() / 2);
-	}
-	else if (position_x + panel->getContentSize().width * panel->getScaleX() / 2 > visibleSize.width * 3 / 4) {
-		position_x -= abs(position_x + panel->getContentSize().width * panel->getScaleX() / 2 - visibleSize.width * 3 / 4);
-	}
-	if (position_y + panel->getContentSize().height * panel->getScaleY() / 2 > visibleSize.height) {
-		position_y = getPosition().y - panel->getContentSize().height * panel->getScaleY() / 2 -
-			Cell::getCellHeight() / 2;
-	}*/
-	if (position_x >= visibleSize.width * 3 / 8) {
-		position_x = panel->getContentSize().width * panel->getScaleX() / 2;
-	}
-	else if (position_x < visibleSize.width * 3 / 8) {
-		position_x = visibleSize.width * 3 / 4 - panel->getContentSize().width * panel->getScaleX() / 2;
-	}
-	position_y = panel->getContentSize().height * panel->getScaleY() / 2;
-	layout->setPosition(Vec2(position_x, position_y));
-	layout->addChild(current_level_layout, 2, "current_level_layout");
-
-	auto nextlevel_button = ui::Button::create("res/buttons/upgrade.png");
-	nextlevel_button->setScaleX(panel->getContentSize().width * panel->getScaleX() * .95f / 
-		nextlevel_button->getContentSize().width * 0.55f);
-	nextlevel_button->setScaleY(panel->getContentSize().height * panel->getScaleY() /
-		nextlevel_button->getContentSize().height * 0.85);
-	nextlevel_button->setPosition(Vec2(panel->getContentSize().width * panel->getScaleX() / 6,
-		0));
-	layout->addChild(nextlevel_button, 1, "next_level_button");
-	nextlevel_button->addTouchEventListener([&, layout](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			MyGame* game = SceneManager::getInstance()->getGame();
-			std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
-
-			auto cost_size = costs.size();
-			if ((int)game->getLevel()->getQuantity() >= costs[level + 1] &&
-				level < (int)cost_size) 
-			{
-				Json::Value action;
-				action["tower_name"] = name;
-				action["time"] = (int)time(0);
-				Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(getPosition());
-				action["position"]["x"] = turret_position.x;
-				action["position"]["y"] = turret_position.y;
-				action["action"] = "upgrade_tower";
-				game->addActionToTracker(action);
-				game->getLevel()->decreaseQuantity(costs[level + 1]);
-				upgradeCallback(sender);
-				
-				if ((int)game->getLevel()->getQuantity() < costs[level + 1]) {
-					((ui::Button*)layout->getChildByName("next_level_button"))->
-						setEnabled(false);
-					((Label*)layout->getChildByName("next_level_layout")->getChildByName("cost_label"))->
-						setColor(Color3B::RED);
-				}
-				else {
-					((ui::Button*)layout->getChildByName("next_level_button"))->
-						setEnabled(true);
-					((Label*)layout->getChildByName("next_level_layout")->getChildByName("cost_label"))->
-						setColor(Color3B::YELLOW);
-				}
-				((Label*)layout->getChildByName("next_level_layout")->getChildByName("level_label"))->
-					setString(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)
-						["level"][language].asString() + " " + Value(level + 2).asString());
-				if (level < (int)cost_size - 2) {
-					std::string s("");
-					s = Value(damages[level + 1]).asString();
-					s.resize(4);
-					((Label*)layout->getChildByName("next_level_layout")->getChildByName("attack_label"))->
-						setString(s);
-					s = Value(attack_speeds[level + 1]).asString();
-					s.resize(4);
-					((Label*)layout->getChildByName("next_level_layout")->getChildByName("speed_label"))->
-						setString(s);
-					s = Value(round(ranges[level + 1] / Cell::getCellWidth() * 100) / 100).asString();
-					s.resize(4);
-					((Label*)layout->getChildByName("next_level_layout")->getChildByName("range_label"))->
-						setString(s);
-					((Label*)layout->getChildByName("next_level_layout")->getChildByName("cost_label"))->
-						setString(Value(costs[level + 1]).asString());
-				}
-				else if (level == (int)cost_size - 2) {
-					((Label*)layout->getChildByName("next_level_layout")->getChildByName("cost_label"))->
-						setString(Value(costs[level + 1]).asString());
-					layout->getChildByName("next_level_layout")->getChildByName("range")->setVisible(false);
-					layout->getChildByName("next_level_layout")->getChildByName("speed")->setVisible(false);
-					layout->getChildByName("next_level_layout")->getChildByName("attack")->setVisible(false);
-					layout->getChildByName("next_level_layout")->getChildByName("range_label")->setVisible(false);
-					layout->getChildByName("next_level_layout")->getChildByName("speed_label")->setVisible(false);
-					layout->getChildByName("next_level_layout")->getChildByName("attack_label")->setVisible(false);
-					layout->getChildByName("next_level_layout")->getChildByName("description_label")->setVisible(true);
-				}
-				else {
-					layout->getChildByName("next_level_layout")->setVisible(false);
-					((ui::Button*)layout->getChildByName("next_level_button"))->
-						setEnabled(false);
-					layout->getChildByName("max_level_label")->setVisible(true);
-				}
-				if (level >= level_max && level < (int)cost_size - 1) {
-					layout->getChildByName("next_level_layout")->getChildByName("range")->setVisible(false);
-					layout->getChildByName("next_level_layout")->getChildByName("speed")->setVisible(false);
-					layout->getChildByName("next_level_layout")->getChildByName("attack")->setVisible(false);
-					layout->getChildByName("next_level_layout")->getChildByName("range_label")->setVisible(false);
-					layout->getChildByName("next_level_layout")->getChildByName("speed_label")->setVisible(false);
-					layout->getChildByName("next_level_layout")->getChildByName("attack_label")->setVisible(false);
-					layout->getChildByName("next_level_layout")->getChildByName("description_label")->setVisible(false);
-					layout->getChildByName("next_level_layout")->getChildByName("locked_label")->setVisible(true);
-					((ui::Button*)layout->getChildByName("next_level_button"))->setEnabled(false);
-				}
-				std::string s("");
-				((Label*)layout->getChildByName("current_level_layout")->getChildByName("level_label"))->
-					setString(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)
-						["level"][language].asString()+ " " + Value(level + 1).asString());
-				s = Value(damages[level]).asString();
-				s.resize(4);
-				((Label*)layout->getChildByName("current_level_layout")->getChildByName("attack_label"))->
-					setString(s);
-				s = Value(attack_speeds[level]).asString();
-				s.resize(4);
-				((Label*)layout->getChildByName("current_level_layout")->getChildByName("speed_label"))->
-					setString(s);
-				s = Value(round(ranges[level] / Cell::getCellWidth() * 100) / 100).asString();
-				s.resize(4);
-				((Label*)layout->getChildByName("current_level_layout")->getChildByName("range_label"))->
-					setString(s);
-				((Label*)layout->getChildByName("sell_label"))->setString(Value(sells[level]).asString());
-			}
-		}
-	});
-	
-	
-
-	auto nextlevel_layout = ui::Layout::create();
-	nextlevel_layout->setContentSize(Size(panel->getContentSize().width * panel->getScaleX() / 3,
-		panel->getContentSize().height * panel->getScaleY() * 3 / 4));
-	nextlevel_layout->setPosition(Vec2(0, nextlevel_layout->getContentSize().height / 2));
-
-	Label* level_n_label = Label::createWithTTF(config["level"][language].asString()+ " " + Value(level + 2).asString(),
-		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	level_n_label->setColor(Color3B::BLACK);
-	level_n_label->setPosition(Vec2(nextlevel_layout->getContentSize().width * nextlevel_layout->getScaleX() / 2, 
-		-level_n_label->getContentSize().height / 2));
-	nextlevel_layout->addChild(level_n_label, 1, "level_label");
-
-	s = Value(xp_levels[level + 1]).asString();
-	int dot_pos = s.find('.');
-	s = s.substr(0, dot_pos);
-	Label* locked_label = Label::createWithTTF(config["locked"][language].asString() + "\n"+ Value(xp).asString() + "/" +
-		s,
-		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	locked_label->setColor(Color3B::BLACK);
-	locked_label->setPosition(level_n_label->getPosition() + Vec2(0, -level_n_label->getContentSize().width / 2
-		-locked_label->getContentSize().height / 2));
-	locked_label->setDimensions(nextlevel_layout->getContentSize().width, level_n_label->getContentSize().height * 2);
-	locked_label->setHorizontalAlignment(TextHAlignment::CENTER);
-	nextlevel_layout->addChild(locked_label, 1, "locked_label");
-
-	Sprite* attack_n = Sprite::create("res/buttons/attack.png");
-	Sprite* speed_n = Sprite::create("res/buttons/speed.png");
-	Sprite* range_ni = Sprite::create("res/buttons/range.png");
-	Sprite* cost = Sprite::create("res/buttons/sugar.png");
-
-	nextlevel_layout->addChild(attack_n, 1, "attack");
-	nextlevel_layout->addChild(speed_n, 1, "speed");
-	nextlevel_layout->addChild(range_ni, 1, "range");
-	nextlevel_layout->addChild(cost, 1, "cost");
-
-	attack_n->setScale(size_sprite / attack_n->getContentSize().width);
-	speed_n->setScale(size_sprite / speed_n->getContentSize().width);
-	range_ni->setScale(size_sprite / range_ni->getContentSize().width);
-	cost->setScale(size_sprite / cost->getContentSize().width);
-
-	attack_n->setPosition(size_sprite, level_n_label->getPosition().y - 
-		level_n_label->getContentSize().height / 2 -size_sprite / 2);
-	speed_n->setPosition(size_sprite, attack_n->getPosition().y - size_sprite / 2 - size_sprite / 2);
-	range_ni->setPosition(size_sprite, speed_n->getPosition().y - size_sprite / 2 - size_sprite / 2);
-
-	auto description_label = Label::createWithTTF(spec_config["last_level_description_" +
-		((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage()].asString(),
-		"fonts/LICABOLD.ttf", 20 * visibleSize.width / 1280);
-	description_label->setColor(Color3B::BLACK);
-	description_label->setAlignment(cocos2d::TextHAlignment::CENTER);
-	description_label->setDimensions(nextlevel_layout->getContentSize().width * 2 * 0.85,
-		nextlevel_layout->getContentSize().height * 3 / 4);
-	description_label->setPosition(nextlevel_layout->getContentSize().width * nextlevel_layout->getScaleX() / 2,
-		level_n_label->getPosition().y - level_n_label->getContentSize().height / 2 -
-		description_label->getContentSize().height / 2);
-	nextlevel_layout->addChild(description_label, 1, "description_label");
-
-	auto upgrade_label = Label::createWithTTF(config["upgrade"][language].asString(),
-		"fonts/LICABOLD.ttf", 30 * visibleSize.width / 1280);
-	upgrade_label->setColor(Color3B::YELLOW);
-	upgrade_label->enableOutline(Color4B::BLACK, 1);
-	upgrade_label->setAlignment(cocos2d::TextHAlignment::CENTER);
-	upgrade_label->setPosition(nextlevel_layout->getContentSize().width * nextlevel_layout->getScaleX() / 2,
-		range_ni->getPosition().y - range_ni->getContentSize().height * range_ni->getScaleY()/ 2 -
-		upgrade_label->getContentSize().height / 2);
-	nextlevel_layout->addChild(upgrade_label, 1, "upgrade");
-
-	cost->setPosition(size_sprite, upgrade_label->getPosition().y - upgrade_label->getContentSize().height / 2 - size_sprite / 2);
-
-	s = Value(damages[level + 1]).asString();
-	s.resize(4);
-	Label* attack_n_label = Label::createWithTTF(s, "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	attack_n_label->setColor(Color3B::BLACK);
-	attack_n_label->setPosition(Vec2(attack_n->getPosition().x + attack_n->getContentSize().width * attack_n->getScale(),
-		attack_n->getPosition().y));
-	attack_n_label->setAnchorPoint(Vec2(0.f, 0.5f));
-	nextlevel_layout->addChild(attack_n_label, 1, "attack_label");
-
-	s = Value(round(ranges[level + 1] / Cell::getCellWidth() * 100) / 100).asString();
-	s.resize(4);
-	Label* range_n_label = Label::createWithTTF(s, "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	range_n_label->setColor(Color3B::BLACK);
-	range_n_label->setPosition(Vec2(range_ni->getPosition().x + attack_n->getContentSize().width * attack_n->getScale(),
-		range_ni->getPosition().y));
-	range_n_label->setAnchorPoint(Vec2(0.f, 0.5f));
-	nextlevel_layout->addChild(range_n_label, 1, "range_label");
-
-	s = Value(attack_speeds[level + 1]).asString();
-	s.resize(4);
-	Label* speed_n_label = Label::createWithTTF(s, "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	speed_n_label->setColor(Color3B::BLACK);
-	speed_n_label->setPosition(Vec2(speed_n->getPosition().x + attack_n->getContentSize().width * attack_n->getScale(),
-		speed_n->getPosition().y));
-	speed_n_label->setAnchorPoint(Vec2(0.f, 0.5f));
-	nextlevel_layout->addChild(speed_n_label, 1, "speed_label");
-
-	s = Value(costs[level + 1]).asString();
-	s.resize(4);
-	Label* cost_n_label = Label::createWithTTF(s, "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	cost_n_label->setColor(Color3B::YELLOW);
-	cost_n_label->enableOutline(Color4B::BLACK, 1);
-	cost_n_label->setPosition(Vec2(cost->getPosition().x + attack_n->getContentSize().width * attack_n->getScale(),
-		cost->getPosition().y));
-	cost_n_label->setAnchorPoint(Vec2(0.f, 0.5f));
-	nextlevel_layout->addChild(cost_n_label, 1, "cost_label");
-
-	layout->addChild(nextlevel_layout, 2, "next_level_layout");
-
-	Label* max_level_label = Label::createWithTTF("Max. Level Reached", "fonts/LICABOLD.ttf", 35 * visibleSize.width / 1280);
-	max_level_label->setColor(Color3B::BLACK);
-	max_level_label->setAlignment(TextHAlignment::CENTER);
-	max_level_label->setDimensions(nextlevel_layout->getContentSize().width, nextlevel_layout->getContentSize().height * 0.6);
-	max_level_label->setAnchorPoint(Vec2(0, 0.5));
-	max_level_label->setPosition(0,0);
-	layout->addChild(max_level_label, 3, "max_level_label");
-
-	if (level < level_max) {
-		locked_label->setVisible(false);
-		if (level < (int)damages.size()) {
-			max_level_label->setVisible(false);
-			range_ni->setVisible(true);
-			speed_n->setVisible(true);
-			attack_n->setVisible(true);
-			attack_n_label->setVisible(true);
-			range_n_label->setVisible(true);
-			speed_n_label->setVisible(true);
-			description_label->setVisible(false);
-		}
-		else {
-			nextlevel_layout->setVisible(false);
-			nextlevel_button->setEnabled(false);
-		}
-		if (level == damages.size() - 2) {
-			range_ni->setVisible(false);
-			speed_n->setVisible(false);
-			attack_n->setVisible(false);
-			attack_n_label->setVisible(false);
-			range_n_label->setVisible(false);
-			speed_n_label->setVisible(false);
-			description_label->setVisible(true);
-		}
-		MyGame* game = SceneManager::getInstance()->getGame();
-		if ((int)game->getLevel()->getQuantity() < costs[level + 1]) {
-			nextlevel_button->setEnabled(false);
-		}
-	}
-	else {
-		max_level_label->setVisible(false);
-		range_ni->setVisible(false);
-		speed_n->setVisible(false);
-		attack_n->setVisible(false);
-		attack_n_label->setVisible(false);
-		range_n_label->setVisible(false);
-		speed_n_label->setVisible(false);
-		description_label->setVisible(false);
-		locked_label->setVisible(true);
-		nextlevel_button->setEnabled(false);
-	}
-	auto sell = ui::Button::create("res/buttons/sell.png");
-	sell->setScaleX(panel->getContentSize().width * panel->getScaleX() / sell->getContentSize().width * 0.3);
-	sell->setScaleY(panel->getContentSize().height * panel->getScaleY() / sell->getContentSize().height * 0.3);
-	sell->setPosition(Vec2( -panel->getContentSize().width * panel->getScaleX() * 0.3, 
-		current_level_layout->getPosition().y + range_i->getPosition().y - size_sprite / 2 -
-		sell->getContentSize().height* sell->getScaleY() / 2));
-	sell->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			MyGame* game = SceneManager::getInstance()->getGame();
-			game->getLevel()->increaseQuantity(sells[level]);
-			destroyCallback(sender);
-			SceneManager::getInstance()->getGame()->getMenu()->hideTowerInfo();
-			Json::Value action;
-			action["tower_name"] = name;
-			action["time"] = (int)time(0);
-			Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(getPosition());
-			action["position"]["x"] = turret_position.x;
-			action["position"]["y"] = turret_position.y;
-			action["action"] = "sell_tower";
-			game->addActionToTracker(action);
-		}
-	});
-	layout->addChild(sell, 1);
-
-	auto sell_label = Label::createWithTTF(config["sell"][language].asString(),
-		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	sell_label->enableOutline(Color4B::BLACK, 2);
-	sell_label->setAlignment(cocos2d::TextHAlignment::CENTER);
-	sell_label->setPosition(sell->getPosition().x, sell->getPosition().y + sell_label->getContentSize().height / 2);
-	layout->addChild(sell_label,1);
-
-	auto sell_cost = Label::createWithTTF(Value(sells[level]).asString(),
-		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
-	sell_cost->enableOutline(Color4B::BLACK, 2);
-	sell_cost->setAlignment(cocos2d::TextHAlignment::CENTER);
-	sell_cost->setPosition(sell->getPosition().x + sell_cost->getContentSize().width / 2, sell_label->getPosition().y -
-		sell_label->getContentSize().height / 2 - size_sprite / 2);
-	layout->addChild(sell_cost, 1, "sell_label");
-
-	Sprite* cost_sugar = Sprite::create("res/buttons/sugar.png");
-	cost_sugar->setScale(size_sprite / cost_sugar->getContentSize().width);
-	cost_sugar->setPosition(sell_cost->getPosition().x - size_sprite,
-		sell_cost->getPosition().y);
-	layout->addChild(cost_sugar, 1);
-
-	return layout;
-}
-
-void Tower::updateInformationLayout(ui::Layout* layout) {
-	MyGame* game = SceneManager::getInstance()->getGame();
-	const auto config = getSpecConfig();
-	if (level < level_max) {
-		if (layout->getChildByName("next_level_layout")->getChildByName("locked_label")->isVisible()) {
-			layout->getChildByName("next_level_layout")->getChildByName("locked_label")->setVisible(false);
-
-			if (level < (int)config["damages"].size()) {
-				layout->getChildByName("next_level_layout")->getChildByName("range")->setVisible(true);
-				layout->getChildByName("next_level_layout")->getChildByName("speed")->setVisible(true);
-				layout->getChildByName("next_level_layout")->getChildByName("attack")->setVisible(true);
-				layout->getChildByName("next_level_layout")->getChildByName("range_label")->setVisible(true);
-				layout->getChildByName("next_level_layout")->getChildByName("speed_label")->setVisible(true);
-				layout->getChildByName("next_level_layout")->getChildByName("attack_label")->setVisible(true);
-				layout->getChildByName("next_level_layout")->getChildByName("description_label")->setVisible(false);
-			}
-			else {
-				layout->getChildByName("next_level_layout")->setVisible(false);
-				((ui::Button*)layout->getChildByName("next_level_button"))->setEnabled(false);
-			}
-			if (level == (int)config["damages"].size() - 2) {
-				layout->getChildByName("next_level_layout")->getChildByName("range")->setVisible(false);
-				layout->getChildByName("next_level_layout")->getChildByName("speed")->setVisible(false);
-				layout->getChildByName("next_level_layout")->getChildByName("attack")->setVisible(false);
-				layout->getChildByName("next_level_layout")->getChildByName("range_label")->setVisible(false);
-				layout->getChildByName("next_level_layout")->getChildByName("speed_label")->setVisible(false);
-				layout->getChildByName("next_level_layout")->getChildByName("attack_label")->setVisible(false);
-				layout->getChildByName("next_level_layout")->getChildByName("description_label")->setVisible(true);
-			}
-		}
-		if ((int)game->getLevel()->getQuantity() < config["cost"][level + 1].asInt()) {
-			((ui::Button*)layout->getChildByName("next_level_button"))->
-				setEnabled(false);
-			((Label*)layout->getChildByName("next_level_layout")->getChildByName("cost_label"))->
-				setColor(Color3B::RED);
-		}
-		else {
-			if (level + 1 < (int)config["cost"].size() && !((ui::Button*)layout->getChildByName("next_level_button"))->isEnabled()) {
-				((ui::Button*)layout->getChildByName("next_level_button"))->
-					setEnabled(true);
-			}
-			else if (level + 1 >= (int)config["cost"].size() && (((ui::Button*)layout->getChildByName("next_level_button"))->isEnabled()
-				|| layout->getChildByName("next_level_layout")->isVisible())) {
-				((ui::Button*)layout->getChildByName("next_level_button"))->
-					setEnabled(false);
-				layout->getChildByName("next_level_layout")->setVisible(false);
-				layout->getChildByName("max_level_label")->setVisible(true);
-			}
-			((Label*)layout->getChildByName("next_level_layout")->getChildByName("cost_label"))->
-				setColor(Color3B::YELLOW);
-		}
-	}
-	else {
-		if (!layout->getChildByName("next_level_layout")->getChildByName("locked_label")->isVisible()) {
-			layout->getChildByName("next_level_layout")->getChildByName("locked_label")->setVisible(true);
-			((ui::Button*)layout->getChildByName("next_level_button"))->setEnabled(false);
-		}
-		std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
-		std::string s = Value(xp_levels[level + 1]).asString();
-		int dot_pos = s.find('.');
-		s = s.substr(0, dot_pos);
-		if (((Label*)layout->getChildByName("next_level_layout")->getChildByName("locked_label"))->getString() !=
-			((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["locked"][language].asString() + "\n" + Value(xp).asString() + "/" + s) {
-			((Label*)layout->getChildByName("next_level_layout")->getChildByName("locked_label"))->setString(
-				((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["locked"][language].asString() + "\n" + Value(xp).asString() + "/" + s);
-		}
-	}
 }
 
 void Tower::updateDirection() {
@@ -1240,4 +753,32 @@ void Tower::changeSpeedAnimation(float game_speed) {
 		std::cerr << "Steady state animation used instead." << std::endl;
 		break;
 	};
+}
+
+std::vector<int>& Tower::getSells() {
+	return sells;
+}
+std::vector<int>& Tower::getCosts() {
+	return costs;
+}
+std::vector<double>& Tower::getXPLevels(){
+	return xp_levels;
+}
+std::vector<double>& Tower::getRanges() {
+	return ranges;
+}
+std::vector<double>& Tower::getDamages() {
+	return damages;
+}
+std::vector<double>& Tower::getAttackSpeeds() {
+	return attackSpeeds;
+}
+
+int Tower::getMaxLevel()
+{
+	return level_max;
+}
+
+int Tower::getCurrentXP(){
+	return xp;
 }
