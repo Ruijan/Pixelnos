@@ -2,5 +2,5 @@ component_depth: 1
 languages:
 - cpp
 exclude:
-- MallowsVsDango/Classes/Config/jsoncpp.cpp
-- MallowsVsDango/Classes/Config/jsoncpp.h
+- /MallowsVsDango/Classes/Config/jsoncpp.cpp
+- /MallowsVsDango/Classes/Config/jsoncpp.h
