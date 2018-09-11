@@ -3,4 +3,4 @@ languages:
 - cpp
 exclude:
 - /MallowsVsDango/Classes/Config/jsoncpp.cpp
-- /MallowsVsDango/Classes/Config/jsoncpp.h
+- /MallowsVsDango/Classes/Config/json.h
