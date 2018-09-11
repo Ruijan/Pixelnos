@@ -1,0 +1,2 @@
+exclude:
+- MallowsVsDango/Classes/Config/jsoncpp.*
