@@ -210,10 +210,12 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Towers\Bomber.cpp" />
     <ClCompile Include="..\Classes\Towers\Cutter.cpp" />
     <ClCompile Include="..\Classes\Towers\Effect.cpp" />
+    <ClCompile Include="..\Classes\Towers\GUI\CurrentLevelPanel.cpp" />
+    <ClCompile Include="..\Classes\Towers\GUI\NextLevelPanel.cpp" />
+    <ClCompile Include="..\Classes\Towers\GUI\TowerInformationPanel.cpp" />
     <ClCompile Include="..\Classes\Towers\Saucer.cpp" />
     <ClCompile Include="..\Classes\Towers\Tower.cpp" />
     <ClCompile Include="..\Classes\Towers\TowerFactory.cpp" />
-    <ClCompile Include="..\Classes\Towers\TowerInformationPanel.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -280,10 +282,12 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Towers\Bomber.h" />
     <ClInclude Include="..\Classes\Towers\Cutter.h" />
     <ClInclude Include="..\Classes\Towers\Effect.h" />
+    <ClInclude Include="..\Classes\Towers\GUI\CurrentLevelPanel.h" />
+    <ClInclude Include="..\Classes\Towers\GUI\NextLevelPanel.h" />
+    <ClInclude Include="..\Classes\Towers\GUI\TowerInformationPanel.h" />
     <ClInclude Include="..\Classes\Towers\Saucer.h" />
     <ClInclude Include="..\Classes\Towers\Tower.h" />
     <ClInclude Include="..\Classes\Towers\TowerFactory.h" />
-    <ClInclude Include="..\Classes\Towers\TowerInformationPanel.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

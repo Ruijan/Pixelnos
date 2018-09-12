@@ -55,6 +55,8 @@ public:
 	bool isLimitReached();
 	bool hasToBeDestroyed();
 	double getRange();
+	double getNormalizedRange();
+	double getNormalizedRangeFromRange(double range);
 	double getCost();
 	Dango* getTarget();
 	double getDamage();

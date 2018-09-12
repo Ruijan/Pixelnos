@@ -11,7 +11,7 @@
 #include "LoseMenu.h"
 #include "RightPanel.h"
 #include "LevelInfo.h"
-#include "../../Towers/TowerInformationPanel.h"
+#include "../../Towers/GUI/TowerInformationPanel.h"
 #include "../../Dangos/Dango.h"
 
 
