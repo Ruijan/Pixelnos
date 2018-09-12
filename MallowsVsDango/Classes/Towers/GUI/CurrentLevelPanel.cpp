@@ -36,7 +36,6 @@ void CurrentLevelPanel::setSpritesPositions(float spriteWidth) {
 		attack->getScaleY() / 2 - speed->getContentSize().height * speed->getScaleY() * 3 / 4);
 	range->setPosition(-spriteWidth / 2, speed->getPosition().y - speed->getContentSize().height*
 		speed->getScaleY() / 2 - range->getContentSize().height * range->getScaleY() * 3 / 4);
-	
 }
 
 void CurrentLevelPanel::setLabelsPositions(float spriteWidth) {
