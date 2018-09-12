@@ -282,6 +282,16 @@ double Tower::getRange(){
 	return range * visibleSize.width / 960.0;
 }
 
+double Tower::getNormalizedRange()
+{
+	return round(range / Cell::getCellWidth() * 100) / 100;
+}
+
+double Tower::getNormalizedRangeFromRange(double cRange)
+{
+	return round(cRange / Cell::getCellWidth() * 100) / 100;
+}
+
 double Tower::getCost(){
 	return cost;
 }

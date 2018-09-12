@@ -49,6 +49,9 @@
     <Filter Include="src\Level\Interface">
       <UniqueIdentifier>{c3bffcbd-d4e7-48b2-bf1f-5a6262db3b8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Towers\GUI">
+      <UniqueIdentifier>{1b5826c0-a8f3-4b7b-8410-31b33921d619}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -240,7 +243,13 @@
     <ClCompile Include="..\Classes\Level\Interface\LevelInfo.cpp">
       <Filter>src\Level\Interface</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\TowerInformationPanel.cpp" />
+    <ClCompile Include="..\Classes\Towers\GUI\TowerInformationPanel.cpp">
+      <Filter>src\Towers\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\GUI\CurrentLevelPanel.cpp">
+      <Filter>src\Towers\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\GUI\NextLevelPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -444,8 +453,14 @@
     <ClInclude Include="..\Classes\Level\Interface\LevelInfo.h">
       <Filter>src\Level\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\TowerInformationPanel.h">
-      <Filter>src\Towers</Filter>
+    <ClInclude Include="..\Classes\Towers\GUI\TowerInformationPanel.h">
+      <Filter>src\Towers\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\GUI\CurrentLevelPanel.h">
+      <Filter>src\Towers\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\GUI\NextLevelPanel.h">
+      <Filter>src\Towers\GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

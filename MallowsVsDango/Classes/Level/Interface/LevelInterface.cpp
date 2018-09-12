@@ -88,9 +88,6 @@ void LevelInterface::addBlackMask(cocos2d::Size &visibleSize)
 	getChildByName("black_mask")->setVisible(false);
 }
 
-
-
-
 bool LevelInterface::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
 	cocos2d::Vec2 p = touch->getLocation();
 	cocos2d::Rect rect = this->getBoundingBox();
@@ -430,6 +427,7 @@ void LevelInterface::reset() {
 	startMenu->reset(game->getLevel()->getLevelId());
 	getChildByName("reward_layout")->removeAllChildren();
 	removeChild(towerPanel);
+	delete towerPanel;
 	towerPanel = nullptr;
 	removeChildByName("information_dango");
 	if (dialogues != nullptr) {
@@ -549,10 +547,9 @@ void LevelInterface::showTowerInfo() {
 	if (towerPanel != nullptr) {
 		auto scale_to = ScaleTo::create(0.125f, 0.f);
 		auto removeAndCreateLayout = CallFunc::create([&]() {
-			removeChild(towerPanel);
 			if (selected_turret != nullptr) {
-				towerPanel = TowerInformationPanel::create(game, selected_turret, configClass);//selected_turret->getInformationLayout(this);
-				addChild(towerPanel, 1, "information_tower");
+				towerPanel->setTower(selected_turret);
+				towerPanel->update();
 				towerPanel->setScale(0);
 				auto scale_to = ScaleTo::create(0.125f, 1.f);
 				towerPanel->runAction(scale_to);
@@ -572,11 +569,7 @@ void LevelInterface::showTowerInfo() {
 void LevelInterface::hideTowerInfo() {
 	if (towerPanel != nullptr) {
 		auto scale_to = ScaleTo::create(0.125f, 0.f);
-		auto removeAndCreateLayout = CallFunc::create([&]() {
-			removeChild(towerPanel);
-			towerPanel = nullptr;
-		});
-		towerPanel->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
+		towerPanel->runAction(scale_to);
 	}
 	displayStartMenuIfInTitleState();
 }
