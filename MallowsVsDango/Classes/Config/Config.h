@@ -9,6 +9,8 @@
 #include "network/HttpClient.h"
 #include "Settings/GameSettings.h"
 #include "Settings/TutorialSettings.h"
+#include "Settings/TowerSettings.h"
+#include "../Towers/Tower.h"
 
 class NetworkController;
 struct LevelTrackingEvent;
@@ -170,6 +172,7 @@ public:
 	GameSettings* getSettings();
 	TutorialSettings* getGameTutorialSettings();
 	TutorialSettings* getSkillTutorialSettings();
+	TowerSettings* getTowerSettings(Tower::TowerType type);
 
 private:
 	Json::Value conf_general;
@@ -205,6 +208,7 @@ private:
 	GameSettings* settings;
 	TutorialSettings* gameTutorialSettings;
 	TutorialSettings* skillTutorialSettings;
+	std::map<Tower::TowerType, TowerSettings*> towersSettings;
 };
 
 #endif

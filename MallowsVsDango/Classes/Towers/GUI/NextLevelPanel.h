@@ -13,4 +13,5 @@ protected:
 
 protected:
 	cocos2d::Label* costLabel;
+	TowerSettings* settings;
 };

@@ -3,6 +3,7 @@
 #include "../../Config/json.h"
 #include "../../Config/Config.h"
 #include "ui/CocosGUI.h"
+#include "../../Config/Settings/TowerSettings.h"
 #include "CurrentLevelPanel.h"
 #include "NextLevelPanel.h"
 
@@ -25,6 +26,7 @@ protected:
 	void createLockLayout(cocos2d::Size &visibleSize);
 	void createDescriptionLayout(cocos2d::Size &visibleSize);
 	void createNextLevelButton(cocos2d::Size &visibleSize);
+	void addUpgradeTowerActionToTracker();
 	void createSellButton(cocos2d::Size &visibleSize);
 	void createMaxLevelLabel(cocos2d::Size &visibleSize);
 
@@ -35,6 +37,7 @@ protected:
 	Tower * tower;
 	MyGame * game;
 	Config* configClass;
+	TowerSettings* settings;
 
 	double spriteWidth;
 

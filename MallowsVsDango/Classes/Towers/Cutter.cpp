@@ -10,13 +10,13 @@ Cutter::Cutter() : Tower(){
 
 }
 
-Cutter* Cutter::create()
+Cutter* Cutter::create(Config* configClass)
 {
 	Cutter* pSprite = new Cutter();
 
 	/*if (pSprite->initWithFile(Cutter::getConfig()["image"].asString()))
 	{*/
-		pSprite->initFromConfig();
+		pSprite->initFromConfig(configClass);
 		pSprite->initDebug();
 		pSprite->initEnragePanel();
 		return pSprite;
@@ -152,10 +152,6 @@ void Cutter::handleEndEnrageAnimation() {
 	state = RELOADING;
 }
 
-bool Cutter::isSameType(std::string type) {
-	return Tower::getTowerTypeFromString(type) == Tower::TowerType::CUTTER;
-}
-
 void Cutter::stopAttacking() {
 	std::vector<Dango*> targets = otherTargets;
 	for (auto& cTarget : targets) {
@@ -167,4 +163,9 @@ void Cutter::stopAttacking() {
 		}
 		removeTarget(cTarget);
 	}
+}
+
+Tower::TowerType Cutter::getType()
+{
+	return TowerType::CUTTER;
 }

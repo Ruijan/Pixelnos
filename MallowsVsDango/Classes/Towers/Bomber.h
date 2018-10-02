@@ -8,14 +8,16 @@ class Bomber : public Tower{
 
 public:
 	Bomber();
-	static Bomber* create();
+	static Bomber* create(Config* configClass);
 	static const Json::Value& getConfig();
 	virtual const Json::Value& getSpecConfig();
-	virtual bool isSameType(std::string type);
 	
 	virtual void attack();
 	virtual void startLimit();
 	virtual void handleEndEnrageAnimation();
+
+protected:
+	virtual TowerType getType();
 
 private:
 	int nb_limit_attack;

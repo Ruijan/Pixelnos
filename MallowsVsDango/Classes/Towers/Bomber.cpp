@@ -7,13 +7,13 @@ USING_NS_CC;
 Bomber::Bomber() : Tower(), nb_limit_attack(0){
 }
 
-Bomber* Bomber::create()
+Bomber* Bomber::create(Config* configClass)
 {
 	Bomber* bomber = new Bomber();
 
 	/*if (pSprite->initWithFile(Bomber::getConfig()["image"].asString()))
 	{*/
-	bomber->initFromConfig();
+	bomber->initFromConfig(configClass);
 	bomber->initDebug();
 	bomber->initEnragePanel();
 	return bomber;
@@ -61,7 +61,7 @@ void Bomber::attack(){
 			break;
 		}
 		//log("--> bullet thrown with id %i", attacked_enemies[target]);
-		if (level >= (int)getConfig()["cost"].size() - 1) {
+		if (level >= settings->getMaxExistingLevel() - 1) {
 			ball = WaterBombBall::create(target, damage, 500 * visibleSize.width / 960, 100);
 		}
 		else {
@@ -131,6 +131,7 @@ void Bomber::handleEndEnrageAnimation() {
 	startLimit();
 }
 
-bool Bomber::isSameType(std::string type) {
-	return Tower::getTowerTypeFromString(type) == Tower::TowerType::BOMBER;
+Tower::TowerType Bomber::getType()
+{
+	return Tower::TowerType::BOMBER;
 }

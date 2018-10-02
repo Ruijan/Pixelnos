@@ -3,13 +3,15 @@
 
 #include "cocos2d.h"
 #include "../Config/json.h"
+
 #include "ui/CocosGUI.h"
 #include <spine/spine-cocos2dx.h>
-
+#include "../Config/Settings/TowerSettings.h"
 
 class Cell;
 class Dango;
 class LevelInterface;
+class Config;
 
 using namespace spine;
 
@@ -31,6 +33,8 @@ public:
 		CUTTER,
 		SAUCER
 	};
+	static std::vector<TowerType> getAllTowerTypes();
+
 	enum Direction {
 		RIGHT,
 		UP,
@@ -42,7 +46,7 @@ public:
 	virtual ~Tower();
 	void initDebug();
 	void initEnragePanel();
-	void initFromConfig();
+	void initFromConfig(Config* configClass);
 
 	void pauseAnimation();
 	void resumeAnimation();
@@ -67,7 +71,7 @@ public:
 	void setState(Tower::State state);
 	void setTarget(Dango* dango);
 	void displayRange(bool disp);
-	virtual bool isSameType(std::string type) = 0;
+	bool isSameType(std::string type);
 	static TowerType getTowerTypeFromString(std::string type);
 	cocos2d::Vector<cocos2d::SpriteFrame*> getAnimation(Tower::State animState);
 	static SkeletonAnimation* getSkeletonAnimationFromName(std::string name);
@@ -79,12 +83,7 @@ public:
 	virtual void stopAttacking();
 	void changeSpeedAnimation(float speed);
 
-	std::vector<int>& getSells();
-	std::vector<int>& getCosts();
-	std::vector<double>& getXPLevels();
-	std::vector<double>& getRanges();
-	std::vector<double>& getDamages();
-	std::vector<double>& getAttackSpeeds();
+	TowerSettings* getTowerSettings();
 	int getMaxLevel();
 	int getCurrentXP();
 	
@@ -115,6 +114,10 @@ public:
 	static const Json::Value& getConfig();
 	virtual const Json::Value& getSpecConfig() = 0;
 
+
+
+protected:
+	virtual TowerType getType() = 0;
 protected:
 	//State attribute
 	State state;
@@ -123,6 +126,8 @@ protected:
 	bool destroy;
 	bool limit_enabled;
 	bool blocked;
+
+	TowerSettings* settings;
 	
 	Dango* target;
 	std::map<Dango*, int> attacked_enemies;
@@ -138,12 +143,6 @@ protected:
 	int level;
 	int level_max;
 	int xp;
-	std::vector<int> sells;
-	std::vector<int> costs;
-	std::vector<double> damages;
-	std::vector<double> attackSpeeds;
-	std::vector<double> ranges;
-	std::vector<double> xp_levels;
 
 	int nb_attacks;
 	int nb_max_attacks_limit;
