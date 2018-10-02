@@ -5,9 +5,15 @@
 #include "../AppDelegate.h"
 #include "../Level/Interface/LevelInterface.h"
 #include "../Scenes/Skills.h"
+#include "../Config/Config.h"
 #include <math.h>
 
 USING_NS_CC;
+
+std::vector<Tower::TowerType> Tower::getAllTowerTypes()
+{
+	return  { BOMBER, CUTTER, SAUCER };
+}
 
 Tower::Tower() :
 	state(State::IDLE), fixed(false), destroy(false), target(nullptr), timer(0), timerIDLE(0), level(0),
@@ -20,22 +26,14 @@ Tower::~Tower() {
 	}
 }
 
-void Tower::initFromConfig() {
+void Tower::initFromConfig(Config* configClass) {
 	auto config = getSpecConfig();
 	auto save = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
-	for (unsigned int i(0); i < config["cost"].size(); ++i) {
-		costs.push_back(config["cost"][i].asInt());
-		sells.push_back(config["sell"][i].asInt());
-		damages.push_back(config["damages"][i].asDouble());
-		ranges.push_back(config["range"][i].asDouble());
-		attackSpeeds.push_back(config["attack_speed"][i].asDouble());
-		xp_levels.push_back(config["xp_level"][i].asDouble());
-	}
-	
-	cost = costs[0];
-	attack_speed = attackSpeeds[0];
-	damage = damages[0];
-	range = ranges[0];
+	settings = configClass->getTowerSettings(getType());
+	cost = settings->getCost(0);;
+	attack_speed = settings->getAttackSpeed(0);
+	damage = settings->getDamage(0);
+	range = settings->getRange(0);
 	animation_duration = config["animation_attack_time"].asDouble();
 	nb_frames_anim = config["animation_attack_size"].asInt();
 	name = config["name"].asString();
@@ -85,17 +83,6 @@ void Tower::initFromConfig() {
 	skeleton->setPosition(Vec2(0, -Cell::getCellHeight() * 3 / 10));
 
 	addChild(skeleton);
-
-	/*auto clipper = ClippingNode::create();
-	clipper->setContentSize(Size(Cell::getCellWidth(), Cell::getCellWidth()));
-	clipper->setAnchorPoint(Vec2(0.5, 0.5));
-	clipper->setAlphaThreshold(0.05f);
-	addChild(clipper);
-
-	auto stencil = Sprite::create("res/turret/splash.png");
-	stencil->setPosition(clipper->getContentSize().width, clipper->getContentSize().height);
-	clipper->setStencil(skeleton);
-	clipper->addChild(stencil);*/
 }
 
 void Tower::initDebug(){
@@ -188,8 +175,8 @@ void Tower::initEnragePanel() {
 
 void Tower::incrementXP(int amount) {
 	xp += amount;
-	if (xp >= xp_levels[level_max + 1]) {
-		xp -= xp_levels[level_max + 1];
+	if (xp >= settings->getXPLevels()[level_max + 1]) {
+		xp -= settings->getXPLevels()[level_max + 1];
 		++level_max;
 	}
 }
@@ -205,11 +192,11 @@ void Tower::builtCallback(Ref* sender){
 }
 
 void Tower::upgradeCallback(Ref* sender){
-	if(level < (int)costs.size()){
+	if(level < (int)settings->getMaxExistingLevel()){
 		++level;
-		range = ranges[level];
-		damage = damages[level];
-		attack_speed = attackSpeeds[level];
+		range = settings->getRange(level);
+		damage = settings->getDamage(level);
+		attack_speed = settings->getAttackSpeed(level);
 		if (target != nullptr) {
 			stopAttacking();
 		}
@@ -593,6 +580,11 @@ void Tower::displayRange(bool disp){
 	loadingCircle->setVisible(disp);
 }
 
+bool Tower::isSameType(std::string type)
+{
+	return Tower::getTowerTypeFromString(type) == getType();
+}
+
 void Tower::startAnimation(float speed){
 	std::string action("");
 	skeleton->clearTracks();
@@ -765,23 +757,9 @@ void Tower::changeSpeedAnimation(float game_speed) {
 	};
 }
 
-std::vector<int>& Tower::getSells() {
-	return sells;
-}
-std::vector<int>& Tower::getCosts() {
-	return costs;
-}
-std::vector<double>& Tower::getXPLevels(){
-	return xp_levels;
-}
-std::vector<double>& Tower::getRanges() {
-	return ranges;
-}
-std::vector<double>& Tower::getDamages() {
-	return damages;
-}
-std::vector<double>& Tower::getAttackSpeeds() {
-	return attackSpeeds;
+TowerSettings * Tower::getTowerSettings()
+{
+	return settings;
 }
 
 int Tower::getMaxLevel()

@@ -9,13 +9,13 @@ USING_NS_CC;
 Saucer::Saucer() : Tower(), nb_limit_attack(0){
 }
 
-Saucer* Saucer::create()
+Saucer* Saucer::create(Config* configClass)
 {
 	Saucer* pSprite = new Saucer();
 
 	/*if (pSprite->initWithFile(Saucer::getConfig()["image"].asString()))
 	{*/
-	pSprite->initFromConfig();
+	pSprite->initFromConfig(configClass);
 	pSprite->initSpecial();
 	pSprite->initDebug();
 	pSprite->initEnragePanel();
@@ -111,12 +111,13 @@ void Saucer::handleEndEnrageAnimation() {
 	startLimit();
 }
 
-bool Saucer::isSameType(std::string type) {
-	return Tower::getTowerTypeFromString(type) == Tower::TowerType::SAUCER;
-}
-
 bool Saucer::isPotentialTarget(Dango* cTarget) {
 	double dist = cTarget->getPosition().distanceSquared(this->getPosition());
 	double minDist = pow(getRange(), 2);
 	return   dist <= minDist && cTarget->willBeAlive() && cTarget->getSpeedRedtuctionRatio() > slow_percent;
+}
+
+Tower::TowerType Saucer::getType()
+{
+	return TowerType::SAUCER;
 }

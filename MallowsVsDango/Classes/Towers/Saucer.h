@@ -9,7 +9,7 @@ class Saucer : public Tower{
 
 public:
 	Saucer();
-	static Saucer* create();
+	static Saucer* create(Config* configClass);
 	static const Json::Value& getConfig();
 	virtual const Json::Value& getSpecConfig();
 	void initSpecial();
@@ -17,9 +17,10 @@ public:
 	virtual void attack();
 	virtual void startLimit();
 	virtual void handleEndEnrageAnimation();
-	virtual bool isSameType(std::string type);
 	virtual bool isPotentialTarget(Dango * cTarget);
 
+protected:
+	virtual TowerType getType();
 
 private:
 	int nb_limit_attack;

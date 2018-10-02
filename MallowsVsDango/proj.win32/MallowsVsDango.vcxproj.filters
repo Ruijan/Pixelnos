@@ -249,7 +249,12 @@
     <ClCompile Include="..\Classes\Towers\GUI\CurrentLevelPanel.cpp">
       <Filter>src\Towers\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\GUI\NextLevelPanel.cpp" />
+    <ClCompile Include="..\Classes\Config\Settings\TowerSettings.cpp">
+      <Filter>src\Config\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\GUI\NextLevelPanel.cpp">
+      <Filter>src\Towers\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -461,6 +466,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Towers\GUI\NextLevelPanel.h">
       <Filter>src\Towers\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Config\Settings\TowerSettings.h">
+      <Filter>src\Config\Settings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

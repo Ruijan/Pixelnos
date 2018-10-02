@@ -158,6 +158,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Config\NetworkController.cpp" />
     <ClCompile Include="..\Classes\Config\Settings\GameSettings.cpp" />
     <ClCompile Include="..\Classes\Config\Settings\Settings.cpp" />
+    <ClCompile Include="..\Classes\Config\Settings\TowerSettings.cpp" />
     <ClCompile Include="..\Classes\Config\Settings\TutorialSettings.cpp" />
     <ClCompile Include="..\Classes\Dangos\Dango.cpp" />
     <ClCompile Include="..\Classes\Dangos\Dangobese.cpp" />
@@ -229,6 +230,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Config\NetworkController.h" />
     <ClInclude Include="..\Classes\Config\Settings\GameSettings.h" />
     <ClInclude Include="..\Classes\Config\Settings\Settings.h" />
+    <ClInclude Include="..\Classes\Config\Settings\TowerSettings.h" />
     <ClInclude Include="..\Classes\Config\Settings\TutorialSettings.h" />
     <ClInclude Include="..\Classes\Dangos\Dango.h" />
     <ClInclude Include="..\Classes\Dangos\Dangobese.h" />

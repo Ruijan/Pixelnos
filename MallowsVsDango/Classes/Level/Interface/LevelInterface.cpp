@@ -321,7 +321,6 @@ void LevelInterface::addEvents()
 	listener->onTouchEnded = CC_CALLBACK_2(LevelInterface::onTouchEnded, this);
 	listener->onTouchMoved = CC_CALLBACK_2(LevelInterface::onTouchMoved, this);
 
-	//cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 30);
 }
 
@@ -330,7 +329,6 @@ void LevelInterface::update(float dt) {
 
 	if (towerPanel != nullptr && selected_turret != nullptr) {
 		towerPanel->update();
-		//selected_turret->updateInformationLayout((ui::Layout*)getChildByName("information_tower"));
 	}
 	if (getChildByName("information_dango") != nullptr && selected_dango != nullptr) {
 		selected_dango->updateInformationLayout((ui::Layout*)getChildByName("information_dango"));
@@ -369,7 +367,7 @@ void LevelInterface::update(float dt) {
 
 void LevelInterface::menuTurretTouchCallback(Tower::TowerType turret) {
 	if (selected_turret == nullptr && !game->isPaused()) {
-		Tower* createdTower = TowerFactory::createTower(turret);
+		Tower* createdTower = TowerFactory::createTower(turret, configClass);
 		game->getLevel()->addTurret(createdTower);
 		selected_turret = createdTower;
 	}

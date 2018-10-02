@@ -26,6 +26,7 @@ bool TowerInformationPanel::init(MyGame* cGame, Tower * cTower, Config* cConfig)
 	game = cGame;
 	tower = cTower;
 	configClass = cConfig;
+	settings = tower->getTowerSettings();
 
 	createMainPanel(visibleSize);
 	createCurrentLevelPanel(visibleSize);
@@ -101,7 +102,7 @@ void TowerInformationPanel::createLockLayout(cocos2d::Size &visibleSize) {
 	lockedLayout->setContentSize(cocos2d::Size(mainPanel->getContentSize().width * mainPanel->getScaleX() / 3,
 		mainPanel->getContentSize().height * mainPanel->getScaleY() * 3 / 4));
 	lockedLayout->setPosition(0, -lockedLayout->getContentSize().height / 2);
-	std::string s = Json::Value(tower->getXPLevels()[tower->getLevel() + 1]).asString();
+	std::string s = Json::Value(settings->getXP(tower->getLevel() + 1)).asString();
 	int dot_pos = s.find('.');
 	s = s.substr(0, dot_pos);
 	cocos2d::Label* locked_label = cocos2d::Label::createWithTTF(config["locked"][language].asString() + "\n" + Json::Value(tower->getCurrentXP()).asString() + "/" +
@@ -154,19 +155,18 @@ void TowerInformationPanel::createNextLevelButton(cocos2d::Size &visibleSize) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 			std::string language = configClass->getSettings()->getLanguage();
 
-			auto cost_size = tower->getCosts().size();
-			if ((int)game->getLevel()->getQuantity() >= tower->getCosts()[tower->getLevel() + 1] &&
-				tower->getLevel() < (int)cost_size)
+			if ((int)game->getLevel()->getQuantity() >= settings->getCost(tower->getLevel() + 1) &&
+				tower->getLevel() < settings->getMaxExistingLevel())
 			{
 				addUpgradeTowerActionToTracker();
-				game->getLevel()->decreaseQuantity(tower->getCosts()[tower->getLevel() + 1]);
+				game->getLevel()->decreaseQuantity(settings->getCost(tower->getLevel() + 1));
 				tower->upgradeCallback(sender);
 
 				currentLevelInfos->updateLabel();
 				nextLevelInfos->updateLabel();
 				nextLevelInfos->updateCost((int)game->getLevel()->getQuantity());
 				updateDisplayNextLevel();
-				((cocos2d::Label*)getChildByName("sell_label"))->setString(Json::Value(tower->getSells()[tower->getLevel()]).asString());
+				((cocos2d::Label*)getChildByName("sell_label"))->setString(Json::Value(settings->getSell(tower->getLevel())).asString());
 			}
 		}
 	});
@@ -197,7 +197,7 @@ void TowerInformationPanel::createSellButton(cocos2d::Size &visibleSize) {
 	sell->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 			MyGame* game = SceneManager::getInstance()->getGame();
-			game->getLevel()->increaseQuantity(tower->getSells()[tower->getLevel()]);
+			game->getLevel()->increaseQuantity(settings->getSell(tower->getLevel()));
 			tower->destroyCallback(sender);
 			SceneManager::getInstance()->getGame()->getMenu()->hideTowerInfo();
 			Json::Value action;
@@ -219,7 +219,7 @@ void TowerInformationPanel::createSellButton(cocos2d::Size &visibleSize) {
 	sell_label->setPosition(sell->getPosition().x, sell->getPosition().y + sell_label->getContentSize().height / 2);
 	addChild(sell_label, 1);
 
-	auto sell_cost = cocos2d::Label::createWithTTF(Json::Value(tower->getCosts()[tower->getLevel()]).asString(),
+	auto sell_cost = cocos2d::Label::createWithTTF(Json::Value(settings->getCost(tower->getLevel())).asString(),
 		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	sell_cost->enableOutline(cocos2d::Color4B::BLACK, 2);
 	sell_cost->setAlignment(cocos2d::TextHAlignment::CENTER);
@@ -263,7 +263,7 @@ void TowerInformationPanel::updateDisplay() {
 void TowerInformationPanel::updateDisplayNextLevel()
 {
 	lockedLayout->setVisible(false);
-	if (tower->getLevel() < (int)tower->getDamages().size()) {
+	if (tower->getLevel() < (int)settings->getMaxExistingLevel()) {
 		maxLevelLabel->setVisible(false);
 		nextLevelInfos->setVisible(true);
 		descriptionLayout->setVisible(false);
@@ -272,18 +272,18 @@ void TowerInformationPanel::updateDisplayNextLevel()
 		nextLevelInfos->setVisible(false);
 		nextLevelButton->setEnabled(false);
 	}
-	if (tower->getLevel() == tower->getDamages().size() - 2) {
+	if (tower->getLevel() == settings->getMaxExistingLevel() - 2) {
 		nextLevelInfos->setVisible(false);
 		descriptionLayout->setVisible(true);
 	}
-	if ((int)game->getLevel()->getQuantity() < tower->getCosts()[tower->getLevel() + 1]) {
+	if ((int)game->getLevel()->getQuantity() < settings->getCost(tower->getLevel() + 1)) {
 		nextLevelButton->setEnabled(false);
 	}
 	else {
-		if (tower->getLevel() + 1 < (int)tower->getCosts().size() && !nextLevelButton->isEnabled()) {
+		if (tower->getLevel() + 1 < settings->getMaxExistingLevel() && !nextLevelButton->isEnabled()) {
 			nextLevelButton->setEnabled(true);
 		}
-		else if (tower->getLevel() + 1 >= (int)tower->getCosts().size() && (nextLevelButton->isEnabled()
+		else if (tower->getLevel() + 1 >= settings->getMaxExistingLevel() && (nextLevelButton->isEnabled()
 			|| nextLevelInfos->isVisible())) {
 			nextLevelButton->setEnabled(false);
 			nextLevelInfos->setVisible(false);
@@ -296,7 +296,7 @@ void TowerInformationPanel::update() {
 	updateDisplay();
 	if(tower->getLevel() < tower->getMaxLevel()) {
 		std::string language = configClass->getSettings()->getLanguage();
-		std::string s = Json::Value(tower->getXPLevels()[tower->getLevel() + 1]).asString();
+		std::string s = Json::Value(settings->getXP(tower->getLevel() + 1)).asString();
 		int dot_pos = s.find('.');
 		s = s.substr(0, dot_pos);
 		std::string lockedWord = configClass->getConfigValues(Config::ConfigType::BUTTON)["locked"][language].asString();

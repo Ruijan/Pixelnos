@@ -5,14 +5,9 @@
 #include "Tower.h"
 
 class Cutter : public Tower{
-protected:
-	std::vector<Dango*> otherTargets;
-
-	
-
 public:
 	Cutter();
-	static Cutter* create();
+	static Cutter* create(Config* configClass);
 
 	static const Json::Value& getConfig();
 	virtual const Json::Value& getSpecConfig();
@@ -23,9 +18,13 @@ public:
 	virtual void attack();
 	virtual void startLimit();
 	virtual void handleEndEnrageAnimation();
-	virtual bool isSameType(std::string type);
 	virtual void stopAttacking();
 
+protected:
+	virtual TowerType getType();
+
+protected:
+	std::vector<Dango*> otherTargets;
 };
 
 #endif
