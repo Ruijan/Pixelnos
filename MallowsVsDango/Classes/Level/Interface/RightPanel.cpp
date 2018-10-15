@@ -321,7 +321,7 @@ void RightPanel::displayTowerInfos(std::string item_name, const std::string& lan
 			((cocos2d::Label*)getChildByName("informations")->getChildByName("sugar_label"))->setColor(cocos2d::Color3B::GREEN);
 		}
 
-		auto animated_skeleton = Tower::getSkeletonAnimationFromName(item_name);
+		auto animated_skeleton = Tower::createSkeletonAnimationFromName(item_name);
 		animated_skeleton->setScale(
 			getChildByName("informations")->getContentSize().width *
 			0.40 / animated_skeleton->getSkeleton()->data->width);

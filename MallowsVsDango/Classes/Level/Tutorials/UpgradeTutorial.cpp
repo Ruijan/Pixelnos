@@ -44,7 +44,7 @@ UpgradeTutorial::~UpgradeTutorial()
 void UpgradeTutorial::startDialogues()
 {
 	for (unsigned int i(0); i < level->getTowers().size(); ++i) {
-		if (level->getTowers()[i]->isSameType("bomber") && level->getTowers()[i]->isFixed()) {
+		if (level->getTowers()[i]->isSameType(Tower::TowerType::BOMBER) && level->getTowers()[i]->isFixed()) {
 			selectedTower = level->getTowers()[i];
 			break;
 		}

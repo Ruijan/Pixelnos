@@ -154,25 +154,25 @@ void TowerInformationPanel::createNextLevelButton(cocos2d::Size &visibleSize) {
 	nextLevelButton->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 			std::string language = configClass->getSettings()->getLanguage();
-
-			if ((int)game->getLevel()->getQuantity() >= settings->getCost(tower->getLevel() + 1) &&
-				tower->getLevel() < settings->getMaxExistingLevel())
+			int towerLevel = tower->getLevel();
+			if ((int)game->getLevel()->getQuantity() >= settings->getCost(towerLevel + 1) &&
+				towerLevel < settings->getMaxExistingLevel())
 			{
-				addUpgradeTowerActionToTracker();
-				game->getLevel()->decreaseQuantity(settings->getCost(tower->getLevel() + 1));
+				addTowerActionToTracker("upgrade_tower");
+				game->getLevel()->decreaseQuantity(settings->getCost(towerLevel + 1));
 				tower->upgradeCallback(sender);
 
 				currentLevelInfos->updateLabel();
 				nextLevelInfos->updateLabel();
 				nextLevelInfos->updateCost((int)game->getLevel()->getQuantity());
 				updateDisplayNextLevel();
-				((cocos2d::Label*)getChildByName("sell_label"))->setString(Json::Value(settings->getSell(tower->getLevel())).asString());
+				((cocos2d::Label*)getChildByName("sell_label"))->setString(Json::Value(settings->getSell(towerLevel)).asString());
 			}
 		}
 	});
 }
 
-void TowerInformationPanel::addUpgradeTowerActionToTracker()
+void TowerInformationPanel::addTowerActionToTracker(std::string towerAction)
 {
 	Json::Value action;
 	action["tower_name"] = tower->getName();
@@ -180,7 +180,7 @@ void TowerInformationPanel::addUpgradeTowerActionToTracker()
 	cocos2d::Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(getPosition());
 	action["position"]["x"] = turret_position.x;
 	action["position"]["y"] = turret_position.y;
-	action["action"] = "upgrade_tower";
+	action["action"] = towerAction;
 	game->addActionToTracker(action);
 }
 
@@ -200,14 +200,7 @@ void TowerInformationPanel::createSellButton(cocos2d::Size &visibleSize) {
 			game->getLevel()->increaseQuantity(settings->getSell(tower->getLevel()));
 			tower->destroyCallback(sender);
 			SceneManager::getInstance()->getGame()->getMenu()->hideTowerInfo();
-			Json::Value action;
-			action["tower_name"] = tower->getName();
-			action["time"] = (int)time(0);
-			cocos2d::Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(getPosition());
-			action["position"]["x"] = turret_position.x;
-			action["position"]["y"] = turret_position.y;
-			action["action"] = "sell_tower";
-			game->addActionToTracker(action);
+			addTowerActionToTracker("sell_tower");
 		}
 	});
 	addChild(sell, 1);
@@ -262,8 +255,9 @@ void TowerInformationPanel::updateDisplay() {
 
 void TowerInformationPanel::updateDisplayNextLevel()
 {
+	int towerLevel = tower->getLevel();
 	lockedLayout->setVisible(false);
-	if (tower->getLevel() < (int)settings->getMaxExistingLevel()) {
+	if (towerLevel < (int)settings->getMaxExistingLevel()) {
 		maxLevelLabel->setVisible(false);
 		nextLevelInfos->setVisible(true);
 		descriptionLayout->setVisible(false);
@@ -272,18 +266,18 @@ void TowerInformationPanel::updateDisplayNextLevel()
 		nextLevelInfos->setVisible(false);
 		nextLevelButton->setEnabled(false);
 	}
-	if (tower->getLevel() == settings->getMaxExistingLevel() - 2) {
+	if (towerLevel == settings->getMaxExistingLevel() - 2) {
 		nextLevelInfos->setVisible(false);
 		descriptionLayout->setVisible(true);
 	}
-	if ((int)game->getLevel()->getQuantity() < settings->getCost(tower->getLevel() + 1)) {
+	if ((int)game->getLevel()->getQuantity() < settings->getCost(towerLevel + 1)) {
 		nextLevelButton->setEnabled(false);
 	}
 	else {
-		if (tower->getLevel() + 1 < settings->getMaxExistingLevel() && !nextLevelButton->isEnabled()) {
+		if (towerLevel + 1 < settings->getMaxExistingLevel() && !nextLevelButton->isEnabled()) {
 			nextLevelButton->setEnabled(true);
 		}
-		else if (tower->getLevel() + 1 >= settings->getMaxExistingLevel() && (nextLevelButton->isEnabled()
+		else if (towerLevel + 1 >= settings->getMaxExistingLevel() && (nextLevelButton->isEnabled()
 			|| nextLevelInfos->isVisible())) {
 			nextLevelButton->setEnabled(false);
 			nextLevelInfos->setVisible(false);
@@ -294,16 +288,19 @@ void TowerInformationPanel::updateDisplayNextLevel()
 
 void TowerInformationPanel::update() {
 	updateDisplay();
-	if(tower->getLevel() < tower->getMaxLevel()) {
+	int towerLevel = tower->getLevel();
+	
+	if(towerLevel < tower->getMaxLevel()) {
 		std::string language = configClass->getSettings()->getLanguage();
-		std::string s = Json::Value(settings->getXP(tower->getLevel() + 1)).asString();
+		std::string s = Json::Value(settings->getXP(towerLevel + 1)).asString();
 		int dot_pos = s.find('.');
 		s = s.substr(0, dot_pos);
 		std::string lockedWord = configClass->getConfigValues(Config::ConfigType::BUTTON)["locked"][language].asString();
+		std::string towerXP = Json::Value(tower->getCurrentXP()).asString();
 		if (((cocos2d::Label*)lockedLayout->getChildByName("locked_label"))->getString() !=
-			lockedWord + "\n" + Json::Value(tower->getCurrentXP()).asString() + "/" + s) {
+			lockedWord + "\n" + towerXP + "/" + s) {
 			((cocos2d::Label*)lockedLayout->getChildByName("locked_label"))->setString(
-				lockedWord + "\n" + Json::Value(tower->getCurrentXP()).asString() + "/" + s);
+				lockedWord + "\n" + towerXP + "/" + s);
 		}
 	}
 }

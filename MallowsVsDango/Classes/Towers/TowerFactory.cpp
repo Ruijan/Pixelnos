@@ -30,3 +30,23 @@ std::string TowerFactory::getTowerNameFromType(Tower::TowerType type)
 		return "saucer";
 	}
 }
+
+Tower::TowerType TowerFactory::getTowerTypeFromString(std::string type) {
+	if (!strcmp(type.c_str(), "bomber")) {
+		return Tower::TowerType::BOMBER;
+	}
+	else if (!strcmp(type.c_str(), "cutter")) {
+		return Tower::TowerType::CUTTER;
+	}
+	else if (!strcmp(type.c_str(), "saucer")) {
+		return Tower::TowerType::SAUCER;
+	}
+	else {
+		return Tower::TowerType::BOMBER;
+	}
+}
+
+std::vector<Tower::TowerType> TowerFactory::getAllTowerTypes()
+{
+	return  { Tower::TowerType::BOMBER, Tower::TowerType::CUTTER, Tower::TowerType::SAUCER };
+}

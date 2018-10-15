@@ -10,7 +10,6 @@
 
 class Cell;
 class Dango;
-class LevelInterface;
 class Config;
 
 using namespace spine;
@@ -33,7 +32,6 @@ public:
 		CUTTER,
 		SAUCER
 	};
-	static std::vector<TowerType> getAllTowerTypes();
 
 	enum Direction {
 		RIGHT,
@@ -62,23 +60,19 @@ public:
 	double getNormalizedRange();
 	double getNormalizedRangeFromRange(double range);
 	double getCost();
-	Dango* getTarget();
 	double getDamage();
 	double getAttackSpeed();
 	std::string getName();
 	int getLevel();
 	Tower::State getState();
-	void setState(Tower::State state);
-	void setTarget(Dango* dango);
 	void displayRange(bool disp);
-	bool isSameType(std::string type);
-	static TowerType getTowerTypeFromString(std::string type);
+	bool isSameType(Tower::TowerType type);
 	cocos2d::Vector<cocos2d::SpriteFrame*> getAnimation(Tower::State animState);
-	static SkeletonAnimation* getSkeletonAnimationFromName(std::string name);
-	static cocos2d::Vector<cocos2d::SpriteFrame*> getAnimationFromName(std::string name, Tower::State animState);
+	static SkeletonAnimation* createSkeletonAnimationFromName(std::string name);
 	virtual void removeTarget(Dango* dango);
 	void incrementXP(int amount);
-	void blockTower(bool block);
+	void blockTower();
+	void freeTower();
 	bool isTowerBlocked();
 	virtual void stopAttacking();
 	void changeSpeedAnimation(float speed);
@@ -92,10 +86,11 @@ public:
 	void updateState(float dt);
 	void updateReloading();
 	void updateAttacking(float dt);
-	void updateBlocked();
 	void updateAware(float dt);
+	void setIDLEState();
 	void updateIDLE();
 	virtual void updateDisplay(float dt);
+	void updateOpacity(float dt);
 	virtual void updateEnrageLayout();
 	virtual void handleEnrageMode();
 	virtual void handleEndEnrageAnimation() = 0;
@@ -125,7 +120,6 @@ protected:
 	bool selected;
 	bool destroy;
 	bool limit_enabled;
-	bool blocked;
 
 	TowerSettings* settings;
 	
@@ -134,10 +128,6 @@ protected:
 	Direction direction;
 	
 	// Characteristics
-	double cost;
-	double attack_speed;
-	double damage;
-	double range;
 	double timer;
 	double timerIDLE;
 	int level;
@@ -147,7 +137,6 @@ protected:
 	int nb_attacks;
 	int nb_max_attacks_limit;
 	
-	//
 	cocos2d::DrawNode* loadingCircle;
 
 	// parameters for animation
@@ -156,7 +145,6 @@ protected:
 	std::string name;
 	SkeletonAnimation* skeleton;
 	cocos2d::Sprite* image;
-	bool spritesheet;
 	
 	//methods
 	virtual void attack() = 0;
@@ -164,6 +152,7 @@ protected:
 	void setOrientedAnimation();
 	void updateDirection();
 };
+void initAnimatedSkeleton(spine::SkeletonAnimation * animated_skeleton);
 
 
 #endif

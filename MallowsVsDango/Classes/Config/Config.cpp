@@ -275,7 +275,7 @@ void Config::extractGeneralConfiguration(cocos2d::FileUtils * fileUtils, Json::R
 	if (parsingConfigSuccessful) {
 		gameTutorialSettings->init(conf_general["configuration_files"]["gameTutorial"].asString(), "gameTutorialProgress.json");
 		skillTutorialSettings->init(conf_general["configuration_files"]["skillsTutorial"].asString(), "skillTutorialProgress.json");
-		std::vector<Tower::TowerType> allTypes = Tower::getAllTowerTypes();
+		std::vector<Tower::TowerType> allTypes = TowerFactory::getAllTowerTypes();
 		for (unsigned int i(0); i < allTypes.size(); ++i) {
 			towersSettings[allTypes[i]] = TowerSettings::create(conf_general["configuration_files"]["tower"].asString(), TowerFactory::getTowerNameFromType(allTypes[i]));
 		}

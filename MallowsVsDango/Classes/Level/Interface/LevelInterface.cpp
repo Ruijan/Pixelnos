@@ -274,7 +274,7 @@ void LevelInterface::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) 
 			if (item.first != "nullptr") {
 				if (game->getLevel()->getQuantity() >= Tower::getConfig()[item.first]["cost"][0].asDouble()) {
 					state = TURRET_CHOSEN;
-					menuTurretTouchCallback(Tower::getTowerTypeFromString(item.first));
+					menuTurretTouchCallback(TowerFactory::getTowerTypeFromString(item.first));
 					moveSelectedTurret(touch->getLocation());
 					selected_turret->displayRange(true);
 					selected_turret->setVisible(true);
@@ -492,7 +492,7 @@ void LevelInterface::builtCallback(Ref* sender) {
 	action["position"]["y"] = turret_position.y;
 	action["action"] = "create_tower";
 	game->addActionToTracker(action);
-	challenges->addTower(Tower::getTowerTypeFromString(selected_turret->getName()), selected_turret->getPosition());
+	challenges->addTower(TowerFactory::getTowerTypeFromString(selected_turret->getName()), selected_turret->getPosition());
 
 	selected_turret->builtCallback(sender);
 	selected_turret->setFixed(true);

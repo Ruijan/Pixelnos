@@ -1,8 +1,6 @@
 #include "Saucer.h"
 #include "../Towers/Attack.h"
 #include "../AppDelegate.h"
-#include "../Level/Cell.h"
-//#include "../Lib/ScreenLog.h"
 
 USING_NS_CC;
 
@@ -13,14 +11,11 @@ Saucer* Saucer::create(Config* configClass)
 {
 	Saucer* pSprite = new Saucer();
 
-	/*if (pSprite->initWithFile(Saucer::getConfig()["image"].asString()))
-	{*/
 	pSprite->initFromConfig(configClass);
 	pSprite->initSpecial();
 	pSprite->initDebug();
 	pSprite->initEnragePanel();
 	return pSprite;
-	//}
 
 	CC_SAFE_DELETE(pSprite);
 	return NULL;
@@ -48,10 +43,10 @@ void Saucer::attack(){
 		ChocoSpit* spit = nullptr;
 		if (level >= (int)getConfig()["cost"].size() - 1) {
 			//spit = AcidChocoSpit::create(target, damage, 500 * visibleSize.width / 960);
-			spit = ChocoSpit::create(target, damage, slow_percent, slow_duration, 500 * visibleSize.width / 960);
+			spit = ChocoSpit::create(target, settings->getDamage(level), slow_percent, slow_duration, 500 * visibleSize.width / 960);
 		}
 		else {
-			spit = ChocoSpit::create(target, damage, slow_percent, slow_duration, 500 * visibleSize.width / 960);
+			spit = ChocoSpit::create(target, settings->getDamage(level), slow_percent, slow_duration, 500 * visibleSize.width / 960);
 		}
 		spit->setDamagesId(attacked_enemies[target]);
 		attacked_enemies.erase(attacked_enemies.find(target));
@@ -85,7 +80,7 @@ void Saucer::startLimit() {
 			animation_duration / nb_frames_anim / 3.f);
 
 		auto callbackAttack = CallFunc::create([&]() {
-			givePDamages(damage);
+			givePDamages(settings->getDamage(level));
 			attack();
 			startLimit();
 		});
@@ -101,9 +96,6 @@ void Saucer::startLimit() {
 		timer = 0;
 		timerIDLE = 0;
 		state = RELOADING;
-		/*std::string frameName = name + "_attack_movement_000.png";
-		SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-		setSpriteFrame(cache->getSpriteFrameByName(frameName.c_str()));*/
 	}
 }
 

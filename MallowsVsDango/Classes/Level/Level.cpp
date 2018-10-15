@@ -6,6 +6,7 @@
 #include "../Scenes/Skills.h"
 #include "../Dangos/Dango.h"
 #include "../Scenes/MyGame.h"
+#include "../Towers/TowerFactory.h"
 #include "Wall.h"
 #include <fstream>
 
@@ -192,7 +193,7 @@ bool Level::init()
 void Level::incrementXPTower(std::string name, int amount) {
 	tower_xp[name] += amount;
 	for (auto& tower : towers) {
-		if (tower->isSameType(name)) {
+		if (tower->isSameType(TowerFactory::getTowerTypeFromString(name))) {
 			tower->incrementXP(amount);
 		}
 	}

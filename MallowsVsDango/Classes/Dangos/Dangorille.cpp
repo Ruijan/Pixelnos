@@ -147,7 +147,7 @@ void Dangorille::generateMonkeys() {
 		} while (already_index);
 		tower_indices.push_back(index);
 		Tower* target_tower = towers[index];
-		target_tower->blockTower(true);
+		target_tower->blockTower();
 
 		auto* showAction = EaseBackIn::create(MoveTo::create(0.5f, target_tower->getPosition()));
 
@@ -171,7 +171,7 @@ void Dangorille::generateMonkeys() {
 		monkey->runAction(Sequence::createWithTwoActions(DelayTime::create(0.25f),showAction));
 		monkey->addTouchEventListener([&, monkey, target_tower, shadow, liane, monkey_layout, this](Ref* sender, ui::Widget::TouchEventType type) {
 			if (type == ui::Widget::TouchEventType::ENDED) {
-				target_tower->blockTower(false);
+				target_tower->freeTower();
 				Size visibleSize = Director::getInstance()->getVisibleSize();
 				auto* hideAction = EaseBackIn::create(MoveTo::create(0.5f, Vec2(monkey->getPosition().x, visibleSize.height +
 					monkey->getContentSize().height * monkey->getScaleY() * 0.6)));

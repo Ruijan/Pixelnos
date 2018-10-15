@@ -60,31 +60,33 @@ void NextLevelPanel::setSpritesPositions(float spriteWidth)
 }
 
 void NextLevelPanel::updateLabel() {
+	int towerLevel = tower->getLevel();
 	std::string language = configClass->getSettings()->getLanguage();
 	std::string s("");
 	levelLabel->setString(configClass->getConfigValues(Config::ConfigType::BUTTON)
 		["level"][language].asString() + " " +
-		Json::Value(tower->getLevel() + 2).asString());
+		Json::Value(towerLevel + 2).asString());
 
-	s = Json::Value(settings->getDamage(tower->getLevel() + 1)).asString();
+	s = Json::Value(settings->getDamage(towerLevel + 1)).asString();
 	s.resize(4);
 	attackLabel->setString(s);
 
-	s = Json::Value(settings->getAttackSpeed(tower->getLevel() + 1)).asString();
+	s = Json::Value(settings->getAttackSpeed(towerLevel + 1)).asString();
 	s.resize(4);
 	speedLabel->setString(s);
 
-	s = Json::Value(tower->getNormalizedRangeFromRange(settings->getRange(tower->getLevel() + 1))).asString();
+	s = Json::Value(tower->getNormalizedRangeFromRange(settings->getRange(towerLevel + 1))).asString();
 	s.resize(4);
 	rangeLabel->setString(s);
 }
 
 void NextLevelPanel::updateCost(int currentSugar) {
-	std::string s = Json::Value(settings->getCost(tower->getLevel() + 1)).asString();
+	int towerLevel = tower->getLevel();
+	std::string s = Json::Value(settings->getCost(towerLevel + 1)).asString();
 	s.resize(4);
 	costLabel->setString(s);
 
-	if (currentSugar < settings->getCost(tower->getLevel() + 1)) {
+	if (currentSugar < settings->getCost(towerLevel + 1)) {
 		costLabel->setColor(cocos2d::Color3B::RED);
 	}
 	else {
