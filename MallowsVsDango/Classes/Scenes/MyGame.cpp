@@ -141,7 +141,7 @@ void MyGame::update(float delta) {
 	// we reset the interface and the parameters and let's go !
 	if (menu->getGameState() == LevelInterface::GameState::TITLE) {
 		cLevel->updateTowers(delta);
-		cLevel->removeElements();
+		cLevel->removeDeletedElements();
 	}
 	else if (menu->getGameState() == LevelInterface::GameState::NEXT_LEVEL) {
 		switchLevel();

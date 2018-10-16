@@ -154,7 +154,7 @@ void TowerInformationPanel::createNextLevelButton(cocos2d::Size &visibleSize) {
 	nextLevelButton->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 			std::string language = configClass->getSettings()->getLanguage();
-			int towerLevel = tower->getLevel();
+			unsigned int towerLevel = tower->getLevel();
 			if ((int)game->getLevel()->getQuantity() >= settings->getCost(towerLevel + 1) &&
 				towerLevel < settings->getMaxExistingLevel())
 			{
@@ -255,7 +255,7 @@ void TowerInformationPanel::updateDisplay() {
 
 void TowerInformationPanel::updateDisplayNextLevel()
 {
-	int towerLevel = tower->getLevel();
+	unsigned int towerLevel = tower->getLevel();
 	lockedLayout->setVisible(false);
 	if (towerLevel < (int)settings->getMaxExistingLevel()) {
 		maxLevelLabel->setVisible(false);
@@ -288,7 +288,7 @@ void TowerInformationPanel::updateDisplayNextLevel()
 
 void TowerInformationPanel::update() {
 	updateDisplay();
-	int towerLevel = tower->getLevel();
+	unsigned int towerLevel = tower->getLevel();
 	
 	if(towerLevel < tower->getMaxLevel()) {
 		std::string language = configClass->getSettings()->getLanguage();

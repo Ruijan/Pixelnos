@@ -41,7 +41,7 @@ void Saucer::attack(){
 	if (target != nullptr) {
 		Size visibleSize = Director::getInstance()->getVisibleSize();
 		ChocoSpit* spit = nullptr;
-		if (level >= (int)getConfig()["cost"].size() - 1) {
+		if (level >= getConfig()["cost"].size() - 1) {
 			//spit = AcidChocoSpit::create(target, damage, 500 * visibleSize.width / 960);
 			spit = ChocoSpit::create(target, settings->getDamage(level), slow_percent, slow_duration, 500 * visibleSize.width / 960);
 		}

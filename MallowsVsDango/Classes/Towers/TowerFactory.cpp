@@ -2,6 +2,7 @@
 #include "Bomber.h"
 #include "Cutter.h"
 #include "Saucer.h"
+#include "Exception/TowerTypeException.h"
 
 Tower* TowerFactory::createTower(Tower::TowerType towerType, Config* config)
 {
@@ -29,6 +30,9 @@ std::string TowerFactory::getTowerNameFromType(Tower::TowerType type)
 	else if (type == Tower::TowerType::SAUCER) {
 		return "saucer";
 	}
+	else {
+		throw new TowerTypeException("Tower type does not exist");
+	}
 }
 
 Tower::TowerType TowerFactory::getTowerTypeFromString(std::string type) {
@@ -42,7 +46,7 @@ Tower::TowerType TowerFactory::getTowerTypeFromString(std::string type) {
 		return Tower::TowerType::SAUCER;
 	}
 	else {
-		return Tower::TowerType::BOMBER;
+		throw new TowerTypeException("Tower type does not exist");
 	}
 }
 

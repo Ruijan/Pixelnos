@@ -63,7 +63,7 @@ public:
 	double getDamage();
 	double getAttackSpeed();
 	std::string getName();
-	int getLevel();
+	unsigned int getLevel();
 	Tower::State getState();
 	void displayRange(bool disp);
 	bool isSameType(Tower::TowerType type);
@@ -78,8 +78,8 @@ public:
 	void changeSpeedAnimation(float speed);
 
 	TowerSettings* getTowerSettings();
-	int getMaxLevel();
-	int getCurrentXP();
+	unsigned int getMaxLevel();
+	unsigned int getCurrentXP();
 	
 	// Updates
 	virtual void update(float dt);
@@ -130,8 +130,8 @@ protected:
 	// Characteristics
 	double timer;
 	double timerIDLE;
-	int level;
-	int level_max;
+	unsigned int level;
+	unsigned int level_max;
 	int xp;
 
 	int nb_attacks;

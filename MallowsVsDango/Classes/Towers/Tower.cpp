@@ -369,10 +369,10 @@ void Tower::handleEnrageMode() {
 
 void Tower::update(float dt) {
 	updateDisplay(dt);
-	if (isLimitReached() && getChildByName("enrage_panel")->isVisible() && limit_enabled) {
-		updateEnrageLayout();
-	}
 	if(fixed){
+		if (isLimitReached() && getChildByName("enrage_panel")->isVisible() && limit_enabled) {
+			updateEnrageLayout();
+		}
 		updateState(dt);
 	}
 }
@@ -597,7 +597,7 @@ Tower::State Tower::getState(){
 	return state;
 }
 
-int Tower::getLevel(){
+unsigned int Tower::getLevel(){
 	return level;
 }
 
@@ -681,11 +681,11 @@ TowerSettings * Tower::getTowerSettings()
 	return settings;
 }
 
-int Tower::getMaxLevel()
+unsigned int Tower::getMaxLevel()
 {
 	return level_max;
 }
 
-int Tower::getCurrentXP(){
+unsigned int Tower::getCurrentXP(){
 	return xp;
 }

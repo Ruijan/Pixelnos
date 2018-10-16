@@ -284,6 +284,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Towers\Bomber.h" />
     <ClInclude Include="..\Classes\Towers\Cutter.h" />
     <ClInclude Include="..\Classes\Towers\Effect.h" />
+    <ClInclude Include="..\Classes\Towers\Exception\TowerTypeException.h" />
     <ClInclude Include="..\Classes\Towers\GUI\CurrentLevelPanel.h" />
     <ClInclude Include="..\Classes\Towers\GUI\NextLevelPanel.h" />
     <ClInclude Include="..\Classes\Towers\GUI\TowerInformationPanel.h" />

@@ -28,7 +28,6 @@ Dango::~Dango() {
 	}
 	state = DEAD;
 	removeAllChildren();
-	//std::cerr << "Dango Destroyed ! confirmed !" << std::endl;
 }
 
 void Dango::initFromConfig() {
@@ -63,7 +62,6 @@ void Dango::initFromConfig() {
 
 	skeleton = SkeletonAnimation::createWithJsonFile(config["skeleton"].asString(),
 		config["atlas"].asString(), 0.12f * visibleSize.width / 1280);
-	//skeleton->setScale(Cell::getCellWidth() / skeleton->getContentSize().width);
 	skeleton->setCompleteListener([&](spTrackEntry* entry) {
 		skeletonAnimationHandle();
 	});
@@ -74,17 +72,12 @@ void Dango::initFromConfig() {
 		else if (Value(event->data->name).asString() == "down") {
 			on_ground = true;
 		}
-		//log("%d event: %s, %d, %f, %s", trackIndex, event->data->name, event->intValue, event->floatValue, event->stringValue);
 	});
 	skeleton->setSkin("normal_" + Value(level + 1).asString());
 	updateAnimation();
-	/*auto anim = skeleton->setAnimation(0,"jump_side",true);
-	skeleton->setTimeScale(1 / (getSpeed() * anim->animation->duration));*/
-	//skeleton->setPosition(Vec2(0, -Cell::getCellHeight() * 3 / 10));
 	addChild(skeleton,2);
 
 	auto layout = ui::Layout::create();
-	//layout->setPosition(Vec2(-Cell::getCellWidth() / 2, -Cell::getCellWidth() / 2));
 
 	ui::LoadingBar* loading_bar = ui::LoadingBar::create("res/buttons/sliderProgress.png");
 	loading_bar->setPercent((double)hitPoints / getSpecConfig()["hitpoints"][level].asDouble() * 100);
