@@ -12,6 +12,7 @@
 #include "RightPanel.h"
 #include "LevelInfo.h"
 #include "../../Towers/GUI/TowerInformationPanel.h"
+#include "../../Dangos/GUI/DangoInformationPanel.h"
 #include "../../Dangos/Dango.h"
 
 
@@ -100,7 +101,7 @@ private:
 	State state;
 	GameState game_state;
 	Tower* selected_turret;
-	Dango* selected_dango;
+	Dango* selectedDango;
 	StartMenu* startMenu;
 	WinMenu* winMenu;
 	LoseMenu* loseMenu;

@@ -110,14 +110,7 @@ void Dangobese::update(float dt) {
 		}
 		break;
 	case ATTACK:
-		if (shouldAttack()) {
-			attack(dt);
-			state = RELOAD;
-		}
-		else {
-			state = MOVE;
-			updateAnimation();
-		}
+		updateAttack(dt);
 		break;
 	case ATTACK_SPE:
 		if (shouldAttackSpe() && attack_spe_done) {
@@ -157,7 +150,6 @@ void Dangobese::update(float dt) {
 				updateAnimation();
 				reload_timer = 0;
 			}
-
 		}
 		else {
 			state = IDLE;

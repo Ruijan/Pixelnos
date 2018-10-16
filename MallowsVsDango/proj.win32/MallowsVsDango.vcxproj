@@ -164,6 +164,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Dangos\Dangobese.cpp" />
     <ClCompile Include="..\Classes\Dangos\Dangorille.cpp" />
     <ClCompile Include="..\Classes\Dangos\Dangosimple.cpp" />
+    <ClCompile Include="..\Classes\Dangos\GUI\DangoInformationPanel.cpp" />
     <ClCompile Include="..\Classes\GUI\CentralMenu.cpp" />
     <ClCompile Include="..\Classes\GUI\ParametersMenu.cpp" />
     <ClCompile Include="..\Classes\GUI\StoryParametersMenu.cpp" />
@@ -236,6 +237,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Dangos\Dangobese.h" />
     <ClInclude Include="..\Classes\Dangos\Dangorille.h" />
     <ClInclude Include="..\Classes\Dangos\Dangosimple.h" />
+    <ClInclude Include="..\Classes\Dangos\GUI\DangoInformationPanel.h" />
     <ClInclude Include="..\Classes\GUI\CentralMenu.h" />
     <ClInclude Include="..\Classes\GUI\ParametersMenu.h" />
     <ClInclude Include="..\Classes\GUI\StoryParametersMenu.h" />

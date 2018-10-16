@@ -1,14 +1,13 @@
-#ifndef DANGO_HPP
-#define DANGO_HPP
+#pragma once
 
 #include "cocos2d.h"
 #include "../Config/json.h"
 #include "ui/CocosGUI.h"
 #include "../Towers/Effect.h"
 #include <spine/spine-cocos2dx.h>
+#include "GUI/DangoInformationPanel.h"
 
 class Cell;
-class LevelInterface;
 class Tower;
 class Attack;
 
@@ -38,30 +37,40 @@ public:
 	static Json::Value getConfig();
 	virtual Json::Value getSpecConfig() = 0;
 	void initFromConfig();
+	void initDangoCharacteristics(Json::Value &config);
+	void initSkeleton(Json::Value &config);
+	void initHolySugarNumber(Json::Value &config);
+
+	void showLifeBar();
+	void hideLifeBar();
 
 	bool isAlive();
 	bool isDying();
 	bool isDone();
 	bool willBeAlive();
 	virtual bool shouldAttack();
-	double getSpeedRedtuctionRatio();
+	double getSpeedReductionRatio();
 	double getHitPoints();
 	double getGain();
 	int getTargetedCell();
 	int getNbCellsToPath();
 	double getSpeed();
+	void updateAnimationDirection(Dango::STATE state, Dango::DIRECTION direction, double gameSpeed);
 	int getXP();
 	int getHolySugar();
+	unsigned int getLevel();
 
 	virtual void update(float dt);
+	void updateMove(float dt);
+	void updateReload(float dt);
+	void updateAttack(float dt);
+	void updateIDLE();
 	virtual void updateAnimation();
 	virtual void skeletonAnimationHandle();
 	void pauseAnimation();
 	void resumeAnimation();
 	void updateDirection(cocos2d::Vec2 direction);
 	void updateEffects(float dt);
-	void updateLifeBar();
-	
 
 	void takeDamages(double damages);
 	void applyProspectiveDamages(int id_damage);
@@ -72,10 +81,6 @@ public:
 	virtual void attack(float dt);
 	void addEffect(Effect* effect);
 	void changeSpeedAnimation(float speed);
-
-
-	cocos2d::ui::Layout* getInformationLayout(LevelInterface* interface_game);
-	virtual void updateInformationLayout(cocos2d::ui::Layout* layout);
 
 	void addTargetingTower(Tower* tower);
 	void addTargetingAttack(Attack* tower);
@@ -97,6 +102,8 @@ protected:
 	std::vector<Cell*> path;
 	cocos2d::Action* cAction;
 
+	DangoInformationPanel* lifeBar;
+
 	std::string name;
 	SkeletonAnimation* skeleton;
 
@@ -108,6 +115,7 @@ protected:
 
 	double speed;
 	double hitPoints;
+	double maxHitPoints;
 	double pDamages;				// prosepctive damages
 	std::map<int, double> prospective_damages;
 	int id_damages;
@@ -115,11 +123,13 @@ protected:
 	double attack_damages;
 	double attack_reloading;
 	bool on_ground;
-	int level;
+	unsigned int level;
 	int xp;
 	int holy_sugar;
 	bool stay_on_ground;
 
 	std::vector<Effect*> effects;
 };
-#endif
+
+std::string getStringFromState(Dango::STATE state);
+std::string getStringFromDirection(Dango::DIRECTION state);

@@ -106,7 +106,7 @@ void Saucer::handleEndEnrageAnimation() {
 bool Saucer::isPotentialTarget(Dango* cTarget) {
 	double dist = cTarget->getPosition().distanceSquared(this->getPosition());
 	double minDist = pow(getRange(), 2);
-	return   dist <= minDist && cTarget->willBeAlive() && cTarget->getSpeedRedtuctionRatio() > slow_percent;
+	return   dist <= minDist && cTarget->willBeAlive() && cTarget->getSpeedReductionRatio() > slow_percent;
 }
 
 Tower::TowerType Saucer::getType()

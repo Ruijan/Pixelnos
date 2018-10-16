@@ -182,14 +182,14 @@ bool LevelInterface::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) 
 				}
 				if (state == IDLE || state == DANGO_SELECTED || state == TOUCHED) {
 					rightPanel->getChildByName("informations")->setVisible(false);
-					selected_dango = dango;
+					selectedDango = dango;
 					state = DANGO_SELECTED;
 				}
 			}
 			else {
 				if (state == DANGO_SELECTED) {
 					hideDangoInfo();
-					selected_dango = nullptr;
+					selectedDango = nullptr;
 					state = IDLE;
 				}
 			}
@@ -227,7 +227,7 @@ void LevelInterface::onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) 
 			showDangoInfo();
 		}
 		else {
-			selected_dango = nullptr;
+			selectedDango = nullptr;
 			state = IDLE;
 			displayStartMenuIfInTitleState();
 		}
@@ -330,9 +330,6 @@ void LevelInterface::update(float dt) {
 	if (towerPanel != nullptr && selected_turret != nullptr) {
 		towerPanel->update();
 	}
-	if (getChildByName("information_dango") != nullptr && selected_dango != nullptr) {
-		selected_dango->updateInformationLayout((ui::Layout*)getChildByName("information_dango"));
-	}
 
 	switch (game_state) {
 	case INTRO:
@@ -415,7 +412,7 @@ void LevelInterface::reset() {
 	state = IDLE;
 	game_state = TITLE;
 	selected_turret = nullptr;
-	selected_dango = nullptr;
+	selectedDango = nullptr;
 
 	loseMenu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	winMenu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
@@ -427,7 +424,6 @@ void LevelInterface::reset() {
 	removeChild(towerPanel);
 	delete towerPanel;
 	towerPanel = nullptr;
-	removeChildByName("information_dango");
 	if (dialogues != nullptr) {
 		removeChild(dialogues, 1);
 		delete dialogues;
@@ -507,36 +503,14 @@ void LevelInterface::displayStartMenuIfInTitleState() {
 }
 
 void LevelInterface::showDangoInfo() {
-	if (getChildByName("information_dango") != nullptr) {
-		auto scale_to = ScaleTo::create(0.125f, 0.f);
-		auto removeAndCreateLayout = CallFunc::create([&]() {
-			removeChildByName("information_dango");
-			if (selected_dango != nullptr) {
-				auto layout = selected_dango->getInformationLayout(this);
-				addChild(layout, 1, "information_dango");
-				layout->setScale(0);
-				auto scale_to = ScaleTo::create(0.125f, 1.f);
-				layout->runAction(scale_to);
-			}
-		});
-		getChildByName("information_dango")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
-	}
-	else if (selected_dango != nullptr) {
-		auto layout = selected_dango->getInformationLayout(this);
-		addChild(layout, 1, "information_dango");
-		layout->setScale(0);
-		auto scale_to = ScaleTo::create(0.125f, 1.f);
-		layout->runAction(scale_to);
+	if (selectedDango != nullptr) {
+		selectedDango->showLifeBar();
 	}
 }
 
 void LevelInterface::hideDangoInfo() {
-	if (getChildByName("information_dango") != nullptr) {
-		auto scale_to = ScaleTo::create(0.125f, 0.f);
-		auto removeAndCreateLayout = CallFunc::create([&]() {
-			removeChildByName("information_dango");
-		});
-		getChildByName("information_dango")->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
+	if (selectedDango != nullptr) {
+		selectedDango->hideLifeBar();
 	}
 	displayStartMenuIfInTitleState();
 }
@@ -753,7 +727,7 @@ void LevelInterface::initDialoguesFromLevel(const Json::Value& config) {
 }
 
 Dango* LevelInterface::getCurrentDango() {
-	return selected_dango;
+	return selectedDango;
 }
 
 int LevelInterface::getSugarQuantity()
@@ -768,7 +742,7 @@ int LevelInterface::getLifeQuantity()
 
 void LevelInterface::handleDeadDango() {
 	hideDangoInfo();
-	selected_dango = nullptr;
+	selectedDango = nullptr;
 	state = IDLE;
 }
 
