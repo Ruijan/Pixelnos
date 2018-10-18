@@ -56,15 +56,16 @@ public:
 	int getNbCellsToPath();
 	double getSpeed();
 	void updateAnimationDirection(Dango::STATE state, Dango::DIRECTION direction, double gameSpeed);
+	virtual std::string getAttackSpeAnimationName();
 	int getXP();
 	int getHolySugar();
 	unsigned int getLevel();
 
 	virtual void update(float dt);
-	void updateMove(float dt);
-	void updateReload(float dt);
-	void updateAttack(float dt);
-	void updateIDLE();
+	virtual void updateMove(float dt);
+	virtual void updateReload(float dt);
+	virtual void updateAttack(float dt);
+	virtual void updateIDLE();
 	virtual void updateAnimation();
 	virtual void skeletonAnimationHandle();
 	void pauseAnimation();

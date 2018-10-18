@@ -11,6 +11,7 @@
 #include <sstream>
 #include "../../GUI/ParametersMenu.h"
 #include "../../Config/Config.h"
+#include "../../Dangos/Monkey.h"
 
 
 USING_NS_CC;
@@ -124,7 +125,7 @@ bool LevelInterface::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) 
 					hideTowerInfo();
 					selected_turret = nullptr;
 				}
-				pauseMenu->getChildByName("informations")->setVisible(false);
+				rightPanel->getChildByName("informations")->setVisible(false);
 				state = State::IDLE;
 			}
 		}
@@ -304,6 +305,25 @@ void LevelInterface::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) 
 	}
 }
 
+void LevelInterface::addMonkey(Monkey* monkey) {
+	monkeys.push_back(monkey);
+	addChild(monkey);
+}
+
+unsigned int LevelInterface::getNbOfMonkeys()
+{
+	return monkeys.size();
+}
+
+void LevelInterface::makeAllMonkeysGoAway()
+{
+	for (auto& monkey : monkeys) {
+		if (monkey != nullptr) {
+			monkey->goAway();
+		}
+	}
+}
+
 void LevelInterface::resetSugarLabel() {
 	levelInfo->resetAnimations();
 }
@@ -326,6 +346,14 @@ void LevelInterface::addEvents()
 
 void LevelInterface::update(float dt) {
 	levelInfo->update(game->getLevel()->getQuantity(), game->getLevel()->getLife(), game->getLevel()->getProgress());
+	for (auto& monkey : monkeys) {
+		if (monkey->hasToBeRemoved()) {
+			removeChild(monkey);
+			delete monkey;
+			monkey = nullptr;
+		}
+	}
+	monkeys.erase(std::remove(monkeys.begin(), monkeys.end(), nullptr), monkeys.end());
 
 	if (towerPanel != nullptr && selected_turret != nullptr) {
 		towerPanel->update();

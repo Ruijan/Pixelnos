@@ -11,7 +11,7 @@ public:
 	const cocos2d::Vec2& getRangePosition();
 	const cocos2d::Vec2& getLevelLabelPosition();
 	const cocos2d::Size& getLevelLabelSize();
-
+	void setTower(Tower* tower);
 	virtual bool init(Config* config, float spriteWidth, Tower* tower);
 
 protected:

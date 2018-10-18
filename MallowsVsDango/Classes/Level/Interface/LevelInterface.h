@@ -15,10 +15,10 @@
 #include "../../Dangos/GUI/DangoInformationPanel.h"
 #include "../../Dangos/Dango.h"
 
-
 class MyGame;
 class Config;
 class ParametersMenu;
+class Monkey;
 
 class LevelInterface : public cocos2d::Layer
 {
@@ -78,6 +78,9 @@ public:
 	void startRewarding(cocos2d::Vec2 pos);
 	void removeTower();
 	void handleDeadDango();
+	void addMonkey(Monkey * monkey);
+	unsigned int getNbOfMonkeys();
+	void makeAllMonkeysGoAway();
 
 	void showDangoInfo();
 	void hideDangoInfo();
@@ -109,6 +112,7 @@ private:
 	LevelInfo* levelInfo;
 	ParametersMenu* pauseMenu;
 	TowerInformationPanel* towerPanel;
+	std::vector<Monkey*> monkeys;
 
 	const double sizeButton;
 	Dialogue* dialogues;
@@ -131,7 +135,6 @@ protected:
 	bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
 	void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
 	void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
-
 
 	void builtCallback(Ref* sender);
 	void endGame();

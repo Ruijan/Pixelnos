@@ -43,6 +43,8 @@ bool TowerInformationPanel::init(MyGame* cGame, Tower * cTower, Config* cConfig)
 
 void TowerInformationPanel::setTower(Tower* newTower) {
 	tower = newTower;
+	currentLevelInfos->setTower(tower);
+	nextLevelInfos->setTower(tower);
 }
 
 void TowerInformationPanel::createMainPanel(cocos2d::Size &visibleSize) {

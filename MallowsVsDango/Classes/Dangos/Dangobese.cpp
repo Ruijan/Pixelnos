@@ -83,9 +83,8 @@ bool Dangobese::shouldAttackSpe() {
 	return false;
 }
 
-void Dangobese::updateAnimation() {
-	Dango::updateAnimation();
-	// Add the case where the state of the system is ATTACK_SPE
+std::string Dangobese::getAttackSpeAnimationName() {
+	return "aspirate";
 }
 
 void Dangobese::update(float dt) {

@@ -264,6 +264,12 @@
     <ClCompile Include="..\Classes\Dangos\GUI\DangoInformationPanel.cpp">
       <Filter>src\Dangos\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Dangos\Monkey.cpp">
+      <Filter>src\Dangos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Dangos\GUI\SpecialAttackAnnouncement.cpp">
+      <Filter>src\Dangos\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -483,6 +489,12 @@
       <Filter>src\Towers\Exception</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Dangos\GUI\DangoInformationPanel.h">
+      <Filter>src\Dangos\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Dangos\Monkey.h">
+      <Filter>src\Dangos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Dangos\GUI\SpecialAttackAnnouncement.h">
       <Filter>src\Dangos\GUI</Filter>
     </ClInclude>
   </ItemGroup>

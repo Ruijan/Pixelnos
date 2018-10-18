@@ -291,8 +291,18 @@ void Dango::updateAnimationDirection(Dango::STATE state, Dango::DIRECTION direct
 	else if (direction == Dango::DIRECTION::LEFT) {
 		this->setScaleX(-((x > 0) - (x < 0))*x);
 	}
-	anim = skeleton->setAnimation(0, getStringFromState(state) + "_" + getStringFromDirection(direction), true);
+	if (state != Dango::STATE::ATTACK_SPE) {
+		anim = skeleton->setAnimation(0, getStringFromState(state) + "_" + getStringFromDirection(direction), true);
+	}
+	else {
+		anim = skeleton->setAnimation(0, getAttackSpeAnimationName(), true);
+	}
+	
 	skeleton->setTimeScale(anim->animation->duration * (1 - getSpeedReductionRatio()) * gameSpeed);
+}
+
+std::string Dango::getAttackSpeAnimationName() {
+	return "";
 }
 
 int Dango::getXP() {

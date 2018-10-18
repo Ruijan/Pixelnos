@@ -1,6 +1,5 @@
 #pragma once
 #include "cocos2d.h"
-#include "../../Config/json.h"
 #include "ui/CocosGUI.h"
 
 class Dango;
