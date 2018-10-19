@@ -6,6 +6,8 @@
 #include "../Scenes/Skills.h"
 #include "../Dangos/Dango.h"
 #include "../Scenes/MyGame.h"
+#include "../Towers/TowerFactory.h"
+#include "../Config/Exceptions/JsonContentException.h"
 #include "Wall.h"
 #include <fstream>
 
@@ -22,7 +24,7 @@ Level* Level::create(unsigned int nLevel, unsigned int nWorld){
 	return NULL;
 }
 
-Level::Level(unsigned int nLevel, unsigned int nWorld) : id(nLevel), id_world(nWorld), size(14,12), sugar(60), life(3), used_sugar(0),
+Level::Level(unsigned int nLevel, unsigned int nWorld) : id(nLevel), id_world(nWorld), size(14,12), sugar(60), life(3), usedSugar(0),
 paused(false), zGround(0), experience(0){}
 
 bool Level::init()
@@ -32,152 +34,100 @@ bool Level::init()
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	Json::Value config = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"][id_world]["levels"][id];
+	Json::Value currentLevelConfig = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"][id_world]["levels"][id];
 	Json::Value save_file = ((AppDelegate*)Application::getInstance())->getSave();
+	Json::Value levelElementsConfig = tryGettingLevelElementsConfig(currentLevelConfig);
 
-	for (unsigned int i(0); i < config["towers"].size(); ++i) {
-		tower_xp[config["towers"].getMemberNames()[i]] = 0;
+	initLevelValues(currentLevelConfig, save_file);
+	
+	addChild(Layer::create(), 0, "backgrounds");
+	addChild(Layer::create(), 0, "objects");
+	getChildByName("backgrounds")->setPosition(visibleSize.width * 3 / 8, visibleSize.height / 2);
+	getChildByName("objects")->setPosition(visibleSize.width  * 3 / 8, visibleSize.height / 2);
+
+	double ratio1 = sqrt((16.0 / 9.0) / (visibleSize.width / visibleSize.height));
+	double ratio2 = sqrt((16.0 / 9.0) / (levelElementsConfig["resolution"]["width"].asDouble() / levelElementsConfig["resolution"]["height"].asDouble()));
+	double ratio = (visibleSize.width * ratio1) / (levelElementsConfig["resolution"]["width"].asDouble() * ratio2);
+	double min_width_ratio = 4.0 / 3.0;
+	double min_height_ratio = 16.0 / 9.0;
+
+	initBackgrounds(levelElementsConfig, ratio);
+	initCells(min_width_ratio, min_height_ratio, visibleSize);
+	initPaths(levelElementsConfig, ratio, visibleSize);
+	initObjects(levelElementsConfig, ratio, visibleSize);
+	initLockedCells(levelElementsConfig, ratio, visibleSize);
+	initGenerator(levelElementsConfig);
+	initWalls();
+
+	return true;
+}
+
+void Level::initLevelValues(Json::Value &currentLevelConfig, Json::Value &save_file)
+{
+	for (unsigned int i(0); i < currentLevelConfig["towers"].size(); ++i) {
+		tower_xp[currentLevelConfig["towers"].getMemberNames()[i]] = 0;
 	}
-	
-	std::vector<Node*> elements;
-	
-	sugar = config["sugar"].asDouble();
+
+	sugar = currentLevelConfig["sugar"].asDouble();
 	sugar += Skills::getSavedSkillFromID(3)["bought"].asBool() ? Skills::getSkillFromID(3)["bonus"].asInt() : 0;
 	sugar += Skills::getSavedSkillFromID(9)["bought"].asBool() ? Skills::getSkillFromID(9)["bonus"].asInt() : 0;
-	experience = config["exp"].asInt();
+
+	experience = currentLevelConfig["exp"].asInt();
 	if (save_file["c_level"].asInt() < (int)id + 1) {
-		holy_sugar = config["holy_sugar"].asInt();
+		holySugar = currentLevelConfig["holy_sugar"].asInt();
 	}
 	else {
-		holy_sugar = 0;
+		holySugar = 0;
 	}
-	generator = new DangoGenerator();
+}
+
+Json::Value tryGettingLevelElementsConfig(Json::Value& allLevelsConfig) {
+	Json::Reader reader;
+	Json::Value levelConfig;
 	auto fileUtils = FileUtils::getInstance();
 	std::string level_config("");
-	if (config["finalized"].asBool()) {
+	if (allLevelsConfig["finalized"].asBool()) {
 		level_config += "res/";
 	}
 	else {
 		level_config += FileUtils::getInstance()->getWritablePath() + "Levels/";
 	}
-	level_config = fileUtils->getStringFromFile(level_config + config["path_level"].asString());
-	Json::Reader reader;
-	Json::Value root;
-	bool parsingConfigSuccessful = reader.parse(level_config, root, false);
+	level_config = fileUtils->getStringFromFile(level_config + allLevelsConfig["path_level"].asString());
+	
+	bool parsingConfigSuccessful = reader.parse(level_config, levelConfig, false);
 	if (!parsingConfigSuccessful) {
-		// report to the user the failure and their locations in the document.
-		std::string error = reader.getFormattedErrorMessages();
+		throw new JsonContentException(reader.getFormattedErrorMessages());
 	}
-	else {
-		addChild(Layer::create(), 0, "backgrounds");
-		addChild(Layer::create(), 0, "objects");
-		getChildByName("backgrounds")->setPosition(visibleSize.width * 3 / 8, visibleSize.height / 2);
-		getChildByName("objects")->setPosition(visibleSize.width  * 3 / 8, visibleSize.height / 2);
+	return levelConfig;
+}
 
-		double ratio1 = sqrt((16.0 / 9.0) / (visibleSize.width / visibleSize.height));
-		double ratio2 = sqrt((16.0 / 9.0) / (root["resolution"]["width"].asDouble() / root["resolution"]["height"].asDouble()));
-		double ratio = (visibleSize.width * ratio1) / (root["resolution"]["width"].asDouble() * ratio2);
-		double min_width_ratio = 4.0 / 3.0;
-		double min_height_ratio = 16.0 / 9.0;
+void Level::initObjects(Json::Value &root, double ratio, cocos2d::Size &visibleSize)
+{
+	std::vector<Node*> elements;
+	Json::Value objects_json = root["objects"];
+	for (auto& object_json : objects_json) {
+		std::string name = object_json["image_name"].asString();
 
-		for (unsigned int i(0); i < root["backgrounds"].size(); ++i) {
-			Sprite* background = Sprite::create(root["backgrounds"][i]["image_name"].asString());
-			background->setRotation(root["backgrounds"][i]["rotation"].asDouble());
-			background->setPosition(root["backgrounds"][i]["position"][0].asDouble() * ratio,
-				root["backgrounds"][i]["position"][1].asDouble() * ratio);
-			background->setScaleX(root["backgrounds"][i]["scale"][0].asDouble() * ratio);
-			background->setScaleY(root["backgrounds"][i]["scale"][1].asDouble() * ratio);
-			background->setLocalZOrder(root["backgrounds"][i]["zorder"].asInt());
-			background->setFlippedX(root["backgrounds"][i]["flipped"][0].asBool());
-			background->setFlippedY(root["backgrounds"][i]["flipped"][1].asBool());
-			getChildByName("backgrounds")->addChild(background);
-		}
-		int nb_cells_width = 12;
-		double ratio3 = visibleSize.width / visibleSize.height;
-		double size_cell = (3.0 / 4.0) * visibleSize.width * sqrt(min_width_ratio / ratio3) / nb_cells_width;
-		int nb_cells_height = visibleSize.height * sqrt(ratio3 / min_height_ratio) / size_cell;
-		int nb_cells_maxwidth = 16;
-		int nb_cells_maxheight = 12;
-		size.width = 12;
-		size.height = nb_cells_height;
-		double offset_x = (12 % 2) * size_cell / 2.0;
-		double offset_y = (nb_cells_height % 2) * size_cell / 2.0;
-		
-		for (int i(0); i < nb_cells_maxwidth; ++i) {
-			std::vector<Cell*> row;
-			for (int j(0); j < nb_cells_maxheight; ++j) {
-				Cell* cell = Cell::create();
-				row.push_back(cell);
-				cell->setPosition(Vec2((i - nb_cells_maxwidth / 2.0 + 0.5) * Cell::getCellWidth() + visibleSize.width * 3 / 8,
-					(nb_cells_maxheight - j - 1 + 0.5 - nb_cells_maxheight / 2.0) * Cell::getCellHeight() + visibleSize.height / 2));
-				if (!((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->isAlwaysGridEnabled()) {
-					cell->setVisible(false);
-				}
-				
-				if (abs(i + 0.5 - nb_cells_maxwidth / 2.0) >= nb_cells_width / 2.0 || abs(j + 0.5 - nb_cells_maxheight / 2.0) >= nb_cells_height / 2.0) {
-					cell->setOffLimit(true);
-				}
-				addChild(cell,4);
-			}
-			cells.push_back(row);
-		}
-		for (unsigned int i(0); i < root["paths"].size(); ++i) {
-			std::vector<Cell*> path;
-			for (unsigned int j(0); j < root["paths"][i]["path"].size(); ++j) {
-				Vec2 path_pos = Vec2(root["paths"][i]["path"][j][0].asFloat() * ratio + visibleSize.width * 3 / 8,
-					root["paths"][i]["path"][j][1].asFloat() * ratio + visibleSize.height / 2);
-				Cell* cell = getNearestCell(path_pos);
-				cell->setPath(true);
-				path.push_back(cell);
-			}
-			paths.push_back(path);
-		}
-		Json::Value objects_json = root["objects"];
-		for (auto& object_json : objects_json) {
-			std::string name = object_json["image_name"].asString();
-			
-			Sprite* object = Sprite::createWithSpriteFrameName(object_json["image_name"].asString());
-			object->setRotation(object_json["rotation"].asDouble());
-			object->setPosition(object_json["position"][0].asDouble() * ratio,
-				object_json["position"][1].asDouble() * ratio);
-			object->setScaleX(object_json["scale"][0].asDouble() * ratio);
-			object->setScaleY(object_json["scale"][1].asDouble() * ratio);
-			object->setLocalZOrder(object_json["zorder"].asInt());
-			object->setFlippedX(object_json["flipped"][0].asBool());
-			object->setFlippedY(object_json["flipped"][1].asBool());
-			
-			if (name.find("path") == std::string::npos) {
-				objects.push_back(object);
-				object->setPosition(object->getPosition() + Vec2(visibleSize.width * 3 / 8, visibleSize.height / 2));
-				addChild(object);
-			}
-			else {
-				getChildByName("backgrounds")->addChild(object);
-			}
-			elements.push_back(object);
-		}
+		Sprite* object = Sprite::createWithSpriteFrameName(object_json["image_name"].asString());
+		object->setRotation(object_json["rotation"].asDouble());
+		object->setPosition(object_json["position"][0].asDouble() * ratio,
+			object_json["position"][1].asDouble() * ratio);
+		object->setScaleX(object_json["scale"][0].asDouble() * ratio);
+		object->setScaleY(object_json["scale"][1].asDouble() * ratio);
+		object->setLocalZOrder(object_json["zorder"].asInt());
+		object->setFlippedX(object_json["flipped"][0].asBool());
+		object->setFlippedY(object_json["flipped"][1].asBool());
 
-		Json::Value locked_cell_json = root["locked_cell"];
-		for (auto& locked_cell : locked_cell_json) {
-			Vec2 cell_pos = Vec2(locked_cell["pos"][0].asFloat() * ratio + visibleSize.width * 3 / 8,
-				locked_cell["pos"][1].asFloat() * ratio + visibleSize.height / 2);
-			Cell* cell = getNearestCell(cell_pos);
-			cell->setOffLimit(true);
+		if (name.find("path") == std::string::npos) {
+			objects.push_back(object);
+			object->setPosition(object->getPosition() + Vec2(visibleSize.width * 3 / 8, visibleSize.height / 2));
+			addChild(object);
 		}
-
-		for (int i(0); i < root["nbwaves"].asInt(); ++i) {
-			generator->addWave();
-			for (unsigned int j(0); j < root["dangosChain"][i].size(); ++j) {
-				int enemy_level = Value(root["dangosChain"][i][j].asString().substr(
-					root["dangosChain"][i][j].asString().size() - 1,
-					root["dangosChain"][i][j].asString().size())).asInt();
-				generator->addStep(root["dangosChain"][i][j].asString(), root["dangosTime"][i][j].asDouble(),
-					root["dangosPath"][i][j].asDouble(), i);
-			}
+		else {
+			getChildByName("backgrounds")->addChild(object);
 		}
+		elements.push_back(object);
 	}
-	initWalls();
-
 	std::sort(elements.begin(), elements.end(), sortZOrder);
 	int i = 1;
 	for (auto& element : elements) {
@@ -185,14 +135,99 @@ bool Level::init()
 		++i;
 	}
 	zGround = i;
+}
 
-	return true;
+void Level::initLockedCells(Json::Value &root, double ratio, cocos2d::Size &visibleSize)
+{
+	Json::Value locked_cell_json = root["locked_cell"];
+	for (auto& locked_cell : locked_cell_json) {
+		Vec2 cell_pos = Vec2(locked_cell["pos"][0].asFloat() * ratio + visibleSize.width * 3 / 8,
+			locked_cell["pos"][1].asFloat() * ratio + visibleSize.height / 2);
+		Cell* cell = getNearestCell(cell_pos);
+		cell->setOffLimit(true);
+	}
+}
+
+void Level::initGenerator(Json::Value &root)
+{
+	generator = new DangoGenerator();
+	for (int i(0); i < root["nbwaves"].asInt(); ++i) {
+		generator->addWave();
+		for (unsigned int j(0); j < root["dangosChain"][i].size(); ++j) {
+			int enemy_level = Value(root["dangosChain"][i][j].asString().substr(
+				root["dangosChain"][i][j].asString().size() - 1,
+				root["dangosChain"][i][j].asString().size())).asInt();
+			generator->addStep(root["dangosChain"][i][j].asString(), root["dangosTime"][i][j].asDouble(),
+				root["dangosPath"][i][j].asDouble(), i);
+		}
+	}
+}
+
+void Level::initPaths(Json::Value &root, double ratio, cocos2d::Size &visibleSize)
+{
+	for (unsigned int i(0); i < root["paths"].size(); ++i) {
+		std::vector<Cell*> path;
+		for (unsigned int j(0); j < root["paths"][i]["path"].size(); ++j) {
+			Vec2 path_pos = Vec2(root["paths"][i]["path"][j][0].asFloat() * ratio + visibleSize.width * 3 / 8,
+				root["paths"][i]["path"][j][1].asFloat() * ratio + visibleSize.height / 2);
+			Cell* cell = getNearestCell(path_pos);
+			cell->setPath(true);
+			path.push_back(cell);
+		}
+		paths.push_back(path);
+	}
+}
+
+void Level::initCells(int min_width_ratio, int min_height_ratio, cocos2d::Size &visibleSize)
+{
+	int nb_cells_width = 12;
+	double ratio3 = visibleSize.width / visibleSize.height;
+	double size_cell = (3.0 / 4.0) * visibleSize.width * sqrt(min_width_ratio / ratio3) / nb_cells_width;
+	int nb_cells_height = visibleSize.height * sqrt(ratio3 / min_height_ratio) / size_cell;
+	int nb_cells_maxwidth = 16;
+	int nb_cells_maxheight = 12;
+	size.width = 12;
+	size.height = nb_cells_height;
+	for (int i(0); i < nb_cells_maxwidth; ++i) {
+		std::vector<Cell*> row;
+		for (int j(0); j < nb_cells_maxheight; ++j) {
+			Cell* cell = Cell::create();
+			row.push_back(cell);
+			cell->setPosition(Vec2((i - nb_cells_maxwidth / 2.0 + 0.5) * Cell::getCellWidth() + visibleSize.width * 3 / 8,
+				(nb_cells_maxheight - j - 1 + 0.5 - nb_cells_maxheight / 2.0) * Cell::getCellHeight() + visibleSize.height / 2));
+			if (!((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->isAlwaysGridEnabled()) {
+				cell->setVisible(false);
+			}
+
+			if (abs(i + 0.5 - nb_cells_maxwidth / 2.0) >= nb_cells_width / 2.0 || abs(j + 0.5 - nb_cells_maxheight / 2.0) >= nb_cells_height / 2.0) {
+				cell->setOffLimit(true);
+			}
+			addChild(cell, 4);
+		}
+		cells.push_back(row);
+	}
+}
+
+void Level::initBackgrounds(Json::Value &root, double ratio)
+{
+	for (unsigned int i(0); i < root["backgrounds"].size(); ++i) {
+		Sprite* background = Sprite::create(root["backgrounds"][i]["image_name"].asString());
+		background->setRotation(root["backgrounds"][i]["rotation"].asDouble());
+		background->setPosition(root["backgrounds"][i]["position"][0].asDouble() * ratio,
+			root["backgrounds"][i]["position"][1].asDouble() * ratio);
+		background->setScaleX(root["backgrounds"][i]["scale"][0].asDouble() * ratio);
+		background->setScaleY(root["backgrounds"][i]["scale"][1].asDouble() * ratio);
+		background->setLocalZOrder(root["backgrounds"][i]["zorder"].asInt());
+		background->setFlippedX(root["backgrounds"][i]["flipped"][0].asBool());
+		background->setFlippedY(root["backgrounds"][i]["flipped"][1].asBool());
+		getChildByName("backgrounds")->addChild(background);
+	}
 }
 
 void Level::incrementXPTower(std::string name, int amount) {
 	tower_xp[name] += amount;
 	for (auto& tower : towers) {
-		if (tower->isSameType(name)) {
+		if (tower->isSameType(TowerFactory::getTowerTypeFromString(name))) {
 			tower->incrementXP(amount);
 		}
 	}
@@ -203,7 +238,7 @@ int Level::getTowerXP(std::string name) {
 }
 
 int Level::getHolySugar() {
-	return holy_sugar;
+	return holySugar;
 }
 
 float Level::getProgress() {
@@ -239,80 +274,93 @@ void Level::update(float dt)
 		// Reorder dangos and towers in Z plan
 		reorder();
 
-		// update generator
-		generator->update(dt, this);
-		if (!generator->isDone() && generator->isWaveDone() && dangos.empty()) {
-			generator->nextWave();
-		}
-
-		// update dangos
-		int i(0);
-		for (auto& dango : dangos) {
-			++i;
-			dango->update(dt);
-			bool del = false;
-			if (dango->isDone()) {
-				del = true;
-				if (life > 0) {
-					life -= 1;
-				}
-			}
-			if (!dango->isAlive()) {
-				del = true;
-			}
-			if (del) {
-				if (dango->getHolySugar() > 0) {
-					SceneManager::getInstance()->getGame()->getMenu()->generateHolySugar(dango->getPosition());
-					holy_sugar += dango->getHolySugar();
-				}
-				if (generator->isDone() && dangos.size() == 1 && life > 0) {
-					SceneManager::getInstance()->getGame()->getMenu()->startRewarding(dango->getPosition());
-				}
-				if (SceneManager::getInstance()->getGame()->getMenu()->getCurrentDango() == dango) {
-					SceneManager::getInstance()->getGame()->getMenu()->handleDeadDango();
-				}
-				removeChild(dango);
-				dango = nullptr;
-			}
-		}
-
-		// update towers
+		updateDangoGenerator(dt);
+		updateDangos(dt);
 		updateTowers(dt);
+		updateBullets(dt);
+		updateWall();
+		removeDeletedElements();
+	}	
+}
 
-		// update bullets
-		for (auto& attack : attacks) {
-			attack->update(dt);
-			if (attack->isDone()) {
-				removeChild(attack);
-				attack = nullptr;
-			}
-		}
+void Level::updateDangoGenerator(float dt)
+{
+	generator->update(dt, this);
+	if (!generator->isDone() && generator->isWaveDone() && dangos.empty()) {
+		generator->nextWave();
+	}
+}
 
-		//update wall
-		for (auto& wall : walls) {
-			if (wall != nullptr && wall->isDestroyed()) {
-				for (auto& path : paths) {
-					for (auto& cell : path) {
-						if (cell->getObject() == wall) {
-							cell->setObject(nullptr);
-						}
+void Level::updateWall()
+{
+	for (auto& wall : walls) {
+		if (wall != nullptr && wall->isDestroyed()) {
+			for (auto& path : paths) {
+				for (auto& cell : path) {
+					if (cell->getObject() == wall) {
+						cell->setObject(nullptr);
 					}
 				}
-				removeChild(wall);
-				wall = nullptr;
+			}
+			removeChild(wall);
+			wall = nullptr;
+		}
+	}
+}
+
+void Level::updateBullets(float dt)
+{
+	for (auto& attack : attacks) {
+		attack->update(dt);
+		if (attack->isDone()) {
+			removeChild(attack);
+			attack = nullptr;
+		}
+	}
+}
+
+void Level::updateDangos(float dt)
+{
+	int i(0);
+	for (auto& dango : dangos) {
+		++i;
+		dango->update(dt);
+		bool del = false;
+		if (dango->isDone()) {
+			del = true;
+			if (life > 0) {
+				life -= 1;
 			}
 		}
-		removeElements();
-	}	
+		if (!dango->isAlive()) {
+			del = true;
+		}
+		if (del) {
+			if (dango->getHolySugar() > 0) {
+				SceneManager::getInstance()->getGame()->getMenu()->generateHolySugar(dango->getPosition());
+				holySugar += dango->getHolySugar();
+			}
+			if (isLevelFinished()) {
+				SceneManager::getInstance()->getGame()->getMenu()->startRewarding(dango->getPosition());
+			}
+			if (SceneManager::getInstance()->getGame()->getMenu()->getCurrentDango() == dango) {
+				SceneManager::getInstance()->getGame()->getMenu()->handleDeadDango();
+			}
+			removeChild(dango);
+			dango = nullptr;
+		}
+	}
+}
+
+bool Level::isLevelFinished()
+{
+	return generator->isDone() && dangos.size() == 1 && life > 0;
 }
 
 void Level::updateTowers(float dt) {
 	for (auto& tower : towers) {
 		if (!tower->hasToBeDestroyed()) {
-			if (tower->isFixed()) {
-				//tower->chooseTarget(dangos);
-				tower->update(dt);
-			}
+			tower->update(dt);
 		}
 		else {
 			for (unsigned int i(0); i < cells.size(); ++i) {
@@ -328,7 +376,7 @@ void Level::updateTowers(float dt) {
 	}
 }
 
-void Level::removeElements() {
+void Level::removeDeletedElements() {
 	attacks.erase(std::remove(attacks.begin(), attacks.end(), nullptr), attacks.end());
 	towers.erase(std::remove(towers.begin(), towers.end(), nullptr), towers.end());
 	dangos.erase(std::remove(dangos.begin(), dangos.end(), nullptr), dangos.end());
@@ -346,7 +394,7 @@ Quantity Level::getQuantity(){
 }
 
 Quantity Level::getUsedQuantity() {
-	return used_sugar;
+	return usedSugar;
 }
 
 Quantity Level::getLife(){
@@ -370,7 +418,7 @@ bool Level::decreaseQuantity(Quantity removed){
 	}
 	else{
 		sugar -= removed;
-		used_sugar += removed;
+		usedSugar += removed;
 		return true;
 	}
 }
@@ -402,6 +450,7 @@ void Level::resume(){
 	}
 	paused = false;
 }
+
 void Level::addTurret(Tower* tower){
 	towers.push_back(tower);
 	addChild(tower);
@@ -481,18 +530,14 @@ bool Level::hasLost(){
 }
 
 bool sortZOrder(Node* sprite1, Node* sprite2){
-	double position1_height = sprite1->getPosition().y - sprite1->getContentSize().height*
-		(1 - sprite1->getAnchorPoint().y) * sprite1->getScaleY();
-	double position2_height = sprite2->getPosition().y - sprite2->getContentSize().height*
-		(1 - sprite2->getAnchorPoint().y) * sprite2->getScaleY();
+	double position1_height = getMaxYPositionFromSprite(sprite1);
+	double position2_height = getMaxYPositionFromSprite(sprite2);
 	if (position1_height > position2_height) {
 		return true;
 	}
 	else if (position1_height == position2_height) {
-		double position1_width = sprite1->getPosition().x + sprite1->getContentSize().width*
-			(1 - sprite1->getAnchorPoint().x) * sprite1->getScaleX();
-		double position2_width = sprite2->getPosition().x + sprite2->getContentSize().width*
-			(1 - sprite2->getAnchorPoint().x) * sprite2->getScaleX();
+		double position1_width = getMaxXPositionFromSprite(sprite1);
+		double position2_width = getMaxXPositionFromSprite(sprite2);
 		return !(position1_width <= position2_width);
 	}
 	else {
@@ -500,13 +545,35 @@ bool sortZOrder(Node* sprite1, Node* sprite2){
 	}
 }
 
+float getMaxXPositionFromSprite(cocos2d::Node * sprite)
+{
+	return sprite->getPosition().x + sprite->getContentSize().width*
+		(1 - sprite->getAnchorPoint().x) * sprite->getScaleX();
+}
+
+float getMaxYPositionFromSprite(cocos2d::Node * sprite)
+{
+	return sprite->getPosition().y - sprite->getContentSize().height*
+		(1 - sprite->getAnchorPoint().y) * sprite->getScaleY();
+}
+
 void Level::reorder(){
+	std::vector<Node*> elements = createElementsArray();
+	std::stable_sort (elements.begin(), elements.end(), sortZOrder);
+	int i = zGround;
+	for(auto& element : elements){
+		element->setLocalZOrder(i);
+		++i;
+	}
+}
+
+std::vector<Node*> Level::createElementsArray() {
 	std::vector<Node*> elements;
-	for(auto& tower : towers){
+	for (auto& tower : towers) {
 		if (tower != nullptr)
 			elements.push_back(tower);
 	}
-	for(auto& dango : dangos){
+	for (auto& dango : dangos) {
 		if (dango != nullptr)
 			elements.push_back(dango);
 	}
@@ -525,44 +592,50 @@ void Level::reorder(){
 			elements.push_back(attack);
 		}
 	}
-	std::stable_sort (elements.begin(), elements.end(), sortZOrder);
-	int i = zGround;
-	for(auto& element : elements){
-		element->setLocalZOrder(i);
-		++i;
-	}
+	return elements;
 }
 
 void Level::reset(){
-	for (auto& dango : dangos){
-		removeChild(dango);
-	}
-	dangos.clear();
-	for (auto& tower : towers){
-		removeChild(tower);
-	}
-	towers.clear();
-	for (auto& attack : attacks){
-		removeChild(attack);
-	}
-	attacks.clear();
+	removeLevelChildren();
 
 	sugar = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::LEVEL)["worlds"][id_world]["levels"][id]["sugar"].asDouble();
-	used_sugar = 0;
+	usedSugar = 0;
 	life = 3;
 	paused = false;
 	generator->reset();
-	for (auto& tcell : cells){
-		for (auto& cell : tcell){
+	resetCells();
+	initWalls();
+}
+
+void Level::resetCells()
+{
+	for (auto& tcell : cells) {
+		for (auto& cell : tcell) {
 			cell->setObject(nullptr);
 		}
 	}
+}
+
+void Level::removeLevelChildren()
+{
+	for (auto& dango : dangos) {
+		removeChild(dango);
+	}
+	dangos.clear();
+	for (auto& tower : towers) {
+		removeChild(tower);
+	}
+	towers.clear();
+	for (auto& attack : attacks) {
+		removeChild(attack);
+	}
+	attacks.clear();
 	for (auto& wall : walls) {
 		if (wall != nullptr) {
 			removeChild(wall);
 		}
 	}
-	initWalls();
+	walls.clear();
 }
 
 Tower* Level::touchingTower(cocos2d::Vec2 position){

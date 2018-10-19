@@ -3,21 +3,15 @@
 #include "../Dangos/Dango.h"
 #include "../Towers/Attack.h"
 #include "../AppDelegate.h"
-#include "../Level/Interface/LevelInterface.h"
 #include "../Scenes/Skills.h"
 #include "../Config/Config.h"
 #include <math.h>
 
 USING_NS_CC;
 
-std::vector<Tower::TowerType> Tower::getAllTowerTypes()
-{
-	return  { BOMBER, CUTTER, SAUCER };
-}
-
 Tower::Tower() :
 	state(State::IDLE), fixed(false), destroy(false), target(nullptr), timer(0), timerIDLE(0), level(0),
-	nb_attacks(0), spritesheet(false), direction(DOWN), blocked(false)
+	nb_attacks(0), direction(DOWN)
 {}
 
 Tower::~Tower() {
@@ -30,10 +24,6 @@ void Tower::initFromConfig(Config* configClass) {
 	auto config = getSpecConfig();
 	auto save = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
 	settings = configClass->getTowerSettings(getType());
-	cost = settings->getCost(0);;
-	attack_speed = settings->getAttackSpeed(0);
-	damage = settings->getDamage(0);
-	range = settings->getRange(0);
 	animation_duration = config["animation_attack_time"].asDouble();
 	nb_frames_anim = config["animation_attack_size"].asInt();
 	name = config["name"].asString();
@@ -92,8 +82,6 @@ void Tower::initDebug(){
 	loadingCircle->setVisible(false);
 	addChild(loadingCircle);
 
-
-
 	Sprite* range = Sprite::create("res/turret/range.png");
 	range->setScale(getRange() / range->getContentSize().width * 2);
 	addChild(range, 0, "range");
@@ -112,7 +100,6 @@ void Tower::initDebug(){
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	
-
 	auto label_state = Label::createWithTTF("IDLE", "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	label_state->enableOutline(Color4B::BLACK, 2);
 	label_state->setVisible(false);
@@ -194,14 +181,10 @@ void Tower::builtCallback(Ref* sender){
 void Tower::upgradeCallback(Ref* sender){
 	if(level < (int)settings->getMaxExistingLevel()){
 		++level;
-		range = settings->getRange(level);
-		damage = settings->getDamage(level);
-		attack_speed = settings->getAttackSpeed(level);
 		if (target != nullptr) {
 			stopAttacking();
 		}
-		state = IDLE;
-		timerIDLE = 0;
+		setIDLEState();
 		skeleton->setSkin("normal_" + Value(level + 1).asString());
 		startAnimation();
 		getChildByName("range")->runAction(ScaleTo::create(0.25f,getRange() / getChildByName("range")->getContentSize().width * 2));
@@ -266,12 +249,12 @@ void Tower::givePDamages(double damage){
 
 double Tower::getRange(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	return range * visibleSize.width / 960.0;
+	return settings->getRange(level) * visibleSize.width / 960.0;
 }
 
 double Tower::getNormalizedRange()
 {
-	return round(range / Cell::getCellWidth() * 100) / 100;
+	return round(settings->getRange(level) / Cell::getCellWidth() * 100) / 100;
 }
 
 double Tower::getNormalizedRangeFromRange(double cRange)
@@ -280,19 +263,15 @@ double Tower::getNormalizedRangeFromRange(double cRange)
 }
 
 double Tower::getCost(){
-	return cost;
-}
-
-Dango* Tower::getTarget(){
-	return target;
+	return settings->getCost(level);
 }
 
 double Tower::getDamage(){
-	return damage;
+	return settings->getDamage(level);
 }
 
 double Tower::getAttackSpeed(){
-	return attack_speed;
+	return 	settings->getAttackSpeed(level);
 }
 
 cocos2d::Vector<SpriteFrame*> Tower::getAnimation(Tower::State animState){
@@ -323,38 +302,7 @@ cocos2d::Vector<SpriteFrame*> Tower::getAnimation(Tower::State animState){
 	return animFrames;
 }
 
-cocos2d::Vector<SpriteFrame*> Tower::getAnimationFromName(std::string name, Tower::State animState){
-	std::string action("");
-	switch(animState){
-		case IDLE:
-			action = "steady";
-			break;
-		case ATTACKING:
-			action = "attack";
-			break;
-		default:
-			log("No animation found for this state.");
-			log("Steady state animation used instead.");
-			action = "steady";
-			break;
-	};
-	
-	int animation_size = Tower::getConfig()[name]["animation_"+ action +"_size"].asInt();
-	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
-	cocos2d::Vector<SpriteFrame*> animFrames;
-
-	char str[100] = { 0 };
-	for (int i(0); i <= animation_size; ++i)
-	{
-		std::string frameName =  name+"_"+action+"_movement_%03d.png";
-		sprintf(str, frameName.c_str(), i);
-		SpriteFrame* frame = cache->getSpriteFrameByName(str);
-		animFrames.pushBack(frame);
-	}
-	return animFrames;
-}
-
-SkeletonAnimation* Tower::getSkeletonAnimationFromName(std::string name) {
+SkeletonAnimation* Tower::createSkeletonAnimationFromName(std::string name) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	auto config = getConfig()[name];
@@ -363,20 +311,21 @@ SkeletonAnimation* Tower::getSkeletonAnimationFromName(std::string name) {
 	animated_skeleton->setCompleteListener([animated_skeleton](spTrackEntry* entry) {
 		std::string name = entry->animation->name;
 		if (name == "hello") {
-			animated_skeleton->setAnimation(0, "still", false);
-			animated_skeleton->addAnimation(0, "blink", false);
-			animated_skeleton->addAnimation(0, "still", false);
-			animated_skeleton->addAnimation(0, "hello", false);
-			//animated_skeleton->setSkin()
+			initAnimatedSkeleton(animated_skeleton);
 		}
 	});
 
+	initAnimatedSkeleton(animated_skeleton);
+	animated_skeleton->setSkin("normal_1");
+	return animated_skeleton;
+}
+
+void initAnimatedSkeleton(spine::SkeletonAnimation * animated_skeleton)
+{
 	animated_skeleton->setAnimation(0, "still", false);
 	animated_skeleton->addAnimation(0, "blink", false);
 	animated_skeleton->addAnimation(0, "still", false);
 	animated_skeleton->addAnimation(0, "hello", false);
-	animated_skeleton->setSkin("normal_1");
-	return animated_skeleton;
 }
 
 void Tower::handleEnrageMode() {
@@ -420,10 +369,10 @@ void Tower::handleEnrageMode() {
 
 void Tower::update(float dt) {
 	updateDisplay(dt);
-	if (isLimitReached() && getChildByName("enrage_panel")->isVisible() && limit_enabled) {
-		updateEnrageLayout();
-	}
 	if(fixed){
+		if (isLimitReached() && getChildByName("enrage_panel")->isVisible() && limit_enabled) {
+			updateEnrageLayout();
+		}
 		updateState(dt);
 	}
 }
@@ -433,7 +382,6 @@ void Tower::updateState(float dt)
 	timer += dt;
 	switch (state) {
 	case State::BLOCKED:
-		updateBlocked();
 		break;
 	case State::IDLE:
 		updateIDLE();
@@ -450,8 +398,7 @@ void Tower::updateState(float dt)
 	case State::LIMIT_BURSTING:
 		break;
 	default:
-		state = IDLE;
-		((Label*)getChildByName("label_state"))->setString("IDLE");
+		setIDLEState();
 		break;
 	}
 }
@@ -471,56 +418,40 @@ void Tower::updateAttacking(float dt)
 	}
 }
 
-void Tower::updateBlocked()
-{
-	if (!blocked) {
-		state = IDLE;
-		((Label*)getChildByName("label_state"))->setString("IDLE");
-	}
-}
-
 void Tower::updateAware(float dt)
 {
-	if (blocked) {
-		state = BLOCKED;
-		((Label*)getChildByName("label_state"))->setString("BLOCKED");
-	}
-	else {
-		timerIDLE += dt;
-		chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
-		if (target != nullptr) {
-			handleEnrageMode();
-			if (state != LIMIT_BURSTING) {
-				state = State::ATTACKING;
-				((Label*)getChildByName("label_state"))->setString("ATTACKING");
-				givePDamages(damage);
-				startAnimation();
-				timerIDLE = 0;
-			}
+	timerIDLE += dt;
+	chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
+	if (target != nullptr) {
+		handleEnrageMode();
+		if (state != LIMIT_BURSTING) {
+			state = State::ATTACKING;
+			((Label*)getChildByName("label_state"))->setString("ATTACKING");
+			givePDamages(settings->getDamage(level));
+			startAnimation();
+			timerIDLE = 0;
 		}
 	}
 	if (timerIDLE > 2) {
-		state = State::IDLE;
-		((Label*)getChildByName("label_state"))->setString("IDLE");
-		timerIDLE = 0;
+		setIDLEState();
 		startAnimation();
 	}
 }
 
+void Tower::setIDLEState()
+{
+	state = State::IDLE;
+	((Label*)getChildByName("label_state"))->setString("IDLE");
+	timerIDLE = 0;
+}
+
 void Tower::updateIDLE()
 {
-	if (blocked) {
-		state = BLOCKED;
-		((Label*)getChildByName("label_state"))->setString("BLOCKED");
-
-	}
-	else {
-		chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
-		if (target != nullptr) {
-			state = State::AWARE;
-			((Label*)getChildByName("label_state"))->setString("AWARE");
-			handleEnrageMode();
-		}
+	chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
+	if (target != nullptr) {
+		state = State::AWARE;
+		((Label*)getChildByName("label_state"))->setString("AWARE");
+		handleEnrageMode();
 	}
 }
 
@@ -539,31 +470,36 @@ void Tower::updateEnrageLayout() {
 
 void Tower::updateDisplay(float dt){
 	if(!fixed){
-		float opacity = skeleton->getOpacity();
-		if (state == BLINKING_UP){
-			if(opacity < 250){
-				opacity = skeleton->getOpacity() + 510 * dt < 250 ? skeleton->getOpacity() + 510 * dt : 250;
-				skeleton->setOpacity(opacity);
-			}
-			else{
-				state = BLINKING_DOWN;
-			}
-		}
-		else if(state == BLINKING_DOWN){
-			if(opacity > 50){
-				opacity = skeleton->getOpacity() + 510 * dt >50 ? skeleton->getOpacity() - 510 * dt : 50;
-				skeleton->setOpacity(opacity);
-			}
-			else{
-				state = BLINKING_UP;
-			}
-		}
-		else{
-			state = BLINKING_UP;
-		}
+		updateOpacity(dt);
 	}
 	else{
 		skeleton->setOpacity(255);
+	}
+}
+
+void Tower::updateOpacity(float dt)
+{
+	float opacity = skeleton->getOpacity();
+	if (state == BLINKING_UP) {
+		if (opacity < 250) {
+			opacity = skeleton->getOpacity() + 510 * dt < 250 ? skeleton->getOpacity() + 510 * dt : 250;
+			skeleton->setOpacity(opacity);
+		}
+		else {
+			state = BLINKING_DOWN;
+		}
+	}
+	else if (state == BLINKING_DOWN) {
+		if (opacity > 50) {
+			opacity = skeleton->getOpacity() + 510 * dt >50 ? skeleton->getOpacity() - 510 * dt : 50;
+			skeleton->setOpacity(opacity);
+		}
+		else {
+			state = BLINKING_UP;
+		}
+	}
+	else {
+		state = BLINKING_UP;
 	}
 }
 
@@ -580,9 +516,9 @@ void Tower::displayRange(bool disp){
 	loadingCircle->setVisible(disp);
 }
 
-bool Tower::isSameType(std::string type)
+bool Tower::isSameType(Tower::TowerType type)
 {
-	return Tower::getTowerTypeFromString(type) == getType();
+	return type == getType();
 }
 
 void Tower::startAnimation(float speed){
@@ -642,7 +578,8 @@ const Json::Value& Tower::getConfig(){
 }
 
 void Tower::reload(){
-	if (timer > attack_speed){
+	double attackSpeed = settings->getAttackSpeed(level);
+	if (timer > attackSpeed){
 		state = State::AWARE;
 		((Label*)getChildByName("label_state"))->setString("AWARE");
 	}
@@ -651,23 +588,8 @@ void Tower::reload(){
 		loadingCircle->clear();
 		loadingCircle->drawSolidCircle(Vec2(0, 0), 0.11 * 50 / getScaleX(),
 			0, 60, 1, 1, Color4F(0, 0, 0, 1));
-		loadingCircle->drawSolidCircle(Vec2(0, 0), 0.1 * timer / attack_speed * 50 / getScaleX(),
-			0, 60, 1, 1, Color4F(1 - timer / attack_speed, timer / attack_speed, 0, 1));		
-	}
-}
-
-Tower::TowerType Tower::getTowerTypeFromString(std::string type){
-	if (!strcmp(type.c_str(), "bomber")){
-		return Tower::TowerType::BOMBER;
-	}
-	else if (!strcmp(type.c_str(), "cutter")){
-		return Tower::TowerType::CUTTER;
-	}
-	else if (!strcmp(type.c_str(), "saucer")) {
-		return Tower::TowerType::SAUCER;
-	}
-	else{
-		return Tower::TowerType::BOMBER;
+		loadingCircle->drawSolidCircle(Vec2(0, 0), 0.1 * timer / attackSpeed * 50 / getScaleX(),
+			0, 60, 1, 1, Color4F(1 - timer / attackSpeed, timer / attackSpeed, 0, 1));
 	}
 }
 
@@ -675,16 +597,8 @@ Tower::State Tower::getState(){
 	return state;
 }
 
-void Tower::setState(Tower::State nstate){
-	state = nstate;
-}
-
-int Tower::getLevel(){
+unsigned int Tower::getLevel(){
 	return level;
-}
-
-void Tower::setTarget(Dango* dango){
-	target = dango;
 }
 
 void Tower::setSelected(bool select){
@@ -721,12 +635,17 @@ std::string Tower::getName() {
 	return name;
 }
 
-void Tower::blockTower(bool block) {
-	blocked = block;
+void Tower::blockTower() {
+	state = BLOCKED;
+	((Label*)getChildByName("label_state"))->setString("BLOCKED");
+}
+
+void Tower::freeTower() {
+	setIDLEState();
 }
 
 bool Tower::isTowerBlocked() {
-	return blocked;
+	return state == BLOCKED;
 }
 
 void Tower::stopAttacking() {
@@ -762,11 +681,11 @@ TowerSettings * Tower::getTowerSettings()
 	return settings;
 }
 
-int Tower::getMaxLevel()
+unsigned int Tower::getMaxLevel()
 {
 	return level_max;
 }
 
-int Tower::getCurrentXP(){
+unsigned int Tower::getCurrentXP(){
 	return xp;
 }

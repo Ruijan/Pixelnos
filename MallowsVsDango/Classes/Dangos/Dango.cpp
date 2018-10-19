@@ -28,42 +28,36 @@ Dango::~Dango() {
 	}
 	state = DEAD;
 	removeAllChildren();
-	//std::cerr << "Dango Destroyed ! confirmed !" << std::endl;
 }
 
 void Dango::initFromConfig() {
 	auto config = getSpecConfig();
+	initDangoCharacteristics(config);
+	initHolySugarNumber(config);
+	initSkeleton(config);
+	lifeBar = DangoInformationPanel::create(this);
+	lifeBar->setVisible(false);
+	addChild(lifeBar, 2, "lifeBar");
+}
+
+void Dango::initDangoCharacteristics(Json::Value &config)
+{
 	hitPoints = config["hitpoints"][level].asDouble();
+	maxHitPoints = config["hitpoints"][level].asDouble();
 	speed = config["speed"][level].asDouble();
 	attack_reloading = config["reload"][level].asDouble();
 	attack_damages = config["damages"][level].asDouble();
 	name = config["names"][level].asString();
 	xp = config["xp"][level].asInt();
-	double proba = config["holy_sugar"]["proba"][level].asDouble();
-	double number = config["holy_sugar"]["number"][level].asDouble();
-	std::string type_proba = config["holy_sugar"]["type"][level].asString();
 	stay_on_ground = config["stay_on_ground"].asBool();
-	holy_sugar = 0;
-	if (type_proba == "full") {
-		double proba = rand() % 1000 / 1000;
-		if (proba > proba) {
-			holy_sugar = number;
-		}
-	}
-	if (type_proba == "range") {
-		for (int i(0); i < number; ++i) {
-			double proba = rand() % 1000 / 1000;
-			if (proba > proba) {
-				++holy_sugar;
-			}
-		}
-	}
+}
 
+void Dango::initSkeleton(Json::Value &config)
+{
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	skeleton = SkeletonAnimation::createWithJsonFile(config["skeleton"].asString(),
 		config["atlas"].asString(), 0.12f * visibleSize.width / 1280);
-	//skeleton->setScale(Cell::getCellWidth() / skeleton->getContentSize().width);
 	skeleton->setCompleteListener([&](spTrackEntry* entry) {
 		skeletonAnimationHandle();
 	});
@@ -74,96 +68,132 @@ void Dango::initFromConfig() {
 		else if (Value(event->data->name).asString() == "down") {
 			on_ground = true;
 		}
-		//log("%d event: %s, %d, %f, %s", trackIndex, event->data->name, event->intValue, event->floatValue, event->stringValue);
 	});
 	skeleton->setSkin("normal_" + Value(level + 1).asString());
 	updateAnimation();
-	/*auto anim = skeleton->setAnimation(0,"jump_side",true);
-	skeleton->setTimeScale(1 / (getSpeed() * anim->animation->duration));*/
-	//skeleton->setPosition(Vec2(0, -Cell::getCellHeight() * 3 / 10));
-	addChild(skeleton,2);
+	addChild(skeleton, 2);
+}
 
-	auto layout = ui::Layout::create();
-	//layout->setPosition(Vec2(-Cell::getCellWidth() / 2, -Cell::getCellWidth() / 2));
+void Dango::initHolySugarNumber(Json::Value &config)
+{
+	double minimumProbability = config["holy_sugar"]["prob"][level].asDouble();
+	double number = config["holy_sugar"]["number"][level].asDouble();
+	std::string type_proba = config["holy_sugar"]["type"][level].asString();
+	std::random_device randomDevice;  //Will be used to obtain a seed for the random number engine
+	std::mt19937 generator(randomDevice()); //Standard mersenne_twister_engine seeded with rd()
+	std::uniform_real_distribution<> uniformDistribution(0.0, 1.0);
+	holy_sugar = 0;
+	if (type_proba == "full") {
+		double proba = uniformDistribution(generator);
+		if (proba < minimumProbability) {
+			holy_sugar = number;
+		}
+	}
+	if (type_proba == "range") {
+		for (int i(0); i < number; ++i) {
+			double proba = uniformDistribution(generator);
+			if (proba < minimumProbability) {
+				++holy_sugar;
+			}
+		}
+	}
+}
 
-	ui::LoadingBar* loading_bar = ui::LoadingBar::create("res/buttons/sliderProgress.png");
-	loading_bar->setPercent((double)hitPoints / getSpecConfig()["hitpoints"][level].asDouble() * 100);
-	loading_bar->setScaleX(Cell::getCellWidth() / 2 / loading_bar->getContentSize().width);
-	loading_bar->setScaleY(Cell::getCellWidth() / 10 / loading_bar->getContentSize().height);
-	layout->addChild(loading_bar, 2, "loading_bar");
+void Dango::showLifeBar()
+{
+	lifeBar->setVisible(true);
+}
 
-	Sprite* loading_background = Sprite::create("res/buttons/loaderBackground.png");
-	loading_background->setScaleX(Cell::getCellWidth() / 2 / loading_background->getContentSize().width);
-	loading_background->setScaleY(Cell::getCellWidth() / 10 / loading_background->getContentSize().height);
-	layout->addChild(loading_background, 1, "loading_background");
-
-	layout->setVisible(false);
-	addChild(layout, 2, "life_bar");
+void Dango::hideLifeBar()
+{
+	if (hitPoints == maxHitPoints) {
+		lifeBar->setVisible(false);
+	}
 }
 
 void Dango::update(float dt) {
 	updateEffects(dt);
-
+	lifeBar->update();
 	switch (state) {
 		case IDLE:
-			if (shouldAttack()) {
-				state = ATTACK;
-				updateAnimation();
-			}
-			else {
-				state = MOVE;
-				updateAnimation();
-			}
+			updateIDLE();
 			break;
 		case ATTACK:
-			if (shouldAttack()) {
-				attack(dt);
-				state = RELOAD;
-			}
-			else {
-				state = MOVE;
-				updateAnimation();
-			}
+			updateAttack(dt);
 			break;
 		case RELOAD:
-			reload_timer += dt;
-			if (reload_timer > attack_reloading) {
-				reload_timer = 0;
-				if (shouldAttack()) {
-					state = ATTACK;
-					updateAnimation();
-				}
-				else {
-					state = MOVE;
-					updateAnimation();
-				}
-			}
+			updateReload(dt);
 			break;
 		case MOVE:
-			if (!on_ground || !stay_on_ground) {
-				move(dt);
-			}
-			
-			if (shouldAttack()) {
-				state = ATTACK;
-				updateAnimation();
-			}
+			updateMove(dt);
 			break;
 		default:
 			break;
 	}
 }
 
+void Dango::updateMove(float dt)
+{
+	if (!on_ground || !stay_on_ground) {
+		move(dt);
+	}
+
+	if (shouldAttack()) {
+		state = ATTACK;
+		updateAnimation();
+	}
+}
+
+void Dango::updateReload(float dt)
+{
+	reload_timer += dt;
+	if (reload_timer > attack_reloading) {
+		reload_timer = 0;
+		if (shouldAttack()) {
+			state = ATTACK;
+			updateAnimation();
+		}
+		else {
+			state = MOVE;
+			updateAnimation();
+		}
+	}
+}
+
+void Dango::updateAttack(float dt)
+{
+	if (shouldAttack()) {
+		attack(dt);
+		state = RELOAD;
+	}
+	else {
+		state = MOVE;
+		updateAnimation();
+	}
+}
+
+void Dango::updateIDLE()
+{
+	if (shouldAttack()) {
+		state = ATTACK;
+		updateAnimation();
+	}
+	else {
+		state = MOVE;
+		updateAnimation();
+	}
+}
+
 void Dango::move(float dt){
 	
-	double distance = path[targetedCell]->getPosition().distanceSquared(getPosition());
-	double distance2(0);
-	double distance3(0);
+	double distanceToTargetCell = path[targetedCell]->getPosition().distanceSquared(getPosition());
+	double distanceBetweenTwoCells(0);
+	double distanceToPreviousCell(0);
 	if (targetedCell >= 1){
-		distance2 = path[targetedCell]->getPosition().distanceSquared(path[targetedCell - 1]->getPosition());
-		distance3 = path[targetedCell-1]->getPosition().distanceSquared(getPosition());
+		distanceBetweenTwoCells = path[targetedCell]->getPosition().distanceSquared(path[targetedCell - 1]->getPosition());
+		distanceToPreviousCell = path[targetedCell-1]->getPosition().distanceSquared(getPosition());
 	}
-	if (targetedCell == 0 || distance3 >= distance2){
+	if (targetedCell == 0 || distanceToPreviousCell >= distanceBetweenTwoCells){
 		if (targetedCell + 1 < path.size()){
 			++targetedCell;
 			Vec2 direction = path[targetedCell]->getPosition() - path[targetedCell - 1]->getPosition();
@@ -213,47 +243,66 @@ void Dango::updateAnimation(){
 		stopAction(cAction);
 	}
 	double x = this->getScaleX();
-	float game_speed = SceneManager::getInstance()->getGame()->getAcceleration();
+	float gameSpeed = SceneManager::getInstance()->getGame()->getAcceleration();
 
+	if (state == ATTACK || state == MOVE) {
+		updateAnimationDirection(state, cDirection, gameSpeed);
+	}
+}
+
+std::string getStringFromState(Dango::STATE state) {
+	switch (state) {
+	case Dango::STATE::ATTACK:
+		return "attack";
+	case Dango::STATE::ATTACK_SPE:
+		return "attack_spe";
+	case Dango::STATE::MOVE:
+		return "jump";
+	case Dango::STATE::RELOAD:
+		return "reload";
+	case Dango::STATE::DYING:
+		return "dying";
+	case Dango::STATE::IDLE:
+		return "idle";
+	case Dango::STATE::DEAD:
+		return "dead";
+	}
+}
+
+std::string getStringFromDirection(Dango::DIRECTION direction) {
+	switch (direction) {
+	case Dango::DIRECTION::UP:
+		return "up";
+	case Dango::DIRECTION::LEFT:
+		return "side";
+	case Dango::DIRECTION::RIGHT:
+		return "side";
+	case Dango::DIRECTION::DOWN:
+		return "down";
+	}
+}
+
+void Dango::updateAnimationDirection(Dango::STATE state, Dango::DIRECTION direction, double gameSpeed) {
 	spTrackEntry* anim;
-	if (state == ATTACK) {
-		switch (cDirection) {
-		case UP:
-			anim = skeleton->setAnimation(0, "attack_up", false);
-			break;
-		case RIGHT:
-			this->setScaleX(((x > 0) - (x < 0))* x);
-			anim = skeleton->setAnimation(0, "attack_side", false);
-			break;
-		case LEFT:
-			this->setScaleX(-((x > 0) - (x < 0))*x);
-			anim = skeleton->setAnimation(0, "attack_side", false);
-			break;
-		case DOWN:
-			anim = skeleton->setAnimation(0, "attack_down", false);
-			break;
-		}
-		skeleton->setTimeScale(1.25f * game_speed);
+	double x = this->getScaleX();
+	if (direction == Dango::DIRECTION::RIGHT) {
+		this->setScaleX(((x > 0) - (x < 0))* x);
 	}
-	else if(state == MOVE) {
-		switch (cDirection) {
-		case UP:
-			anim = skeleton->setAnimation(0, "jump_up", true);
-			break;
-		case RIGHT:
-			this->setScaleX(((x > 0) - (x < 0))* x);
-			anim = skeleton->setAnimation(0, "jump_side", true);
-			break;
-		case LEFT:
-			this->setScaleX(-((x > 0) - (x < 0))*x);
-			anim = skeleton->setAnimation(0, "jump_side", true);
-			break;
-		case DOWN:
-			anim = skeleton->setAnimation(0, "jump_down", true);
-			break;
-		}
-		skeleton->setTimeScale(anim->animation->duration * (1 - getSpeedRedtuctionRatio()) * game_speed);
+	else if (direction == Dango::DIRECTION::LEFT) {
+		this->setScaleX(-((x > 0) - (x < 0))*x);
 	}
+	if (state != Dango::STATE::ATTACK_SPE) {
+		anim = skeleton->setAnimation(0, getStringFromState(state) + "_" + getStringFromDirection(direction), true);
+	}
+	else {
+		anim = skeleton->setAnimation(0, getAttackSpeAnimationName(), true);
+	}
+	
+	skeleton->setTimeScale(anim->animation->duration * (1 - getSpeedReductionRatio()) * gameSpeed);
+}
+
+std::string Dango::getAttackSpeAnimationName() {
+	return "";
 }
 
 int Dango::getXP() {
@@ -262,6 +311,11 @@ int Dango::getXP() {
 
 int Dango::getHolySugar() {
 	return holy_sugar;
+}
+
+unsigned int Dango::getLevel()
+{
+	return level;
 }
 
 double Dango::getHitPoints(){
@@ -287,7 +341,7 @@ void Dango::takeDamages(double damages){
 		state = DYING;
 		die();
 	}
-	updateLifeBar();
+	showLifeBar();
 }
 
 void Dango::applyProspectiveDamages(int id_damage) {
@@ -302,7 +356,7 @@ void Dango::applyProspectiveDamages(int id_damage) {
 		state = DYING;
 		die();
 	}
-	updateLifeBar();
+	showLifeBar();
 	/*log("take prospective damages id : %i, size: %i", id_damage, prospective_damages.size());
 	for (auto id : prospective_damages){
 		log("-> damages id : %i", id);
@@ -387,7 +441,7 @@ int Dango::getTargetedCell(){
 
 double Dango::getSpeed(){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	return speed + getSpeedRedtuctionRatio() * speed;
+	return speed + getSpeedReductionRatio() * speed;
 }
 
 void Dango::addEffect(Effect* effect) {
@@ -449,62 +503,6 @@ int Dango::addDamagesModifier(std::pair<double, Effect*> dmg_modifier) {
 	return modifier_id - 1;
 }
 
-ui::Layout* Dango::getInformationLayout(LevelInterface* interface_game) {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-
-	auto layout = ui::Layout::create();
-	layout->setPosition(Vec2(-Cell::getCellWidth() / 2, -Cell::getCellWidth() / 2));
-
-	ui::LoadingBar* loading_bar = ui::LoadingBar::create("res/buttons/sliderProgress.png");
-	loading_bar->setPercent((double)hitPoints / getSpecConfig()["hitpoints"][level].asDouble() * 100);
-	loading_bar->setScaleX(Cell::getCellWidth() / 2 / loading_bar->getContentSize().width);
-	loading_bar->setScaleY(Cell::getCellWidth() / 10 / loading_bar->getContentSize().height);
-	layout->addChild(loading_bar, 2, "loading_bar");
-
-	Sprite* loading_background = Sprite::create("res/buttons/loaderBackground.png");
-	loading_background->setScaleX(Cell::getCellWidth() / 2 / loading_background->getContentSize().width);
-	loading_background->setScaleY(Cell::getCellWidth() / 10 / loading_background->getContentSize().height);
-	layout->addChild(loading_background, 1, "loading_background");
-
-	double position_x = getPosition().x;
-	double position_y = getPosition().y + getContentSize().height * getScaleY();
-	if (position_x - loading_background->getContentSize().width * loading_background->getScaleX() / 2 < 0) {
-		position_x += abs(position_x - loading_background->getContentSize().width * loading_background->getScaleX() / 2);
-	}
-	else if (position_x + loading_background->getContentSize().width * loading_background->getScaleX() / 2 > visibleSize.width * 3 / 4) {
-		position_x -= abs(position_x + loading_background->getContentSize().width * loading_background->getScaleX() / 2 - visibleSize.width * 3 / 4);
-	}
-	if (position_y + loading_background->getContentSize().height * loading_background->getScaleY() / 2 > visibleSize.height) {
-		position_y = getPosition().y - loading_background->getContentSize().height * loading_background->getScaleY() / 2 -
-			getContentSize().height*getScaleY() / 2;
-	}
-	layout->setPosition(Vec2(position_x, position_y));
-
-	return layout;
-}
-
-void Dango::updateInformationLayout(cocos2d::ui::Layout* layout) {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-
-	auto loading_background = layout->getChildByName("loading_background");
-	auto loading_bar = (ui::LoadingBar*)layout->getChildByName("loading_bar");
-	loading_bar->setPercent((double)hitPoints / getSpecConfig()["hitpoints"][level].asDouble() * 100);
-
-	double position_x = getPosition().x;
-	double position_y = getPosition().y + getContentSize().height * getScaleY();
-	if (position_x - loading_background->getContentSize().width * loading_background->getScaleX() / 2 < 0) {
-		position_x += abs(position_x - loading_background->getContentSize().width * loading_background->getScaleX() / 2);
-	}
-	else if (position_x + loading_background->getContentSize().width * loading_background->getScaleX() / 2 > visibleSize.width * 3 / 4) {
-		position_x -= abs(position_x + loading_background->getContentSize().width * loading_background->getScaleX() / 2 - visibleSize.width * 3 / 4);
-	}
-	if (position_y + loading_background->getContentSize().height * loading_background->getScaleY() / 2 > visibleSize.height) {
-		position_y = getPosition().y - loading_background->getContentSize().height * loading_background->getScaleY() / 2 -
-			getContentSize().height*getScaleY() / 2;
-	}
-	layout->setPosition(Vec2(position_x, position_y));
-}
-
 void Dango::pauseAnimation() {
 	skeleton->pause();
 }
@@ -517,7 +515,7 @@ int Dango::getNbCellsToPath() {
 	return path.size() - targetedCell;
 }
 
-double Dango::getSpeedRedtuctionRatio() {
+double Dango::getSpeedReductionRatio() {
 	double speed_ratio(0);
 	for (auto modifier : m_speed) {
 		if(modifier.second.first < speed_ratio){
@@ -560,13 +558,4 @@ void Dango::changeSpeedAnimation(float game_speed) {
 	else if (state == MOVE) {
 		skeleton->setTimeScale(skeleton->getCurrent()->animation->duration * getSpeed() * game_speed);
 	}
-}
-
-void Dango::updateLifeBar() {
-	if (!getChildByName("life_bar")->isVisible()) {
-		getChildByName("life_bar")->setVisible(true);
-	}
-	auto loading_background = getChildByName("life_bar")->getChildByName("loading_background");
-	auto loading_bar = (ui::LoadingBar*)getChildByName("life_bar")->getChildByName("loading_bar");
-	loading_bar->setPercent((double)hitPoints / getSpecConfig()["hitpoints"][level].asDouble() * 100);
 }

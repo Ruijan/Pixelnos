@@ -20,8 +20,8 @@ public:
 	Json::Value getSpecConfig();
 	void attackSpe(float dt);
 	virtual void update(float dt);
-	virtual void updateAnimation();
 	virtual bool shouldAttackSpe();
+	virtual std::string getAttackSpeAnimationName();
 	virtual void startAttackSpeAnimation();
 
 	bool isAffectedByAttack(Attack* attack);

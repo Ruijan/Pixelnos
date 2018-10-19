@@ -62,10 +62,10 @@ void Bomber::attack(){
 		}
 		//log("--> bullet thrown with id %i", attacked_enemies[target]);
 		if (level >= settings->getMaxExistingLevel() - 1) {
-			ball = WaterBombBall::create(target, damage, 500 * visibleSize.width / 960, 100);
+			ball = WaterBombBall::create(target, settings->getDamage(level), 500 * visibleSize.width / 960, 100);
 		}
 		else {
-			ball = WaterBall::createWithFile(file, target, damage, 500 * visibleSize.width / 960);
+			ball = WaterBall::createWithFile(file, target, settings->getDamage(level), 500 * visibleSize.width / 960);
 		}
 		ball->setDamagesId(attacked_enemies[target]);
 		attacked_enemies.erase(attacked_enemies.find(target));
@@ -94,7 +94,7 @@ void Bomber::startLimit() {
 		state = LIMIT_BURSTING;
 		log("LIMIT STARTED, round %i", nb_limit_attack);
 
-		givePDamages(damage);
+		givePDamages(settings->getDamage(level));
 		startAnimation(2.f);
 		++nb_limit_attack;
 		//((Label*)getChildByName("label_state"))->setString("LIMIT_BURSTING");

@@ -90,12 +90,12 @@ void Cutter::attack(){
 	for (auto& cTarget : otherTargets){
 		if (cTarget != nullptr){
 			Slash* slash = nullptr;
-			if (level >= (int)getConfig()["cost"].size() - 1 || state == LIMIT_BURSTING) {
-				slash = DeepSlash::create(cTarget, damage, getConfig()["deep_wound_duration"].asDouble(),
+			if (level >= getConfig()["cost"].size() - 1 || state == LIMIT_BURSTING) {
+				slash = DeepSlash::create(cTarget, settings->getDamage(level), getConfig()["deep_wound_duration"].asDouble(),
 					getConfig()["deep_wound_percent"].asDouble());
 			}
 			else {
-				slash = Slash::create(cTarget, damage);
+				slash = Slash::create(cTarget, settings->getDamage(level));
 			}
 			slash->setDamagesId(attacked_enemies[cTarget]);
 			attacked_enemies.erase(attacked_enemies.find(cTarget));
@@ -125,7 +125,7 @@ void Cutter::startLimit() {
 		/*cocos2d::Vector<SpriteFrame*> animFrames = getAnimation(ATTACKING);
 		Animation* currentAnimation = Animation::createWithSpriteFrames(animFrames,
 			animation_duration / nb_frames_anim / 3.0f);*/
-		givePDamages(damage);
+		givePDamages(settings->getDamage(level));
 		startAnimation(3.f);
 
 		/*auto callbackAttack = CallFunc::create([&]() {

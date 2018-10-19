@@ -26,7 +26,7 @@ protected:
 	void createLockLayout(cocos2d::Size &visibleSize);
 	void createDescriptionLayout(cocos2d::Size &visibleSize);
 	void createNextLevelButton(cocos2d::Size &visibleSize);
-	void addUpgradeTowerActionToTracker();
+	void addTowerActionToTracker(std::string towerAction);
 	void createSellButton(cocos2d::Size &visibleSize);
 	void createMaxLevelLabel(cocos2d::Size &visibleSize);
 

@@ -13,7 +13,7 @@ protected:
 	virtual bool init(MyGame* game);
 	void addTowerExperiences(cocos2d::Size &visibleSize);
 	void addWinMallowsImages();
-	void addTowerLoadingExp(std::string & towerName, cocos2d::Size &visibleSize, Json::Value &root);
+	void addTowerLoadingExp(std::string & towerName, cocos2d::Size &visibleSize, Json::Value &root, Json::Value &towerConfig);
 	void addRewardSugar(Json::Value &buttons, std::string &language, cocos2d::Size &visibleSize);
 	void addStars();
 	void addYouWinLabel(Json::Value &buttons, std::string &language, cocos2d::Size &visibleSize);

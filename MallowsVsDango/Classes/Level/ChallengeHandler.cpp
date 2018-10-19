@@ -2,6 +2,7 @@
 #include "../SceneManager.h"
 #include "../AppDelegate.h"
 #include "../Config/json.h"
+#include "../Towers/TowerFactory.h"
 
 USING_NS_CC;
 
@@ -225,12 +226,12 @@ void ChallengeHandler::addTower(Tower::TowerType type, cocos2d::Vec2 position) {
 			}
 			break;
 		case Challenge::ChallengeType::Discriminant:
-			if (Tower::getTowerTypeFromString(challenge->getStringValue()) == type) {
+			if (TowerFactory::getTowerTypeFromString(challenge->getStringValue()) == type) {
 				challenge->setState(Challenge::State::Failed);
 			}
 			break;
 		case Challenge::ChallengeType::Narrow:
-			if (Tower::getTowerTypeFromString(challenge->getStringValue()) != type) {
+			if (TowerFactory::getTowerTypeFromString(challenge->getStringValue()) != type) {
 				challenge->setState(Challenge::State::Failed);
 			}
 			break;

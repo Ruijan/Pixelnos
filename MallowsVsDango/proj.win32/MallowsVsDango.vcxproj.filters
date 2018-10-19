@@ -52,6 +52,12 @@
     <Filter Include="src\Towers\GUI">
       <UniqueIdentifier>{1b5826c0-a8f3-4b7b-8410-31b33921d619}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Towers\Exception">
+      <UniqueIdentifier>{d03282c2-fc5a-4f38-8506-bbb36b64b879}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Dangos\GUI">
+      <UniqueIdentifier>{9d660e7c-c80e-4e5d-b211-7f16d2588740}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -254,6 +260,15 @@
     </ClCompile>
     <ClCompile Include="..\Classes\Towers\GUI\NextLevelPanel.cpp">
       <Filter>src\Towers\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Dangos\GUI\DangoInformationPanel.cpp">
+      <Filter>src\Dangos\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Dangos\Monkey.cpp">
+      <Filter>src\Dangos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Dangos\GUI\SpecialAttackAnnouncement.cpp">
+      <Filter>src\Dangos\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -469,6 +484,18 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Config\Settings\TowerSettings.h">
       <Filter>src\Config\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Exception\TowerTypeException.h">
+      <Filter>src\Towers\Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Dangos\GUI\DangoInformationPanel.h">
+      <Filter>src\Dangos\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Dangos\Monkey.h">
+      <Filter>src\Dangos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Dangos\GUI\SpecialAttackAnnouncement.h">
+      <Filter>src\Dangos\GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,9 @@ Like a specific screen with all the caracteristics. It's an abstract class.
 */
 
 bool sortZOrder(cocos2d::Node* sprite1, cocos2d::Node* sprite2);
+float getMaxXPositionFromSprite(cocos2d::Node * sprite);
+float getMaxYPositionFromSprite(cocos2d::Node * sprite);
+Json::Value tryGettingLevelElementsConfig(Json::Value& allLevelsConfig);
 typedef unsigned int Quantity;
 
 class Level : public cocos2d::Layer
@@ -28,11 +31,23 @@ public:
 	virtual ~Level();
 	static Level* create(unsigned int nLevel, unsigned int nWorld);
 	virtual bool init();
+	void initLevelValues(Json::Value &currentLevelConfig, Json::Value &save_file);
+	void initObjects(Json::Value &root, double ratio, cocos2d::Size &visibleSize);
+	void initLockedCells(Json::Value &root, double ratio, cocos2d::Size &visibleSize);
+	void initGenerator(Json::Value &root);
+	void initPaths(Json::Value &root, double ratio, cocos2d::Size &visibleSize);
+	void initCells(int min_width_ratio, int min_height_ratio, cocos2d::Size &visibleSize);
+	void initBackgrounds(Json::Value &root, double ratio);
 	void initWalls();
 
 	virtual void update(float dt);
+	void updateDangoGenerator(float dt);
+	void updateWall();
+	void updateBullets(float dt);
+	void updateDangos(float dt);
+	bool isLevelFinished();
 	void updateTowers(float dt);
-	void removeElements();
+	void removeDeletedElements();
 
 	bool isPaused();
 	std::vector<Tower*>& getTowers();
@@ -68,6 +83,8 @@ public:
 	void addAttack(Attack* bullet);
 	bool hasLost();
 	void reset();
+	void resetCells();
+	void removeLevelChildren();
 	std::vector<Attack*> getAttacks();
 	void setGameSpeed(float game_speed);
 
@@ -93,12 +110,13 @@ protected:
 	bool paused;
 	int zGround;
 	Quantity sugar;
-	Quantity used_sugar;
+	Quantity usedSugar;
 	Quantity life;
 	int experience;
-	int holy_sugar;
+	int holySugar;
 	
 	void reorder();
+	std::vector<Node*> createElementsArray();
 };
 
 #endif

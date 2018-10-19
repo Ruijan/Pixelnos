@@ -55,7 +55,6 @@ void WinMenu::updateIncrementXP(cocos2d::Label* exp_label, cocos2d::ui::LoadingB
 	float* increment, int initial_value, int diff_exp, int loop, int max_level) {
 	Json::Value root = ((AppDelegate*)cocos2d::Application::getInstance())->getSave();
 	Json::Value config = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER);
-
 	int c_exp = initial_value;
 	float duration = 4.0 / ((float)loop + 1.0);
 	float speed = 0.05f;
@@ -74,7 +73,7 @@ void WinMenu::updateIncrementXP(cocos2d::Label* exp_label, cocos2d::ui::LoadingB
 				cocos2d::ScaleTo::create(0.125f, 1.f), nullptr));
 		}
 	}
-	loading_bar->setPercent(100 * (float)c_exp / Tower::getConfig()[tower_name]["xp_level"][max_level + 1].asDouble());
+	loading_bar->setPercent(100 * (float)c_exp / config[tower_name]["xp_level"][max_level + 1].asDouble());
 	exp_label->setString("+" + Json::Value(diff_exp - (int)(*increment)).asString());
 	if (exp_label->getString() != "+0") {
 		(*increment) += (float)diff_exp / (float)nb_iterations;
@@ -133,11 +132,12 @@ bool WinMenu::init(MyGame* game)
 void WinMenu::addTowerExperiences(cocos2d::Size &visibleSize)
 {
 	Json::Value root = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getSaveValues()["towers"];
+	Json::Value towerConfig = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER);
 	previousObjectPos = previousObjectPos - cocos2d::Vec2(0, previousObjectSize.height);
 	std::vector<std::string> towerNames = root.getMemberNames();
 	for (auto towerName : towerNames) {
 		if (root[towerName]["unlocked"].asBool()) {
-			addTowerLoadingExp(towerName, visibleSize, root);
+			addTowerLoadingExp(towerName, visibleSize, root, towerConfig);
 		}
 	}
 }
@@ -161,7 +161,7 @@ void WinMenu::addWinMallowsImages()
 	addChild(win_mallow3, 2, "win_mallow3");
 }
 
-void WinMenu::addTowerLoadingExp(std::string & towerName, cocos2d::Size &visibleSize, Json::Value &root)
+void WinMenu::addTowerLoadingExp(std::string & towerName, cocos2d::Size &visibleSize, Json::Value &root, Json::Value &towerConfig)
 {
 	cocos2d::Label* exp_tower = cocos2d::Label::createWithTTF("Exp " + towerName, "fonts/LICABOLD.ttf", 40.f * visibleSize.width / 1280);
 	exp_tower->enableOutline(cocos2d::Color4B::BLACK, 2);

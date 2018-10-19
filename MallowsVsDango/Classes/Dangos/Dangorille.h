@@ -5,6 +5,7 @@
 #include "../Config/json.h"
 #include "Dangosimple.h"
 #include "ui/CocosGUI.h"
+#include "Monkey.h"
 
 
 class Cell;
@@ -12,6 +13,11 @@ class Cell;
 class Dangorille : public Dangosimple{
 
 public:
+	enum SpecialAttackState {
+		WAITING,
+		STARTING,
+		DONE
+	};
 	Dangorille(std::vector<Cell*> npath, int nlevel);
 	virtual ~Dangorille();
 	static Dangorille* create(std::vector<Cell*> npath, int nlevel);
@@ -21,20 +27,21 @@ public:
 	Json::Value getSpecConfig();
 	void attackSpe(float dt);
 	virtual void update(float dt);
-	virtual void updateAnimation();
+	void updateIDLE();
+	void updateMove(float dt);
+	void updateSpecialAttack(float dt);
+	virtual std::string getAttackSpeAnimationName();
 	bool shouldAttackSpe();
 	void generateMonkeys();
 	void startAttackSpeAnimation();
-	void animateWords(std::vector<cocos2d::Label*> texts, int index);
 	virtual void endDyingAnimation();
 
 private:
 	double nb_monkeys;
-	std::vector<cocos2d::ui::Layout*> monkeys;
 	double attack_spe_reload_timer;
 	double attack_spe_reload_time;
-	Json::Value attack_spe_text;
-	bool attack_spe_done;
+	std::vector<std::string> textToDisplay;
+	SpecialAttackState speAttackState;
 };
 
 #endif

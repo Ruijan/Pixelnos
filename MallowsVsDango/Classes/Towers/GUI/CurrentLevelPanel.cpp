@@ -129,3 +129,8 @@ const cocos2d::Size & CurrentLevelPanel::getLevelLabelSize()
 {
 	return levelLabel->getContentSize();
 }
+
+void CurrentLevelPanel::setTower(Tower * cTower)
+{
+	tower = cTower;
+}
