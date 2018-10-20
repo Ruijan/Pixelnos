@@ -6,9 +6,7 @@ Slash::Slash(Dango* ntarget, double ndamages) :
 
 }
 
-Slash::~Slash() {
-
-}
+Slash::~Slash() {}
 
 Slash* Slash::create(Dango* ntarget, double damages) {
 	Slash* pSprite = new Slash(ntarget, damages);

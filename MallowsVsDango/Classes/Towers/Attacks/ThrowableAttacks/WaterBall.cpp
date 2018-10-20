@@ -4,9 +4,7 @@ WaterBall::WaterBall(Dango* ntarget, double ndamages, double nspeed) :
 	ThrowableAttack(ntarget, ndamages, nspeed, "bomber"){
 }
 
-WaterBall::~WaterBall() {
-
-}
+WaterBall::~WaterBall() {}
 
 WaterBall* WaterBall::create(Dango* ntarget, double damages, double nspeed) {
 	WaterBall* pSprite = new WaterBall(ntarget, damages, nspeed);

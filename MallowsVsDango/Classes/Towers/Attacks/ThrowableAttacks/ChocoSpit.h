@@ -1,6 +1,7 @@
 #pragma once
 #include "WaterBall.h"
 
+
 class ChocoSpit : public WaterBall{
 public:
 	ChocoSpit(Dango* ntarget, double damages, double slow, double duration, double nspeed);

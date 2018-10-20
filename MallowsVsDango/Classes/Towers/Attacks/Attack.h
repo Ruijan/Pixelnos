@@ -15,7 +15,7 @@ public:
 		ANIMATING,
 		DONE
 	};
-	Attack(Dango* ntarget, double ndamages, std::string njsontype);
+	Attack(Dango* ntarget, double ndamages, const std::string& njsontype);
 	virtual ~Attack();
 	
 	virtual void update(float dt);
@@ -36,16 +36,13 @@ public:
 
 protected:
 	Dango* target;
-	int id;
 	double damages;
 	int damages_id;
+	std::string jsontype;
 	State state;
 
-	// deletion attributes
 	bool enabled;
 	cocos2d::Action* action;
-
-	std::string jsontype;
 	int rewardedXP;
 };
 

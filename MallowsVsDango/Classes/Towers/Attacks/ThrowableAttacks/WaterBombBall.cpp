@@ -6,9 +6,7 @@ WaterBombBall::WaterBombBall(Dango* ntarget, double ndamages, double nspeed, dou
 	jsontype = "bomber";
 }
 
-WaterBombBall::~WaterBombBall() {
-
-}
+WaterBombBall::~WaterBombBall() {}
 
 WaterBombBall* WaterBombBall::create(Dango* ntarget, double damages, double nspeed, double range) {
 	WaterBombBall* pSprite = new WaterBombBall(ntarget, damages, nspeed, range);

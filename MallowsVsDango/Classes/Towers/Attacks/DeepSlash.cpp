@@ -6,9 +6,7 @@ DeepSlash::DeepSlash(Dango* ntarget, double ndamages, double duration, double pe
 	effect = DeepWound::create(ntarget, duration, percent);
 }
 
-DeepSlash::~DeepSlash() {
-
-}
+DeepSlash::~DeepSlash() {}
 
 DeepSlash* DeepSlash::create(Dango* ntarget, double damages, double duration, double percent) {
 	DeepSlash* pSprite = new DeepSlash(ntarget, damages, duration, percent);

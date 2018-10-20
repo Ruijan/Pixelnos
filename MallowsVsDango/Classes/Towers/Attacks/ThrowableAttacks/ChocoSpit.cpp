@@ -1,5 +1,5 @@
 #include "ChocoSpit.h"
-#include "../../../SceneManager.h"
+#include "../../../Dangos/Dangobese.h"
 
 ChocoSpit::ChocoSpit(Dango* ntarget, double damages, double slow, double duration, double nspeed) :
 	WaterBall(ntarget, damages, nspeed), 
@@ -7,9 +7,7 @@ ChocoSpit::ChocoSpit(Dango* ntarget, double damages, double slow, double duratio
 	jsontype = "saucer";
 }
 
-ChocoSpit::~ChocoSpit() {
-
-}
+ChocoSpit::~ChocoSpit() {}
 
 ChocoSpit* ChocoSpit::create(Dango* ntarget, double damages, double slow, double slow_duration, double nspeed) {
 	ChocoSpit* pSprite = new ChocoSpit(ntarget, damages, slow, slow_duration, nspeed);
@@ -46,8 +44,6 @@ void ChocoSpit::applyDamagesToTarget()
 	effect->applyModifierToTarget();
 	if (target->isDying() && !target->isDying()) {
 		rewardedXP += target->getXP();
-		/*SceneManager::getInstance()->getGame()->getLevel()->incrementXPTower(jsontype,
-		target->getXP());*/
 	}
 	target = nullptr;
 }

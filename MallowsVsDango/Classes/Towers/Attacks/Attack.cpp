@@ -8,7 +8,7 @@
 USING_NS_CC;
 
 
-Attack::Attack(Dango* ntarget, double ndamages, std::string njsontype): target(ntarget), 
+Attack::Attack(Dango* ntarget, double ndamages, const std::string& njsontype): target(ntarget),
 	damages(ndamages), action(nullptr), 
 	enabled(true), jsontype(njsontype), rewardedXP(0), state(IDLE){
 }
