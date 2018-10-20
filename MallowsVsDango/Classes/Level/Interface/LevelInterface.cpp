@@ -12,6 +12,7 @@
 #include "../../GUI/ParametersMenu.h"
 #include "../../Config/Config.h"
 #include "../../Dangos/Monkey.h"
+#include "../Level.h"
 
 
 USING_NS_CC;
@@ -46,6 +47,7 @@ LevelInterface* LevelInterface::create(MyGame* ngame, Config* config) {
 
 bool LevelInterface::init(MyGame* ngame, Config* nConfig) {
 	game = ngame;
+	level = game->getLevel();
 	if (!Layer::init()) { return false; }
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
@@ -133,7 +135,7 @@ bool LevelInterface::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) 
 			if (game_state == TITLE) {
 				hideStartMenu();
 			}
-			Tower* tower = game->getLevel()->touchingTower(p);
+			Tower* tower = level->touchingTower(p);
 			if (tower != nullptr) {
 				if (state == TURRET_SELECTED) {
 					selected_turret->displayRange(false);
@@ -172,7 +174,7 @@ bool LevelInterface::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) 
 					selected_turret->setVisible(true);
 				}
 			}
-			Dango* dango = game->getLevel()->touchingDango(p);
+			Dango* dango = level->touchingDango(p);
 			if (dango != nullptr) {
 				if (state == TURRET_SELECTED) {
 					state = IDLE;
@@ -205,10 +207,10 @@ void LevelInterface::onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) 
 	cocos2d::Rect rectrightpanel = rightPanel->getChildByName("panel")->getBoundingBox();
 	rectrightpanel.origin += rightPanel->getBoundingBox().origin;
 	if (configClass->getSettings()->isMovingGridEnabled()) {
-		game->getLevel()->showGrid(false);
+		level->showGrid(false);
 	}
 	if (state == TURRET_SELECTED) {
-		Tower* tower = game->getLevel()->touchingTower(p);
+		Tower* tower = level->touchingTower(p);
 		if (tower != nullptr) {
 			selected_turret = tower;
 			rightPanel->displayTowerInfos(tower->getSpecConfig()["name"].asString(), configClass->getSettings()->getLanguage());
@@ -223,7 +225,7 @@ void LevelInterface::onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) 
 		}
 	}
 	else if (state == DANGO_SELECTED) {
-		Dango* dango = game->getLevel()->touchingDango(p);
+		Dango* dango = level->touchingDango(p);
 		if (dango != nullptr) {
 			showDangoInfo();
 		}
@@ -269,11 +271,11 @@ void LevelInterface::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) 
 
 		if (touch->getLocation().x - visibleSize.width * 3 / 4 < 0) {
 			if (configClass->getSettings()->isMovingGridEnabled()) {
-				game->getLevel()->showGrid(true);
+				level->showGrid(true);
 			}
 			auto item = rightPanel->getTowerFromPoint(touch->getStartLocation());
 			if (item.first != "nullptr") {
-				if (game->getLevel()->getQuantity() >= Tower::getConfig()[item.first]["cost"][0].asDouble()) {
+				if (level->getQuantity() >= Tower::getConfig()[item.first]["cost"][0].asDouble()) {
 					state = TURRET_CHOSEN;
 					menuTurretTouchCallback(TowerFactory::getTowerTypeFromString(item.first));
 					moveSelectedTurret(touch->getLocation());
@@ -296,7 +298,7 @@ void LevelInterface::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) 
 			selected_turret = nullptr;
 			state = TOUCHED;
 			if (configClass->getSettings()->isMovingGridEnabled()) {
-				game->getLevel()->showGrid(false);
+				level->showGrid(false);
 			}
 		}
 		else {
@@ -345,7 +347,7 @@ void LevelInterface::addEvents()
 }
 
 void LevelInterface::update(float dt) {
-	levelInfo->update(game->getLevel()->getQuantity(), game->getLevel()->getLife(), game->getLevel()->getProgress());
+	levelInfo->update(level->getQuantity(), level->getLife(), level->getProgress());
 	for (auto& monkey : monkeys) {
 		if (monkey->hasToBeRemoved()) {
 			removeChild(monkey);
@@ -392,16 +394,16 @@ void LevelInterface::update(float dt) {
 
 void LevelInterface::menuTurretTouchCallback(Tower::TowerType turret) {
 	if (selected_turret == nullptr && !game->isPaused()) {
-		Tower* createdTower = TowerFactory::createTower(turret, configClass);
-		game->getLevel()->addTurret(createdTower);
+		Tower* createdTower = TowerFactory::createTower(turret, configClass, level);
+		level->addTurret(createdTower);
 		selected_turret = createdTower;
 	}
 }
 
 void LevelInterface::moveSelectedTurret(Vec2 pos) {
 	if (selected_turret != nullptr) {
-		Cell* nearestCell = game->getLevel()->getNearestCell(selected_turret->getPosition());
-		Cell* nearestCell2 = game->getLevel()->getNearestCell(pos / game->getLevel()->getScale());
+		Cell* nearestCell = level->getNearestCell(selected_turret->getPosition());
+		Cell* nearestCell2 = level->getNearestCell(pos / level->getScale());
 		if (nearestCell2 != nullptr && nearestCell != nullptr) {
 			if (nearestCell2->isFree() && !nearestCell2->isPath() && !nearestCell2->isOffLimit()) {
 				nearestCell->setObject(nullptr);
@@ -413,7 +415,7 @@ void LevelInterface::moveSelectedTurret(Vec2 pos) {
 }
 
 bool LevelInterface::isOnTower(Vec2 pos) {
-	Cell* nearestCell = game->getLevel()->getNearestCell(pos / game->getLevel()->getScale());
+	Cell* nearestCell = level->getNearestCell(pos / level->getScale());
 	if (nearestCell != nullptr) {
 		if ((nearestCell->isFree() || nearestCell->getObject() == selected_turret) && !nearestCell->isPath() && !nearestCell->isOffLimit()) {
 			return false;
@@ -447,7 +449,7 @@ void LevelInterface::reset() {
 	//startMenu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
 	getChildByName("black_mask")->setVisible(false);
 
-	startMenu->reset(game->getLevel()->getLevelId());
+	startMenu->reset(level->getLevelId());
 	getChildByName("reward_layout")->removeAllChildren();
 	removeChild(towerPanel);
 	delete towerPanel;
@@ -461,7 +463,7 @@ void LevelInterface::reset() {
 	removeChildByName("menu_win");
 	initWinMenu(config);
 	challenges = ChallengeHandler::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
-		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["challenges"]);
+		[level->getWorldId()]["levels"][level->getLevelId()]["challenges"]);
 	levelInfo->reset(challenges);
 }
 
@@ -471,7 +473,7 @@ void LevelInterface::initParametersMenu(const Json::Value& config) {
 }
 
 void LevelInterface::initStartMenu(const Json::Value& config) {
-	startMenu = StartMenu::create(this, game->getLevel()->getLevelId());
+	startMenu = StartMenu::create(this, level->getLevelId());
 	addChild(startMenu, 2, "start");
 }
 
@@ -481,7 +483,7 @@ void LevelInterface::showLabelInformation() {
 
 void LevelInterface::initLabels(const Json::Value& config) {
 	challenges = ChallengeHandler::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
-		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["challenges"]);
+		[level->getWorldId()]["levels"][level->getLevelId()]["challenges"]);
 
 	levelInfo = LevelInfo::create(challenges);
 	addChild(levelInfo, 2, "label_information");
@@ -511,7 +513,7 @@ void LevelInterface::builtCallback(Ref* sender) {
 	Json::Value action;
 	action["tower_name"] = selected_turret->getName();
 	action["time"] = (unsigned int)time(0);
-	Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(selected_turret->getPosition());
+	Vec2 turret_position = level->getNearestPositionInGrid(selected_turret->getPosition());
 	action["position"]["x"] = turret_position.x;
 	action["position"]["y"] = turret_position.y;
 	action["action"] = "create_tower";
@@ -520,7 +522,7 @@ void LevelInterface::builtCallback(Ref* sender) {
 
 	selected_turret->builtCallback(sender);
 	selected_turret->setFixed(true);
-	game->getLevel()->decreaseQuantity(selected_turret->getCost());
+	level->decreaseQuantity(selected_turret->getCost());
 	rightPanel->displayTowerInfos("", configClass->getSettings()->getLanguage());
 }
 
@@ -669,7 +671,7 @@ void LevelInterface::startRewarding(Vec2 pos) {
 	std::string language = configClass->getSettings()->getLanguage();
 	Json::Value rootSave = configClass->getSaveValues();
 	Json::Value level_config = configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
-		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()];
+		[level->getWorldId()]["levels"][level->getLevelId()];
 
 	challenges->endChallengeHandler();
 	int successfull_challenges = challenges->countSucceedChallenges();
@@ -680,8 +682,8 @@ void LevelInterface::startRewarding(Vec2 pos) {
 		((Sprite*)getChildByName("menu_win")->getChildByName(starNames[i]))->addChild(star);
 	}
 
-	if ((int)game->getLevel()->getWorldId() >= rootSave["c_world"].asInt() &&
-		(int)game->getLevel()->getLevelId() >= rootSave["c_level"].asInt()) {
+	if ((int)level->getWorldId() >= rootSave["c_world"].asInt() &&
+		(int)level->getLevelId() >= rootSave["c_level"].asInt()) {
 		ui::Layout* reward_layout = (ui::Layout*)getChildByName("reward_layout");
 
 		// Creating Holy Sugar reward animation
@@ -739,7 +741,7 @@ void LevelInterface::initDialoguesFromLevel(const Json::Value& config) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	if (configClass->getSettings()->isDialoguesEnabled()) {
 		Settings* dialgouesSettings = Settings::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
-		[game->getLevel()->getWorldId()]["levels"][game->getLevel()->getLevelId()]["dialogues_file"].asString());
+		[level->getWorldId()]["levels"][level->getLevelId()]["dialogues_file"].asString());
 		if (dialgouesSettings->getSettingsMap()["introDialogue"].size() != 0) {
 			dialogues = Dialogue::createFromConfig(dialgouesSettings->getSettingsMap()["introDialogue"]);
 			addChild(dialogues, 1, "dialogue");
@@ -760,12 +762,12 @@ Dango* LevelInterface::getCurrentDango() {
 
 int LevelInterface::getSugarQuantity()
 {
-	return game->getLevel()->getQuantity();
+	return level->getQuantity();
 }
 
 int LevelInterface::getLifeQuantity()
 {
-	return game->getLevel()->getLife();
+	return level->getLife();
 }
 
 void LevelInterface::handleDeadDango() {
@@ -776,12 +778,12 @@ void LevelInterface::handleDeadDango() {
 
 void LevelInterface::pauseLevel()
 {
-	game->getLevel()->pause();
+	level->pause();
 }
 
 void LevelInterface::resumeLevel()
 {
-	game->getLevel()->resume();
+	level->resume();
 }
 
 void LevelInterface::shakeScaleElement(Node* element, bool loop) {

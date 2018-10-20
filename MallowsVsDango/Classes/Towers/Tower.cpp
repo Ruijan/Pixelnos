@@ -19,8 +19,9 @@ Tower::~Tower() {
 	}
 }
 
-void Tower::initFromConfig(Config* configClass) {
+void Tower::initFromConfig(Config* configClass, Level* globalLevel) {
 	auto config = getSpecConfig();
+	this->globalLevel = globalLevel;
 	auto save = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
 	settings = configClass->getTowerSettings(getType());
 	animation_duration = config["animation_attack_time"].asDouble();
@@ -28,7 +29,7 @@ void Tower::initFromConfig(Config* configClass) {
 	name = config["name"].asString();
 	nb_max_attacks_limit = config["limit"].asInt();
 	xp = save["towers"][config["name"].asString()]["exp"].asInt() + 
-		(SceneManager::getInstance())->getGame()->getLevel()->getTowerXP(config["name"].asString());
+		globalLevel->getTowerXP(config["name"].asString());
 	level_max = save["towers"][config["name"].asString()]["max_level"].asInt();
 	limit_enabled = Skills::getSavedSkillFromID(config["limit_skill_id"].asInt())["bought"].asBool();
 
@@ -169,7 +170,6 @@ void Tower::incrementXP(int amount) {
 
 void Tower::destroyCallback(Ref* sender){
 	destroy = true;
-	SceneManager::getInstance()->getGame()->getMenu()->removeTower();
 }
 
 void Tower::builtCallback(Ref* sender){
@@ -404,7 +404,7 @@ void Tower::updateState(float dt)
 
 void Tower::updateReloading()
 {
-	chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
+	chooseTarget(globalLevel->getEnemies());
 	reload();
 	handleEnrageMode();
 }
@@ -420,7 +420,7 @@ void Tower::updateAttacking(float dt)
 void Tower::updateAware(float dt)
 {
 	timerIDLE += dt;
-	chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
+	chooseTarget(globalLevel->getEnemies());
 	if (target != nullptr) {
 		handleEnrageMode();
 		if (state != LIMIT_BURSTING) {
@@ -446,7 +446,7 @@ void Tower::setIDLEState()
 
 void Tower::updateIDLE()
 {
-	chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
+	chooseTarget(globalLevel->getEnemies());
 	if (target != nullptr) {
 		state = State::AWARE;
 		((Label*)getChildByName("label_state"))->setString("AWARE");

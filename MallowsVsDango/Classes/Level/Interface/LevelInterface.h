@@ -19,6 +19,7 @@ class MyGame;
 class Config;
 class ParametersMenu;
 class Monkey;
+class Level;
 
 class LevelInterface : public cocos2d::Layer
 {
@@ -101,6 +102,7 @@ private:
 	cocos2d::EventListenerTouchOneByOne* listener;
 
 	MyGame* game;
+	Level* level;
 	State state;
 	GameState game_state;
 	Tower* selected_turret;

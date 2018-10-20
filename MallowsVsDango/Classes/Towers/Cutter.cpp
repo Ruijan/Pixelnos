@@ -11,13 +11,13 @@ Cutter::Cutter() : Tower(){
 
 }
 
-Cutter* Cutter::create(Config* configClass)
+Cutter* Cutter::create(Config* configClass, Level* globalLevel)
 {
 	Cutter* pSprite = new Cutter();
 
 	/*if (pSprite->initWithFile(Cutter::getConfig()["image"].asString()))
 	{*/
-		pSprite->initFromConfig(configClass);
+		pSprite->initFromConfig(configClass, globalLevel);
 		pSprite->initDebug();
 		pSprite->initEnragePanel();
 		return pSprite;
@@ -104,14 +104,14 @@ void Cutter::attack(){
 			slash->setPosition(cTarget->getPosition());
 			slash->setScale(visibleSize.width/960);
 			slash->setVisible(false);
-			SceneManager::getInstance()->getGame()->getLevel()->addAttack(slash);
+			globalLevel->addAttack(slash);
 			++nb_attacks;
 		}
 	}
 }
 
 void Cutter::startLimit() {
-	chooseTarget(SceneManager::getInstance()->getGame()->getLevel()->getEnemies());
+	chooseTarget(globalLevel->getEnemies());
 
 	if (isLimitReached() && target != nullptr) {
 		if (state == ATTACKING) {

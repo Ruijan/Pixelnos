@@ -198,10 +198,10 @@ void TowerInformationPanel::createSellButton(cocos2d::Size &visibleSize) {
 		sell->getContentSize().height* sell->getScaleY() / 2));
 	sell->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			MyGame* game = SceneManager::getInstance()->getGame();
 			game->getLevel()->increaseQuantity(settings->getSell(tower->getLevel()));
 			tower->destroyCallback(sender);
-			SceneManager::getInstance()->getGame()->getMenu()->hideTowerInfo();
+			game->getMenu()->removeTower();
+			game->getMenu()->hideTowerInfo();
 			addTowerActionToTracker("sell_tower");
 		}
 	});

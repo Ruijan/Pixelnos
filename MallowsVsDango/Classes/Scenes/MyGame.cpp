@@ -309,7 +309,8 @@ void MyGame::loadTutorials()
 	auto* config = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass();
 	Json::Value tutorialConfiguration = config->getConfigValues(Config::ConfigType::GAMETUTORIAL);
 	for (std::string tutorial : tutorialConfiguration.getMemberNames()) {
-		tutorials.push_back(TutorialFactory::createTutorial(TutorialFactory::getTutorialTypeFromString(tutorial), config, this));
+		tutorials.push_back(TutorialFactory::createTutorial(
+			TutorialFactory::getTutorialTypeFromString(tutorial), config, menu, cLevel));
 	}
 }
 

@@ -3,18 +3,19 @@
 #include "Cutter.h"
 #include "Saucer.h"
 #include "Exception/TowerTypeException.h"
+#include "../Level/Level.h"
 
-Tower* TowerFactory::createTower(Tower::TowerType towerType, Config* config)
+Tower* TowerFactory::createTower(Tower::TowerType towerType, Config* config, Level* level)
 {
 	Tower* createrTower = nullptr;
 	if (towerType == Tower::TowerType::BOMBER) {
-		createrTower = Bomber::create(config);
+		createrTower = Bomber::create(config, level);
 	}
 	else if (towerType == Tower::TowerType::CUTTER) {
-		createrTower = Cutter::create(config);
+		createrTower = Cutter::create(config, level);
 	}
 	else if (towerType == Tower::TowerType::SAUCER) {
-		createrTower = Saucer::create(config);
+		createrTower = Saucer::create(config, level);
 	}
 	return createrTower;
 }

@@ -1,7 +1,7 @@
 #include "WinMenu.h"
 #include "../../AppDelegate.h"
 #include "../../Scenes/MyGame.h"
-
+#include "../Level.h"
 
 WinMenu * WinMenu::create(MyGame* game)
 {
@@ -21,8 +21,8 @@ void WinMenu::showWin()
 	auto* showAction = cocos2d::TargetedAction::create(this, cocos2d::EaseBackOut::create(
 		cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(visibleSize.width / 2, visibleSize.height / 2))));
 	Json::Value root = ((AppDelegate*)cocos2d::Application::getInstance())->getSave();
-
-	rewardSugarValueLabel->setString("+" + Json::Value(game->getLevel()->getHolySugar()).asString());
+	Level* cLevel = game->getLevel();
+	rewardSugarValueLabel->setString("+" + Json::Value(cLevel->getHolySugar()).asString());
 	rewardSugarValueLabel->runAction(
 		cocos2d::Sequence::create(
 			cocos2d::DelayTime::create(0.5f),
@@ -32,23 +32,33 @@ void WinMenu::showWin()
 	for (unsigned int i(0); i < root["towers"].getMemberNames().size(); ++i) {
 		std::string tower_name = root["towers"].getMemberNames()[i];
 		if (root["towers"][tower_name]["unlocked"].asBool()) {
-			getChildByName(tower_name + "_levelup")->setVisible(false);
-			auto exp_label = ((cocos2d::Label*)getChildByName(tower_name + "_exp"));
-			int max_level = root["towers"][tower_name]["max_level"].asInt();
-			exp_label->setColor(cocos2d::Color3B::WHITE);
-			auto loading_bar = ((cocos2d::ui::LoadingBar*)getChildByName(tower_name + "_bar"));
-			int diff_exp = game->getLevel()->getTowerXP(tower_name);
-			exp_label->setString("+" + Json::Value(game->getLevel()->getTowerXP(tower_name)).asString());
-			float* increment = new float(0);
-			int initial_xp = root["towers"][tower_name]["exp"].asInt();
-			int loop(0);
-			auto incrementExp = cocos2d::CallFunc::create([this, exp_label, loading_bar, tower_name, increment, initial_xp, diff_exp, loop, max_level]() {
-				updateIncrementXP(exp_label, loading_bar, tower_name, increment, initial_xp, diff_exp, loop, max_level);
-			});
-			exp_label->runAction(cocos2d::Sequence::create(cocos2d::DelayTime::create(0.1f), cocos2d::ScaleTo::create(0.25f, 1.5f), cocos2d::ScaleTo::create(0.25f, 1.f), incrementExp, nullptr));
+			showIncreasingTowerExperience(tower_name, root, cLevel);
 		}
 	}
 	runAction(showAction);
+}
+
+void WinMenu::showIncreasingTowerExperience(std::string &tower_name, Json::Value &root, Level * cLevel)
+{
+	getChildByName(tower_name + "_levelup")->setVisible(false);
+	auto exp_label = ((cocos2d::Label*)getChildByName(tower_name + "_exp"));
+	int max_level = root["towers"][tower_name]["max_level"].asInt();
+	exp_label->setColor(cocos2d::Color3B::WHITE);
+	auto loading_bar = ((cocos2d::ui::LoadingBar*)getChildByName(tower_name + "_bar"));
+	int diff_exp = cLevel->getTowerXP(tower_name);
+	exp_label->setString("+" + Json::Value(cLevel->getTowerXP(tower_name)).asString());
+	float* increment = new float(0);
+	int initial_xp = root["towers"][tower_name]["exp"].asInt();
+	int loop(0);
+	auto incrementExp = cocos2d::CallFunc::create([this, exp_label, loading_bar, tower_name, increment, initial_xp, diff_exp, loop, max_level]() {
+		updateIncrementXP(exp_label, loading_bar, tower_name, increment, initial_xp, diff_exp, loop, max_level);
+	});
+	exp_label->runAction(cocos2d::Sequence::create(
+		cocos2d::DelayTime::create(0.1f),
+		cocos2d::ScaleTo::create(0.25f, 1.5f),
+		cocos2d::ScaleTo::create(0.25f, 1.f),
+		incrementExp,
+		nullptr));
 }
 
 void WinMenu::updateIncrementXP(cocos2d::Label* exp_label, cocos2d::ui::LoadingBar* loading_bar, std::string tower_name,
