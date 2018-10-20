@@ -1,6 +1,5 @@
-#ifndef  _APP_DELEGATE_H_
-#define  _APP_DELEGATE_H_
-#define COCOS2D_DEBUG 1
+#pragma once
+#define COCOS2D_DEBUG 0
 
 #include "cocos2d.h"
 #include "SceneManager.h"
@@ -66,5 +65,4 @@ protected:
 	AudioController* controller;
 };
 
-#endif // _APP_DELEGATE_H_
 

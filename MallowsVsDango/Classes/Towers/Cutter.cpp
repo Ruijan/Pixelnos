@@ -1,6 +1,7 @@
 #include "Cutter.h"
 #include "../Dangos/Dango.h"
-#include "../Towers/Attack.h"
+#include "../Towers/Attacks/Slash.h"
+#include "../Towers/Attacks/DeepSlash.h"
 #include "../Level/Cell.h"
 #include "../AppDelegate.h"
 

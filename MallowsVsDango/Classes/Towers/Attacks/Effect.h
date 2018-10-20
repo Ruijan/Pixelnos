@@ -1,5 +1,4 @@
-#ifndef EFFECT_HPP
-#define EFFECT_HPP
+#pragma once
 
 #include "cocos2d.h"
 
@@ -15,10 +14,10 @@ SLOW
 // EFFECT
 class Effect: public cocos2d::Sprite{
 public:
-	Effect( Dango* ntarget, float duration, std::string animation_name = "");
+	Effect( Dango* ntarget, float duration, const std::string& animation_name = "");
 	virtual ~Effect();
-	bool initWithFileName(std::string image);
-	std::string getAnimationName();
+	bool initWithFileName(const std::string& image);
+	const std::string& getAnimationName();
 	
 	virtual void update(float dt);
 	bool isDone();
@@ -34,9 +33,9 @@ protected:
 // DEEPWOUND EFFECT
 class DeepWound: public Effect {
 public:
-	DeepWound(Dango* ntarget, float duration, float dmg_percent, std::string animation_name = "");
+	DeepWound(Dango* ntarget, float duration, float dmg_percent, const std::string& animation_name = "");
 	virtual ~DeepWound();
-	static DeepWound* create(Dango* ntarget, float duration, float dmg_percent, std::string animation_name = "");
+	static DeepWound* create(Dango* ntarget, float duration, float dmg_percent, const std::string& animation_name = "");
 
 	virtual void update(float dt);
 	float getDmgPercent();
@@ -50,9 +49,9 @@ protected:
 // BURN EFFECT
 class Burn : public Effect {
 public:
-	Burn(Dango* ntarget, float duration, float dmg, std::string animation_name = "");
+	Burn(Dango* ntarget, float duration, float dmg, const std::string& animation_name = "");
 	virtual ~Burn();
-	static Burn* create(Dango* ntarget, float duration, float dmg_percent, std::string animation_name = "");
+	static Burn* create(Dango* ntarget, float duration, float dmg_percent, const std::string& animation_name = "");
 
 	virtual void update(float dt);
 	float getDamage();
@@ -65,9 +64,9 @@ protected:
 // SLOW EFFECT
 class Slow : public Effect {
 public:
-	Slow(Dango* ntarget, float duration, float nslow, std::string animation_name = "");
+	Slow(Dango* ntarget, float duration, float nslow, const std::string& animation_name = "");
 	virtual ~Slow();
-	static Slow* create(Dango* ntarget, float duration, float slow_percent, std::string animation_name = "");
+	static Slow* create(Dango* ntarget, float duration, float slow_percent, const std::string& animation_name = "");
 
 	virtual void update(float dt);
 	float getSlow();
@@ -77,5 +76,3 @@ protected:
 	float slow_percent;
 	int id;
 };
-
-#endif

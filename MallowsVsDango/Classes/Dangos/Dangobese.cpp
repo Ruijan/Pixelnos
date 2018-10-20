@@ -1,7 +1,7 @@
 #include "Dangobese.h"
 #include "../Level/Cell.h"
 #include "../AppDelegate.h"
-#include "../Towers/Attack.h"
+#include "../Towers/Attacks/ThrowableAttacks/WaterBall.h"
 
 USING_NS_CC;
 
@@ -48,20 +48,11 @@ void Dangobese::attackSpe(float dt) {
 	for (auto& attack : attacks) {
 		if (!isAffectedByAttack(attack)) {
 			double distance = attack->getPosition().distance(getPosition());
-			double speed = 500;
-			double time_to_reach = distance / speed;
 			if (distance < 150 * visibleSize.width / 960 &&
-				time_to_reach < attack_spe_duration - attack_spe_timer &&
 				!((WaterBall*)attack)->isForceApplied()) {
-				Vec2 direction = Vec2(attack->getPosition().x - getPosition().x,
-					attack->getPosition().y - getPosition().y).getNormalized();
-				Vec2 npos = attack->getPosition() - direction * speed * dt * visibleSize.width / 960;
-				attack->setPosition(npos);
 				attack->setEnabled(false);
+				attack->setTarget(this);
 				((WaterBall*)attack)->setForceApplied(true);
-				if (distance < 20 * visibleSize.width / 960) {
-					attack->setHasToBeDeleted(true);
-				}
 			}
 		}
 	}

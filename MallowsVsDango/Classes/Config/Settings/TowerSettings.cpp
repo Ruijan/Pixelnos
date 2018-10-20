@@ -48,7 +48,7 @@ int TowerSettings::getSell(unsigned int level) {
 	}
 }
 
-int TowerSettings::getCost(int level) {
+int TowerSettings::getCost(unsigned int level) {
 	if (level < maxExistingLevel) {
 		return costs[level];
 	}
@@ -56,7 +56,7 @@ int TowerSettings::getCost(int level) {
 		return 0;
 	}
 }
-double TowerSettings::getXP(int level) {
+double TowerSettings::getXP(unsigned int level) {
 	if (level < maxExistingLevel) {
 		return xp_levels[level];
 	}
@@ -64,7 +64,7 @@ double TowerSettings::getXP(int level) {
 		return 0;
 	}
 }
-double TowerSettings::getRange(int level) {
+double TowerSettings::getRange(unsigned int level) {
 	if (level < maxExistingLevel) {
 		return ranges[level];
 	}
@@ -72,7 +72,7 @@ double TowerSettings::getRange(int level) {
 		return 0;
 	}
 }
-double TowerSettings::getDamage(int level) {
+double TowerSettings::getDamage(unsigned int level) {
 	if (level < maxExistingLevel) {
 		return damages[level];
 	}
@@ -80,7 +80,7 @@ double TowerSettings::getDamage(int level) {
 		return 0;
 	}
 }
-double TowerSettings::getAttackSpeed(int level) {
+double TowerSettings::getAttackSpeed(unsigned int level) {
 	if (level < maxExistingLevel) {
 		return attackSpeeds[level];
 	}

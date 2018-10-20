@@ -58,6 +58,12 @@
     <Filter Include="src\Dangos\GUI">
       <UniqueIdentifier>{9d660e7c-c80e-4e5d-b211-7f16d2588740}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Towers\Attacks">
+      <UniqueIdentifier>{b9181e05-0afe-4d04-a1e3-a3a594d99660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Towers\Attacks\ThrowableAttacks">
+      <UniqueIdentifier>{fd1d4b78-9f89-4086-a59d-28f555826924}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -116,12 +122,6 @@
     </ClCompile>
     <ClCompile Include="..\Classes\Level\Wall.cpp">
       <Filter>src\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Attack.cpp">
-      <Filter>src\Towers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Effect.cpp">
-      <Filter>src\Towers</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Towers\Saucer.cpp">
       <Filter>src\Towers</Filter>
@@ -270,6 +270,33 @@
     <ClCompile Include="..\Classes\Dangos\GUI\SpecialAttackAnnouncement.cpp">
       <Filter>src\Dangos\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Attacks\Attack.cpp">
+      <Filter>src\Towers\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Attacks\Effect.cpp">
+      <Filter>src\Towers\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Attacks\Suckable.cpp">
+      <Filter>src\Towers\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Attacks\Slash.cpp">
+      <Filter>src\Towers\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Attacks\DeepSlash.cpp">
+      <Filter>src\Towers\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Attacks\ThrowableAttacks\ThrowableAttack.cpp">
+      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Attacks\ThrowableAttacks\ChocoSpit.cpp">
+      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Attacks\ThrowableAttacks\WaterBall.cpp">
+      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Towers\Attacks\ThrowableAttacks\WaterBombBall.cpp">
+      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -331,12 +358,6 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Level\Wall.h">
       <Filter>src\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Attack.h">
-      <Filter>src\Towers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Effect.h">
-      <Filter>src\Towers</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Towers\Saucer.h">
       <Filter>src\Towers</Filter>
@@ -496,6 +517,33 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Dangos\GUI\SpecialAttackAnnouncement.h">
       <Filter>src\Dangos\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Attacks\Attack.h">
+      <Filter>src\Towers\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Attacks\Effect.h">
+      <Filter>src\Towers\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Attacks\Suckable.h">
+      <Filter>src\Towers\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Attacks\Slash.h">
+      <Filter>src\Towers\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Attacks\DeepSlash.h">
+      <Filter>src\Towers\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Attacks\ThrowableAttacks\ThrowableAttack.h">
+      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Attacks\ThrowableAttacks\ChocoSpit.h">
+      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Attacks\ThrowableAttacks\WaterBall.h">
+      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers\Attacks\ThrowableAttacks\WaterBombBall.h">
+      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

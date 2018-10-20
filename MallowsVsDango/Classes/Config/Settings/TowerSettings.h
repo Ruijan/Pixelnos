@@ -16,11 +16,11 @@ public:
 	const std::vector<double>& getAttackSpeeds();
 
 	int getSell(unsigned int level);
-	int getCost(int level);
-	double getXP(int level);
-	double getRange(int level);
-	double getDamage(int level);
-	double getAttackSpeed(int level);
+	int getCost(unsigned int level);
+	double getXP(unsigned int level);
+	double getRange(unsigned int level);
+	double getDamage(unsigned int level);
+	double getAttackSpeed(unsigned int level);
 	unsigned int getMaxExistingLevel();
 
 protected:
