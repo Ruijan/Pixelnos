@@ -6,18 +6,16 @@
 #include "../Towers/Tower.h"
 
 class Challenge;
+class Level;
 
 class ChallengeHandler: public cocos2d::Node {
-private:
-	std::vector<Challenge*> challenges;
-
 public:
 	/**
 	* @brief Create a ChallengeHandler from the configuration file and the save file. 
 	* @return A pointer to the ChallengeHandler.
 	*/
-	static ChallengeHandler* create(const Json::Value& value);
-	ChallengeHandler(const Json::Value& value);
+	static ChallengeHandler* create(const Json::Value& value, Level* level);
+	ChallengeHandler(const Json::Value& value, Level* level);
 	~ChallengeHandler();
 	void addTower(Tower::TowerType type, cocos2d::Vec2 position);
 	void upgradeTower(Tower::TowerType type, cocos2d::Vec2 position);
@@ -25,6 +23,10 @@ public:
 	void endChallengeHandler();
 	int countSucceedChallenges();
 	void hideDescription();
+
+protected:
+	std::vector<Challenge*> challenges;
+	Level* level;
 };
 
 class Challenge {
@@ -61,7 +63,6 @@ private:
 	ChallengeType type;
 	int int_value;
 	std::string str_value;
-	State state;
-	
+	State state;	
 };
 #endif

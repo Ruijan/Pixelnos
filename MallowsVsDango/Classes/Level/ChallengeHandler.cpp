@@ -3,12 +3,13 @@
 #include "../AppDelegate.h"
 #include "../Config/json.h"
 #include "../Towers/TowerFactory.h"
+#include "Level.h"
 
 USING_NS_CC;
 
-ChallengeHandler* ChallengeHandler::create(const Json::Value& value) {
+ChallengeHandler* ChallengeHandler::create(const Json::Value& value, Level* level) {
 
-	ChallengeHandler* challenges = new ChallengeHandler(value);
+	ChallengeHandler* challenges = new ChallengeHandler(value, level);
 	if (challenges->init()) {
 		return challenges;
 	}
@@ -16,7 +17,7 @@ ChallengeHandler* ChallengeHandler::create(const Json::Value& value) {
 	return NULL;
 }
 
-ChallengeHandler::ChallengeHandler(const Json::Value& value) {
+ChallengeHandler::ChallengeHandler(const Json::Value& value, Level* level): level(level) {
 	Json::Value j_challenges = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::CHALLENGE);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	float size_button = visibleSize.width / 20;
@@ -29,23 +30,23 @@ ChallengeHandler::ChallengeHandler(const Json::Value& value) {
 	Sprite* background = Sprite::create("res/buttons/Challenges/text_holder.png");
 	background->setScale(visibleSize.width * 0.20 / background->getContentSize().width);
 	text_layout->addChild(background, 0, "background");
+	
 	ui::Text* title_text = ui::Text::create("", "fonts/LICABOLD.ttf", visibleSize.width / 50);
 	title_text->setTextAreaSize(Size(background->getContentSize().width * background->getScale() * 0.85,
 		background->getContentSize().height * background->getScale() * 0.2));
 	title_text->setPosition(Vec2(0, background->getContentSize().height *background->getScale() * 0.4 - title_text->getTextAreaSize().height / 2));
 	title_text->setColor(Color3B(252, 211, 139));
-	//title_text->setAnchorPoint(Vec2(0, 0.5f));
 	text_layout->addChild(title_text, 0, "title_text");
+	
 	ui::Text* description_text = ui::Text::create("", "fonts/LICABOLD.ttf", visibleSize.width / 64);
-	//description_text->setAnchorPoint(Vec2(0, 0.5f));
 	description_text->setTextAreaSize(Size(background->getContentSize().width * background->getScale() * 0.85,
 		background->getContentSize().height * background->getScale() * 0.5));
 	description_text->setPosition(Vec2(title_text->getPosition().x,
 		title_text->getPosition().y - title_text->getTextAreaSize().height / 2 - description_text->getTextAreaSize().height / 2));
 	description_text->setTextVerticalAlignment(cocos2d::TextVAlignment::CENTER);
 	text_layout->addChild(description_text, 0, "description_text");
+	
 	ui::Text* progress_text = ui::Text::create("","fonts/LICABOLD.ttf", visibleSize.width / 64);
-	//progress_text->setAnchorPoint(Vec2(0, 0.5f));
 	progress_text->setTextAreaSize(Size(background->getContentSize().width * background->getScale() * 0.85,
 		background->getContentSize().height * background->getScale() * 0.2));
 	progress_text->setPosition(Vec2(description_text->getPosition().x,
@@ -156,7 +157,7 @@ void ChallengeHandler::update() {
 
 		switch (challenge->getChallengeType()) {
 		case Challenge::ChallengeType::Untouchable:
-			if (challenge->getIntValue() > (int)SceneManager::getInstance()->getGame()->getLevel()->getLife()) {
+			if (challenge->getIntValue() > (int)level->getLife()) {
 				challenge->setState(Challenge::State::Failed);
 			}
 			else {
@@ -164,14 +165,14 @@ void ChallengeHandler::update() {
 			}
 			break;
 		case Challenge::ChallengeType::Perfectionist:
-			for (auto& wall : SceneManager::getInstance()->getGame()->getLevel()->getWalls()) {
+			for (auto& wall : level->getWalls()) {
 				if (wall->isDamaged()) {
 					challenge->setState(Challenge::State::Failed);
 				}
 			}
 			break;
 		case Challenge::ChallengeType::Stingy:
-			if (challenge->getIntValue() < (int)SceneManager::getInstance()->getGame()->getLevel()->getUsedQuantity()) {
+			if (challenge->getIntValue() < (int)level->getUsedQuantity()) {
 				challenge->setState(Challenge::State::Failed);
 			}
 			else {
@@ -179,7 +180,7 @@ void ChallengeHandler::update() {
 			}
 			break;
 		case Challenge::ChallengeType::Believer:
-			if (challenge->getIntValue() < (int)SceneManager::getInstance()->getGame()->getLevel()->getTowers().size()) {
+			if (challenge->getIntValue() < (int)level->getTowers().size()) {
 				challenge->setState(Challenge::State::Failed);
 			}
 			else {
@@ -203,20 +204,20 @@ void ChallengeHandler::addTower(Tower::TowerType type, cocos2d::Vec2 position) {
 	for (auto& challenge : challenges) {
 		int previous_state = challenge->getState();
 		bool touching = false;
-
+		std::vector<Tower*> towers = level->getTowers();
 		switch (challenge->getChallengeType()) {
 		case Challenge::ChallengeType::Misanthrope:
-			for (auto& tower : SceneManager::getInstance()->getGame()->getLevel()->getTowers()) {
+			for (auto& tower : towers) {
 				if (tower->getPosition().getDistance(position) <= Cell::getCellWidth() && position != tower->getPosition()) {
 					challenge->setState(Challenge::State::Failed);
 				}
 			}
 			break;
 		case Challenge::ChallengeType::Philanthrope:
-			if (SceneManager::getInstance()->getGame()->getLevel()->getTowers().size() <= 1) {
+			if (towers.size() <= 1) {
 				touching = true;
 			}
-			for (auto& tower : SceneManager::getInstance()->getGame()->getLevel()->getTowers()) {
+			for (auto& tower : towers) {
 				if (tower->getPosition() != position && tower->getPosition().getDistance(position) <= Cell::getCellWidth()) {
 					touching = true;
 				}
@@ -236,7 +237,7 @@ void ChallengeHandler::addTower(Tower::TowerType type, cocos2d::Vec2 position) {
 			}
 			break;
 		case Challenge::ChallengeType::Reckless:
-			for (auto& path : SceneManager::getInstance()->getGame()->getLevel()->getPaths()) {
+			for (auto& path : level->getPaths()) {
 				for (auto& cell : path) {
 					double distance = cell->getPosition().getDistance(position);
 					if (cell->getPosition().getDistance(position) <= Cell::getCellWidth()) {
@@ -282,8 +283,8 @@ void ChallengeHandler::endChallengeHandler() {
 		}
 	}
 	Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
-	int worldID = SceneManager::getInstance()->getGame()->getLevel()->getWorldId();
-	int levelID = SceneManager::getInstance()->getGame()->getLevel()->getLevelId();
+	int worldID = level->getWorldId();
+	int levelID = level->getLevelId();
 	Json::Value level_challenge = save["levels"][worldID][levelID]["challenges"];
 	if (level_challenge.isNull()) {
 		save["levels"][worldID][levelID]["challenges"] = countSucceedChallenges();

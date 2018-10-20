@@ -334,6 +334,7 @@ void Level::updateDangos(float dt)
 			}
 		}
 		if (!dango->isAlive()) {
+			increaseQuantity(dango->getGain());
 			del = true;
 		}
 		if (del) {

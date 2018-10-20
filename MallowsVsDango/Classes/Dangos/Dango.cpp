@@ -402,16 +402,16 @@ void Dango::die() {
 	auto star = Sprite::create("res/levels/star.png");
 	star->setScale(Cell::getCellWidth() / 5 / star->getContentSize().width);
 	star->setPosition(_position);
-	SceneManager::getInstance()->getGame()->getMenu()->getChildByName("reward_layout")->addChild(star,2,"star");
-	auto element = SceneManager::getInstance()->getGame()->getMenu()->getChildByName("label_information")->getChildByName("sugar");
+	LevelInterface* menu = SceneManager::getInstance()->getGame()->getMenu();
+	menu->getChildByName("reward_layout")->addChild(star,2,"star");
+	auto element = menu->getChildByName("label_information")->getChildByName("sugar");
 	int posx = element->getPosition().x + element->getContentSize().width * (0.5 - element->getAnchorPoint().x);
 	int posy = element->getPosition().y + element->getContentSize().height * (0.5 - element->getAnchorPoint().y);
-	posx += SceneManager::getInstance()->getGame()->getMenu()->getChildByName("label_information")->getPosition().x;
-	posy += SceneManager::getInstance()->getGame()->getMenu()->getChildByName("label_information")->getPosition().y;
+	posx += menu->getChildByName("label_information")->getPosition().x;
+	posy += menu->getChildByName("label_information")->getPosition().y;
 	int gain = getGain();
-	auto autoRemove = CallFunc::create([star, gain, this]() {
-		SceneManager::getInstance()->getGame()->getLevel()->increaseQuantity(gain);
-		SceneManager::getInstance()->getGame()->getMenu()->getChildByName("reward_layout")->removeChild(star);
+	auto autoRemove = CallFunc::create([star, gain, menu, this]() {
+		menu->getChildByName("reward_layout")->removeChild(star);
 	});
 	star->runAction(Sequence::create(Spawn::createWithTwoActions(
 		EaseBackOut::create(MoveBy::create(1.f, Vec2(0, posy - _position.y))),

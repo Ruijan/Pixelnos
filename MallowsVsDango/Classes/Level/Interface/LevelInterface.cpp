@@ -463,7 +463,7 @@ void LevelInterface::reset() {
 	removeChildByName("menu_win");
 	initWinMenu(config);
 	challenges = ChallengeHandler::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
-		[level->getWorldId()]["levels"][level->getLevelId()]["challenges"]);
+		[level->getWorldId()]["levels"][level->getLevelId()]["challenges"], level);
 	levelInfo->reset(challenges);
 }
 
@@ -483,7 +483,7 @@ void LevelInterface::showLabelInformation() {
 
 void LevelInterface::initLabels(const Json::Value& config) {
 	challenges = ChallengeHandler::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
-		[level->getWorldId()]["levels"][level->getLevelId()]["challenges"]);
+		[level->getWorldId()]["levels"][level->getLevelId()]["challenges"], level);
 
 	levelInfo = LevelInfo::create(challenges);
 	addChild(levelInfo, 2, "label_information");

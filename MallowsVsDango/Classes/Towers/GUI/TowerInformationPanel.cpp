@@ -2,6 +2,8 @@
 #include "../Tower.h"
 #include "../../Scenes/Mygame.h"
 #include "../../SceneManager.h"
+#include "../../Level/Level.h"
+#include "../../Level/Interface/LevelInterface.h"
 
 TowerInformationPanel::~TowerInformationPanel()
 {
@@ -24,6 +26,8 @@ bool TowerInformationPanel::init(MyGame* cGame, Tower * cTower, Config* cConfig)
 	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
 	game = cGame;
+	level = cGame->getLevel();
+	menu = cGame->getMenu();
 	tower = cTower;
 	configClass = cConfig;
 	settings = tower->getTowerSettings();
@@ -45,6 +49,8 @@ void TowerInformationPanel::setTower(Tower* newTower) {
 	tower = newTower;
 	currentLevelInfos->setTower(tower);
 	nextLevelInfos->setTower(tower);
+	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+	setPanelPosition(visibleSize);
 }
 
 void TowerInformationPanel::createMainPanel(cocos2d::Size &visibleSize) {
@@ -157,16 +163,16 @@ void TowerInformationPanel::createNextLevelButton(cocos2d::Size &visibleSize) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 			std::string language = configClass->getSettings()->getLanguage();
 			unsigned int towerLevel = tower->getLevel();
-			if ((int)game->getLevel()->getQuantity() >= settings->getCost(towerLevel + 1) &&
+			if ((int)level->getQuantity() >= settings->getCost(towerLevel + 1) &&
 				towerLevel < settings->getMaxExistingLevel())
 			{
 				addTowerActionToTracker("upgrade_tower");
-				game->getLevel()->decreaseQuantity(settings->getCost(towerLevel + 1));
+				level->decreaseQuantity(settings->getCost(towerLevel + 1));
 				tower->upgradeCallback(sender);
 
 				currentLevelInfos->updateLabel();
 				nextLevelInfos->updateLabel();
-				nextLevelInfos->updateCost((int)game->getLevel()->getQuantity());
+				nextLevelInfos->updateCost((int)level->getQuantity());
 				updateDisplayNextLevel();
 				((cocos2d::Label*)getChildByName("sell_label"))->setString(Json::Value(settings->getSell(towerLevel)).asString());
 			}
@@ -179,7 +185,7 @@ void TowerInformationPanel::addTowerActionToTracker(std::string towerAction)
 	Json::Value action;
 	action["tower_name"] = tower->getName();
 	action["time"] = (int)time(0);
-	cocos2d::Vec2 turret_position = game->getLevel()->getNearestPositionInGrid(getPosition());
+	cocos2d::Vec2 turret_position = level->getNearestPositionInGrid(getPosition());
 	action["position"]["x"] = turret_position.x;
 	action["position"]["y"] = turret_position.y;
 	action["action"] = towerAction;
@@ -198,10 +204,10 @@ void TowerInformationPanel::createSellButton(cocos2d::Size &visibleSize) {
 		sell->getContentSize().height* sell->getScaleY() / 2));
 	sell->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			game->getLevel()->increaseQuantity(settings->getSell(tower->getLevel()));
+			level->increaseQuantity(settings->getSell(tower->getLevel()));
 			tower->destroyCallback(sender);
-			game->getMenu()->removeTower();
-			game->getMenu()->hideTowerInfo();
+			menu->removeTower();
+			menu->hideTowerInfo();
 			addTowerActionToTracker("sell_tower");
 		}
 	});
@@ -243,7 +249,7 @@ void TowerInformationPanel::updateDisplay() {
 	if (tower->getLevel() < tower->getMaxLevel()) {
 		currentLevelInfos->updateLabel();
 		nextLevelInfos->updateLabel();
-		nextLevelInfos->updateCost((int)game->getLevel()->getQuantity());
+		nextLevelInfos->updateCost((int)level->getQuantity());
 		updateDisplayNextLevel();
 	}
 	else {
@@ -272,7 +278,7 @@ void TowerInformationPanel::updateDisplayNextLevel()
 		nextLevelInfos->setVisible(false);
 		descriptionLayout->setVisible(true);
 	}
-	if ((int)game->getLevel()->getQuantity() < settings->getCost(towerLevel + 1)) {
+	if ((int)level->getQuantity() < settings->getCost(towerLevel + 1)) {
 		nextLevelButton->setEnabled(false);
 	}
 	else {
