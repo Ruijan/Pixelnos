@@ -68,7 +68,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	}
 
 	// turn on display FPS
-	director->setDisplayStats(false);
+	director->setDisplayStats(true);
 	director->setAnimationInterval(1.0f / 60.0f);
 
 	// Set the design resolution

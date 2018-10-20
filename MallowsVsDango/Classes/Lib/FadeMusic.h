@@ -10,13 +10,13 @@ public:
 	//
 	// Overrides
 	//
-	virtual FadeMusic* clone() const override;
-	virtual FadeMusic* reverse(void) const override;
-	virtual void startWithTarget(cocos2d::Node *target) override;
+	virtual FadeMusic* clone() const;
+	virtual FadeMusic* reverse(void) const;
+	virtual void startWithTarget(cocos2d::Node *target);
 	/**
 	 * @param time In seconds.
 	 */
-	virtual void update(float time) override;
+	virtual void update(float time);
 
 CC_CONSTRUCTOR_ACCESS:
 	FadeMusic() {}
@@ -46,9 +46,9 @@ public:
     //
     // Overrides
     //
-    virtual void startWithTarget(cocos2d::Node *target) override;
-    virtual FadeInMusic* clone() const override;
-    virtual FadeMusic* reverse(void) const override;
+    virtual void startWithTarget(cocos2d::Node *target);
+    virtual FadeInMusic* clone() const;
+    virtual FadeMusic* reverse(void) const;
 
     /**
      * @js NA
@@ -80,9 +80,9 @@ public:
     //
     // Overrides
     //
-    virtual void startWithTarget(cocos2d::Node *target) override;
-    virtual FadeOutMusic* clone() const  override;
-    virtual FadeMusic* reverse(void) const override;
+    virtual void startWithTarget(cocos2d::Node *target);
+    virtual FadeOutMusic* clone() const;
+    virtual FadeMusic* reverse(void) const;
 
     /**
      * @js NA
@@ -113,9 +113,9 @@ public:
     /**
      * @param time In seconds.
      */
-    virtual void update(float time) override;
-    virtual ActionInstant* reverse() const override;
-    virtual ChangeMusic* clone() const override;
+    virtual void update(float time);
+    virtual ActionInstant* reverse() const;
+    virtual ChangeMusic* clone() const;
 
 CC_CONSTRUCTOR_ACCESS:
 	ChangeMusic(){}
