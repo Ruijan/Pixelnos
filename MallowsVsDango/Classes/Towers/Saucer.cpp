@@ -1,5 +1,5 @@
 #include "Saucer.h"
-#include "../Towers/Attack.h"
+#include "../Towers/Attacks/ThrowableAttacks/ChocoSpit.h"
 #include "../AppDelegate.h"
 
 USING_NS_CC;

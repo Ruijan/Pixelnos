@@ -1,5 +1,6 @@
 #include "Bomber.h"
-#include "../Towers/Attack.h"
+#include "../Towers/Attacks/ThrowableAttacks/WaterBall.h"
+#include "../Towers/Attacks/ThrowableAttacks/WaterBombBall.h"
 #include "../AppDelegate.h"
 
 USING_NS_CC;

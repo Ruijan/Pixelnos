@@ -1,9 +1,9 @@
 #include "Effect.h"
-#include "../Dangos/Dango.h"
-#include "../Towers/Tower.h"
-#include "../Lib/Functions.h"
-#include "../AppDelegate.h"
-#include "../Dangos/Dangobese.h"
+#include "../../Dangos/Dango.h"
+#include "../../Towers/Tower.h"
+#include "../../Lib/Functions.h"
+#include "../../AppDelegate.h"
+#include "../../Dangos/Dangobese.h"
 
 USING_NS_CC;
 

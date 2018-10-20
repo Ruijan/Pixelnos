@@ -3,7 +3,7 @@
 #include "cocos2d.h"
 #include "../Config/json.h"
 #include "ui/CocosGUI.h"
-#include "../Towers/Effect.h"
+#include "../Towers/Attacks/Effect.h"
 #include <spine/spine-cocos2dx.h>
 #include "GUI/DangoInformationPanel.h"
 

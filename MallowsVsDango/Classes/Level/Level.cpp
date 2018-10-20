@@ -313,6 +313,7 @@ void Level::updateBullets(float dt)
 	for (auto& attack : attacks) {
 		attack->update(dt);
 		if (attack->isDone()) {
+			incrementXPTower(attack->getType() , attack->getRewardedXP());
 			removeChild(attack);
 			attack = nullptr;
 		}

@@ -6,7 +6,7 @@
 #include "../SceneManager.h"
 #include "../Level/Interface/LevelInterface.h"
 #include "../Towers/Tower.h"
-#include "../Towers/Attack.h"
+#include "../Towers/Attacks/Attack.h"
 #include <random>
 #include <stdio.h>      /* printf, NULL */
 #include <stdlib.h>     /* srand, rand */
