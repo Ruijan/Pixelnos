@@ -15,8 +15,13 @@ public:
 	* @return A pointer to the ChallengeHandler.
 	*/
 	static ChallengeHandler* create(const Json::Value& value, Level* level);
-	ChallengeHandler(const Json::Value& value, Level* level);
 	~ChallengeHandler();
+	bool init(const Json::Value& value, Level* level);
+	void createChallengesButtons(cocos2d::Size &visibleSize, const Json::Value & value);
+	void createChallenge(Json::Value &configChallenge, Json::Value &j_challenges, std::string &language, float size_button);
+	void showChallenge(cocos2d::ui::Button * challenge, const std::string &name, const std::string &description, Challenge * c_challenge);
+	void updateChallengeText(Challenge * c_challenge, const std::string & description, const std::string & name, cocos2d::ui::Button * challenge);
+	void createTextLayout(cocos2d::Size &visibleSize);
 	void addTower(Tower::TowerType type, cocos2d::Vec2 position);
 	void upgradeTower(Tower::TowerType type, cocos2d::Vec2 position);
 	void update();
@@ -27,6 +32,11 @@ public:
 protected:
 	std::vector<Challenge*> challenges;
 	Level* level;
+	cocos2d::ui::Layout* text_layout;
+	cocos2d::Sprite* background;
+	cocos2d::ui::Text* title_text;
+	cocos2d::ui::Text* description_text;
+	cocos2d::ui::Text* progress_text;
 };
 
 class Challenge {
