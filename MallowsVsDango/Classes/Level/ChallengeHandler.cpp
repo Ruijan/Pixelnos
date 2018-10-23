@@ -306,7 +306,6 @@ void ChallengeHandler::addTowerReckless(cocos2d::Vec2 &position, bool &touching,
 {
 	for (auto& path : level->getPaths()) {
 		for (auto& cell : path) {
-			double distance = cell->getPosition().getDistance(position);
 			if (cell->getPosition().getDistance(position) <= Cell::getCellWidth()) {
 				touching = true;
 			}

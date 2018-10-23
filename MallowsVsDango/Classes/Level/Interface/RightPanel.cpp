@@ -342,3 +342,10 @@ cocos2d::Sprite* RightPanel::getTower(std::string towerName)
 {
 	return towers[towerName].first;
 }
+
+cocos2d::Rect RightPanel::getRectangularPanel()
+{
+	cocos2d::Rect rectrightpanel = getChildByName("panel")->getBoundingBox();
+	rectrightpanel.origin += getBoundingBox().origin;
+	return rectrightpanel;
+}

@@ -105,7 +105,7 @@ private:
 	Level* level;
 	State state;
 	GameState game_state;
-	Tower* selected_turret;
+	Tower* selectedTower;
 	Dango* selectedDango;
 	StartMenu* startMenu;
 	WinMenu* winMenu;
@@ -135,7 +135,13 @@ protected:
 	void initDialoguesFromLevel(const Json::Value& config);
 
 	bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
+	void unselectDango();
+	void unselectTower();
+	void handleRightPanelTouch(cocos2d::Touch * touch);
 	void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
+	void handleEndTouchBuildingTower(cocos2d::Rect &rectrightpanel, cocos2d::Vec2 &p);
+	void handleEndTouchForDango(cocos2d::Vec2 &p);
+	void handleEndTouchForTower(cocos2d::Vec2 &p);
 	void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
 
 	void builtCallback(Ref* sender);

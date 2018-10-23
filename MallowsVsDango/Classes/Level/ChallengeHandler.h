@@ -23,6 +23,12 @@ public:
 	void updateChallengeText(Challenge * c_challenge, const std::string & description, const std::string & name, cocos2d::ui::Button * challenge);
 	void createTextLayout(cocos2d::Size &visibleSize);
 	void addTower(Tower::TowerType type, cocos2d::Vec2 position);
+	void showChallengeFailure(Challenge *& challenge);
+	void addTowerMisanthrope(std::vector<Tower *> &towers, cocos2d::Vec2 &position, Challenge *& challenge);
+	void addTowerPhilanthrope(std::vector<Tower *> &towers, bool &touching, cocos2d::Vec2 &position, Challenge *& challenge);
+	void addTowerDiscriminant(Challenge *& challenge, Tower::TowerType type);
+	void addTowerNarrow(Challenge *& challenge, Tower::TowerType type);
+	void addTowerReckless(cocos2d::Vec2 &position, bool &touching, Challenge *& challenge);
 	void upgradeTower(Tower::TowerType type, cocos2d::Vec2 position);
 	void update();
 	void endChallengeHandler();

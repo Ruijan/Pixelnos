@@ -56,7 +56,7 @@ bool Level::init()
 	initPaths(levelElementsConfig, ratio, visibleSize);
 	initObjects(levelElementsConfig, ratio, visibleSize);
 	initLockedCells(levelElementsConfig, ratio, visibleSize);
-	initGenerator(levelElementsConfig);
+	generator = generator->createWithRoot(levelElementsConfig);
 	initWalls();
 
 	return true;
@@ -145,21 +145,6 @@ void Level::initLockedCells(Json::Value &root, double ratio, cocos2d::Size &visi
 			locked_cell["pos"][1].asFloat() * ratio + visibleSize.height / 2);
 		Cell* cell = getNearestCell(cell_pos);
 		cell->setOffLimit(true);
-	}
-}
-
-void Level::initGenerator(Json::Value &root)
-{
-	generator = new DangoGenerator();
-	for (int i(0); i < root["nbwaves"].asInt(); ++i) {
-		generator->addWave();
-		for (unsigned int j(0); j < root["dangosChain"][i].size(); ++j) {
-			int enemy_level = Value(root["dangosChain"][i][j].asString().substr(
-				root["dangosChain"][i][j].asString().size() - 1,
-				root["dangosChain"][i][j].asString().size())).asInt();
-			generator->addStep(root["dangosChain"][i][j].asString(), root["dangosTime"][i][j].asDouble(),
-				root["dangosPath"][i][j].asDouble(), i);
-		}
 	}
 }
 

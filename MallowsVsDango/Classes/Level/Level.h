@@ -34,7 +34,6 @@ public:
 	void initLevelValues(Json::Value &currentLevelConfig, Json::Value &save_file);
 	void initObjects(Json::Value &root, double ratio, cocos2d::Size &visibleSize);
 	void initLockedCells(Json::Value &root, double ratio, cocos2d::Size &visibleSize);
-	void initGenerator(Json::Value &root);
 	void initPaths(Json::Value &root, double ratio, cocos2d::Size &visibleSize);
 	void initCells(int min_width_ratio, int min_height_ratio, cocos2d::Size &visibleSize);
 	void initBackgrounds(Json::Value &root, double ratio);

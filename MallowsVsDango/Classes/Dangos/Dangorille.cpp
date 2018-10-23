@@ -16,7 +16,6 @@ Dangosimple(npath, nlevel), speAttackState(WAITING){
 	for (unsigned int i(0); i < attack_spe_text.size(); ++i) {
 		textToDisplay.push_back(attack_spe_text[i].asString());
 	}
-	
 }
 
 Dangorille::~Dangorille() {

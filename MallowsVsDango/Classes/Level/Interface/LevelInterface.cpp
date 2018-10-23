@@ -1,6 +1,5 @@
 #include "LevelInterface.h"
 #include "../../SceneManager.h"
-#include "../../AppDelegate.h"
 #include "../../Scenes/MyGame.h"
 #include "../../Towers/TowerFactory.h"
 #include "../../Lib/Functions.h"
@@ -17,7 +16,11 @@
 
 USING_NS_CC;
 
-LevelInterface::LevelInterface() : sizeButton(cocos2d::Director::getInstance()->getVisibleSize().width / 15), towerPanel(nullptr)
+LevelInterface::LevelInterface() :
+	sizeButton(cocos2d::Director::getInstance()->getVisibleSize().width / 15),
+	towerPanel(nullptr),
+	selectedDango(nullptr),
+	selectedTower(nullptr)
 {}
 
 LevelInterface::~LevelInterface() {
@@ -67,7 +70,7 @@ bool LevelInterface::init(MyGame* ngame, Config* nConfig) {
 	addRewardLayout();
 
 	addBlackMask(visibleSize);
-	selected_turret = nullptr;
+	selectedTower = nullptr;
 
 	addEvents();
 
@@ -92,183 +95,114 @@ void LevelInterface::addBlackMask(cocos2d::Size &visibleSize)
 }
 
 bool LevelInterface::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
+	unselectTower();
+	unselectDango();
+	if (state == TURRET_CHOSEN && selectedTower != nullptr) {
+		selectedTower->destroyCallback(this);
+		selectedTower = nullptr;
+	}
+	challenges->hideDescription();
+	state = IDLE;
+
 	cocos2d::Vec2 p = touch->getLocation();
 	cocos2d::Rect rect = this->getBoundingBox();
-	cocos2d::Rect rectrightpanel = rightPanel->getChildByName("panel")->getBoundingBox();
-	rectrightpanel.origin += rightPanel->getBoundingBox().origin;
-	challenges->hideDescription();
+	cocos2d::Rect rectrightpanel = rightPanel->getRectangularPanel();
+
 	if (rect.containsPoint(p)) {
 		if (rectrightpanel.containsPoint(p)) {
-			if (state == TURRET_CHOSEN) {
-				if (selected_turret != nullptr) {
-					selected_turret->destroyCallback(this);
-					removeTower();
-				}
-			}
-			auto item = rightPanel->getTowerFromPoint(touch->getStartLocation());
-			if (item.first != "nullptr") {
-				if (state == TURRET_SELECTED) {
-					selected_turret->displayRange(false);
-					hideTowerInfo();
-					selected_turret = nullptr;
-				}
-				state = State::TOUCHED;
-				rightPanel->displayTowerInfos(item.first, configClass->getSettings()->getLanguage());
-				if (game_state == TITLE) {
-					hideStartMenu();
-				}
-			}
-			else {
-				if (selected_turret != nullptr && state == TURRET_CHOSEN) {
-					removeTower();
-				}
-				else if (selected_turret != nullptr && state == TURRET_SELECTED) {
-					selected_turret->displayRange(false);
-					hideTowerInfo();
-					selected_turret = nullptr;
-				}
-				rightPanel->getChildByName("informations")->setVisible(false);
-				state = State::IDLE;
-			}
+			handleRightPanelTouch(touch);
 		}
-		else {
-			if (game_state == TITLE) {
-				hideStartMenu();
-			}
-			Tower* tower = level->touchingTower(p);
-			if (tower != nullptr) {
-				if (state == TURRET_SELECTED) {
-					selected_turret->displayRange(false);
-					if (tower != selected_turret) {
-						selected_turret = tower;
-					}
-					else {
-						hideTowerInfo();
-						selected_turret = nullptr;
-						state = IDLE;
-					}
-				}
-				else if (state == IDLE) {
-					selected_turret = tower;
-					state = TURRET_SELECTED;
-				}
-			}
-			else {
-				if (state == TURRET_SELECTED) {
-					selected_turret->displayRange(false);
-					hideTowerInfo();
-					if (game_state == TITLE) {
-						hideStartMenu();
-					}
-					selected_turret = nullptr;
-					state = IDLE;
-				}
-				else if (state == TOUCHED) {
-					state = IDLE;
-					rightPanel->getChildByName("informations")->setVisible(false);
-					//log("Problem, you shouldn't be in this state: TOUCHED when touched began in the background.");
-				}
-				else if (state == TURRET_CHOSEN) {
-					Vec2 pos = touch->getLocation();
-					moveSelectedTurret(pos);
-					selected_turret->setVisible(true);
-				}
-			}
-			Dango* dango = level->touchingDango(p);
-			if (dango != nullptr) {
-				if (state == TURRET_SELECTED) {
-					state = IDLE;
-					rightPanel->getChildByName("informations")->setVisible(false);
-					selected_turret->displayRange(false);
-					hideTowerInfo();
-					selected_turret = nullptr;
-				}
-				if (state == IDLE || state == DANGO_SELECTED || state == TOUCHED) {
-					rightPanel->getChildByName("informations")->setVisible(false);
-					selectedDango = dango;
-					state = DANGO_SELECTED;
-				}
-			}
-			else {
-				if (state == DANGO_SELECTED) {
-					hideDangoInfo();
-					selectedDango = nullptr;
-					state = IDLE;
-				}
-			}
+		if (game_state == TITLE) {
+			hideStartMenu();
 		}
 		return true; // to indicate that we have consumed it.
 	}
 	return false; // we did not consume this event, pass thru.
 }
 
+void LevelInterface::unselectDango()
+{
+	hideDangoInfo();
+	selectedDango = nullptr;
+}
+
+void LevelInterface::unselectTower()
+{
+	if (selectedTower != nullptr) {
+		selectedTower->displayRange(false);
+	}
+	hideTowerInfo();
+	rightPanel->getChildByName("informations")->setVisible(false);
+	selectedTower = nullptr;
+	state = IDLE;
+}
+
+void LevelInterface::handleRightPanelTouch(cocos2d::Touch * touch)
+{
+	auto item = rightPanel->getTowerFromPoint(touch->getStartLocation());
+	if (item.first != "nullptr") {
+		state = State::TOUCHED;
+		rightPanel->displayTowerInfos(item.first, configClass->getSettings()->getLanguage());
+	}
+}
+
 void LevelInterface::onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) {
 	cocos2d::Vec2 p = touch->getLocation();
-	cocos2d::Rect rectrightpanel = rightPanel->getChildByName("panel")->getBoundingBox();
-	rectrightpanel.origin += rightPanel->getBoundingBox().origin;
+	cocos2d::Rect rectrightpanel = rightPanel->getRectangularPanel();
 	if (configClass->getSettings()->isMovingGridEnabled()) {
 		level->showGrid(false);
 	}
-	if (state == TURRET_SELECTED) {
-		Tower* tower = level->touchingTower(p);
-		if (tower != nullptr) {
-			selected_turret = tower;
-			rightPanel->displayTowerInfos(tower->getSpecConfig()["name"].asString(), configClass->getSettings()->getLanguage());
-			selected_turret->displayRange(true);
-			showTowerInfo();
-		}
-		else {
-			rightPanel->getChildByName("informations")->setVisible(false);
-			selected_turret = nullptr;
-			state = IDLE;
-			displayStartMenuIfInTitleState();
-		}
-	}
-	else if (state == DANGO_SELECTED) {
-		Dango* dango = level->touchingDango(p);
-		if (dango != nullptr) {
-			showDangoInfo();
-		}
-		else {
-			selectedDango = nullptr;
-			state = IDLE;
-			displayStartMenuIfInTitleState();
-		}
+	if (state == IDLE) {
+		handleEndTouchForTower(p);
+		handleEndTouchForDango(p);
 	}
 	else if (state == TURRET_CHOSEN) {
-		if (!rectrightpanel.containsPoint(p)) {
-			if (selected_turret->getPosition() != Vec2(0, 0)) {
-				builtCallback(nullptr);
-				state = State::IDLE;
-				selected_turret->displayRange(false);
-				rightPanel->getChildByName("informations")->setVisible(false);
-				selected_turret = nullptr;
-			}
-			else {
-				selected_turret->destroyCallback(this);
-				removeTower();
-			}
-		}
-		else {
-			selected_turret->destroyCallback(this);
-			removeTower();
-		}
-		displayStartMenuIfInTitleState();
+		handleEndTouchBuildingTower(rectrightpanel, p);
 	}
-	else if (state == TOUCHED) {
-		displayStartMenuIfInTitleState();
-		//state = IDLE;
+	displayStartMenuIfInTitleState();
+}
+
+void LevelInterface::handleEndTouchBuildingTower(cocos2d::Rect &rectrightpanel, cocos2d::Vec2 &p)
+{
+	bool hasTowerBeenBuilt = false;
+	if (!rectrightpanel.containsPoint(p)) {
+		if (selectedTower->getPosition() != Vec2(0, 0)) {
+			builtCallback(nullptr);
+			unselectTower();
+			hasTowerBeenBuilt = true;
+		}
 	}
-	if (state == IDLE) {
-		displayStartMenuIfInTitleState();
-		rightPanel->getChildByName("informations")->setVisible(false);
+	if (!hasTowerBeenBuilt) {
+		selectedTower->destroyCallback(this);
+		removeTower();
+	}
+}
+
+void LevelInterface::handleEndTouchForDango(cocos2d::Vec2 &p)
+{
+	Dango* dango = level->touchingDango(p);
+	if (dango != nullptr) {
+		selectedDango = dango;
+		showDangoInfo();
+		state = DANGO_SELECTED;
+	}
+}
+
+void LevelInterface::handleEndTouchForTower(cocos2d::Vec2 &p)
+{
+	Tower* tower = level->touchingTower(p);
+	if (tower != nullptr) {
+		selectedTower = tower;
+		rightPanel->displayTowerInfos(tower->getSpecConfig()["name"].asString(), configClass->getSettings()->getLanguage());
+		selectedTower->displayRange(true);
+		showTowerInfo();
+		state = TURRET_SELECTED;
 	}
 }
 
 void LevelInterface::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) {
 	if (state == State::TOUCHED) {
 		Size visibleSize = Director::getInstance()->getVisibleSize();
-
 		if (touch->getLocation().x - visibleSize.width * 3 / 4 < 0) {
 			if (configClass->getSettings()->isMovingGridEnabled()) {
 				level->showGrid(true);
@@ -279,8 +213,8 @@ void LevelInterface::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) 
 					state = TURRET_CHOSEN;
 					menuTurretTouchCallback(TowerFactory::getTowerTypeFromString(item.first));
 					moveSelectedTurret(touch->getLocation());
-					selected_turret->displayRange(true);
-					selected_turret->setVisible(true);
+					selectedTower->displayRange(true);
+					selectedTower->setVisible(true);
 				}
 				else {
 					resetSugarLabel();
@@ -291,15 +225,11 @@ void LevelInterface::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) 
 	}
 	else if (state == State::TURRET_CHOSEN) {
 		Vec2 pos = touch->getLocation();
-		cocos2d::Rect rectrightpanel = rightPanel->getChildByName("panel")->getBoundingBox();
-		rectrightpanel.origin += rightPanel->getBoundingBox().origin;
+		cocos2d::Rect rectrightpanel = rightPanel->getRectangularPanel();
 		if (rectrightpanel.containsPoint(pos)) {
-			selected_turret->destroyCallback(nullptr);
-			selected_turret = nullptr;
+			selectedTower->destroyCallback(nullptr);
+			selectedTower = nullptr;
 			state = TOUCHED;
-			if (configClass->getSettings()->isMovingGridEnabled()) {
-				level->showGrid(false);
-			}
 		}
 		else {
 			moveSelectedTurret(pos);
@@ -357,7 +287,7 @@ void LevelInterface::update(float dt) {
 	}
 	monkeys.erase(std::remove(monkeys.begin(), monkeys.end(), nullptr), monkeys.end());
 
-	if (towerPanel != nullptr && selected_turret != nullptr) {
+	if (towerPanel != nullptr && selectedTower != nullptr) {
 		towerPanel->update();
 	}
 
@@ -378,37 +308,37 @@ void LevelInterface::update(float dt) {
 	case TITLE:
 		rightPanel->update();
 		challenges->update();
-		if (selected_turret != nullptr) {
-			selected_turret->updateDisplay(dt);
+		if (selectedTower != nullptr) {
+			selectedTower->updateDisplay(dt);
 		}
 		break;
 	case RUNNING:
 		rightPanel->update();
 		challenges->update();
-		if (selected_turret != nullptr) {
-			selected_turret->updateDisplay(dt);
+		if (selectedTower != nullptr) {
+			selectedTower->updateDisplay(dt);
 		}
 		break;
 	}
 }
 
 void LevelInterface::menuTurretTouchCallback(Tower::TowerType turret) {
-	if (selected_turret == nullptr && !game->isPaused()) {
+	if (selectedTower == nullptr && !game->isPaused()) {
 		Tower* createdTower = TowerFactory::createTower(turret, configClass, level);
 		level->addTurret(createdTower);
-		selected_turret = createdTower;
+		selectedTower = createdTower;
 	}
 }
 
 void LevelInterface::moveSelectedTurret(Vec2 pos) {
-	if (selected_turret != nullptr) {
-		Cell* nearestCell = level->getNearestCell(selected_turret->getPosition());
+	if (selectedTower != nullptr) {
+		Cell* nearestCell = level->getNearestCell(selectedTower->getPosition());
 		Cell* nearestCell2 = level->getNearestCell(pos / level->getScale());
 		if (nearestCell2 != nullptr && nearestCell != nullptr) {
 			if (nearestCell2->isFree() && !nearestCell2->isPath() && !nearestCell2->isOffLimit()) {
 				nearestCell->setObject(nullptr);
-				nearestCell2->setObject(selected_turret);
-				selected_turret->setPosition(nearestCell2->getPosition());
+				nearestCell2->setObject(selectedTower);
+				selectedTower->setPosition(nearestCell2->getPosition());
 			}
 		}
 	}
@@ -417,7 +347,7 @@ void LevelInterface::moveSelectedTurret(Vec2 pos) {
 bool LevelInterface::isOnTower(Vec2 pos) {
 	Cell* nearestCell = level->getNearestCell(pos / level->getScale());
 	if (nearestCell != nullptr) {
-		if ((nearestCell->isFree() || nearestCell->getObject() == selected_turret) && !nearestCell->isPath() && !nearestCell->isOffLimit()) {
+		if ((nearestCell->isFree() || nearestCell->getObject() == selectedTower) && !nearestCell->isPath() && !nearestCell->isOffLimit()) {
 			return false;
 		}
 	}
@@ -441,7 +371,7 @@ void LevelInterface::reset() {
 
 	state = IDLE;
 	game_state = TITLE;
-	selected_turret = nullptr;
+	selectedTower = nullptr;
 	selectedDango = nullptr;
 
 	loseMenu->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
@@ -505,24 +435,24 @@ void LevelInterface::initRightPanel() {
 }
 
 void LevelInterface::removeTower() {
-	selected_turret = nullptr;
+	selectedTower = nullptr;
 	state = State::IDLE;
 }
 
 void LevelInterface::builtCallback(Ref* sender) {
 	Json::Value action;
-	action["tower_name"] = selected_turret->getName();
+	action["tower_name"] = selectedTower->getName();
 	action["time"] = (unsigned int)time(0);
-	Vec2 turret_position = level->getNearestPositionInGrid(selected_turret->getPosition());
+	Vec2 turret_position = level->getNearestPositionInGrid(selectedTower->getPosition());
 	action["position"]["x"] = turret_position.x;
 	action["position"]["y"] = turret_position.y;
 	action["action"] = "create_tower";
 	game->addActionToTracker(action);
-	challenges->addTower(TowerFactory::getTowerTypeFromString(selected_turret->getName()), selected_turret->getPosition());
+	challenges->addTower(TowerFactory::getTowerTypeFromString(selectedTower->getName()), selectedTower->getPosition());
 
-	selected_turret->builtCallback(sender);
-	selected_turret->setFixed(true);
-	level->decreaseQuantity(selected_turret->getCost());
+	selectedTower->builtCallback(sender);
+	selectedTower->setFixed(true);
+	level->decreaseQuantity(selectedTower->getCost());
 	rightPanel->displayTowerInfos("", configClass->getSettings()->getLanguage());
 }
 
@@ -549,8 +479,8 @@ void LevelInterface::showTowerInfo() {
 	if (towerPanel != nullptr) {
 		auto scale_to = ScaleTo::create(0.125f, 0.f);
 		auto removeAndCreateLayout = CallFunc::create([&]() {
-			if (selected_turret != nullptr) {
-				towerPanel->setTower(selected_turret);
+			if (selectedTower != nullptr) {
+				towerPanel->setTower(selectedTower);
 				towerPanel->update();
 				towerPanel->setScale(0);
 				auto scale_to = ScaleTo::create(0.125f, 1.f);
@@ -560,7 +490,7 @@ void LevelInterface::showTowerInfo() {
 		towerPanel->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
 	}
 	else {
-		towerPanel = TowerInformationPanel::create(game, selected_turret, configClass);
+		towerPanel = TowerInformationPanel::create(game, selectedTower, configClass);
 		addChild(towerPanel, 1, "information_tower");
 		towerPanel->setScale(0);
 		auto scale_to = ScaleTo::create(0.125f, 1.f);
@@ -609,7 +539,7 @@ void LevelInterface::setGameState(GameState g_state) {
 
 void LevelInterface::setSelectedTower(Tower * tower)
 {
-	selected_turret = tower;
+	selectedTower = tower;
 }
 
 void LevelInterface::setListening(bool listening) {
@@ -741,7 +671,7 @@ void LevelInterface::initDialoguesFromLevel(const Json::Value& config) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	if (configClass->getSettings()->isDialoguesEnabled()) {
 		Settings* dialgouesSettings = Settings::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
-		[level->getWorldId()]["levels"][level->getLevelId()]["dialogues_file"].asString());
+			[level->getWorldId()]["levels"][level->getLevelId()]["dialogues_file"].asString());
 		if (dialgouesSettings->getSettingsMap()["introDialogue"].size() != 0) {
 			dialogues = Dialogue::createFromConfig(dialgouesSettings->getSettingsMap()["introDialogue"]);
 			addChild(dialogues, 1, "dialogue");
