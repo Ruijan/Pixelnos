@@ -139,7 +139,7 @@ void DangoGenerator::empty() {
 	sequencePath.clear();
 }
 
-void DangoGenerator::nextWave(){
+void DangoGenerator::startNextWave(){
 	if (cWave + 1 < getNbWaves()){
 		++cWave;
 		step = 0;

@@ -67,6 +67,7 @@ public:
 	Cell* getNearestCell(cocos2d::Vec2 position);
 	cocos2d::Vec2 getNearestPositionInGrid(cocos2d::Vec2 position);
 	Tower* touchingTower(cocos2d::Vec2 position);
+	bool isTouchingNode(cocos2d::Node * node, cocos2d::Vec2 position);
 	Dango* touchingDango(cocos2d::Vec2 position);
 
 	void incrementXPTower(std::string name, int amount);
@@ -93,6 +94,7 @@ protected:
 	unsigned int id;
 	unsigned int id_world;
 	cocos2d::Size size;
+	cocos2d::Size cellSize;
 
 	std::vector<Dango*> dangos;
 	std::vector<Tower*> towers;

@@ -25,7 +25,9 @@ Level* Level::create(unsigned int nLevel, unsigned int nWorld){
 }
 
 Level::Level(unsigned int nLevel, unsigned int nWorld) : id(nLevel), id_world(nWorld), size(14,12), sugar(60), life(3), usedSugar(0),
-paused(false), zGround(0), experience(0){}
+paused(false), zGround(0), experience(0){
+	cellSize = Size(Cell::getCellWidth(), Cell::getCellHeight());
+}
 
 bool Level::init()
 {
@@ -56,7 +58,7 @@ bool Level::init()
 	initPaths(levelElementsConfig, ratio, visibleSize);
 	initObjects(levelElementsConfig, ratio, visibleSize);
 	initLockedCells(levelElementsConfig, ratio, visibleSize);
-	generator = generator->createWithRoot(levelElementsConfig);
+	generator = DangoGenerator::createWithRoot(levelElementsConfig);
 	initWalls();
 
 	return true;
@@ -178,8 +180,8 @@ void Level::initCells(int min_width_ratio, int min_height_ratio, cocos2d::Size &
 		for (int j(0); j < nb_cells_maxheight; ++j) {
 			Cell* cell = Cell::create();
 			row.push_back(cell);
-			cell->setPosition(Vec2((i - nb_cells_maxwidth / 2.0 + 0.5) * Cell::getCellWidth() + visibleSize.width * 3 / 8,
-				(nb_cells_maxheight - j - 1 + 0.5 - nb_cells_maxheight / 2.0) * Cell::getCellHeight() + visibleSize.height / 2));
+			cell->setPosition(Vec2((i - nb_cells_maxwidth / 2.0 + 0.5) * cellSize.width + visibleSize.width * 3 / 8,
+				(nb_cells_maxheight - j - 1 + 0.5 - nb_cells_maxheight / 2.0) * cellSize.height + visibleSize.height / 2));
 			if (!((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->isAlwaysGridEnabled()) {
 				cell->setVisible(false);
 			}
@@ -236,8 +238,8 @@ void Level::initWalls() {
 			Wall* wall = Wall::create(2);
 			path[path.size() - 3]->setObject(wall);
 			wall->setPosition(path[path.size() - 3]->getPosition());
-			wall->setPosition(wall->getPositionX(), wall->getPositionY() + Cell::getCellHeight() / 4);
-			wall->setScale(Cell::getCellWidth() / wall->getChildren().at(0)->getContentSize().width);
+			wall->setPosition(wall->getPositionX(), wall->getPositionY() + cellSize.height / 4);
+			wall->setScale(cellSize.width / wall->getChildren().at(0)->getContentSize().width);
 			addChild(wall);
 			walls.push_back(wall);
 		}
@@ -271,8 +273,8 @@ void Level::update(float dt)
 void Level::updateDangoGenerator(float dt)
 {
 	generator->update(dt, this);
-	if (!generator->isDone() && generator->isWaveDone() && dangos.empty()) {
-		generator->nextWave();
+	if (generator->isWaveDone() && dangos.empty()) {
+		generator->startNextWave();
 	}
 }
 
@@ -627,30 +629,24 @@ void Level::removeLevelChildren()
 
 Tower* Level::touchingTower(cocos2d::Vec2 position){
 	for (auto& tower : towers){
-		Vec2 pointInSprite = position - tower->getPosition() * getScale();
-		double scale1 = tower->getScale();
-		double scale2 = getScale();
-		pointInSprite.x += Cell::getCellWidth() / 2;
-		pointInSprite.y += Cell::getCellWidth() / 2;
-		Rect itemRect = Rect(0, 0, Cell::getCellWidth(),
-			Cell::getCellHeight());
-
-		if (itemRect.containsPoint(pointInSprite)){
+		if (isTouchingNode(tower, position)){
 			return tower;
 		}
 	}
 	return nullptr;
 }
 
+bool Level::isTouchingNode(cocos2d::Node* node, cocos2d::Vec2 position) {
+	Vec2 pointInSprite = position - node->getPosition() * getScale();
+	pointInSprite.x += cellSize.width / 2;
+	pointInSprite.y += cellSize.width / 2;
+	Rect itemRect = Rect(0, 0, cellSize.width, cellSize.height);
+	return itemRect.containsPoint(pointInSprite);
+}
+
 Dango* Level::touchingDango(cocos2d::Vec2 position) {
 	for (auto& dango : dangos) {
-		Vec2 pointInSprite = position - dango->getPosition() * getScale();
-		pointInSprite.x += Cell::getCellWidth() / 2;
-		pointInSprite.y += Cell::getCellHeight() / 2;
-		Rect itemRect = Rect(0, 0, Cell::getCellWidth(),
-			Cell::getCellHeight());
-
-		if (itemRect.containsPoint(pointInSprite)) {
+		if (isTouchingNode(dango, position)) {
 			return dango;
 		}
 	}
