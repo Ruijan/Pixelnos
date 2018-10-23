@@ -63,7 +63,7 @@ void DangoGenerator::update(double dt, Level* level){
 					dango = Dangobese::create(level->getPath(sequencePath[cWave][step]),levelDango);
 				}
 				else if (dango_type == "dangorille") {
-					dango = Dangorille::create(level->getPath(sequencePath[cWave][step]), levelDango);
+					dango = Dangorille::create(level->getPath(sequencePath[cWave][step]), levelDango, level);
 				}
 				dango->setPosition(level->getPath(sequencePath[cWave][step])[0]->getPosition());
 				level->addDango(dango);

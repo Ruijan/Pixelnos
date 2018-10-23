@@ -6,8 +6,8 @@
 
 USING_NS_CC;
 
-Dangorille::Dangorille(std::vector<Cell*> npath, int nlevel) :
-Dangosimple(npath, nlevel), speAttackState(WAITING){
+Dangorille::Dangorille(std::vector<Cell*> npath, int nlevel, Level* globalLevel) :
+Dangosimple(npath, nlevel), speAttackState(WAITING), globalLevel(globalLevel){
 	auto config = getSpecConfig();
 	attack_spe_reload_time = config["attack_spe"]["reload_spe"][nlevel].asDouble();
 	nb_monkeys = config["attack_spe"]["nb_monkeys"][nlevel].asInt();
@@ -22,9 +22,9 @@ Dangorille::~Dangorille() {
 
 }
 
-Dangorille* Dangorille::create(std::vector<Cell*> npath, int nlevel)
+Dangorille* Dangorille::create(std::vector<Cell*> npath, int nlevel, Level* globalLevel)
 {
-	Dangorille* pSprite = new Dangorille(npath, nlevel);
+	Dangorille* pSprite = new Dangorille(npath, nlevel, globalLevel);
 
 	pSprite->initFromConfig();
 	pSprite->autorelease();
@@ -35,7 +35,7 @@ Dangorille* Dangorille::create(std::vector<Cell*> npath, int nlevel)
 }
 
 void Dangorille::attackSpe(float dt) {
-	((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->pause();
+	globalLevel->pause();
 	startAttackSpeAnimation();
 }
 
@@ -121,8 +121,7 @@ bool Dangorille::shouldAttackSpe() {
 void Dangorille::generateMonkeys() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	MyGame* game = ((SceneManager*)SceneManager::getInstance())->getGame();
-	Level* c_level = game->getLevel();
-	std::vector<Tower*> towers = c_level->getTowers();
+	std::vector<Tower*> towers = globalLevel->getTowers();
 	std::vector<int> blockedTowerIndices;
 	unsigned int currentNbOfMonkeys = game->getMenu()->getNbOfMonkeys();
 

@@ -171,6 +171,7 @@ void MyGame::switchLevel()
 		int new_level_id = cLevel->getLevelId() + 1;
 		removeChild(cLevel, 1);
 		cLevel = Level::create(new_level_id, id_world);
+		cLevel->setMenu(menu);
 		menu->reset();
 		menu->setListening(true);
 		acceleration = 1.; 0;
@@ -269,7 +270,6 @@ bool MyGame::save() {
 }
 
 void MyGame::initAttributes() {
-	// create new level and add it to the game
 	cLevel = Level::create(id_level, id_world);
 	addChild(cLevel, 0);
 	if (menu == nullptr) {
@@ -279,6 +279,7 @@ void MyGame::initAttributes() {
 	else {
 		menu->reset();
 	}
+	cLevel->setMenu(menu);
 
 	// reset attributes
 	acceleration = 1.0;

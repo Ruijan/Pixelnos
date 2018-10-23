@@ -16,7 +16,7 @@
 
 Like a specific screen with all the caracteristics. It's an abstract class.
 */
-
+class LevelInterface;
 bool sortZOrder(cocos2d::Node* sprite1, cocos2d::Node* sprite2);
 float getMaxXPositionFromSprite(cocos2d::Node * sprite);
 float getMaxYPositionFromSprite(cocos2d::Node * sprite);
@@ -61,6 +61,7 @@ public:
 	float getProgress();
 	void increaseQuantity(Quantity add);
 	bool decreaseQuantity(Quantity removed);
+	void setMenu(LevelInterface* menu);
 	virtual void pause();
 	virtual void resume();
 	void addTurret(Tower* turret);
@@ -118,6 +119,7 @@ protected:
 	
 	void reorder();
 	std::vector<Node*> createElementsArray();
+	LevelInterface* interfaceMenu;
 };
 
 #endif

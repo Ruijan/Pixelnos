@@ -6,6 +6,7 @@
 #include "../Scenes/Skills.h"
 #include "../Dangos/Dango.h"
 #include "../Scenes/MyGame.h"
+#include "Interface/LevelInterface.h"
 #include "../Towers/TowerFactory.h"
 #include "../Config/Exceptions/JsonContentException.h"
 #include "Wall.h"
@@ -326,14 +327,14 @@ void Level::updateDangos(float dt)
 		}
 		if (del) {
 			if (dango->getHolySugar() > 0) {
-				SceneManager::getInstance()->getGame()->getMenu()->generateHolySugar(dango->getPosition());
+				interfaceMenu->generateHolySugar(dango->getPosition());
 				holySugar += dango->getHolySugar();
 			}
 			if (isLevelFinished()) {
-				SceneManager::getInstance()->getGame()->getMenu()->startRewarding(dango->getPosition());
+				interfaceMenu->startRewarding(dango->getPosition());
 			}
-			if (SceneManager::getInstance()->getGame()->getMenu()->getCurrentDango() == dango) {
-				SceneManager::getInstance()->getGame()->getMenu()->handleDeadDango();
+			if (interfaceMenu->getCurrentDango() == dango) {
+				interfaceMenu->handleDeadDango();
 			}
 			removeChild(dango);
 			dango = nullptr;
@@ -410,6 +411,11 @@ bool Level::decreaseQuantity(Quantity removed){
 		usedSugar += removed;
 		return true;
 	}
+}
+
+void Level::setMenu(LevelInterface * menu)
+{
+	interfaceMenu = menu;
 }
 
 void Level::pause(){
