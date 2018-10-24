@@ -17,6 +17,7 @@ public:
 	void displayTowerInfos(std::string item_name, const std::string& language);
 	cocos2d::Vec2 getAbsoluteMenuTowerPosition(std::string towerName);
 	cocos2d::Sprite* getTower(std::string towerName);
+	cocos2d::Rect getRectangularPanel();
 
 protected:
 	void createPanel();

@@ -50,7 +50,7 @@ public:
 	void removeWave(unsigned int wave);
 	int getNbWaves();
 	int getNbSteps(unsigned int step);
-	void nextWave();
+	void startNextWave();
 	bool isWaveDone();
 	bool isDone();
 	void reset();

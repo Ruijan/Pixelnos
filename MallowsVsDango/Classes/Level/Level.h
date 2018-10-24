@@ -16,7 +16,7 @@
 
 Like a specific screen with all the caracteristics. It's an abstract class.
 */
-
+class LevelInterface;
 bool sortZOrder(cocos2d::Node* sprite1, cocos2d::Node* sprite2);
 float getMaxXPositionFromSprite(cocos2d::Node * sprite);
 float getMaxYPositionFromSprite(cocos2d::Node * sprite);
@@ -34,7 +34,6 @@ public:
 	void initLevelValues(Json::Value &currentLevelConfig, Json::Value &save_file);
 	void initObjects(Json::Value &root, double ratio, cocos2d::Size &visibleSize);
 	void initLockedCells(Json::Value &root, double ratio, cocos2d::Size &visibleSize);
-	void initGenerator(Json::Value &root);
 	void initPaths(Json::Value &root, double ratio, cocos2d::Size &visibleSize);
 	void initCells(int min_width_ratio, int min_height_ratio, cocos2d::Size &visibleSize);
 	void initBackgrounds(Json::Value &root, double ratio);
@@ -62,12 +61,14 @@ public:
 	float getProgress();
 	void increaseQuantity(Quantity add);
 	bool decreaseQuantity(Quantity removed);
+	void setMenu(LevelInterface* menu);
 	virtual void pause();
 	virtual void resume();
 	void addTurret(Tower* turret);
 	Cell* getNearestCell(cocos2d::Vec2 position);
 	cocos2d::Vec2 getNearestPositionInGrid(cocos2d::Vec2 position);
 	Tower* touchingTower(cocos2d::Vec2 position);
+	bool isTouchingNode(cocos2d::Node * node, cocos2d::Vec2 position);
 	Dango* touchingDango(cocos2d::Vec2 position);
 
 	void incrementXPTower(std::string name, int amount);
@@ -94,6 +95,7 @@ protected:
 	unsigned int id;
 	unsigned int id_world;
 	cocos2d::Size size;
+	cocos2d::Size cellSize;
 
 	std::vector<Dango*> dangos;
 	std::vector<Tower*> towers;
@@ -117,6 +119,7 @@ protected:
 	
 	void reorder();
 	std::vector<Node*> createElementsArray();
+	LevelInterface* interfaceMenu;
 };
 
 #endif

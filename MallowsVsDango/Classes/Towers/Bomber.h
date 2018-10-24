@@ -8,7 +8,7 @@ class Bomber : public Tower{
 
 public:
 	Bomber();
-	static Bomber* create(Config* configClass);
+	static Bomber* create(Config* configClass, Level* globalLevel);
 	static const Json::Value& getConfig();
 	virtual const Json::Value& getSpecConfig();
 	

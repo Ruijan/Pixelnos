@@ -3,143 +3,18 @@
 #include "../AppDelegate.h"
 #include "../Config/json.h"
 #include "../Towers/TowerFactory.h"
+#include "Level.h"
 
 USING_NS_CC;
 
-ChallengeHandler* ChallengeHandler::create(const Json::Value& value) {
+ChallengeHandler* ChallengeHandler::create(const Json::Value& value, Level* level) {
 
-	ChallengeHandler* challenges = new ChallengeHandler(value);
-	if (challenges->init()) {
+	ChallengeHandler* challenges = new ChallengeHandler();
+	if (challenges->init(value, level)) {
 		return challenges;
 	}
 	CC_SAFE_DELETE(challenges);
 	return NULL;
-}
-
-ChallengeHandler::ChallengeHandler(const Json::Value& value) {
-	Json::Value j_challenges = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::CHALLENGE);
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	float size_button = visibleSize.width / 20;
-
-	// GUI
-	ui::Layout* text_layout = ui::Layout::create();
-	text_layout->setVisible(false);
-	addChild(text_layout, 0, "text_layout");
-
-	Sprite* background = Sprite::create("res/buttons/Challenges/text_holder.png");
-	background->setScale(visibleSize.width * 0.20 / background->getContentSize().width);
-	text_layout->addChild(background, 0, "background");
-	ui::Text* title_text = ui::Text::create("", "fonts/LICABOLD.ttf", visibleSize.width / 50);
-	title_text->setTextAreaSize(Size(background->getContentSize().width * background->getScale() * 0.85,
-		background->getContentSize().height * background->getScale() * 0.2));
-	title_text->setPosition(Vec2(0, background->getContentSize().height *background->getScale() * 0.4 - title_text->getTextAreaSize().height / 2));
-	title_text->setColor(Color3B(252, 211, 139));
-	//title_text->setAnchorPoint(Vec2(0, 0.5f));
-	text_layout->addChild(title_text, 0, "title_text");
-	ui::Text* description_text = ui::Text::create("", "fonts/LICABOLD.ttf", visibleSize.width / 64);
-	//description_text->setAnchorPoint(Vec2(0, 0.5f));
-	description_text->setTextAreaSize(Size(background->getContentSize().width * background->getScale() * 0.85,
-		background->getContentSize().height * background->getScale() * 0.5));
-	description_text->setPosition(Vec2(title_text->getPosition().x,
-		title_text->getPosition().y - title_text->getTextAreaSize().height / 2 - description_text->getTextAreaSize().height / 2));
-	description_text->setTextVerticalAlignment(cocos2d::TextVAlignment::CENTER);
-	text_layout->addChild(description_text, 0, "description_text");
-	ui::Text* progress_text = ui::Text::create("","fonts/LICABOLD.ttf", visibleSize.width / 64);
-	//progress_text->setAnchorPoint(Vec2(0, 0.5f));
-	progress_text->setTextAreaSize(Size(background->getContentSize().width * background->getScale() * 0.85,
-		background->getContentSize().height * background->getScale() * 0.2));
-	progress_text->setPosition(Vec2(description_text->getPosition().x,
-		description_text->getPosition().y - description_text->getTextAreaSize().height / 2 - progress_text->getTextAreaSize().height / 2));
-	text_layout->addChild(progress_text, 0, "progress_text");
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
-
-	// Challenges
-	for (unsigned int i(0); i < value.size(); ++i) {	
-		Challenge::ChallengeType type = Challenge::getChallengeTypeFromString(value[i]["name"].asString());
-		
-		challenges.push_back(Challenge::create(
-			type,
-			value[i]["int_value"].asInt(),
-			value[i]["str_value"].asString()));
-
-		// GUI part
-		std::string image_name = j_challenges[value[i]["name"].asString()]["image"].asString();
-		if (type == Challenge::ChallengeType::Discriminant || type == Challenge::ChallengeType::Narrow) {
-			int dot_pos = image_name.find('.');
-			std::string extension = image_name.substr(dot_pos + 1,image_name.length());
-			image_name = image_name.substr(0, dot_pos) + "_" + value[i]["str_value"].asString() + "." + extension;
-		}
-		Challenge* c_challenge = challenges.back();
-
-		std::string description = j_challenges[value[i]["name"].asString()]["description_" + language].asString();
-		std::string name		= j_challenges[value[i]["name"].asString()]["name_" + language].asString();
-		ui::Button* challenge = ui::Button::create(image_name);
-		challenge->setScale(size_button / challenge->getContentSize().width);
-		challenge->setPosition(Vec2(0,
-			-(challenges.size() - 1 / 2.0) * (challenge->getContentSize().height * challenge->getScale() + size_button / 10)));
-		challenge->addTouchEventListener([&, challenge, text_layout, name, description, c_challenge](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-			if (type == ui::Widget::TouchEventType::ENDED) {
-				Size visibleSize = Director::getInstance()->getVisibleSize();
-				ActionInterval* action = DelayTime::create(0.0f);
-				if (text_layout->isVisible()) {
-					auto action = ScaleTo::create(0.125f, 0.f);
-				}
-				auto updateText = CallFunc::create([&, challenge, text_layout, name, description, c_challenge]() {
-					std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
-
-					std::string str_progress("");
-					if (c_challenge->getState() == Challenge::State::Running) {
-						str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["progress_running"][language].asString();
-						((ui::Text*)text_layout->getChildByName("progress_text"))->setColor(Color3B::WHITE);
-					}
-					else if (c_challenge->getState() == Challenge::State::Failed) {
-						str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["progress_failed"][language].asString();
-						((ui::Text*)text_layout->getChildByName("progress_text"))->setColor(Color3B::ORANGE);
-					}
-					else if (c_challenge->getState() == Challenge::State::Succeed) {
-						str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["progress_succeed"][language].asString();
-						((ui::Text*)text_layout->getChildByName("progress_text"))->setColor(Color3B::GREEN);
-					}
-					std::string n_description = description;
-					text_layout->setScale(0);
-					if (name != ((ui::Text*)text_layout->getChildByName("title_text"))->getString()) {
-						int value_pos = description.find("%i");
-						int string_pos = description.find("%s");
-
-						if (value_pos != std::string::npos) {
-							char buffer[50];
-							sprintf(buffer, n_description.c_str(), c_challenge->getIntValue());
-							n_description = std::string(buffer);
-						}
-						if (string_pos != std::string::npos) {
-							char buffer[50];
-							sprintf(buffer, n_description.c_str(), c_challenge->getStringValue().c_str());
-							n_description = std::string(buffer);
-						}
-						((ui::Text*)text_layout->getChildByName("title_text"))->setString(name);
-						((ui::Text*)text_layout->getChildByName("description_text"))->setString(n_description);
-						((ui::Text*)text_layout->getChildByName("progress_text"))->setString(str_progress);
-						text_layout->setPosition(Vec2(
-							challenge->getPosition().x + challenge->getContentSize().width * challenge->getScale() * 2 / 3 + 
-							text_layout->getChildByName("background")->getContentSize().width * text_layout->getChildByName("background")->getScale() / 2,
-							challenge->getPosition().y ));
-
-						text_layout->setVisible(true);
-
-						auto scale_to = ScaleTo::create(0.125f, 1.f);
-						text_layout->runAction(scale_to);
-					}
-					else {
-						((ui::Text*)text_layout->getChildByName("title_text"))->setString("");
-						((ui::Text*)text_layout->getChildByName("description_text"))->setString("");
-						((ui::Text*)text_layout->getChildByName("progress_text"))->setString("");
-					}
-				});
-				text_layout->runAction(Sequence::create(action, updateText, nullptr));
-			}
-		});
-		addChild(challenge, 1, Value(type).asString());
-	}
 }
 
 ChallengeHandler::~ChallengeHandler() {
@@ -150,13 +25,166 @@ ChallengeHandler::~ChallengeHandler() {
 	challenges.empty();
 }
 
+bool ChallengeHandler::init(const Json::Value & value, Level * level)
+{
+	bool correctlyInitialized = Node::init();
+	this->level = level;
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	createTextLayout(visibleSize);
+	createChallengesButtons(visibleSize, value);
+
+	return correctlyInitialized;
+}
+
+void ChallengeHandler::createChallengesButtons(cocos2d::Size &visibleSize, const Json::Value & value)
+{
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
+	Json::Value j_challenges = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::CHALLENGE);
+	float size_button = visibleSize.width / 20;
+	for (unsigned int i(0); i < value.size(); ++i) {
+		Json::Value configChallenge = value[i];
+		createChallenge(configChallenge, j_challenges, language, size_button);
+	}
+}
+
+void ChallengeHandler::createChallenge(Json::Value &configChallenge, Json::Value &j_challenges, std::string &language, float size_button)
+{
+	Challenge::ChallengeType type = Challenge::getChallengeTypeFromString(configChallenge["name"].asString());
+
+	challenges.push_back(Challenge::create(
+		type,
+		configChallenge["int_value"].asInt(),
+		configChallenge["str_value"].asString()));
+
+	std::string description = j_challenges[configChallenge["name"].asString()]["description_" + language].asString();
+	std::string name = j_challenges[configChallenge["name"].asString()]["name_" + language].asString();
+
+	// GUI part
+	std::string image_name = j_challenges[configChallenge["name"].asString()]["image"].asString();
+	if (type == Challenge::ChallengeType::Discriminant || type == Challenge::ChallengeType::Narrow) {
+		int dot_pos = image_name.find('.');
+		std::string extension = image_name.substr(dot_pos + 1, image_name.length());
+		image_name = image_name.substr(0, dot_pos) + "_" + configChallenge["str_value"].asString() + "." + extension;
+	}
+
+	Challenge* c_challenge = challenges.back();
+	ui::Button* challenge = ui::Button::create(image_name);
+	challenge->setScale(size_button / challenge->getContentSize().width);
+	challenge->setPosition(Vec2(0,
+		-(challenges.size() - 1 / 2.0) * (challenge->getContentSize().height * challenge->getScale() + size_button / 10)));
+	challenge->addTouchEventListener([&, challenge, name, description, c_challenge](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			showChallenge(challenge, name, description, c_challenge);
+		}
+	});
+	addChild(challenge, 1, Value(type).asString());
+}
+
+void ChallengeHandler::showChallenge(cocos2d::ui::Button * challenge, const std::string &name, const std::string &description, Challenge * c_challenge)
+{
+	ActionInterval* action = DelayTime::create(0.0f);
+	if (text_layout->isVisible()) {
+		auto action = ScaleTo::create(0.125f, 0.f);
+	}
+	auto updateText = CallFunc::create([&, challenge, name, description, c_challenge]() {
+		updateChallengeText(c_challenge, description, name, challenge);
+	});
+	text_layout->runAction(Sequence::create(action, updateText, nullptr));
+}
+
+void ChallengeHandler::updateChallengeText(Challenge * c_challenge, const std::string & description, const std::string & name, cocos2d::ui::Button * challenge)
+{
+	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
+
+	std::string str_progress("");
+	if (c_challenge->getState() == Challenge::State::Running) {
+		str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["progress_running"][language].asString();
+		progress_text->setColor(Color3B::WHITE);
+	}
+	else if (c_challenge->getState() == Challenge::State::Failed) {
+		str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["progress_failed"][language].asString();
+		progress_text->setColor(Color3B::ORANGE);
+	}
+	else if (c_challenge->getState() == Challenge::State::Succeed) {
+		str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["progress_succeed"][language].asString();
+		progress_text->setColor(Color3B::GREEN);
+	}
+	std::string n_description = description;
+	text_layout->setScale(0);
+	if (name != title_text->getString()) {
+		int value_pos = description.find("%i");
+		int string_pos = description.find("%s");
+
+		if (value_pos != std::string::npos) {
+			char buffer[50];
+			sprintf(buffer, n_description.c_str(), c_challenge->getIntValue());
+			n_description = std::string(buffer);
+		}
+		if (string_pos != std::string::npos) {
+			char buffer[50];
+			sprintf(buffer, n_description.c_str(), c_challenge->getStringValue().c_str());
+			n_description = std::string(buffer);
+		}
+		title_text->setString(name);
+		description_text->setString(n_description);
+		progress_text->setString(str_progress);
+		text_layout->setPosition(Vec2(
+			challenge->getPosition().x + challenge->getContentSize().width * challenge->getScale() * 2 / 3 +
+			background->getContentSize().width * background->getScale() / 2,
+			challenge->getPosition().y));
+
+		text_layout->setVisible(true);
+
+		auto scale_to = ScaleTo::create(0.125f, 1.f);
+		text_layout->runAction(scale_to);
+	}
+	else {
+		title_text->setString("");
+		description_text->setString("");
+		progress_text->setString("");
+	}
+}
+
+void ChallengeHandler::createTextLayout(cocos2d::Size &visibleSize)
+{
+	text_layout = ui::Layout::create();
+	text_layout->setVisible(false);
+	addChild(text_layout, 0, "text_layout");
+
+	background = Sprite::create("res/buttons/Challenges/text_holder.png");
+	background->setScale(visibleSize.width * 0.20 / background->getContentSize().width);
+	text_layout->addChild(background, 0, "background");
+
+	title_text = ui::Text::create("", "fonts/LICABOLD.ttf", visibleSize.width / 50);
+	title_text->setTextAreaSize(Size(background->getContentSize().width * background->getScale() * 0.85,
+		background->getContentSize().height * background->getScale() * 0.2));
+	title_text->setPosition(Vec2(0, background->getContentSize().height *background->getScale() * 0.4 - title_text->getTextAreaSize().height / 2));
+	title_text->setColor(Color3B(252, 211, 139));
+	text_layout->addChild(title_text, 0, "title_text");
+
+	description_text = ui::Text::create("", "fonts/LICABOLD.ttf", visibleSize.width / 64);
+	description_text->setTextAreaSize(Size(background->getContentSize().width * background->getScale() * 0.85,
+		background->getContentSize().height * background->getScale() * 0.5));
+	description_text->setPosition(Vec2(title_text->getPosition().x,
+		title_text->getPosition().y - title_text->getTextAreaSize().height / 2 - description_text->getTextAreaSize().height / 2));
+	description_text->setTextVerticalAlignment(cocos2d::TextVAlignment::CENTER);
+	text_layout->addChild(description_text, 0, "description_text");
+
+	progress_text = ui::Text::create("", "fonts/LICABOLD.ttf", visibleSize.width / 64);
+	progress_text->setTextAreaSize(Size(background->getContentSize().width * background->getScale() * 0.85,
+		background->getContentSize().height * background->getScale() * 0.2));
+	progress_text->setPosition(Vec2(description_text->getPosition().x,
+		description_text->getPosition().y - description_text->getTextAreaSize().height / 2 - progress_text->getTextAreaSize().height / 2));
+	text_layout->addChild(progress_text, 0, "progress_text");
+}
+
 void ChallengeHandler::update() {
 	for (auto& challenge : challenges) {
 		int previous_state = challenge->getState();
 
 		switch (challenge->getChallengeType()) {
 		case Challenge::ChallengeType::Untouchable:
-			if (challenge->getIntValue() > (int)SceneManager::getInstance()->getGame()->getLevel()->getLife()) {
+			if (challenge->getIntValue() > (int)level->getLife()) {
 				challenge->setState(Challenge::State::Failed);
 			}
 			else {
@@ -164,14 +192,14 @@ void ChallengeHandler::update() {
 			}
 			break;
 		case Challenge::ChallengeType::Perfectionist:
-			for (auto& wall : SceneManager::getInstance()->getGame()->getLevel()->getWalls()) {
+			for (auto& wall : level->getWalls()) {
 				if (wall->isDamaged()) {
 					challenge->setState(Challenge::State::Failed);
 				}
 			}
 			break;
 		case Challenge::ChallengeType::Stingy:
-			if (challenge->getIntValue() < (int)SceneManager::getInstance()->getGame()->getLevel()->getUsedQuantity()) {
+			if (challenge->getIntValue() < (int)level->getUsedQuantity()) {
 				challenge->setState(Challenge::State::Failed);
 			}
 			else {
@@ -179,7 +207,7 @@ void ChallengeHandler::update() {
 			}
 			break;
 		case Challenge::ChallengeType::Believer:
-			if (challenge->getIntValue() < (int)SceneManager::getInstance()->getGame()->getLevel()->getTowers().size()) {
+			if (challenge->getIntValue() < (int)level->getTowers().size()) {
 				challenge->setState(Challenge::State::Failed);
 			}
 			else {
@@ -203,59 +231,88 @@ void ChallengeHandler::addTower(Tower::TowerType type, cocos2d::Vec2 position) {
 	for (auto& challenge : challenges) {
 		int previous_state = challenge->getState();
 		bool touching = false;
-
+		std::vector<Tower*> towers = level->getTowers();
 		switch (challenge->getChallengeType()) {
 		case Challenge::ChallengeType::Misanthrope:
-			for (auto& tower : SceneManager::getInstance()->getGame()->getLevel()->getTowers()) {
-				if (tower->getPosition().getDistance(position) <= Cell::getCellWidth() && position != tower->getPosition()) {
-					challenge->setState(Challenge::State::Failed);
-				}
-			}
+			addTowerMisanthrope(towers, position, challenge);
 			break;
 		case Challenge::ChallengeType::Philanthrope:
-			if (SceneManager::getInstance()->getGame()->getLevel()->getTowers().size() <= 1) {
-				touching = true;
-			}
-			for (auto& tower : SceneManager::getInstance()->getGame()->getLevel()->getTowers()) {
-				if (tower->getPosition() != position && tower->getPosition().getDistance(position) <= Cell::getCellWidth()) {
-					touching = true;
-				}
-			}
-			if (!touching) {
-				challenge->setState(Challenge::State::Failed);
-			}
+			addTowerPhilanthrope(towers, touching, position, challenge);
 			break;
 		case Challenge::ChallengeType::Discriminant:
-			if (TowerFactory::getTowerTypeFromString(challenge->getStringValue()) == type) {
-				challenge->setState(Challenge::State::Failed);
-			}
+			addTowerDiscriminant(challenge, type);
 			break;
 		case Challenge::ChallengeType::Narrow:
-			if (TowerFactory::getTowerTypeFromString(challenge->getStringValue()) != type) {
-				challenge->setState(Challenge::State::Failed);
-			}
+			addTowerNarrow(challenge, type);
 			break;
 		case Challenge::ChallengeType::Reckless:
-			for (auto& path : SceneManager::getInstance()->getGame()->getLevel()->getPaths()) {
-				for (auto& cell : path) {
-					double distance = cell->getPosition().getDistance(position);
-					if (cell->getPosition().getDistance(position) <= Cell::getCellWidth()) {
-						touching = true;
-					}
-				}
-			}
-			if (!touching) {
-				challenge->setState(Challenge::State::Failed);
-			}
+			addTowerReckless(position, touching, challenge);
 			break;
 		}
 		if (previous_state != challenge->getState()) {
-			Sprite* failed = Sprite::create("res/buttons/Challenges/failed.png");
-			failed->setScale(getChildByName(Value(challenge->getChallengeType()).asString())->getContentSize().width *
-				getChildByName(Value(challenge->getChallengeType()).asString())->getScale() * 0.6 / failed->getContentSize().width);
-			failed->setPosition(getChildByName(Value(challenge->getChallengeType()).asString())->getPosition());
-			addChild(failed, 2);
+			showChallengeFailure(challenge);
 		}
+	}
+}
+
+void ChallengeHandler::showChallengeFailure(Challenge *& challenge)
+{
+	Sprite* failed = Sprite::create("res/buttons/Challenges/failed.png");
+	failed->setScale(getChildByName(Value(challenge->getChallengeType()).asString())->getContentSize().width *
+		getChildByName(Value(challenge->getChallengeType()).asString())->getScale() * 0.6 / failed->getContentSize().width);
+	failed->setPosition(getChildByName(Value(challenge->getChallengeType()).asString())->getPosition());
+	addChild(failed, 2);
+}
+
+void ChallengeHandler::addTowerMisanthrope(std::vector<Tower *> &towers, cocos2d::Vec2 &position, Challenge *& challenge)
+{
+	for (auto& tower : towers) {
+		if (tower->getPosition().getDistance(position) <= Cell::getCellWidth() && position != tower->getPosition()) {
+			challenge->setState(Challenge::State::Failed);
+		}
+	}
+}
+
+void ChallengeHandler::addTowerPhilanthrope(std::vector<Tower *> &towers, bool &touching, cocos2d::Vec2 &position, Challenge *& challenge)
+{
+	if (towers.size() <= 1) {
+		touching = true;
+	}
+	for (auto& tower : towers) {
+		if (tower->getPosition() != position && tower->getPosition().getDistance(position) <= Cell::getCellWidth()) {
+			touching = true;
+		}
+	}
+	if (!touching) {
+		challenge->setState(Challenge::State::Failed);
+	}
+}
+
+void ChallengeHandler::addTowerDiscriminant(Challenge *& challenge, Tower::TowerType type)
+{
+	if (TowerFactory::getTowerTypeFromString(challenge->getStringValue()) == type) {
+		challenge->setState(Challenge::State::Failed);
+	}
+}
+
+void ChallengeHandler::addTowerNarrow(Challenge *& challenge, Tower::TowerType type)
+{
+	if (TowerFactory::getTowerTypeFromString(challenge->getStringValue()) != type) {
+		challenge->setState(Challenge::State::Failed);
+	}
+}
+
+void ChallengeHandler::addTowerReckless(cocos2d::Vec2 &position, bool &touching, Challenge *& challenge)
+{
+	for (auto& path : level->getPaths()) {
+		for (auto& cell : path) {
+			if (cell->getPosition().getDistance(position) <= Cell::getCellWidth()) {
+				touching = true;
+			}
+		}
+	}
+	if (!touching) {
+		challenge->setState(Challenge::State::Failed);
 	}
 }
 
@@ -282,8 +339,8 @@ void ChallengeHandler::endChallengeHandler() {
 		}
 	}
 	Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
-	int worldID = SceneManager::getInstance()->getGame()->getLevel()->getWorldId();
-	int levelID = SceneManager::getInstance()->getGame()->getLevel()->getLevelId();
+	int worldID = level->getWorldId();
+	int levelID = level->getLevelId();
 	Json::Value level_challenge = save["levels"][worldID][levelID]["challenges"];
 	if (level_challenge.isNull()) {
 		save["levels"][worldID][levelID]["challenges"] = countSucceedChallenges();

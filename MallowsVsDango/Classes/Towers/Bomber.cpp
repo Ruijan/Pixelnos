@@ -8,13 +8,13 @@ USING_NS_CC;
 Bomber::Bomber() : Tower(), nb_limit_attack(0){
 }
 
-Bomber* Bomber::create(Config* configClass)
+Bomber* Bomber::create(Config* configClass, Level* globalLevel)
 {
 	Bomber* bomber = new Bomber();
 
 	/*if (pSprite->initWithFile(Bomber::getConfig()["image"].asString()))
 	{*/
-	bomber->initFromConfig(configClass);
+	bomber->initFromConfig(configClass, globalLevel);
 	bomber->initDebug();
 	bomber->initEnragePanel();
 	return bomber;
@@ -75,7 +75,7 @@ void Bomber::attack(){
 		//ball->setPosition(getPosition() - Vec2(0, getSpriteFrame()->getRect().size.width / 2 * getScale()));
 		ball->setScale(0.020 * visibleSize.width / ball->getContentSize().width);
 
-		SceneManager::getInstance()->getGame()->getLevel()->addAttack(ball);
+		globalLevel->addAttack(ball);
 		if (target != nullptr) {
 			target->removeTargetingTower(this);
 		}
@@ -85,7 +85,7 @@ void Bomber::attack(){
 }
 
 void Bomber::startLimit() {
-	chooseTarget(SceneManager::getInstance()->getGame()->getLevel()->getEnemies());
+	chooseTarget(globalLevel->getEnemies());
 
 	if (isLimitReached() && nb_limit_attack < 2 && target != nullptr) {
 		if (state == ATTACKING) {

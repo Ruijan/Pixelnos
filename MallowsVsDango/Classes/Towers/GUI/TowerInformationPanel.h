@@ -9,6 +9,8 @@
 
 class Tower;
 class MyGame;
+class Level;
+class LevelInterface;
 
 class TowerInformationPanel: public cocos2d::ui::Layout {
 public:
@@ -36,6 +38,8 @@ protected:
 protected:
 	Tower * tower;
 	MyGame * game;
+	Level* level;
+	LevelInterface* menu;
 	Config* configClass;
 	TowerSettings* settings;
 

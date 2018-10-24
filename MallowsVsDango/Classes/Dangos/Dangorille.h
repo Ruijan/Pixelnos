@@ -18,9 +18,9 @@ public:
 		STARTING,
 		DONE
 	};
-	Dangorille(std::vector<Cell*> npath, int nlevel);
+	Dangorille(std::vector<Cell*> npath, int nlevel, Level* globalLevel);
 	virtual ~Dangorille();
-	static Dangorille* create(std::vector<Cell*> npath, int nlevel);
+	static Dangorille* create(std::vector<Cell*> npath, int nlevel, Level* globalLevel);
 
 	virtual void skeletonAnimationHandle();
 	static Json::Value getConfig();
@@ -42,6 +42,7 @@ private:
 	double attack_spe_reload_time;
 	std::vector<std::string> textToDisplay;
 	SpecialAttackState speAttackState;
+	Level* globalLevel;
 };
 
 #endif

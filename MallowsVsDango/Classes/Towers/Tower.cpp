@@ -19,8 +19,9 @@ Tower::~Tower() {
 	}
 }
 
-void Tower::initFromConfig(Config* configClass) {
+void Tower::initFromConfig(Config* configClass, Level* globalLevel) {
 	auto config = getSpecConfig();
+	this->globalLevel = globalLevel;
 	auto save = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSaveValues();
 	settings = configClass->getTowerSettings(getType());
 	animation_duration = config["animation_attack_time"].asDouble();
@@ -28,7 +29,7 @@ void Tower::initFromConfig(Config* configClass) {
 	name = config["name"].asString();
 	nb_max_attacks_limit = config["limit"].asInt();
 	xp = save["towers"][config["name"].asString()]["exp"].asInt() + 
-		(SceneManager::getInstance())->getGame()->getLevel()->getTowerXP(config["name"].asString());
+		globalLevel->getTowerXP(config["name"].asString());
 	level_max = save["towers"][config["name"].asString()]["max_level"].asInt();
 	limit_enabled = Skills::getSavedSkillFromID(config["limit_skill_id"].asInt())["bought"].asBool();
 
@@ -106,12 +107,13 @@ void Tower::initDebug(){
 }
 
 void Tower::initEnragePanel() {
+	cocos2d::Size cellSize(Cell::getCellWidth(), Cell::getCellHeight());
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	auto enrage_panel = ui::Layout::create();
-	enrage_panel->setPosition(Vec2(0, Cell::getCellWidth() / getScaleX()));
+	enrage_panel->setPosition(Vec2(0, cellSize.width / getScaleX()));
 
 	auto bubble = Sprite::create("res/buttons/speech_fury_red.png");
-	bubble->setScale(2.25 * Cell::getCellWidth() / getScaleX() / bubble->getContentSize().width);
+	bubble->setScale(2.25 * cellSize.width / getScaleX() / bubble->getContentSize().width);
 	bubble->setAnchorPoint(Vec2(0.5f, 0.f));
 	enrage_panel->addChild(bubble, 0, "bubble");
 
@@ -123,7 +125,7 @@ void Tower::initEnragePanel() {
 				startLimit();
 				getChildByName("enrage_panel")->stopAllActions();
 				getChildByName("enrage_panel")->setPosition(Vec2(
-					0, Cell::getCellWidth() / getScaleX()));
+					0, cellSize.width / getScaleX()));
 				getChildByName("enrage_panel")->setScale(1.0f);
 				((ui::Button*)getChildByName("enrage_panel")->
 					getChildByName("enrage_button"))->setEnabled(false);
@@ -132,7 +134,7 @@ void Tower::initEnragePanel() {
 				auto scale_to_button = TargetedAction::create(getChildByName("enrage_panel")->
 					getChildByName("enrage_button"), EaseBackOut::create(ScaleTo::create(0.1f, 0.0001f)));
 				auto shake_it_right = MoveBy::create(0.03f,
-					Vec2(Cell::getCellWidth() / getScaleX() / 8, 0));
+					Vec2(cellSize.width / getScaleX() / 8, 0));
 				auto shake_it_left = shake_it_right->reverse();
 				auto scale_by = ScaleBy::create(0.24f, 1.1f);
 				auto shake_sequence = Repeat::create(Sequence::create(shake_it_right, shake_it_left,
@@ -169,7 +171,6 @@ void Tower::incrementXP(int amount) {
 
 void Tower::destroyCallback(Ref* sender){
 	destroy = true;
-	SceneManager::getInstance()->getGame()->getMenu()->removeTower();
 }
 
 void Tower::builtCallback(Ref* sender){
@@ -333,9 +334,10 @@ void Tower::handleEnrageMode() {
 			startLimit();
 		}
 		else if (isLimitReached() && !getChildByName("enrage_panel")->isVisible() && limit_enabled) {
+			float cellWidth = Cell::getCellWidth();
 			getChildByName("enrage_panel")->setVisible(true);
 			getChildByName("enrage_panel")->stopAllActions();
-			getChildByName("enrage_panel")->setPosition(Vec2(0, Cell::getCellWidth() / getScaleX()));
+			getChildByName("enrage_panel")->setPosition(Vec2(0, cellWidth / getScaleX()));
 			getChildByName("enrage_panel")->setScale(0.0001f);
 			((ui::Button*)getChildByName("enrage_panel")->
 				getChildByName("enrage_button"))->setEnabled(true);
@@ -350,7 +352,7 @@ void Tower::handleEnrageMode() {
 				getChildByName("enrage_button"), EaseBackOut::create(ScaleTo::create(0.1f, scale)));
 			auto callbackEnrage = CallFunc::create([&]() {
 				auto shake_it_right = MoveBy::create(0.05f,
-					Vec2(Cell::getCellWidth() / getScaleX() / 8, 0));
+					Vec2(cellWidth / getScaleX() / 8, 0));
 				auto shake_it_left = shake_it_right->reverse();
 				auto scale_by = ScaleBy::create(0.3f, 1.05f);
 				auto shake_sequence = Repeat::create(Sequence::create(shake_it_right, shake_it_left,
@@ -404,7 +406,7 @@ void Tower::updateState(float dt)
 
 void Tower::updateReloading()
 {
-	chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
+	chooseTarget(globalLevel->getEnemies());
 	reload();
 	handleEnrageMode();
 }
@@ -420,7 +422,7 @@ void Tower::updateAttacking(float dt)
 void Tower::updateAware(float dt)
 {
 	timerIDLE += dt;
-	chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
+	chooseTarget(globalLevel->getEnemies());
 	if (target != nullptr) {
 		handleEnrageMode();
 		if (state != LIMIT_BURSTING) {
@@ -446,7 +448,7 @@ void Tower::setIDLEState()
 
 void Tower::updateIDLE()
 {
-	chooseTarget(((SceneManager*)SceneManager::getInstance())->getGame()->getLevel()->getEnemies());
+	chooseTarget(globalLevel->getEnemies());
 	if (target != nullptr) {
 		state = State::AWARE;
 		((Label*)getChildByName("label_state"))->setString("AWARE");

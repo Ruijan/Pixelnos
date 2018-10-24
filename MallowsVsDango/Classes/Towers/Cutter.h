@@ -7,7 +7,7 @@
 class Cutter : public Tower{
 public:
 	Cutter();
-	static Cutter* create(Config* configClass);
+	static Cutter* create(Config* configClass, Level* globalLevel);
 
 	static const Json::Value& getConfig();
 	virtual const Json::Value& getSpecConfig();

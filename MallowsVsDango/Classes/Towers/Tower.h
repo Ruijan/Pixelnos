@@ -11,6 +11,7 @@
 class Cell;
 class Dango;
 class Config;
+class Level;
 
 using namespace spine;
 
@@ -44,7 +45,7 @@ public:
 	virtual ~Tower();
 	void initDebug();
 	void initEnragePanel();
-	void initFromConfig(Config* configClass);
+	void initFromConfig(Config* configClass, Level* level);
 
 	void pauseAnimation();
 	void resumeAnimation();
@@ -120,6 +121,7 @@ protected:
 	bool selected;
 	bool destroy;
 	bool limit_enabled;
+	Level* globalLevel;
 
 	TowerSettings* settings;
 	

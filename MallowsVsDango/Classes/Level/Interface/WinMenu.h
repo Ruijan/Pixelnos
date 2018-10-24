@@ -3,11 +3,14 @@
 #include "../../Config/json.h"
 
 class MyGame;
+class Level;
 
 class WinMenu : public CentralMenu {
 public:
 	static WinMenu* create(MyGame *game);
 	void showWin();
+
+	void showIncreasingTowerExperience(std::string &tower_name, Json::Value &root, Level * cLevel);
 
 protected:
 	virtual bool init(MyGame* game);

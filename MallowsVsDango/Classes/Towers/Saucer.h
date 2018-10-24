@@ -9,7 +9,7 @@ class Saucer : public Tower{
 
 public:
 	Saucer();
-	static Saucer* create(Config* configClass);
+	static Saucer* create(Config* configClass, Level* globalLevel);
 	static const Json::Value& getConfig();
 	virtual const Json::Value& getSpecConfig();
 	void initSpecial();

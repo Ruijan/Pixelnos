@@ -7,11 +7,11 @@ USING_NS_CC;
 Saucer::Saucer() : Tower(), nb_limit_attack(0){
 }
 
-Saucer* Saucer::create(Config* configClass)
+Saucer* Saucer::create(Config* configClass, Level* globalLevel)
 {
 	Saucer* pSprite = new Saucer();
 
-	pSprite->initFromConfig(configClass);
+	pSprite->initFromConfig(configClass, globalLevel);
 	pSprite->initSpecial();
 	pSprite->initDebug();
 	pSprite->initEnragePanel();
@@ -56,7 +56,7 @@ void Saucer::attack(){
 
 		Vec2 direction = target->getPosition() - spit->getPosition();
 		//spit->setRotation(180 * direction.getAngle() / M_PI);
-		SceneManager::getInstance()->getGame()->getLevel()->addAttack(spit);
+		globalLevel->addAttack(spit);
 		if (target != nullptr) {
 			target->removeTargetingTower(this);
 		}
@@ -66,7 +66,7 @@ void Saucer::attack(){
 }
 
 void Saucer::startLimit() {
-	chooseTarget(SceneManager::getInstance()->getGame()->getLevel()->getEnemies());
+	chooseTarget(globalLevel->getEnemies());
 
 	if (isLimitReached() && nb_limit_attack < 2 && target != nullptr) {
 		if (state == ATTACKING) {

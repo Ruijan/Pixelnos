@@ -95,11 +95,7 @@ void SaucerTutorial::showTower()
 	);
 }
 
-
-
 bool SaucerTutorial::isLastTowerCreatedASaucer() {
 	return config->getLastLevelAction()["action"] == "create_tower" &&
 		config->getLastLevelAction()["tower_name"] == "bomber";
-}
-
-
+}	

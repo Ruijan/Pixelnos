@@ -1,5 +1,5 @@
 #pragma once
-#define COCOS2D_DEBUG 0
+#define COCOS2D_DEBUG 1
 
 #include "cocos2d.h"
 #include "SceneManager.h"
