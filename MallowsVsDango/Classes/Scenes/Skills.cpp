@@ -15,68 +15,42 @@ bool Skills::init(Config* config) {
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Json::Value talents = configClass->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
-	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
+	Json::Value savedSkills = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 	Json::Value buttons = configClass->getConfigValues(Config::ConfigType::BUTTON);
 
-	if (!save_root.isMember("holy_sugar")) {
-		save_root["holy_sugar"] = 0;
+	initSkillTreeProperties(savedSkills, talents);
+
+	addBackground(visibleSize);
+	addBlackMask(visibleSize);
+	createBackToMainMenuButton(visibleSize);
+
+	createLeftPanelForSkillDescrition(visibleSize, buttons, language, savedSkills);
+	createValidationLayout(visibleSize, buttons, language);
+	createBuyingButtonLayout(visibleSize, buttons, language);
+	initSkills();
+
+	return true;
+}
+
+void Skills::initSkillTreeProperties(Json::Value &savedSkills, Json::Value &talents)
+{
+	if (!savedSkills.isMember("holy_sugar")) {
+		savedSkills["holy_sugar"] = 0;
 	}
-	if (!save_root.isMember("holy_sugar_spent")) {
-		save_root["holy_sugar_spent"] = 0;
+	if (!savedSkills.isMember("holy_sugar_spent")) {
+		savedSkills["holy_sugar_spent"] = 0;
 	}
 	// FILLING SAVE FILE WITH VALUES
-	Json::Value root2 = save_root;
-	root2["talents"] = {};
-	for (unsigned int k(0); k < talents.size(); ++k) {
-		auto conf = talents[k]["id"].asInt();
-		root2["talents"][k]["id"] = talents[k]["id"].asInt();
-		root2["talents"][k]["bought"] = false;
-	}
-	for (unsigned int i(0); i < save_root["talents"].size(); ++i) {
-		if (save_root["talents"][i].isMember("id")) {
-			if (talents[i]["id"].asInt() != save_root["talents"][i]["id"].asInt()) {
-				for (unsigned int k(0); k < talents.size(); ++k) {
-					if (talents[k]["id"].asInt() == save_root["talents"][i]["id"].asInt()) {
-						root2["talents"][k]["id"] = talents[k]["id"].asInt();
-						root2["talents"][k]["bought"] = save_root["talents"][i]["bought"].asBool();
-					}
-				}
-			}
-			else {
-				root2["talents"][i]["id"] = talents[i]["id"].asInt();
-				root2["talents"][i]["bought"] = save_root["talents"][i]["bought"].asBool();
-			}
-		}
-	}
-	save_root = root2;
-	configClass->setSave(save_root);
+	Json::Value savedSkillsCopy = savedSkills;
+	initializeDefaultSkillTree(savedSkillsCopy, talents);
+	updateSkillTreeWithSaveFile(savedSkills, talents, savedSkillsCopy);
+	savedSkills = savedSkillsCopy;
+	configClass->setSave(savedSkills);
 	configClass->save();
+}
 
-	//generating a background for skills 
-	Sprite* loading_background = Sprite::create("res/background/space.png");
-	loading_background->setPosition(Vec2(visibleSize.width * 5 / 8, visibleSize.height / 2));
-	loading_background->setScale(visibleSize.height / loading_background->getContentSize().height);
-	addChild(loading_background);
-
-	//return button to levels on the top right corner
-	cocos2d::ui::Button* back = ui::Button::create("res/buttons/restart_button.png");
-	Sprite* back_wood = Sprite::create("res/buttons/close2_shadow.png");
-
-	back->addChild(back_wood, -1);
-	addChild(back, 2);
-	back->setScale(visibleSize.width / back->getContentSize().width / 15);
-	back->setAnchorPoint(Vec2(1.f, 1.f));
-	back_wood->setScale(0.98f);
-	back_wood->setPosition(Vec2(back->getContentSize().width / 2,
-		back->getContentSize().height / 2));
-	back->setPosition(Vec2(visibleSize.width, visibleSize.height));
-	back->addTouchEventListener([back](Ref* sender, ui::Widget::TouchEventType type) {
-		if (type == ui::Widget::TouchEventType::ENDED) {
-			SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
-		}
-	});
-
-	//Skill_info, window left side
+void Skills::createLeftPanelForSkillDescrition(cocos2d::Size &visibleSize, Json::Value &buttons, std::string &language, Json::Value &savedSkills)
+{
 	Sprite* skill_info = Sprite::create("res/buttons/menupanel5.png");
 	addChild(skill_info, 1);
 	skill_info->setScaleX(visibleSize.width / skill_info->getContentSize().width / 4);
@@ -102,7 +76,7 @@ bool Skills::init(Config* config) {
 	addChild(sugar_sprite1, 1);
 
 	//current sugar info
-	Label* sugar_amount = Label::createWithTTF("X " + save_root["holy_sugar"].asString(), "fonts/LICABOLD.ttf", round(visibleSize.width / 25));
+	Label* sugar_amount = Label::createWithTTF("X " + savedSkills["holy_sugar"].asString(), "fonts/LICABOLD.ttf", round(visibleSize.width / 25));
 	sugar_amount->setColor(Color3B::YELLOW);
 	sugar_amount->enableOutline(Color4B::BLACK, 2);
 	sugar_amount->setPosition(Vec2(skill_info->getContentSize().width * skill_info->getScaleX() / 3, 0) + sugar_sprite1->getPosition());
@@ -124,27 +98,59 @@ bool Skills::init(Config* config) {
 	addChild(skill_name, 1, "skill_name");
 
 	//label for setting skill_description
-	Label* skill_description = Label::createWithTTF(buttons["waiting_talent"][language].asString(),
+	skillDescription = Label::createWithTTF(buttons["waiting_talent"][language].asString(),
 		"fonts/LICABOLD.ttf", round(visibleSize.width / 55.f));
-	skill_description->setColor(Color3B::BLACK);
-	skill_description->setWidth(visibleSize.width / 5);
-	skill_description->setPosition(Vec2(visibleSize.width / 8, skill_name->getPosition().y - skill_name->getContentSize().height / 2 -
+	skillDescription->setColor(Color3B::BLACK);
+	skillDescription->setWidth(visibleSize.width / 5);
+	skillDescription->setPosition(Vec2(visibleSize.width / 8, skill_name->getPosition().y - skill_name->getContentSize().height / 2 -
 		visibleSize.height / 25));
-	skill_description->setVerticalAlignment(cocos2d::TextVAlignment::TOP);
-	skill_description->setAnchorPoint(Vec2(0.5f, 1.f));
-	skill_description->runAction(RepeatForever::create(Sequence::createWithTwoActions(FadeIn::create(1.f), FadeOut::create(1.f))));
-	addChild(skill_description, 1, "skill_description");
+	skillDescription->setVerticalAlignment(cocos2d::TextVAlignment::TOP);
+	skillDescription->setAnchorPoint(Vec2(0.5f, 1.f));
+	skillDescription->runAction(RepeatForever::create(Sequence::createWithTwoActions(FadeIn::create(1.f), FadeOut::create(1.f))));
+	addChild(skillDescription, 1, "skillDescription");
+}
 
-	//add black mask to prevent change during confirmation
-	addChild(ui::Layout::create(), 2, "black_mask");
-	ui::Button* mask = ui::Button::create("res/buttons/mask.png");
-	mask->setScaleX(visibleSize.width / mask->getContentSize().width);
-	mask->setScaleY(visibleSize.height / mask->getContentSize().height);
-	mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-	getChildByName("black_mask")->addChild(mask, 4);
-	getChildByName("black_mask")->setVisible(false);
+void Skills::createBuyingButtonLayout(cocos2d::Size &visibleSize, Json::Value &buttons, std::string &language)
+{
+	buyingLayout = cocos2d::ui::Layout::create();
+	buyingLayout->setPosition(Vec2(visibleSize.width / 8, visibleSize.height * 0.1));
+	addChild(buyingLayout, 1, "buyingLayout");
 
-	//add buy confirmation
+	cocos2d::ui::Button* buy_button = ui::Button::create("res/buttons/shop.png");
+	buy_button->setScale(visibleSize.width / buy_button->getContentSize().width / 8);
+	buy_button->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED) {
+			showValidationPanel();
+		}
+	});
+	buyingLayout->addChild(buy_button, 1, "buy_button");
+
+	//skill_cost + sprite under buy_label
+	Sprite* sugar_sprite2 = Sprite::create("res/buttons/holy_sugar.png");
+	sugar_sprite2->setScale(visibleSize.width / sugar_sprite2->getContentSize().width / 20);
+	sugar_sprite2->setPosition(Vec2(-buy_button->getContentSize().width * buy_button->getScaleX() / 5, 0));
+	buyingLayout->addChild(sugar_sprite2, 1, "sugar_sprite2");
+
+	Label* skill_cost = Label::createWithTTF("5", "fonts/LICABOLD.ttf", round(visibleSize.width / 30));
+	skill_cost->setColor(Color3B::WHITE);
+	skill_cost->enableOutline(Color4B::BLACK, 1);
+	skill_cost->setPosition(Vec2(buy_button->getContentSize().width * buy_button->getScaleX() / 5, 0));
+	buyingLayout->addChild(skill_cost, 1, "skill_cost");
+	buyingLayout->setVisible(false);
+
+	// add unlocked description
+	std::string txt = buttons["skill_bought"][language].asString();
+	txt[0] = toupper(txt[0]);
+	Label* unlocked_txt = Label::createWithTTF(txt, "fonts/LICABOLD.ttf", round(visibleSize.width / 25));
+	unlocked_txt->setColor(Color3B::YELLOW);
+	unlocked_txt->enableOutline(Color4B::BLACK, 1);
+	unlocked_txt->setPosition(buyingLayout->getPosition());
+	addChild(unlocked_txt, 1, "unlocked_txt");
+	unlocked_txt->setVisible(false);
+}
+
+void Skills::createValidationLayout(cocos2d::Size &visibleSize, Json::Value &buttons, std::string &language)
+{
 	auto validate_buy = ui::Layout::create();
 	addChild(validate_buy, 2, "validate_buy");
 	ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel2.png");
@@ -208,7 +214,7 @@ bool Skills::init(Config* config) {
 
 			//update skill panels, check box
 			removeChildByName("talent_page");
-			initTalents();
+			initSkills();
 			selectSkill(c_talent["id"].asInt());
 			hideValidationPanel();
 		}
@@ -218,48 +224,75 @@ bool Skills::init(Config* config) {
 	validate_shadow->setPosition(validate_button->getPosition());
 	validate_buy->addChild(validate_shadow, -1);
 	validate_buy->addChild(validate_button, 5, "validate_button");
+}
 
-	//add buy_button
-	cocos2d::ui::Layout* buy_layout = cocos2d::ui::Layout::create();
-	buy_layout->setPosition(Vec2(visibleSize.width / 8, visibleSize.height * 0.1));
-	addChild(buy_layout, 1, "buy_layout");
+void Skills::addBlackMask(cocos2d::Size &visibleSize)
+{
+	addChild(ui::Layout::create(), 2, "black_mask");
+	ui::Button* mask = ui::Button::create("res/buttons/mask.png");
+	mask->setScaleX(visibleSize.width / mask->getContentSize().width);
+	mask->setScaleY(visibleSize.height / mask->getContentSize().height);
+	mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	getChildByName("black_mask")->addChild(mask, 4);
+	getChildByName("black_mask")->setVisible(false);
+}
 
-	cocos2d::ui::Button* buy_button = ui::Button::create("res/buttons/shop.png");
-	buy_button->setScale(visibleSize.width / buy_button->getContentSize().width / 8);
-	buy_button->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+void Skills::createBackToMainMenuButton(cocos2d::Size &visibleSize)
+{
+	cocos2d::ui::Button* back = ui::Button::create("res/buttons/restart_button.png");
+	Sprite* back_wood = Sprite::create("res/buttons/close2_shadow.png");
+
+	back->addChild(back_wood, -1);
+	addChild(back, 2);
+	back->setScale(visibleSize.width / back->getContentSize().width / 15);
+	back->setAnchorPoint(Vec2(1.f, 1.f));
+	back_wood->setScale(0.98f);
+	back_wood->setPosition(Vec2(back->getContentSize().width / 2,
+		back->getContentSize().height / 2));
+	back->setPosition(Vec2(visibleSize.width, visibleSize.height));
+	back->addTouchEventListener([back](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			showValidationPanel();
+			SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 		}
 	});
-	buy_layout->addChild(buy_button, 1, "buy_button");
+}
 
-	//skill_cost + sprite under buy_label
-	Sprite* sugar_sprite2 = Sprite::create("res/buttons/holy_sugar.png");
-	sugar_sprite2->setScale(visibleSize.width / sugar_sprite2->getContentSize().width / 20);
-	sugar_sprite2->setPosition(Vec2(-buy_button->getContentSize().width * buy_button->getScaleX() / 5, 0));
-	buy_layout->addChild(sugar_sprite2, 1, "sugar_sprite2");
+void Skills::addBackground(cocos2d::Size &visibleSize)
+{
+	Sprite* loading_background = Sprite::create("res/background/space.png");
+	loading_background->setPosition(Vec2(visibleSize.width * 5 / 8, visibleSize.height / 2));
+	loading_background->setScale(visibleSize.height / loading_background->getContentSize().height);
+	addChild(loading_background);
+}
 
-	Label* skill_cost = Label::createWithTTF("5", "fonts/LICABOLD.ttf", round(visibleSize.width / 30));
-	skill_cost->setColor(Color3B::WHITE);
-	skill_cost->enableOutline(Color4B::BLACK, 1);
-	skill_cost->setPosition(Vec2(buy_button->getContentSize().width * buy_button->getScaleX() / 5, 0));
-	buy_layout->addChild(skill_cost, 1, "skill_cost");
-	buy_layout->setVisible(false);
+void Skills::updateSkillTreeWithSaveFile(Json::Value &save_root, Json::Value &talents, Json::Value &root2)
+{
+	for (unsigned int i(0); i < save_root["talents"].size(); ++i) {
+		if (save_root["talents"][i].isMember("id")) {
+			if (talents[i]["id"].asInt() != save_root["talents"][i]["id"].asInt()) {
+				for (unsigned int k(0); k < talents.size(); ++k) {
+					if (talents[k]["id"].asInt() == save_root["talents"][i]["id"].asInt()) {
+						root2["talents"][k]["id"] = talents[k]["id"].asInt();
+						root2["talents"][k]["bought"] = save_root["talents"][i]["bought"].asBool();
+					}
+				}
+			}
+			else {
+				root2["talents"][i]["id"] = talents[i]["id"].asInt();
+				root2["talents"][i]["bought"] = save_root["talents"][i]["bought"].asBool();
+			}
+		}
+	}
+}
 
-	// add unlocked description
-	std::string txt = buttons["skill_bought"][language].asString();
-	txt[0] = toupper(txt[0]);
-	Label* unlocked_txt = Label::createWithTTF(txt, "fonts/LICABOLD.ttf", round(visibleSize.width / 25));
-	unlocked_txt->setColor(Color3B::YELLOW);
-	unlocked_txt->enableOutline(Color4B::BLACK, 1);
-	unlocked_txt->setPosition(buy_layout->getPosition());
-	addChild(unlocked_txt, 1, "unlocked_txt");
-	unlocked_txt->setVisible(false);
-
-	//create talents
-	initTalents();
-
-	return true;
+void Skills::initializeDefaultSkillTree(Json::Value &root2, Json::Value &talents)
+{
+	root2["talents"] = {};
+	for (unsigned int k(0); k < talents.size(); ++k) {
+		auto conf = talents[k]["id"].asInt();
+		root2["talents"][k]["id"] = talents[k]["id"].asInt();
+		root2["talents"][k]["bought"] = false;
+	}
 }
 
 Skills * Skills::create(Config * config)
@@ -308,7 +341,7 @@ int Skills::getSavedSkillPosFromID(int id) {
 	return -1;
 }
 
-void Skills::initTalents() {
+void Skills::initSkills() {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Json::Value talents = configClass->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
@@ -335,39 +368,13 @@ void Skills::initTalents() {
 		}
 
 		// create the button for the specific talent
-		std::string sprite_name = "";
-		if (save_root["c_level"].asInt() > talent["condition_level"].asInt() && save_root["c_world"].asInt() > talent["condition_world"].asInt() &&
-			save_root["holy_sugar_spent"].asInt() > talent["condition_sugar"].asInt() && (talent["condition_id"].asInt() < 0 ||
-			(talent["condition_id"].asInt() > 0 && getSavedSkillFromID(talent["condition_id"].asInt())["bought"].asBool()))) {
-			sprite_name = talent["sprite_enabled"].asString();
-		}
-		else {
-			sprite_name = talent["sprite_disabled"].asString();
-		}
-		ui::Button* talent_btn = ui::Button::create(sprite_name);
-		if (save_root["c_level"].asInt() > talent["condition_level"].asInt() && save_root["c_world"].asInt() > talent["condition_world"].asInt()) {
-			talent_btn->setEnabled(true);
-		}
-		else {
-			talent_btn->setEnabled(false);
-		}
-		talent_btn->setScale(talent_pages->getContentSize().width / talent_btn->getContentSize().width / (1.75 * max_row));
+		float buttonScale = talent_pages->getContentSize().width / (1.75 * max_row);
+		cocos2d::ui::Button* skillButton = createSkillButton(save_root, talent, buttonScale);
 		float position_x = column * talent_pages->getContentSize().width * 1 / max_column + talent_pages->getContentSize().width * 1 / (2 * max_column);
 		float position_y = -row * talent_pages->getContentSize().height * 1 / max_row + talent_pages->getContentSize().height * (2 * max_row - 1) / (2 * max_row);
-		talent_btn->setPosition(Vec2(position_x, position_y));
-		talent_btn->addTouchEventListener([&, talent, talent_btn](Ref* sender, ui::Widget::TouchEventType type) {
-			if (type == ui::Widget::TouchEventType::ENDED && talent_btn->isEnabled()) {
-				selectSkill(talent["id"].asInt());
-			}
-		});
-		if (getSavedSkillFromID(talent["id"].asInt())["bought"].asBool()) {
-			setTalentBtnBought(talent_btn);
-		}
-		if (c_talent != Json::Value::null && c_talent["id"].asInt() == talent["id"].asInt()) {
-			c_button = talent_btn;
-		}
-		c_page->addChild(talent_btn);
-		talents_button[talent["id"].asInt()] = talent_btn;
+		skillButton->setPosition(Vec2(position_x, position_y));
+		talents_button[talent["id"].asInt()] = skillButton;
+		c_page->addChild(skillButton);
 		++row;
 		if (row >= max_row) {
 			++column;
@@ -382,6 +389,44 @@ void Skills::initTalents() {
 	addChild(talent_pages, 1, "talent_page");
 }
 
+cocos2d::ui::Button* Skills::createSkillButton(Json::Value &save_root, Json::Value & talent, float buttonScale)
+{
+	std::string sprite_name = getSkillSpriteName(save_root, talent);
+	ui::Button* skillButton = ui::Button::create(sprite_name);
+	skillButton->setEnabled(shouldEnableSkillButton(save_root, talent));
+	skillButton->setScale(buttonScale / skillButton->getContentSize().width);
+
+	skillButton->addTouchEventListener([&, talent, skillButton](Ref* sender, ui::Widget::TouchEventType type) {
+		if (type == ui::Widget::TouchEventType::ENDED && skillButton->isEnabled()) {
+			selectSkill(talent["id"].asInt());
+		}
+	});
+	if (getSavedSkillFromID(talent["id"].asInt())["bought"].asBool()) {
+		setTalentBtnBought(skillButton);
+	}
+	if (c_talent != Json::Value::null && c_talent["id"].asInt() == talent["id"].asInt()) {
+		c_button = skillButton;
+	}
+	return skillButton;
+}
+bool Skills::shouldEnableSkillButton(Json::Value & save_root, Json::Value & talent)
+{
+	return save_root["c_level"].asInt() > talent["condition_level"].asInt() && save_root["c_world"].asInt() > talent["condition_world"].asInt();
+}
+
+std::string Skills::getSkillSpriteName(Json::Value &save_root, Json::Value & talent) {
+	std::string sprite_name = "";
+	if (save_root["c_level"].asInt() > talent["condition_level"].asInt() && save_root["c_world"].asInt() > talent["condition_world"].asInt() &&
+		save_root["holy_sugar_spent"].asInt() > talent["condition_sugar"].asInt() && (talent["condition_id"].asInt() < 0 ||
+		(talent["condition_id"].asInt() > 0 && getSavedSkillFromID(talent["condition_id"].asInt())["bought"].asBool()))) {
+		sprite_name = talent["sprite_enabled"].asString();
+	}
+	else {
+		sprite_name = talent["sprite_disabled"].asString();
+	}
+	return sprite_name;
+}
+
 void Skills::setTalentBtnBought(ui::Button* btn) {
 	Sprite* validate = Sprite::create("res/buttons/validate.png");
 	validate->setScale(btn->getContentSize().width * 0.4 / validate->getContentSize().width);
@@ -392,30 +437,67 @@ void Skills::setTalentBtnBought(ui::Button* btn) {
 void Skills::selectSkill(int id) {
 	Json::Value talent = getSkillFromID(id);
 	ui::Button* talent_btn = talents_button[id];
-	Size visibleSize = Director::getInstance()->getVisibleSize();
+	
 	std::string language = configClass->getSettings()->getLanguage();
 	Json::Value talents = configClass->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 	Json::Value buttons = configClass->getConfigValues(Config::ConfigType::BUTTON);
 
 	((Label*)getChildByName("skill_name"))->setString(talent["name_" + language].asString());
-	((Label*)getChildByName("skill_description"))->stopAllActions();
-	getChildByName("skill_description")->setOpacity(255);
-	if (talent["cost"].asInt() > save_root["holy_sugar"].asInt()) {
-		((Label*)getChildByName("buy_layout")->getChildByName("skill_cost"))->setColor(Color3B::RED);
-		((ui::Button*)getChildByName("buy_layout")->getChildByName("buy_button"))->setEnabled(false);
+
+	updateSkillDescription(talent, language);
+	updateBuyingCapacity(talent, save_root);
+	removeChildByName("requirement_description");
+	createRequirementDescription(buttons, language, talent, save_root);
+	updateBuyingLayoutVisibility(talent);
+	removeSelectedEffectFromSkillButton();
+	c_button = talent_btn;
+	c_talent = talent;
+	addSelectedEffectToSkillButton(talent_btn);
+}
+
+void Skills::removeSelectedEffectFromSkillButton()
+{
+	if (c_button != nullptr) {
+		c_button->removeChildByName("yellow");
+	}
+}
+
+void Skills::addSelectedEffectToSkillButton(cocos2d::ui::Button * talent_btn)
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Sprite* selected = Sprite::create("res/buttons/Skills/selected.png");
+	selected->setScale((talent_btn->getScale() * talent_btn->getContentSize().width + visibleSize.width / 20) / selected->getContentSize().width);
+	selected->setPosition(Vec2(talent_btn->getContentSize().width / 2, talent_btn->getContentSize().height / 2));
+	talent_btn->addChild(selected, -1, "yellow");
+}
+
+void Skills::updateBuyingLayoutVisibility(Json::Value &talent)
+{
+	if (getSavedSkillFromID(talent["id"].asInt())["bought"].asBool()) {
+		buyingLayout->setVisible(false);
+		getChildByName("unlocked_txt")->setVisible(true);
 	}
 	else {
-		((Label*)getChildByName("buy_layout")->getChildByName("skill_cost"))->setColor(Color3B::WHITE);
-		((ui::Button*)getChildByName("buy_layout")->getChildByName("buy_button"))->setEnabled(true);
+		buyingLayout->setVisible(true);
+		getChildByName("unlocked_txt")->setVisible(false);
 	}
-	getChildByName("buy_layout")->setVisible(true);
+}
 
-	removeChildByName("requirement_description");
+void Skills::updateSkillDescription(Json::Value &talent, std::string &language)
+{
+	skillDescription->stopAllActions();
+	skillDescription->setOpacity(255);
+	skillDescription->setString(talent["description_" + language].asString());
+}
+
+void Skills::createRequirementDescription(Json::Value &buttons, std::string &language, Json::Value &talent, Json::Value &save_root)
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
 	ui::RichText* requirement_description = ui::RichText::create();
 	requirement_description->setContentSize(Size(visibleSize.width / 5, visibleSize.height / 3));
-	requirement_description->setPosition(Vec2(visibleSize.width / 8, getChildByName("skill_description")->getPosition().y -
-		getChildByName("skill_description")->getContentSize().height -
+	requirement_description->setPosition(Vec2(visibleSize.width / 8, skillDescription->getPosition().y -
+		skillDescription->getContentSize().height -
 		visibleSize.height / 25));
 	requirement_description->ignoreContentAdaptWithSize(false);
 	requirement_description->setAnchorPoint(Vec2(0.5f, 1.f));
@@ -428,7 +510,7 @@ void Skills::selectSkill(int id) {
 		Color3B color = Color3B(1, 69, 0);
 		if (save_root["holy_sugar_spent"].asInt() < talent["condition_sugar"].asInt()) {
 			color = Color3B::RED;
-			((ui::Button*)getChildByName("buy_layout")->getChildByName("buy_button"))->setEnabled(false);
+			((ui::Button*)buyingLayout->getChildByName("buy_button"))->setEnabled(false);
 		}
 		++elements;
 		requirement_description->pushBackElement(
@@ -443,7 +525,7 @@ void Skills::selectSkill(int id) {
 		Color3B color = Color3B(1, 69, 0);
 		if (!getSavedSkillFromID(talent["condition_id"].asInt())["bought"].asBool()) {
 			color = Color3B::RED;
-			((ui::Button*)getChildByName("buy_layout")->getChildByName("buy_button"))->setEnabled(false);
+			((ui::Button*)buyingLayout->getChildByName("buy_button"))->setEnabled(false);
 		}
 		++elements;
 		requirement_description->pushBackElement(
@@ -460,28 +542,27 @@ void Skills::selectSkill(int id) {
 			ui::RichElementText::create(elements, Color3B(1, 69, 0), 255, buttons["none"][language].asString(),
 				"fonts/LICABOLD.ttf", round(visibleSize.width / 55.f)));
 	}
-	((Label*)getChildByName("skill_description"))->setString(talent["description_" + language].asString());
-	getChildByName("requirement_description")->setPosition(Vec2(visibleSize.width / 8, getChildByName("skill_description")->getPosition().y - getChildByName("skill_description")->getContentSize().height -
+
+	requirement_description->setPosition(Vec2(visibleSize.width / 8, skillDescription->getPosition().y - skillDescription->getContentSize().height -
 		visibleSize.height / 25));
-	if (getSavedSkillFromID(talent["id"].asInt())["bought"].asBool()) {
-		getChildByName("buy_layout")->setVisible(false);
-		getChildByName("unlocked_txt")->setVisible(true);
+}
+
+void Skills::updateBuyingCapacity(Json::Value &talent, Json::Value &save_root)
+{
+	if (!hasEnoughHolySugar(talent, save_root)) {
+		((Label*)buyingLayout->getChildByName("skill_cost"))->setColor(Color3B::RED);
+		((ui::Button*)buyingLayout->getChildByName("buy_button"))->setEnabled(false);
 	}
 	else {
-		getChildByName("buy_layout")->setVisible(true);
-		getChildByName("unlocked_txt")->setVisible(false);
+		((Label*)buyingLayout->getChildByName("skill_cost"))->setColor(Color3B::WHITE);
+		((ui::Button*)buyingLayout->getChildByName("buy_button"))->setEnabled(true);
 	}
-	((Label*)getChildByName("buy_layout")->getChildByName("skill_cost"))->setString(talent["cost"].asString());
+	((Label*)buyingLayout->getChildByName("skill_cost"))->setString(talent["cost"].asString());
+}
 
-	if (c_button != nullptr) {
-		c_button->removeChildByName("yellow");
-	}
-	c_button = talent_btn;
-	c_talent = talent;
-	Sprite* selected = Sprite::create("res/buttons/Skills/selected.png");
-	selected->setScale((talent_btn->getScale() * talent_btn->getContentSize().width + visibleSize.width / 20) / selected->getContentSize().width);
-	selected->setPosition(Vec2(talent_btn->getContentSize().width / 2, talent_btn->getContentSize().height / 2));
-	talent_btn->addChild(selected, -1, "yellow");
+bool Skills::hasEnoughHolySugar(Json::Value &talent, Json::Value &save_root)
+{
+	return talent["cost"].asInt() < save_root["holy_sugar"].asInt();
 }
 
 void Skills::hideValidationPanel() {
@@ -608,7 +689,7 @@ void Skills::updateTutorial(float dt) {
 					DelayTime::create(0.25f),
 					select_skill,
 					DelayTime::create(0.25f),
-					MoveTo::create(1.f, getChildByName("buy_layout")->getPosition()),
+					MoveTo::create(1.f, buyingLayout->getPosition()),
 					DelayTime::create(0.25f),
 					show_skill_buy,
 					nullptr)
@@ -620,7 +701,7 @@ void Skills::updateTutorial(float dt) {
 
 void Skills::onEnterTransitionDidFinish() {
 	removeChildByName("talent_page");
-	initTalents();
+	initSkills();
 	((Label*)getChildByName("sugar_amount"))->setString("x " + ((AppDelegate*)Application::getInstance())->getSave()["holy_sugar"].asString());
 	scheduleUpdate();
 }
