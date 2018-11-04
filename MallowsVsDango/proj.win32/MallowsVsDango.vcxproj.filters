@@ -79,6 +79,9 @@
     <Filter Include="src\Scenes\Level\Towers\Attacks\ThrowableAttacks">
       <UniqueIdentifier>{68ab2cd9-8574-49b4-80c1-b61f98fbde9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Scenes\SkillTree\Tutorials">
+      <UniqueIdentifier>{0ccfe80f-bcb9-4890-bd70-3d3bc0706fd5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -314,6 +317,9 @@
     </ClCompile>
     <ClCompile Include="..\Classes\Scenes\StoryMenu\StoryParametersMenu.cpp">
       <Filter>src\Scenes\StoryMenu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\SkillTree\Tutorials\SkillTutorial.cpp">
+      <Filter>src\Scenes\SkillTree\Tutorials</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -565,6 +571,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Scenes\StoryMenu\StoryParametersMenu.h">
       <Filter>src\Scenes\StoryMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\SkillTree\Tutorials\SkillTutorial.h">
+      <Filter>src\Scenes\SkillTree\Tutorials</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

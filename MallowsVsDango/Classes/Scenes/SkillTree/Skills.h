@@ -5,6 +5,7 @@
 #include "ui/CocosGUI.h"
 #include "../../Config/json.h"
 #include "../../Config/Config.h"
+#include "Tutorials/SkillTutorial.h"
 
 class Skills : public cocos2d::Scene
 {
@@ -26,13 +27,15 @@ public:
 	void updateTutorial(float dt);
 
 	void showHowToBuySkill(cocos2d::Size & visibleSize);
-
-protected:
 	void hideValidationPanel();
 	void showValidationPanel();
+	void selectSkill(int id);
+	cocos2d::ui::Button* getTalentButton(int index);
+
+protected:
 	int getSavedSkillPosFromID(int id);
 	void setTalentBtnBought(cocos2d::ui::Button* btn);
-	void selectSkill(int id);
+	
 	void removeSelectedEffectFromSkillButton();
 	void addSelectedEffectToSkillButton(cocos2d::ui::Button * talent_btn);
 	void updateBuyingLayoutVisibility(Json::Value &talent);
@@ -50,9 +53,10 @@ protected:
 	bool tutorial_running;
 	cocos2d::ui::Button* c_button;
 	Json::Value c_talent;
-	std::map<int, cocos2d::ui::Button*> talents_button;
+	std::map<int, cocos2d::ui::Button*> talentButtons;
 	Config* configClass;
 	cocos2d::ui::Layout* buyingLayout;
 	cocos2d::Label* skillDescription;
+	SkillTutorial* tutorial;
 };
 #endif

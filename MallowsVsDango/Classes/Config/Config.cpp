@@ -3,8 +3,6 @@
 #include "AppDelegate.h"
 #include "extensions/cocos-ext.h"
 #include "NetworkController.h"
-#include "../Scenes/Level/MyGame.h"
-#include "../Scenes/Level/Towers/TowerFactory.h"
 
 #include "Exceptions/RequestToJsonException.h"
 #include <time.h>

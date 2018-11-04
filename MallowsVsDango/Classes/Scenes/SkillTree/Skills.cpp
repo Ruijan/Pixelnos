@@ -12,6 +12,7 @@ bool Skills::init(Config* config) {
 	tutorial_running = false;
 	c_talent = Json::Value::null;
 	c_button = nullptr;
+	tutorial = new SkillTutorial(configClass->getSkillTutorialSettings(), this);
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Json::Value talents = configClass->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
@@ -373,7 +374,7 @@ void Skills::initSkills() {
 		float position_x = column * talent_pages->getContentSize().width * 1 / max_column + talent_pages->getContentSize().width * 1 / (2 * max_column);
 		float position_y = -row * talent_pages->getContentSize().height * 1 / max_row + talent_pages->getContentSize().height * (2 * max_row - 1) / (2 * max_row);
 		skillButton->setPosition(Vec2(position_x, position_y));
-		talents_button[talent["id"].asInt()] = skillButton;
+		talentButtons[talent["id"].asInt()] = skillButton;
 		c_page->addChild(skillButton);
 		++row;
 		if (row >= max_row) {
@@ -436,7 +437,7 @@ void Skills::setTalentBtnBought(ui::Button* btn) {
 
 void Skills::selectSkill(int id) {
 	Json::Value talent = getSkillFromID(id);
-	ui::Button* talent_btn = talents_button[id];
+	ui::Button* talent_btn = talentButtons[id];
 	
 	std::string language = configClass->getSettings()->getLanguage();
 	Json::Value talents = configClass->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
@@ -454,6 +455,11 @@ void Skills::selectSkill(int id) {
 	c_button = talent_btn;
 	c_talent = talent;
 	addSelectedEffectToSkillButton(talent_btn);
+}
+
+cocos2d::ui::Button * Skills::getTalentButton(int index)
+{
+	return talentButtons[index];
 }
 
 void Skills::removeSelectedEffectFromSkillButton()
@@ -611,95 +617,7 @@ void Skills::showValidationPanel() {
 }
 
 void Skills::update(float dt) {
-	updateTutorial(dt);
-}
-
-void Skills::updateTutorial(float dt) {
-	auto save = ((AppDelegate*)Application::getInstance())->getSave();
-	auto config = configClass->getConfigValues(Config::ConfigType::SKILLTUTORIAL);
-	if (configClass->getSkillTutorialSettings()->isTutorialRunning("skills") &&
-		save["c_level"].asInt() >= config["skills"]["level"].asInt() &&
-		save["c_world"].asInt() >= config["skills"]["world"].asInt()) {
-
-		if (getChildByName("dialogue") == nullptr && !tutorial_running) {
-			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
-			addChild(Dialogue::createFromConfig(config["skills"]["dialogue_skills"]), 3, "dialogue");
-			((Dialogue*)getChildByName("dialogue"))->launch();
-			tutorial_running = true;
-			Size visibleSize = Director::getInstance()->getVisibleSize();
-
-			// mask to prevent any action from the player
-			addChild(ui::Layout::create(), 2, "invisble_mask");
-			ui::Button* mask = ui::Button::create("res/buttons/tranparent_mask.png");
-			mask->setScaleX(visibleSize.width / mask->getContentSize().width);
-			mask->setScaleY(visibleSize.height / mask->getContentSize().height);
-			mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-			getChildByName("invisble_mask")->addChild(mask);
-		}
-		else if (getChildByName("dialogue") != nullptr) {
-			((Dialogue*)getChildByName("dialogue"))->update();
-			if (((Dialogue*)getChildByName("dialogue"))->hasFinished()) {
-				removeChildByName("dialogue");
-				Size visibleSize = Director::getInstance()->getVisibleSize();
-				showHowToBuySkill(visibleSize);
-				
-			}
-		}
-	}
-}
-
-void Skills::showHowToBuySkill(cocos2d::Size &visibleSize)
-{
-	Sprite* hand = Sprite::create("res/buttons/hand.png");
-	hand->setAnchorPoint(Vec2(0.15f, 0.90f));
-	hand->setScale(visibleSize.width / 10 / hand->getContentSize().width);
-	hand->setPosition(visibleSize / 2);
-	addChild(hand, 4, "hand");
-	hand->setOpacity(0.f);
-	auto select_skill = CallFunc::create([this]() {
-		selectSkill(1);
-	});
-	auto show_skill_buy = CallFunc::create([this, hand]() {
-		showValidationPanel();
-		auto end_tutorial = CallFunc::create([this, hand]() {
-			this->removeChildByName("invisble_mask");
-			this->removeChildByName("hand");
-			this->hideValidationPanel();
-			configClass->getSkillTutorialSettings()->completeTutorial("skills");
-			tutorial_running = false;
-		});
-		Size visibleSize = Director::getInstance()->getVisibleSize();
-		Vec2 pos = Vec2(visibleSize.width, visibleSize.height) / 2 + this->getChildByName("validate_buy")->getChildByName("validate_button")->getPosition();
-		hand->runAction(Sequence::create(
-			DelayTime::create(0.25f),
-			MoveTo::create(1.f, pos),
-			DelayTime::create(0.25f),
-			FadeOut::create(0.5f),
-			end_tutorial,
-			nullptr
-		));
-	});
-
-	hand->runAction(Sequence::create(
-		FadeIn::create(0.5f),
-		DelayTime::create(0.5f),
-		Spawn::createWithTwoActions(
-			MoveBy::create(1.5f, Vec2(getChildByName("talent_page")->getPosition().x +
-				talents_button[1]->getPosition().x -
-				visibleSize.width / 2, 0)),
-			EaseBackOut::create(MoveBy::create(1.5f,
-				Vec2(0, getChildByName("talent_page")->getPosition().y +
-					talents_button[1]->getPosition().y -
-					talents_button[1]->getContentSize().height *
-					talents_button[1]->getScaleY() / 2 -
-					visibleSize.height / 2)))),
-		DelayTime::create(0.25f),
-		select_skill,
-		DelayTime::create(0.25f),
-		MoveTo::create(1.f, buyingLayout->getPosition()),
-		DelayTime::create(0.25f),
-		show_skill_buy,
-		nullptr));
+	tutorial->update(dt);
 }
 
 void Skills::onEnterTransitionDidFinish() {
