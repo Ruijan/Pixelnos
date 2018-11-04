@@ -321,6 +321,9 @@
     <ClCompile Include="..\Classes\Scenes\SkillTree\Tutorials\SkillTutorial.cpp">
       <Filter>src\Scenes\SkillTree\Tutorials</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\SkillTree\RequirementDescription.cpp">
+      <Filter>src\Scenes\SkillTree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -574,6 +577,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Scenes\SkillTree\Tutorials\SkillTutorial.h">
       <Filter>src\Scenes\SkillTree\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\SkillTree\RequirementDescription.h">
+      <Filter>src\Scenes\SkillTree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

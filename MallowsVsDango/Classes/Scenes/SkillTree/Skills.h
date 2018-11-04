@@ -6,11 +6,13 @@
 #include "../../Config/json.h"
 #include "../../Config/Config.h"
 #include "Tutorials/SkillTutorial.h"
+#include "RequirementDescription.h"
 
 class Skills : public cocos2d::Scene
 {
 public:
 	virtual bool init(Config* config);
+	void createRequirementDescription(cocos2d::Size &visibleSize, Config* configClass);
 	void initSkillTreeProperties(Json::Value &savedSkills, Json::Value &talents);
 	void createLeftPanelForSkillDescrition(cocos2d::Size &visibleSize, Json::Value &buttons, std::string &language, Json::Value &savedSkills);
 	void createBuyingButtonLayout(cocos2d::Size &visibleSize, Json::Value &buttons, std::string &language);
@@ -24,13 +26,11 @@ public:
 	static Json::Value getSkillFromID(int id);
 	static Json::Value getSavedSkillFromID(int id);
 	virtual void update(float dt);
-	void updateTutorial(float dt);
-
-	void showHowToBuySkill(cocos2d::Size & visibleSize);
 	void hideValidationPanel();
 	void showValidationPanel();
 	void selectSkill(int id);
 	cocos2d::ui::Button* getTalentButton(int index);
+	cocos2d::ui::Button* getBuyButton();
 
 protected:
 	int getSavedSkillPosFromID(int id);
@@ -40,7 +40,6 @@ protected:
 	void addSelectedEffectToSkillButton(cocos2d::ui::Button * talent_btn);
 	void updateBuyingLayoutVisibility(Json::Value &talent);
 	void updateSkillDescription(Json::Value &talent, std::string &language);
-	void createRequirementDescription(Json::Value &buttons, std::string &language, Json::Value &talent, Json::Value &save_root);
 	void updateBuyingCapacity(Json::Value &talent, Json::Value &save_root);
 	bool hasEnoughHolySugar(Json::Value &talent, Json::Value &save_root);
 	void initSkills();
@@ -58,5 +57,7 @@ protected:
 	cocos2d::ui::Layout* buyingLayout;
 	cocos2d::Label* skillDescription;
 	SkillTutorial* tutorial;
+
+	RequirementDescription* requirementDescription;
 };
 #endif

@@ -24,13 +24,22 @@ bool Skills::init(Config* config) {
 	addBackground(visibleSize);
 	addBlackMask(visibleSize);
 	createBackToMainMenuButton(visibleSize);
-
 	createLeftPanelForSkillDescrition(visibleSize, buttons, language, savedSkills);
 	createValidationLayout(visibleSize, buttons, language);
 	createBuyingButtonLayout(visibleSize, buttons, language);
+	createRequirementDescription(visibleSize, configClass);
 	initSkills();
 
 	return true;
+}
+
+void Skills::createRequirementDescription(cocos2d::Size &visibleSize, Config* configClass)
+{
+	requirementDescription = RequirementDescription::create(this, visibleSize, configClass);
+	requirementDescription->setPosition(Vec2(visibleSize.width / 8, skillDescription->getPosition().y -
+		skillDescription->getContentSize().height -
+		visibleSize.height / 25));
+	addChild(requirementDescription, 3, "requirement_description");
 }
 
 void Skills::initSkillTreeProperties(Json::Value &savedSkills, Json::Value &talents)
@@ -443,13 +452,15 @@ void Skills::selectSkill(int id) {
 	Json::Value talents = configClass->getConfigValues(Config::ConfigType::TALENT)["talents"]; //load data file
 	Json::Value save_root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 	Json::Value buttons = configClass->getConfigValues(Config::ConfigType::BUTTON);
+	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	((Label*)getChildByName("skill_name"))->setString(talent["name_" + language].asString());
 
 	updateSkillDescription(talent, language);
 	updateBuyingCapacity(talent, save_root);
-	removeChildByName("requirement_description");
-	createRequirementDescription(buttons, language, talent, save_root);
+	requirementDescription->update(language, talent, save_root);
+	requirementDescription->setPosition(Vec2(visibleSize.width / 8, skillDescription->getPosition().y - skillDescription->getContentSize().height -
+		visibleSize.height / 25));
 	updateBuyingLayoutVisibility(talent);
 	removeSelectedEffectFromSkillButton();
 	c_button = talent_btn;
@@ -460,6 +471,11 @@ void Skills::selectSkill(int id) {
 cocos2d::ui::Button * Skills::getTalentButton(int index)
 {
 	return talentButtons[index];
+}
+
+cocos2d::ui::Button * Skills::getBuyButton()
+{
+	return ((cocos2d::ui::Button*)buyingLayout->getChildByName("buy_button"));
 }
 
 void Skills::removeSelectedEffectFromSkillButton()
@@ -495,62 +511,6 @@ void Skills::updateSkillDescription(Json::Value &talent, std::string &language)
 	skillDescription->stopAllActions();
 	skillDescription->setOpacity(255);
 	skillDescription->setString(talent["description_" + language].asString());
-}
-
-void Skills::createRequirementDescription(Json::Value &buttons, std::string &language, Json::Value &talent, Json::Value &save_root)
-{
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	ui::RichText* requirement_description = ui::RichText::create();
-	requirement_description->setContentSize(Size(visibleSize.width / 5, visibleSize.height / 3));
-	requirement_description->setPosition(Vec2(visibleSize.width / 8, skillDescription->getPosition().y -
-		skillDescription->getContentSize().height -
-		visibleSize.height / 25));
-	requirement_description->ignoreContentAdaptWithSize(false);
-	requirement_description->setAnchorPoint(Vec2(0.5f, 1.f));
-	addChild(requirement_description, 3, "requirement_description");
-	ui::RichElementText* re1 = ui::RichElementText::create(1, Color3B::BLACK, 255, buttons["requirements"][language].asString(),
-		"fonts/LICABOLD.ttf", round(visibleSize.width / 55.f));
-	requirement_description->pushBackElement(re1);
-	int elements = 1;
-	if (talent["condition_sugar"].asInt() != -1) {
-		Color3B color = Color3B(1, 69, 0);
-		if (save_root["holy_sugar_spent"].asInt() < talent["condition_sugar"].asInt()) {
-			color = Color3B::RED;
-			((ui::Button*)buyingLayout->getChildByName("buy_button"))->setEnabled(false);
-		}
-		++elements;
-		requirement_description->pushBackElement(
-			ui::RichElementText::create(elements, color, 255, talent["condition_sugar"].asString() + " ",
-				"fonts/LICABOLD.ttf", round(visibleSize.width / 55.f)));
-		++elements;
-		requirement_description->pushBackElement(
-			ui::RichElementText::create(elements, Color3B::BLACK, 255, buttons["holy_sugar_spent"][language].asString(),
-				"fonts/LICABOLD.ttf", round(visibleSize.width / 55.f)));
-	}
-	if (talent["condition_id"].asInt() != -1 && getSkillFromID(talent["condition_id"].asInt()) != Json::Value::null) {
-		Color3B color = Color3B(1, 69, 0);
-		if (!getSavedSkillFromID(talent["condition_id"].asInt())["bought"].asBool()) {
-			color = Color3B::RED;
-			((ui::Button*)buyingLayout->getChildByName("buy_button"))->setEnabled(false);
-		}
-		++elements;
-		requirement_description->pushBackElement(
-			ui::RichElementText::create(elements, color, 255, getSkillFromID(talent["condition_id"].asInt())["name_" + language].asString(),
-				"fonts/LICABOLD.ttf", round(visibleSize.width / 55.f)));
-		++elements;
-		requirement_description->pushBackElement(
-			ui::RichElementText::create(elements, Color3B::BLACK, 255, " " + buttons["skill_bought"][language].asString(),
-				"fonts/LICABOLD.ttf", round(visibleSize.width / 55.f)));
-	}
-	if (elements == 1) {
-		++elements;
-		requirement_description->pushBackElement(
-			ui::RichElementText::create(elements, Color3B(1, 69, 0), 255, buttons["none"][language].asString(),
-				"fonts/LICABOLD.ttf", round(visibleSize.width / 55.f)));
-	}
-
-	requirement_description->setPosition(Vec2(visibleSize.width / 8, skillDescription->getPosition().y - skillDescription->getContentSize().height -
-		visibleSize.height / 25));
 }
 
 void Skills::updateBuyingCapacity(Json::Value &talent, Json::Value &save_root)

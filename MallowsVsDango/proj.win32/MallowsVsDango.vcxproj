@@ -224,6 +224,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Scenes\Level\Wall.cpp" />
     <ClCompile Include="..\Classes\Scenes\SceneFactory.cpp" />
     <ClCompile Include="..\Classes\Scenes\Shop\Shop.cpp" />
+    <ClCompile Include="..\Classes\Scenes\SkillTree\RequirementDescription.cpp" />
     <ClCompile Include="..\Classes\Scenes\SkillTree\Skills.cpp" />
     <ClCompile Include="..\Classes\Scenes\SkillTree\Tutorials\SkillTutorial.cpp" />
     <ClCompile Include="..\Classes\Scenes\StoryMenu\StoryMenu.cpp" />
@@ -310,6 +311,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Scenes\Level\Wall.h" />
     <ClInclude Include="..\Classes\Scenes\SceneFactory.h" />
     <ClInclude Include="..\Classes\Scenes\Shop\Shop.h" />
+    <ClInclude Include="..\Classes\Scenes\SkillTree\RequirementDescription.h" />
     <ClInclude Include="..\Classes\Scenes\SkillTree\Skills.h" />
     <ClInclude Include="..\Classes\Scenes\SkillTree\Tutorials\SkillTutorial.h" />
     <ClInclude Include="..\Classes\Scenes\StoryMenu\StoryMenu.h" />
