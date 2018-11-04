@@ -1,9 +1,9 @@
 #include "ParametersMenu.h"
 #include "../AppDelegate.h"
 
-ParametersMenu* ParametersMenu::create(MyGame* game, Config* config)
+ParametersMenu* ParametersMenu::create(Config* config)
 {
-	ParametersMenu* menu = new (std::nothrow) ParametersMenu(game, config);
+	ParametersMenu* menu = new (std::nothrow) ParametersMenu(config);
 	if (menu && menu->init())
 	{
 		menu->autorelease();
@@ -13,8 +13,7 @@ ParametersMenu* ParametersMenu::create(MyGame* game, Config* config)
 	return nullptr;
 }
 
-ParametersMenu::ParametersMenu(MyGame* game, Config* config) :
-	game(game),
+ParametersMenu::ParametersMenu(Config* config) :
 	config(config)
 {}
 
@@ -95,34 +94,19 @@ void ParametersMenu::addGlobalSettings(Json::Value &buttons, const cocos2d::Size
 	auto checkboxAlwaysGrid = createNormalCheckBox(visibleSize, cocos2d::Vec2(always_show_grid->getPosition().x, show_grid->getPosition().y));
 	config->getSettings()->addAlwaysGridCheckbox(checkboxAlwaysGrid);
 	checkboxAlwaysGrid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			config->getSettings()->enableAlwaysGrid(true);
-			if (game != nullptr) {
-				game->getLevel()->showGrid(true);
-			}
-		}
+		handleAlwaysShowGridButton(type);
 	});
 
 	auto checkboxNeverGrid = createNormalCheckBox(visibleSize, cocos2d::Vec2(never_show_grid->getPosition().x, show_grid->getPosition().y));
 	config->getSettings()->addNeverGridButton(checkboxNeverGrid);
 	checkboxNeverGrid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			config->getSettings()->enableNeverGrid(true);
-			if (game != nullptr) {
-				game->getLevel()->showGrid(false);
-			}
-		}
+		handleNeverShowGridButton(type);
 	});
 
 	auto checkboxMovingGrid = createNormalCheckBox(visibleSize, cocos2d::Vec2(moving_show_grid->getPosition().x, show_grid->getPosition().y));
 	config->getSettings()->addMovingGridButton(checkboxMovingGrid);
 	checkboxMovingGrid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			config->getSettings()->enableMovingGrid(true);
-			if (game != nullptr) {
-				game->getLevel()->showGrid(false);
-			}
-		}
+		handleMovingGridButton(type);
 	});
 	addChild(checkboxAlwaysGrid, 6, "GridEnable");
 	addChild(checkboxNeverGrid, 6, "NeverGridEnable");
@@ -143,6 +127,27 @@ void ParametersMenu::addGlobalSettings(Json::Value &buttons, const cocos2d::Size
 	addChild(checkBoxDialogues, 6, "DialogueEnable");
 	settingsCheckboxes.push_back(checkBoxLimit);
 	settingsCheckboxes.push_back(checkBoxDialogues);
+}
+
+void ParametersMenu::handleAlwaysShowGridButton(cocos2d::ui::Widget::TouchEventType type)
+{
+	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+		config->getSettings()->enableAlwaysGrid(true);
+	}
+}
+
+void ParametersMenu::handleMovingGridButton(cocos2d::ui::Widget::TouchEventType type)
+{
+	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+		config->getSettings()->enableMovingGrid(true);
+	}
+}
+
+void ParametersMenu::handleNeverShowGridButton(cocos2d::ui::Widget::TouchEventType type)
+{
+	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+		config->getSettings()->enableNeverGrid(true);
+	}
 }
 
 cocos2d::ui::CheckBox* ParametersMenu::createCheckBoxWithLabel(std::string label, const cocos2d::Size& visibleSize, int posXBox) {
@@ -196,7 +201,6 @@ SoundController ParametersMenu::createSoundController(const std::string& title, 
 void ParametersMenu::rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type)
 {
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-		game->updateTracker("left");
 		auto callbackmainmenu = cocos2d::CallFunc::create([&]() {
 			SceneManager::getInstance()->setScene(SceneFactory::LEVELS);
 		});
@@ -210,7 +214,6 @@ void ParametersMenu::leftButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widg
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
 		this->runAction(createHideAction(this));
 		blackMask->setVisible(false);
-		game->resume();
 	}
 }
 

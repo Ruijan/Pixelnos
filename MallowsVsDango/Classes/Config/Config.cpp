@@ -3,8 +3,8 @@
 #include "AppDelegate.h"
 #include "extensions/cocos-ext.h"
 #include "NetworkController.h"
-#include "../Scenes/MyGame.h"
-#include "../Towers/TowerFactory.h"
+#include "../Scenes/Level/MyGame.h"
+#include "../Scenes/Level/Towers/TowerFactory.h"
 
 #include "Exceptions/RequestToJsonException.h"
 #include <time.h>
@@ -275,10 +275,7 @@ void Config::extractGeneralConfiguration(cocos2d::FileUtils * fileUtils, Json::R
 	if (parsingConfigSuccessful) {
 		gameTutorialSettings->init(conf_general["configuration_files"]["gameTutorial"].asString(), "gameTutorialProgress.json");
 		skillTutorialSettings->init(conf_general["configuration_files"]["skillsTutorial"].asString(), "skillTutorialProgress.json");
-		std::vector<Tower::TowerType> allTypes = TowerFactory::getAllTowerTypes();
-		for (unsigned int i(0); i < allTypes.size(); ++i) {
-			towersSettings[allTypes[i]] = TowerSettings::create(conf_general["configuration_files"]["tower"].asString(), TowerFactory::getTowerNameFromType(allTypes[i]));
-		}
+
 		bool parsing_conf_towers = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tower"].asString()), conf_tower, false);
 		bool parsing_conf_advice = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["advice"].asString()), conf_advice, false);
 		bool parsing_conf_dangos = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["dango"].asString()), conf_dango, false);
@@ -838,7 +835,3 @@ TutorialSettings * Config::getSkillTutorialSettings()
 	return skillTutorialSettings;
 }
 
-TowerSettings * Config::getTowerSettings(Tower::TowerType type)
-{
-	return towersSettings[type];
-}

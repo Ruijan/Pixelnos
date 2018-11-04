@@ -1,7 +1,6 @@
 #pragma once
 #include "CentralMenu.h"
 #include "../Config/json.h"
-#include "../Scenes/MyGame.h"
 #include "../Config/AudioController.h"
 #include "../Config/Config.h"
 #include "../Config/Settings/GameSettings.h"
@@ -10,15 +9,14 @@ typedef std::pair<AudioSlider*, cocos2d::ui::CheckBox*> SoundController;
 
 class ParametersMenu : public CentralMenu {
 public:
-	static ParametersMenu* create(MyGame* game, Config* config);
-	ParametersMenu(MyGame * game, Config * config);
+	static ParametersMenu* create(Config* config);
+	ParametersMenu(Config * config);
 	virtual bool init();
 	void displayWithAnimation();
 	virtual ~ParametersMenu();
 
 protected:
 	cocos2d::ui::Layout* blackMask;
-	MyGame* game;
 	cocos2d::Vec2 lastObjectPosition;
 	cocos2d::Size lastObjectSize;
 	cocos2d::ui::CheckBox* checkboxLoop;
@@ -34,6 +32,9 @@ protected:
 
 	void addBlackMask(const cocos2d::Size &visibleSize);
 	void addGlobalSettings(Json::Value &buttons, const cocos2d::Size &visibleSize);
+	virtual void handleAlwaysShowGridButton(cocos2d::ui::Widget::TouchEventType type);
+	virtual void handleMovingGridButton(cocos2d::ui::Widget::TouchEventType type);
+	virtual void handleNeverShowGridButton(cocos2d::ui::Widget::TouchEventType type);
 	SoundController createSoundController(const std::string& title, cocos2d::Size visibleSize, AudioController::SOUNDTYPE type);
 	void addMusicLoopCheckBox(Json::Value &buttons, const cocos2d::Size &visibleSize, AudioController * audioController);
 	void addTitle(Json::Value &buttons, const cocos2d::Size &visibleSize);

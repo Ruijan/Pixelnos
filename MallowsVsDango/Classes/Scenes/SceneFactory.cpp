@@ -1,11 +1,11 @@
 #include "SceneFactory.h"
-#include "MainMenu.h"
-#include "StoryMenu.h"
-#include "CreditScreen.h"
-#include "LevelEditor.h"
-#include "Skills.h"
-#include "MyGame.h"
-#include "Shop.h"
+#include "Welcome/MainMenu.h"
+#include "StoryMenu/StoryMenu.h"
+#include "Credits/CreditScreen.h"
+#include "LevelEditor/LevelEditor.h"
+#include "SkillTree/Skills.h"
+#include "Level/MyGame.h"
+#include "Shop/Shop.h"
 #include "../Config/Config.h"
 
 cocos2d::Scene * SceneFactory::createScene(SceneType type, Config* config)

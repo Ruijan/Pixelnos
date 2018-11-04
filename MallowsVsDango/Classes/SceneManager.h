@@ -6,7 +6,7 @@
 #include "Lib/Loader.h"
 #include <array>
 #include "Lib/Translationable.h"
-#include "Scenes/MyGame.h"
+#include "Scenes/Level/MyGame.h"
 #include "Config/Config.h"
 
 class SceneManager
