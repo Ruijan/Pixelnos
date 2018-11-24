@@ -2,23 +2,24 @@
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 #include "../../../../Config/Config.h"
+#include "../../../../GUI/GUISettings.h"
 #include "../Tower.h"
 
 class CurrentLevelPanel : public cocos2d::ui::Layout {
 public:
-	static CurrentLevelPanel* create(Config* config, float spriteWidth, Tower* tower);
+	static CurrentLevelPanel* create(float spriteWidth, Tower* tower, GUISettings* settings);
 	virtual void updateLabel();
 	const cocos2d::Vec2& getRangePosition();
 	const cocos2d::Vec2& getLevelLabelPosition();
 	const cocos2d::Size& getLevelLabelSize();
 	void setTower(Tower* tower);
-	virtual bool init(Config* config, float spriteWidth, Tower* tower);
+	virtual bool init(float spriteWidth, Tower* tower, GUISettings* settings);
 
 protected:
-	void addLevelInfo(cocos2d::Size & visibleSize);
-	void addAttackInfo(cocos2d::Size & visibleSize, float spriteWidth);
-	void addRangeInfo(cocos2d::Size & visibleSize, float spriteWidth);
-	void addSpeedInfo(cocos2d::Size & visibleSize, float spriteWidth);
+	void addLevelInfo();
+	void addAttackInfo(float spriteWidth);
+	void addRangeInfo(float spriteWidth);
+	void addSpeedInfo(float spriteWidth);
 	virtual void setSpritesPositions(float spriteWidth);
 	virtual void setLabelsPositions(float spriteWidth);
 
@@ -32,6 +33,6 @@ protected:
 	cocos2d::Sprite* speed;
 	cocos2d::Sprite* range;
 
-	Config* configClass;
+	GUISettings* guiSettings;
 	Tower* tower;
 };

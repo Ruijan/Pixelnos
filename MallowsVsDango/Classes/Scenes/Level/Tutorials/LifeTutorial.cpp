@@ -1,8 +1,8 @@
 #include "LifeTutorial.h"
 #include "../Interface/LevelInterface.h"
 
-LifeTutorial::LifeTutorial(TutorialSettings* settings, LevelInterface * nInterfaceGame) :
-	DialogueTutorial(settings),
+LifeTutorial::LifeTutorial(TutorialSettings* settings, LevelInterface * nInterfaceGame, GUISettings* guiSettings) :
+	DialogueTutorial(settings, guiSettings),
 	levelInterface(nInterfaceGame)
 {
 }
@@ -21,7 +21,7 @@ LifeTutorial::~LifeTutorial()
 void LifeTutorial::startDialogues() {
 	running = true;
 	levelInterface->pauseLevel();
-	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["life"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["life"]["dialogue"], guiSettings);
 	levelInterface->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	shakeScaleElement(levelInterface->getChildByName("label_information")->getChildByName("life"), true);

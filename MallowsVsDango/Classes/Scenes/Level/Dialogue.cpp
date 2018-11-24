@@ -7,7 +7,7 @@ using namespace std::chrono;
 using namespace std;
 
 Dialogue::Dialogue(std::vector<string> text, std::vector<std::string>speakers, 
-	std::vector<Direction> direction, std::vector<Emotion> emotion) :
+	std::vector<Direction> direction, std::vector<Emotion> emotion, GUISettings* settings) :
 running(false), finished(false), posCurrentCaract(0), currentSpeech(0), type(PROGRESSIVE), 
 speech(nullptr), state(HEAD_APPEAR), directions(direction), emotions(emotion){
 
@@ -29,12 +29,12 @@ Dialogue::~Dialogue(){
 	}
 }
 
-Dialogue* Dialogue::createFromConfig(Json::Value config){
+Dialogue* Dialogue::createFromConfig(Json::Value config, GUISettings* settings){
 	std::vector<std::string> text;
 	std::vector<std::string> heads;
 	std::vector<Direction> direction;
 	std::vector<Emotion> emotions;
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
+	std::string language = settings->getLanguage();
 
 	for(unsigned int i(0); i < config.size(); ++i){
 		for(unsigned int j(0); j < config[i]["text_" + language].size(); ++j){
@@ -52,7 +52,7 @@ Dialogue* Dialogue::createFromConfig(Json::Value config){
 			direction.push_back(dir);
 		}
 	}
-	return new Dialogue(text, heads, direction, emotions);
+	return new Dialogue(text, heads, direction, emotions, settings);
 }
 
 void Dialogue::updateEmotionBubble() {
@@ -73,7 +73,7 @@ void Dialogue::updateEmotionBubble() {
 void Dialogue::launch(){
 	start = std::chrono::system_clock::now();
 
-	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Size visibleSize = settings->getVisibleSize();
 	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 
 	// The speech bubble is just a node. We add two sprites to this node. It becomes easier to switch
@@ -113,8 +113,7 @@ void Dialogue::launch(){
 
 	auto skip = ui::Button::create("res/buttons/red_button.png");
 	skip->setScale(visibleSize.width / 5 / skip->getContentSize().width);
-	skip->setTitleText(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)
-		["skip_dialogues"][language].asString());
+	skip->setTitleText(settings->getButton("skip_dialogues"));
 	skip->setTitleFontName("fonts/LICABOLD.ttf");
 	skip->setTitleFontSize(45.f);
 	Label* skip_label = skip->getTitleRenderer();
@@ -129,8 +128,7 @@ void Dialogue::launch(){
 	skip->setPosition(Vec2(visibleSize.width * 3 / 4 - skip->getContentSize().width*skip->getScale(),
 		skip->getContentSize().height*skip->getScale()/4));
 
-	tapToContinue = Label::createWithSystemFont(((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)
-		["tap_continue"][language].asString(), "Arial", 25.f * visibleSize.width / 1280);
+	tapToContinue = Label::createWithSystemFont(settings->getButton("tap_continue"), "Arial", 25.f * visibleSize.width / 1280);
 	tapToContinue->setPosition(Point(speech->getPosition().x, speechBubble->getPosition().y - 
 		currentSpeechBubble->getContentSize().height*speechBubble->getScale() / 4));
 
@@ -165,7 +163,7 @@ void Dialogue::addEvents(){
 		// If it waits to tap, we start to close the bubble.
 		if (state == DISPLAYING){
 			if ((unsigned int)posCurrentCaract < textes[currentSpeech].first.length() - 1){
-				Size visibleSize = Director::getInstance()->getVisibleSize();
+				Size visibleSize = settings->getVisibleSize();
 
 				posCurrentCaract = textes[currentSpeech].first.length();
 				std::string text = textes[currentSpeech].first;
@@ -196,7 +194,7 @@ bool Dialogue::hasFinished(){
 
 void Dialogue::update(){
 	if (!finished && running){
-		Size visibleSize = Director::getInstance()->getVisibleSize();
+		Size visibleSize = settings->getVisibleSize();
 		switch (state){
 		case DISPLAYING:
 			if (type == PROGRESSIVE){

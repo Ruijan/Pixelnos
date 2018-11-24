@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "../../Config/json.h"
 #include "Towers/Tower.h"
+#include "../../GUI/GUISettings.h"
 
 class Challenge;
 class Level;
@@ -14,14 +15,14 @@ public:
 	* @brief Create a ChallengeHandler from the configuration file and the save file. 
 	* @return A pointer to the ChallengeHandler.
 	*/
-	static ChallengeHandler* create(const Json::Value& value, Level* level);
+	static ChallengeHandler* create(const Json::Value& value, Level* level, GUISettings* settings);
 	~ChallengeHandler();
-	bool init(const Json::Value& value, Level* level);
-	void createChallengesButtons(cocos2d::Size &visibleSize, const Json::Value & value);
-	void createChallenge(Json::Value &configChallenge, Json::Value &j_challenges, std::string &language, float size_button);
+	bool init(const Json::Value& value, Level* level, GUISettings* settings);
+	void createChallengesButtons(const Json::Value & value);
+	void createChallenge(Json::Value &configChallenge, Json::Value &j_challenges, float size_button);
 	void showChallenge(cocos2d::ui::Button * challenge, const std::string &name, const std::string &description, Challenge * c_challenge);
 	void updateChallengeText(Challenge * c_challenge, const std::string & description, const std::string & name, cocos2d::ui::Button * challenge);
-	void createTextLayout(cocos2d::Size &visibleSize);
+	void createTextLayout();
 	void addTower(Tower::TowerType type, cocos2d::Vec2 position);
 	void showChallengeFailure(Challenge *& challenge);
 	void addTowerMisanthrope(std::vector<Tower *> &towers, cocos2d::Vec2 &position, Challenge *& challenge);
@@ -43,6 +44,7 @@ protected:
 	cocos2d::ui::Text* title_text;
 	cocos2d::ui::Text* description_text;
 	cocos2d::ui::Text* progress_text;
+	GUISettings* settings;
 };
 
 class Challenge {

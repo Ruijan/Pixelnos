@@ -6,6 +6,7 @@
 #include "../TowerSettings.h"
 #include "CurrentLevelPanel.h"
 #include "NextLevelPanel.h"
+#include "../../../../GUI/GUISettings.h"
 
 class Tower;
 class MyGame;
@@ -15,15 +16,15 @@ class LevelInterface;
 class TowerInformationPanel: public cocos2d::ui::Layout {
 public:
 	~TowerInformationPanel();
-	static TowerInformationPanel* create(MyGame* game, Tower* tower, Config* config);
-	bool init(MyGame* game, Tower* tower, Config* config);
+	static TowerInformationPanel* create(MyGame* game, Tower* tower, GUISettings* settings);
+	bool init(MyGame* game, Tower* tower, GUISettings* settings);
 	void setTower(Tower * newTower);
 	void update();
 
 protected:
 	void createMainPanel(cocos2d::Size &visibleSize);
 	void createCurrentLevelPanel(cocos2d::Size &visibleSize);
-	void setPanelPosition(cocos2d::Size &visibleSize);
+	void setPanelPosition(const cocos2d::Size &visibleSize);
 	void createNextLevelPanel(cocos2d::Size &visibleSize);
 	void createLockLayout(cocos2d::Size &visibleSize);
 	void createDescriptionLayout(cocos2d::Size &visibleSize);
@@ -40,9 +41,8 @@ protected:
 	MyGame * game;
 	Level* level;
 	LevelInterface* menu;
-	Config* configClass;
 	TowerSettings* settings;
-
+	GUISettings* guiSettings;
 	double spriteWidth;
 
 	cocos2d::ui::Button* mainPanel;
@@ -54,4 +54,6 @@ protected:
 
 	cocos2d::ui::Button* nextLevelButton;
 	cocos2d::Label* maxLevelLabel;
+
+	
 };

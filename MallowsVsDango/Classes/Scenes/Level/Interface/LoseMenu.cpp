@@ -3,10 +3,10 @@
 #include "../MyGame.h"
 
 
-LoseMenu* LoseMenu::create(MyGame * game, const std::string& language, const Json::Value& buttons, const Json::Value& advice)
+LoseMenu* LoseMenu::create(MyGame * game, GUISettings* settings, const Json::Value& advice)
 {
 	LoseMenu* loseMenu = new (std::nothrow) LoseMenu();
-	if (loseMenu && loseMenu->init(game, language, buttons, advice))
+	if (loseMenu && loseMenu->init(game, settings, advice))
 	{
 		loseMenu->autorelease();
 		return loseMenu;
@@ -23,27 +23,28 @@ void LoseMenu::showLose()
 	runAction(showAction);
 }
 
-bool LoseMenu::init(MyGame * game, const std::string& language, const Json::Value& buttons, const Json::Value& advice)
+bool LoseMenu::init(MyGame * game, GUISettings* settings, const Json::Value& advice)
 {
 	bool initialized = cocos2d::ui::Layout::init();
 	this->game = game;
-	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+	this->settings = settings;
+	cocos2d::Size visibleSize = settings->getVisibleSize();
 	setPosition(cocos2d::Vec2(cocos2d::Point(visibleSize.width / 2, visibleSize.height * 1.5)));
 
 	addPanel(visibleSize, 0.45);
-	addRightButton(buttons["main_menu"][language].asString());
-	addLeftButton(buttons["retry"][language].asString());
-	addYouLoseLabel(buttons, language, visibleSize);
-	addAdvice(language, visibleSize, advice);
+	addRightButton(settings->getButton("main_menu"));
+	addLeftButton(settings->getButton("retry"));
+	addYouLoseLabel();
+	addAdvice(advice);
 	return initialized;
 }
 
-void LoseMenu::addAdvice(const std::string &language, cocos2d::Size &visibleSize, const Json::Value& advice)
+void LoseMenu::addAdvice(const Json::Value& advice)
 {
-	auto conf = advice[language];
+	auto conf = advice[settings->getLanguage()];
 	std::string advice_text = conf[rand() % conf.size()].asString();
 
-	cocos2d::Label* adviceLabel = cocos2d::Label::createWithTTF(advice_text, "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	cocos2d::Label* adviceLabel = cocos2d::Label::createWithTTF(advice_text, "fonts/LICABOLD.ttf", 30.f * settings->getVisibleSize().width / 1280);
 	adviceLabel->setDimensions(panel->getContentSize().width * panel->getScaleX() * 0.75,
 		panel->getContentSize().height * panel->getScaleY() * 0.4);
 	adviceLabel->setPosition(0, 0);
@@ -53,11 +54,11 @@ void LoseMenu::addAdvice(const std::string &language, cocos2d::Size &visibleSize
 	addChild(adviceLabel, 2, "advice_text");
 }
 
-void LoseMenu::addYouLoseLabel(const Json::Value &buttons, const std::string &language, cocos2d::Size &visibleSize)
+void LoseMenu::addYouLoseLabel()
 {
 	cocos2d::Label* you_lose = cocos2d::Label::createWithTTF(
-		buttons["lose_info"][language].asString(),
-		"fonts/LICABOLD.ttf", 50.f * visibleSize.width / 1280);
+		settings->getButton("lose_info"),
+		"fonts/LICABOLD.ttf", 50.f * settings->getVisibleSize().width / 1280);
 	you_lose->enableOutline(cocos2d::Color4B::BLACK, 2);
 	you_lose->setPosition(0, panel->getContentSize().height*panel->getScaleY() * 0.35);
 	you_lose->setColor(cocos2d::Color3B::YELLOW);

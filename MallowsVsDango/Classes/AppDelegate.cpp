@@ -17,7 +17,7 @@ static cocos2d::Size designResolutionSize = cocos2d::Size(1280, 720);
 //static cocos2d::Size designResolutionSize = cocos2d::Size(960, 640);
 
 
-AppDelegate::AppDelegate() : config(new Config("res/config.json", "MvDSave")), controller(new AudioController()) {
+AppDelegate::AppDelegate() : config(new Config("res/config.json", "MvDSave")), controller(new AudioController()){
 }
 
 AppDelegate::~AppDelegate()

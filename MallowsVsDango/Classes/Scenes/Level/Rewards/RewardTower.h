@@ -4,9 +4,9 @@
 #include "cocos2d.h"
 #include "VisualReward.h"
 #include "ui/CocosGUI.h"
+#include "../../../GUI/GUISettings.h"
 
 USING_NS_CC;
-
 
 class RewardTower : public VisualReward {
 private:
@@ -31,15 +31,14 @@ public:
 	* to be improved when we will have the skill tree and real save file.
 	* @return A pointer to the wall.
 	*/
-	static RewardTower* create(std::string file, std::string towername, cocos2d::Vec2 pos, 
-		const cocos2d::ui::Widget::ccWidgetTouchCallback& callback);
+	static RewardTower* create(std::string file, std::string towername, cocos2d::Vec2 pos,
+		const cocos2d::ui::Widget::ccWidgetTouchCallback& callback, GUISettings* settings);
 
 	/**
 	* @brief Decrease the hps and update the display.
 	* @param damages amount of damages that will be inflicted.
 	*/
 	virtual void animate();
-
 };
 
 #endif

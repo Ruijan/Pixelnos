@@ -2,10 +2,11 @@
 #include "Tutorial.h"
 #include "../Dialogue.h"
 #include "cocos2d.h"
+#include "../../../GUI/GUISettings.h"
 
 class DialogueTutorial : public Tutorial {
 public:
-	DialogueTutorial(TutorialSettings* settings);
+	DialogueTutorial(TutorialSettings* settings, GUISettings* guiSettings);
 	virtual ~DialogueTutorial();
 	virtual void update(float dt);
 	virtual bool isDone() = 0;
@@ -13,4 +14,5 @@ public:
 	virtual void startDialogues() = 0;
 protected:
 	Dialogue* dialogues;
+	GUISettings* guiSettings;
 };

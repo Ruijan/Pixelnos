@@ -2,8 +2,8 @@
 #include "../Level.h"
 #include "../Interface/LevelInterface.h"
 
-DangobeseTutorial::DangobeseTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level) :
-	DialogueTutorial(settings),
+DangobeseTutorial::DangobeseTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level, GUISettings* guiSettings) :
+	DialogueTutorial(settings, guiSettings),
 	level(level),
 	levelInterface(levelInterface)
 {
@@ -31,7 +31,7 @@ void DangobeseTutorial::startDialogues()
 {
 	running = true;
 	level->pause();
-	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["dangobese"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["dangobese"]["dialogue"], guiSettings);
 	levelInterface->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	levelInterface->hideStartMenu();

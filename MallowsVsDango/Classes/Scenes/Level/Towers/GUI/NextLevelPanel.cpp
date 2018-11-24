@@ -1,30 +1,28 @@
 #include "NextLevelPanel.h"
 
-NextLevelPanel * NextLevelPanel::create(Config * config, float spriteWidth, Tower * tower, cocos2d::Size size)
+NextLevelPanel * NextLevelPanel::create(float spriteWidth, Tower * tower, cocos2d::Size size, GUISettings* guiSettings)
 {
 	NextLevelPanel* panel = new NextLevelPanel();
-	if (panel->init(config, spriteWidth, tower, size)) {
+	if (panel->init(spriteWidth, tower, size, guiSettings)) {
 		return panel;
 	}
 	delete panel;
 	return nullptr;
 }
 
-bool NextLevelPanel::init(Config* config, float spriteWidth, Tower* cTower, cocos2d::Size size)
+bool NextLevelPanel::init(float spriteWidth, Tower* cTower, cocos2d::Size size, GUISettings* guiSettings)
 {
 	setContentSize(size);
-	CurrentLevelPanel::init(config, spriteWidth, cTower);
+	CurrentLevelPanel::init(spriteWidth, cTower, guiSettings);
 	settings = cTower->getTowerSettings();
 
-	const auto buttonsConfig = configClass->getConfigValues(Config::ConfigType::BUTTON);
-	std::string language = configClass->getSettings()->getLanguage();
-	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+	cocos2d::Size visibleSize = guiSettings->getVisibleSize();
 
 	cocos2d::Sprite* cost = cocos2d::Sprite::create("res/buttons/sugar.png");
 	addChild(cost, 1, "cost");
 	cost->setScale(spriteWidth / cost->getContentSize().width);
 
-	auto upgrade_label = cocos2d::Label::createWithTTF(buttonsConfig["upgrade"][language].asString(),
+	auto upgrade_label = cocos2d::Label::createWithTTF(guiSettings->getButton("upgrade"),
 		"fonts/LICABOLD.ttf", 30 * visibleSize.width / 1280);
 	upgrade_label->setColor(cocos2d::Color3B::YELLOW);
 	upgrade_label->enableOutline(cocos2d::Color4B::BLACK, 1);
@@ -61,10 +59,8 @@ void NextLevelPanel::setSpritesPositions(float spriteWidth)
 
 void NextLevelPanel::updateLabel() {
 	int towerLevel = tower->getLevel();
-	std::string language = configClass->getSettings()->getLanguage();
 	std::string s("");
-	levelLabel->setString(configClass->getConfigValues(Config::ConfigType::BUTTON)
-		["level"][language].asString() + " " +
+	levelLabel->setString(guiSettings->getButton("level") + " " +
 		Json::Value(towerLevel + 2).asString());
 
 	s = Json::Value(settings->getDamage(towerLevel + 1)).asString();

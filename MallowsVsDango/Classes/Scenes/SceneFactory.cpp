@@ -13,13 +13,13 @@ cocos2d::Scene * SceneFactory::createScene(SceneType type, Config* config)
 	cocos2d::Scene * scene(nullptr);
 	switch (type) {
 	case MENU:
-		scene = MainMenu::create(config);
+		scene = MainMenu::create(config, config->getGUISettings());
 		break;
 	case GAME:
-		scene = MyGame::create(config);
+		scene = MyGame::create(config, config->getGUISettings());
 		break;
 	case LEVELS:
-		scene = StoryMenu::create(config);
+		scene = StoryMenu::create(config, config->getGUISettings());
 		break;
 	case CREDIT:
 		scene = CreditScreen::create();
@@ -28,7 +28,7 @@ cocos2d::Scene * SceneFactory::createScene(SceneType type, Config* config)
 		scene = LevelEditor::create();
 		break;
 	case SKILLS:
-		scene = Skills::create(config);
+		scene = Skills::create(config, config->getGUISettings());
 		break;
 	case SHOP:
 		scene = Shop::create();

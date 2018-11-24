@@ -8,10 +8,10 @@
 
 USING_NS_CC;
 
-ChallengeHandler* ChallengeHandler::create(const Json::Value& value, Level* level) {
+ChallengeHandler* ChallengeHandler::create(const Json::Value& value, Level* level, GUISettings* settings) {
 
 	ChallengeHandler* challenges = new ChallengeHandler();
-	if (challenges->init(value, level)) {
+	if (challenges->init(value, level, settings)) {
 		return challenges;
 	}
 	CC_SAFE_DELETE(challenges);
@@ -26,29 +26,28 @@ ChallengeHandler::~ChallengeHandler() {
 	challenges.empty();
 }
 
-bool ChallengeHandler::init(const Json::Value & value, Level * level)
+bool ChallengeHandler::init(const Json::Value & value, Level * level, GUISettings* settings)
 {
 	bool correctlyInitialized = Node::init();
 	this->level = level;
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	createTextLayout(visibleSize);
-	createChallengesButtons(visibleSize, value);
+	this->settings = settings;
+	createTextLayout();
+	createChallengesButtons(value);
 
 	return correctlyInitialized;
 }
 
-void ChallengeHandler::createChallengesButtons(cocos2d::Size &visibleSize, const Json::Value & value)
+void ChallengeHandler::createChallengesButtons(const Json::Value & value)
 {
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
 	Json::Value j_challenges = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::CHALLENGE);
-	float size_button = visibleSize.width / 20;
+	float size_button = settings->getVisibleSize().width / 20;
 	for (unsigned int i(0); i < value.size(); ++i) {
 		Json::Value configChallenge = value[i];
-		createChallenge(configChallenge, j_challenges, language, size_button);
+		createChallenge(configChallenge, j_challenges, size_button);
 	}
 }
 
-void ChallengeHandler::createChallenge(Json::Value &configChallenge, Json::Value &j_challenges, std::string &language, float size_button)
+void ChallengeHandler::createChallenge(Json::Value &configChallenge, Json::Value &j_challenges, float size_button)
 {
 	Challenge::ChallengeType type = Challenge::getChallengeTypeFromString(configChallenge["name"].asString());
 
@@ -57,8 +56,8 @@ void ChallengeHandler::createChallenge(Json::Value &configChallenge, Json::Value
 		configChallenge["int_value"].asInt(),
 		configChallenge["str_value"].asString()));
 
-	std::string description = j_challenges[configChallenge["name"].asString()]["description_" + language].asString();
-	std::string name = j_challenges[configChallenge["name"].asString()]["name_" + language].asString();
+	std::string description = j_challenges[configChallenge["name"].asString()]["description_" + settings->getLanguage()].asString();
+	std::string name = j_challenges[configChallenge["name"].asString()]["name_" + settings->getLanguage()].asString();
 
 	// GUI part
 	std::string image_name = j_challenges[configChallenge["name"].asString()]["image"].asString();
@@ -95,19 +94,17 @@ void ChallengeHandler::showChallenge(cocos2d::ui::Button * challenge, const std:
 
 void ChallengeHandler::updateChallengeText(Challenge * c_challenge, const std::string & description, const std::string & name, cocos2d::ui::Button * challenge)
 {
-	std::string language = ((AppDelegate*)Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
-
 	std::string str_progress("");
 	if (c_challenge->getState() == Challenge::State::Running) {
-		str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["progress_running"][language].asString();
+		str_progress = settings->getButton("progress_running");
 		progress_text->setColor(Color3B::WHITE);
 	}
 	else if (c_challenge->getState() == Challenge::State::Failed) {
-		str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["progress_failed"][language].asString();
+		str_progress = settings->getButton("progress_failed");
 		progress_text->setColor(Color3B::ORANGE);
 	}
 	else if (c_challenge->getState() == Challenge::State::Succeed) {
-		str_progress = ((AppDelegate*)Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["progress_succeed"][language].asString();
+		str_progress = settings->getButton("progress_succeed");
 		progress_text->setColor(Color3B::GREEN);
 	}
 	std::string n_description = description;
@@ -146,8 +143,9 @@ void ChallengeHandler::updateChallengeText(Challenge * c_challenge, const std::s
 	}
 }
 
-void ChallengeHandler::createTextLayout(cocos2d::Size &visibleSize)
+void ChallengeHandler::createTextLayout()
 {
+	cocos2d::Size visibleSize = settings->getVisibleSize();
 	text_layout = ui::Layout::create();
 	text_layout->setVisible(false);
 	addChild(text_layout, 0, "text_layout");

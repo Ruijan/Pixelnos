@@ -2,12 +2,13 @@
 #include "cocos2d.h"
 #include "../../../Config/Settings/TutorialSettings.h"
 #include "../../Level/Dialogue.h"
+#include "../../../GUI/GUISettings.h"
 
 class Skills;
 
 class SkillTutorial {
 public:
-	SkillTutorial(TutorialSettings* settings, Skills* skillTree);
+	SkillTutorial(TutorialSettings* settings, Skills* skillTree, GUISettings* guiSettings);
 	virtual void update(float dt);
 	virtual bool isDone();
 	void showHowToBuySkill();
@@ -19,7 +20,6 @@ public:
 
 protected:
 	cocos2d::CallFunc * createShowSkillFunction(cocos2d::Sprite * hand);
-
 	void endTutorial();
 
 protected:
@@ -28,4 +28,5 @@ protected:
 	Dialogue* dialogues;
 	Skills* skillTree;
 	bool showingHand;
+	GUISettings* guiSettings;
 };

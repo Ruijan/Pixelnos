@@ -14,7 +14,7 @@ StoryParametersMenu * StoryParametersMenu::create(Config* config)
 }
 
 StoryParametersMenu::StoryParametersMenu(Config* config) :
-	ParametersMenu(config) {}
+	ParametersMenu(config->getSettings(), config->getGUISettings()) {}
 
 bool StoryParametersMenu::init() {
 	bool initialized = ParametersMenu::init();
@@ -37,8 +37,8 @@ bool StoryParametersMenu::init() {
 
 void StoryParametersMenu::addBottomButtons(Json::Value & buttons)
 {
-	addLeftButton(buttons["credits"][config->getSettings()->getLanguage()].asString());
-	addRightButton(buttons["title_menu"][config->getSettings()->getLanguage()].asString());
+	addLeftButton(buttons["credits"][gameSettings->getLanguage()].asString());
+	addRightButton(buttons["title_menu"][gameSettings->getLanguage()].asString());
 }
 
 void StoryParametersMenu::rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type)

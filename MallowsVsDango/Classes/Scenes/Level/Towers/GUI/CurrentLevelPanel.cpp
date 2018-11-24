@@ -1,25 +1,24 @@
 #include "CurrentLevelPanel.h"
 
 
-CurrentLevelPanel * CurrentLevelPanel::create(Config* config, float spriteWidth, Tower* tower)
+CurrentLevelPanel * CurrentLevelPanel::create(float spriteWidth, Tower* tower, GUISettings* settings)
 {
 	CurrentLevelPanel* panel = new CurrentLevelPanel();
-	if (panel->init(config, spriteWidth, tower)) {
+	if (panel->init(spriteWidth, tower, settings)) {
 		return panel;
 	}
 	delete panel;
 	return nullptr;
 }
 
-bool CurrentLevelPanel::init(Config* config, float spriteWidth, Tower* cTower)
+bool CurrentLevelPanel::init(float spriteWidth, Tower* cTower, GUISettings* guiSettings)
 {
 	tower = cTower;
-	configClass = config;
-	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-	addLevelInfo(visibleSize);
-	addAttackInfo(visibleSize, spriteWidth);
-	addSpeedInfo(visibleSize, spriteWidth);
-	addRangeInfo(visibleSize, spriteWidth);
+	this->guiSettings = guiSettings;
+	addLevelInfo();
+	addAttackInfo(spriteWidth);
+	addSpeedInfo(spriteWidth);
+	addRangeInfo(spriteWidth);
 
 	setSpritesPositions(spriteWidth);
 	setLabelsPositions(spriteWidth);
@@ -46,48 +45,45 @@ void CurrentLevelPanel::setLabelsPositions(float spriteWidth) {
 		speed->getPosition().y));
 }
 
-void CurrentLevelPanel::addLevelInfo(cocos2d::Size &visibleSize) {
-	const auto buttonsConfig = configClass->getConfigValues(Config::ConfigType::BUTTON);
-	std::string language = configClass->getSettings()->getLanguage();
+void CurrentLevelPanel::addLevelInfo() {
 
 	levelLabel = cocos2d::Label::createWithTTF(
-		buttonsConfig["level"][language].asString() +
-		" " + Json::Value(tower->getLevel() + 1).asString(),
-		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
+		guiSettings->getButton("level") + " " + Json::Value(tower->getLevel() + 1).asString(),
+		"fonts/LICABOLD.ttf", 25 * guiSettings->getVisibleSize().width / 1280);
 	levelLabel->setColor(cocos2d::Color3B::BLACK);
 	
 	addChild(levelLabel, 1, "levelLabel");
 }
 
-void CurrentLevelPanel::addAttackInfo(cocos2d::Size &visibleSize, float spriteWidth) {
+void CurrentLevelPanel::addAttackInfo( float spriteWidth) {
 	attack = cocos2d::Sprite::create("res/buttons/attack.png");
 	addChild(attack, 1, "attack");
 	attack->setScale(spriteWidth / attack->getContentSize().width);
 
-	attackLabel = cocos2d::Label::createWithTTF("", "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
+	attackLabel = cocos2d::Label::createWithTTF("", "fonts/LICABOLD.ttf", 25 * guiSettings->getVisibleSize().width / 1280);
 	attackLabel->setColor(cocos2d::Color3B::BLACK);
 	attackLabel->setAnchorPoint(cocos2d::Vec2(0.f, 0.5f));
 	addChild(attackLabel, 1, "attackLabel");
 }
 
-void CurrentLevelPanel::addRangeInfo(cocos2d::Size &visibleSize, float spriteWidth) {
+void CurrentLevelPanel::addRangeInfo(float spriteWidth) {
 	range = cocos2d::Sprite::create("res/buttons/range.png");
 	addChild(range, 1, "range");
 	range->setScale(spriteWidth / range->getContentSize().width);
 	
-	rangeLabel = cocos2d::Label::createWithTTF("", "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
+	rangeLabel = cocos2d::Label::createWithTTF("", "fonts/LICABOLD.ttf", 25 * guiSettings->getVisibleSize().width / 1280);
 	rangeLabel->setColor(cocos2d::Color3B::BLACK);
 	
 	rangeLabel->setAnchorPoint(cocos2d::Vec2(0.f, 0.5f));
 	addChild(rangeLabel, 1, "rangeLabel");
 }
 
-void CurrentLevelPanel::addSpeedInfo(cocos2d::Size &visibleSize, float spriteWidth) {
+void CurrentLevelPanel::addSpeedInfo(float spriteWidth) {
 	speed = cocos2d::Sprite::create("res/buttons/speed.png");
 	addChild(speed, 1, "speed");
 	speed->setScale(spriteWidth / speed->getContentSize().width);
 
-	speedLabel = cocos2d::Label::createWithTTF("", "fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
+	speedLabel = cocos2d::Label::createWithTTF("", "fonts/LICABOLD.ttf", 25 * guiSettings->getVisibleSize().width / 1280);
 	speedLabel->setColor(cocos2d::Color3B::BLACK);
 	
 	speedLabel->setAnchorPoint(cocos2d::Vec2(0.f, 0.5f));
@@ -95,10 +91,8 @@ void CurrentLevelPanel::addSpeedInfo(cocos2d::Size &visibleSize, float spriteWid
 }
 
 void CurrentLevelPanel::updateLabel() {
-	std::string language = configClass->getSettings()->getLanguage();
 	std::string s("");
-	levelLabel->setString(configClass->getConfigValues(Config::ConfigType::BUTTON)
-		["level"][language].asString() + " " + 
+	levelLabel->setString(guiSettings->getButton("level") + " " +
 		Json::Value(tower->getLevel() + 1).asString());
 
 	s = Json::Value(tower->getDamage()).asString();

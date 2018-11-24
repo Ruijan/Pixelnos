@@ -19,7 +19,6 @@ public:
 	* @brief Animate the reward
 	*/
 	virtual void animate() = 0;
-
 };
 
 #endif

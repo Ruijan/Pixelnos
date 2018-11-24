@@ -160,12 +160,14 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Config\Settings\Settings.cpp" />
     <ClCompile Include="..\Classes\Config\Settings\TutorialSettings.cpp" />
     <ClCompile Include="..\Classes\GUI\CentralMenu.cpp" />
+    <ClCompile Include="..\Classes\GUI\GUISettings.cpp" />
     <ClCompile Include="..\Classes\GUI\ParametersMenu.cpp" />
     <ClCompile Include="..\Classes\Lib\AudioSlider.cpp" />
     <ClCompile Include="..\Classes\Lib\FadeMusic.cpp" />
     <ClCompile Include="..\Classes\Lib\Functions.cpp" />
     <ClCompile Include="..\Classes\Lib\Loader.cpp" />
     <ClCompile Include="..\Classes\SceneManager.cpp" />
+    <ClCompile Include="..\Classes\Scenes\AdvancedScene.cpp" />
     <ClCompile Include="..\Classes\Scenes\Credits\CreditScreen.cpp" />
     <ClCompile Include="..\Classes\Scenes\LevelEditor\LevelEditor.cpp" />
     <ClCompile Include="..\Classes\Scenes\Level\Cell.cpp" />
@@ -245,6 +247,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Config\Settings\Settings.h" />
     <ClInclude Include="..\Classes\Config\Settings\TutorialSettings.h" />
     <ClInclude Include="..\Classes\GUI\CentralMenu.h" />
+    <ClInclude Include="..\Classes\GUI\GUISettings.h" />
     <ClInclude Include="..\Classes\GUI\ParametersMenu.h" />
     <ClInclude Include="..\Classes\Lib\AudioSlider.h" />
     <ClInclude Include="..\Classes\Lib\FadeMusic.h" />
@@ -310,6 +313,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Scenes\Level\Tutorials\UpgradeTutorial.h" />
     <ClInclude Include="..\Classes\Scenes\Level\Wall.h" />
     <ClInclude Include="..\Classes\Scenes\SceneFactory.h" />
+    <ClInclude Include="..\Classes\Scenes\AdvancedScene.h" />
     <ClInclude Include="..\Classes\Scenes\Shop\Shop.h" />
     <ClInclude Include="..\Classes\Scenes\SkillTree\RequirementDescription.h" />
     <ClInclude Include="..\Classes\Scenes\SkillTree\Skills.h" />

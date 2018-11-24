@@ -6,7 +6,7 @@ class LevelInterface;
 class Level;
 class DangorillaTutorial : public DialogueTutorial {
 public:
-	DangorillaTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level);
+	DangorillaTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level, GUISettings* guiSettings);
 	bool isDone();
 	bool areConditionsMet();
 	virtual ~DangorillaTutorial();

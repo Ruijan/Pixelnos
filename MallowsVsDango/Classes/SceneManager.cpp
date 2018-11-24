@@ -19,7 +19,8 @@ SceneManager* SceneManager::getInstance() {
 }
 
 SceneManager::SceneManager(Config* config) :
-	configClass(config)
+	configClass(config),
+	settings(config->getGUISettings())
 {
 	currentscene = SceneFactory::createScene(SceneFactory::SceneType::MENU, configClass);
 	c_index = 0;
@@ -43,7 +44,7 @@ SceneManager::SceneManager(Config* config) :
 SceneManager::~SceneManager() {}
 
 void SceneManager::startGameWithLevel(int worldID, int levelID) {
-	MyGame* game = MyGame::create(configClass);
+	MyGame* game = MyGame::create(configClass, settings);
 	game->initLevel(levelID, worldID);
 	currentscene = game;
 	replaceSceneWithCurrentScene(SceneFactory::GAME);

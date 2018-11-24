@@ -27,6 +27,7 @@ Config::Config(std::string configfilename, std::string savename) :
 	settings = new GameSettings();
 	gameTutorialSettings = new TutorialSettings();
 	skillTutorialSettings = new TutorialSettings();
+	guiSettings = new GUISettings();
 
 	scheduler = Director::getInstance()->getScheduler();
 	scheduler->retain();
@@ -54,9 +55,6 @@ const Json::Value& Config::getConfigValues(ConfigType type) const {
 		break;
 	case DANGO:
 		return conf_dango;
-		break;
-	case BUTTON:
-		return conf_button;
 		break;
 	case CHALLENGE:
 		return conf_challenge;
@@ -273,6 +271,7 @@ void Config::extractGeneralConfiguration(cocos2d::FileUtils * fileUtils, Json::R
 	if (parsingConfigSuccessful) {
 		gameTutorialSettings->init(conf_general["configuration_files"]["gameTutorial"].asString(), "gameTutorialProgress.json");
 		skillTutorialSettings->init(conf_general["configuration_files"]["skillsTutorial"].asString(), "skillTutorialProgress.json");
+		guiSettings->init(conf_general["configuration_files"]["button"].asString(), settings->getLanguage());
 
 		bool parsing_conf_towers = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["tower"].asString()), conf_tower, false);
 		bool parsing_conf_advice = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["advice"].asString()), conf_advice, false);
@@ -280,11 +279,9 @@ void Config::extractGeneralConfiguration(cocos2d::FileUtils * fileUtils, Json::R
 		bool parsing_conf_challenges = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["challenge"].asString()), conf_challenge, false);
 		bool parsing_conf_talents = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["talent"].asString()), conf_talent, false);
 		bool parsing_conf_levels = reader.parse(fileUtils->getStringFromFile(conf_general["configuration_files"]["level"].asString()), conf_level, false);
-		std::string buttons = fileUtils->getStringFromFile(conf_general["configuration_files"]["button"].asString());
-		bool parsing_conf_buttons = reader.parse(buttons, conf_button, false);
 		if (!parsing_conf_towers || !parsing_conf_advice || !parsing_conf_dangos ||
 			!parsing_conf_challenges || !parsing_conf_talents ||
-			!parsing_conf_levels || !parsing_conf_buttons) {
+			!parsing_conf_levels) {
 			std::string error = reader.getFormattedErrorMessages();
 			throw std::invalid_argument("ERROR : loading configuration files. " + error);
 			return;
@@ -831,5 +828,10 @@ TutorialSettings * Config::getGameTutorialSettings()
 TutorialSettings * Config::getSkillTutorialSettings()
 {
 	return skillTutorialSettings;
+}
+
+GUISettings * Config::getGUISettings()
+{
+	return guiSettings;
 }
 

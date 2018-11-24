@@ -4,30 +4,32 @@
 Tutorial * TutorialFactory::createTutorial(TutorialType tutorialType, Config* config, LevelInterface* menu, Level* level)
 {
 	Tutorial* tutorial = nullptr;
+	TutorialSettings* settings = config->getGameTutorialSettings();
+	GUISettings* guiSettings = config->getGUISettings();
 	switch (tutorialType) {
 	case DANGOBESE:
-		tutorial = new DangobeseTutorial(config->getGameTutorialSettings(), menu, level);
+		tutorial = new DangobeseTutorial(settings, menu, level, guiSettings);
 		break;
 	case DANGORILLA:
-		tutorial = new DangorillaTutorial(config->getGameTutorialSettings(), menu, level);
+		tutorial = new DangorillaTutorial(settings, menu, level, guiSettings);
 		break;
 	case MULTIPATHS:
-		tutorial = new MultiPathsTutorial(config->getGameTutorialSettings(), menu, level);
+		tutorial = new MultiPathsTutorial(settings, menu, level, guiSettings);
 		break;
 	case LIFE:
-		tutorial = new LifeTutorial(config->getGameTutorialSettings(), menu);
+		tutorial = new LifeTutorial(settings, menu, guiSettings);
 		break;
 	case SUGAR:
-		tutorial = new SugarTutorial(config->getGameTutorialSettings(), menu);
+		tutorial = new SugarTutorial(settings, menu, guiSettings);
 		break;
 	case SAUCER:
-		tutorial = new SaucerTutorial(config, menu, level);
+		tutorial = new SaucerTutorial(config, menu, level, guiSettings);
 		break;
 	case TOWERPOSITIONING:
 		tutorial = new TowerPositioningTutorial(config, menu);
 		break;
 	case UPGRADE:
-		tutorial = new UpgradeTutorial(config->getGameTutorialSettings(), menu, level);
+		tutorial = new UpgradeTutorial(settings, menu, level, guiSettings);
 		break;
 	}
 	if (tutorial == nullptr) {

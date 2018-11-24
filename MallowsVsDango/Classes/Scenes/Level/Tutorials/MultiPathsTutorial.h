@@ -8,7 +8,7 @@ class LevelInterface;
 class Level;
 class MultiPathsTutorial : public DialogueTutorial {
 public:
-	MultiPathsTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level);
+	MultiPathsTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level, GUISettings* guiSettings);
 	bool isDone();
 	bool areConditionsMet();
 	virtual ~MultiPathsTutorial();

@@ -5,23 +5,21 @@
 USING_NS_CC;
 
 
-MainMenu* MainMenu::create(Config* config) {
+MainMenu* MainMenu::create(Config* config, GUISettings* settings) {
 	MainMenu* mainMenu = new MainMenu();
-	if (mainMenu->init(config)) {
+	if (mainMenu->init(config, settings)) {
 		return mainMenu;
 	}
 	delete mainMenu;
 	return nullptr;
 }
 
-bool MainMenu::init(Config* config)
+bool MainMenu::init(Config* config, GUISettings* settings)
 {
-	if (!Scene::init()) { return false; }
+	if (!AdvancedScene::init(settings)) { return false; }
 	configClass = config;
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = configClass->getSettings()->getLanguage();
-	Json::Value buttons = configClass->getConfigValues(Config::ConfigType::BUTTON);
-
+	Size visibleSize = settings->getVisibleSize();
+	std::string language = settings->getLanguage();
 
 	/*loading sprites, setting position, scaling for main menu*/
 
@@ -76,7 +74,7 @@ bool MainMenu::init(Config* config)
 	float coeff2 = visibleSize.width*0.35 / dangotxt->getContentSize().width;
 
 	cocos2d::ui::Button* button = ui::Button::create();
-	button->setTitleText(buttons["start"][language].asString());
+	button->setTitleText(settings->getButton("start"));
 	button->setTitleColor(Color3B::YELLOW);
 	button->setTitleFontName("fonts/LICABOLD.ttf");
 	button->setTitleFontSize(75.f* visibleSize.width / 960);
@@ -171,7 +169,7 @@ bool MainMenu::init(Config* config)
 		layout_username->addChild(close_shadow, -1);
 		layout_username->addChild(close, 5, "close");
 
-		Label* title = Label::createWithTTF(buttons["username"][language].asString(), "fonts/LICABOLD.ttf", 50.0f * visibleSize.width / 1280);
+		Label* title = Label::createWithTTF(settings->getButton("username"), "fonts/LICABOLD.ttf", 50.0f * visibleSize.width / 1280);
 		title->setColor(Color3B::WHITE);
 		title->enableOutline(Color4B::BLACK, 2);
 		title->setDimensions(panel->getContentSize().width * panel->getScaleX() * 0.90,
@@ -207,7 +205,7 @@ bool MainMenu::init(Config* config)
 				configClass->setUsername(username->getText());
 			}
 		});
-		validate_username->setTitleText(buttons["validate"][language].asString());
+		validate_username->setTitleText(settings->getButton("validate"));
 		validate_username->setTitleFontName("fonts/LICABOLD.ttf");
 		validate_username->setTitleFontSize(60.f);
 		validate_username->setEnabled(false);
@@ -338,13 +336,11 @@ void MainMenu::initLanguageList() {
 }
 
 void MainMenu::switchLanguage() {
-	std::string language = configClass->getSettings()->getLanguage();
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Json::Value buttons = configClass->getConfigValues(Config::ConfigType::BUTTON);
+	Size visibleSize = settings->getVisibleSize();
 
 
 	((ui::Button*)getChildByName("interface")->getChildByName("start"))->setTitleText(
-		buttons["start"][language].asString());
+		settings->getButton("start"));
 
 	auto menu_restart = ui::Layout::create();
 	menu_restart->setPosition(Vec2(Point(visibleSize.width / 2, visibleSize.height * 1.5)));
@@ -357,7 +353,7 @@ void MainMenu::switchLanguage() {
 
 	ui::Button* quit = ui::Button::create("res/buttons/yellow_button.png");
 	quit->setScale(visibleSize.width / 5 / quit->getContentSize().width);
-	quit->setTitleText(buttons["quit"][language].asString());
+	quit->setTitleText(settings->getButton("quit"));
 	quit->setTitleFontName("fonts/LICABOLD.ttf");
 	quit->setTitleFontSize(45.f * visibleSize.width / 1280);
 	Label* quit_label = quit->getTitleRenderer();
@@ -381,7 +377,7 @@ void MainMenu::switchLanguage() {
 		quit->getContentSize().height*quit->getScaleY() * 0.41));
 	menu_restart->addChild(quit, 1, "quit");
 
-	Label* advice = Label::createWithTTF(buttons["quit_info"][language].asString(), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
+	Label* advice = Label::createWithTTF(settings->getButton("quit_info"), "fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	advice->setDimensions(panel->getContentSize().width * panel->getScaleX() * 0.75,
 		panel->getContentSize().height * panel->getScaleY() * 0.4);
 	advice->setPosition(0, 0);

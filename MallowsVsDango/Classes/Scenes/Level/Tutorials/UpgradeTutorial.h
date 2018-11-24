@@ -7,7 +7,7 @@ class Level;
 class Tower;
 class UpgradeTutorial : public DialogueTutorial {
 public:
-	UpgradeTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level);
+	UpgradeTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level, GUISettings* guiSettings);
 	virtual void update(float dt);
 	bool isDone();
 	virtual ~UpgradeTutorial();

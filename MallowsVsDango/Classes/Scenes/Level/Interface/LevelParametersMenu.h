@@ -5,7 +5,7 @@
 class LevelParametersMenu : public ParametersMenu {
 public:
 	static LevelParametersMenu* create(MyGame* game, Config* config);
-	LevelParametersMenu(MyGame * game, Config * config);
+	LevelParametersMenu(MyGame * game, Config* config);
 
 	virtual void handleAlwaysShowGridButton(cocos2d::ui::Widget::TouchEventType type);
 	virtual void handleMovingGridButton(cocos2d::ui::Widget::TouchEventType type);

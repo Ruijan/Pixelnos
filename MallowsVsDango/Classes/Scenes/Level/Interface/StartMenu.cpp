@@ -3,13 +3,11 @@
 #include "../../../AppDelegate.h"
 #include "LevelInterface.h"
 
-
 StartMenu::StartMenu() :
 	levelInterface(nullptr),
 	hidden(false),
 	locked(false)
 {
-
 }
 
 StartMenu* StartMenu::create(LevelInterface* levelInterface, int levelId) {
@@ -70,7 +68,7 @@ void StartMenu::reset(int levelId)
 		visibleSize.height + getChildByName("title")->getContentSize().height * getChildByName("title")->getScaleY()));
 	((cocos2d::Label*)getChildByName("title"))->runAction(cocos2d::FadeIn::create(0.5f));
 	((cocos2d::Label*)getChildByName("title"))->setString(
-		((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON)["level"][language].asString() + " " +
+		settings->getButton("level") + " " +
 		Json::Value((int)(levelId + 1)).asString());
 	getChildByName("advice")->setVisible(false);
 	getChildByName("advice")->runAction(cocos2d::RepeatForever::create(cocos2d::Sequence::create(
@@ -82,18 +80,19 @@ void StartMenu::reset(int levelId)
 bool StartMenu::init(LevelInterface* levelInterface, int levelId) {
 	bool initialized = cocos2d::ui::Layout::init();
 	this->levelInterface = levelInterface;
-	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-	std::string language = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getSettings()->getLanguage();
-	Json::Value buttons = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::BUTTON);
+	settings = levelInterface->getGUISettings();
+	std::string language = settings->getLanguage();
 
-	addTitleLabel(buttons, language, levelId, visibleSize);
-	addAdviceLabel(buttons, language, visibleSize);
-	addStartButton(visibleSize, buttons, language);
+	addTitleLabel(levelId);
+	addAdviceLabel();
+	addStartButton();
 	return initialized;
 }
 
-void StartMenu::addTitleLabel(Json::Value &buttons, std::string &language, int levelId, cocos2d::Size &visibleSize) {
-	cocos2d::Label* title = cocos2d::Label::createWithTTF(buttons["level"][language].asString() + " " +
+void StartMenu::addTitleLabel(int levelId) {
+	cocos2d::Size visibleSize = settings->getVisibleSize();
+
+	cocos2d::Label* title = cocos2d::Label::createWithTTF(settings->getButton("level") + " " +
 		Json::Value((int)(levelId + 1)).asString(),
 		"fonts/LICABOLD.ttf", round(visibleSize.width / 12.0));
 	title->setColor(cocos2d::Color3B::YELLOW);
@@ -102,8 +101,9 @@ void StartMenu::addTitleLabel(Json::Value &buttons, std::string &language, int l
 	addChild(title, 2, "title");
 }
 
-void StartMenu::addAdviceLabel(Json::Value &buttons, std::string &language, cocos2d::Size &visibleSize) {
-	cocos2d::Label* advice = cocos2d::Label::createWithTTF(buttons["advice_game_drag"][language].asString(),
+void StartMenu::addAdviceLabel() {
+	cocos2d::Size visibleSize = settings->getVisibleSize();
+	cocos2d::Label* advice = cocos2d::Label::createWithTTF(settings->getButton("advice_game_drag"),
 		"fonts/LICABOLD.ttf", 30.f * visibleSize.width / 1280);
 	advice->setDimensions(visibleSize.width / 2, visibleSize.height / 10);
 	advice->setPosition(round(visibleSize.width * 3 / 8.0), visibleSize.height - advice->getContentSize().height);
@@ -116,11 +116,11 @@ void StartMenu::addAdviceLabel(Json::Value &buttons, std::string &language, coco
 	addChild(advice, 2, "advice");
 }
 
-void StartMenu::addStartButton(cocos2d::Size &visibleSize, Json::Value &buttons, std::string &language)
-{
+void StartMenu::addStartButton() {
+	cocos2d::Size visibleSize = settings->getVisibleSize();
 	cocos2d::ui::Button* start = cocos2d::ui::Button::create("res/buttons/blue_button.png");
 	start->setScale(visibleSize.width / 4 / start->getContentSize().width);
-	start->setTitleText(buttons["start_game"][language].asString());
+	start->setTitleText(settings->getButton("start_game"));
 	start->setTitleFontName("fonts/LICABOLD.ttf");
 	start->setTitleFontSize(45.f);
 	cocos2d::Label* start_label = start->getTitleRenderer();

@@ -1,8 +1,9 @@
 #include "DialogueTutorial.h"
 
-DialogueTutorial::DialogueTutorial(TutorialSettings * settings):
+DialogueTutorial::DialogueTutorial(TutorialSettings * settings, GUISettings* guiSettings):
 	Tutorial(settings),
-	dialogues(nullptr)
+	dialogues(nullptr),
+	guiSettings(guiSettings)
 {
 }
 

@@ -9,7 +9,7 @@ RewardSugar* RewardSugar::create(cocos2d::Vec2 pos) {
 	if (reward->init()) {
 		Sprite* sugar = Sprite::create("res/buttons/holy_sugar.png");
 		sugar->setScale(Cell::getCellWidth() / sugar->getContentSize().width);
-		reward->addChild(sugar,1,"sugar");
+		reward->addChild(sugar, 1, "sugar");
 		reward->setPosition(pos);
 
 		return reward;

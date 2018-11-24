@@ -1,5 +1,4 @@
 #include "LevelInterface.h"
-#include "../../../SceneManager.h"
 #include "../MyGame.h"
 #include "../Towers/TowerFactory.h"
 #include "../../../Lib/Functions.h"
@@ -13,11 +12,14 @@
 #include "../Dangos/Monkey.h"
 #include "../Level.h"
 
-
 USING_NS_CC;
 
-LevelInterface::LevelInterface() :
-	sizeButton(cocos2d::Director::getInstance()->getVisibleSize().width / 15),
+LevelInterface::LevelInterface(MyGame* ngame, Config* config) :
+	game(ngame),
+	configClass(config),
+	settings(config->getGUISettings()),
+	level(game->getLevel()),
+	sizeButton(config->getGUISettings()->getVisibleSize().width / 15),
 	towerPanel(nullptr),
 	selectedDango(nullptr),
 	selectedTower(nullptr)
@@ -32,44 +34,35 @@ LevelInterface::~LevelInterface() {
 }
 
 LevelInterface* LevelInterface::create(MyGame* ngame, Config* config) {
+	LevelInterface* interface_game = new LevelInterface(ngame, config);
 
-	LevelInterface* interface_game = new LevelInterface();
-
-	if (interface_game->init(ngame, config))
-	{
+	if (interface_game->init()){
 		interface_game->autorelease();
 		return interface_game;
 	}
-	else
-	{
+	else{
 		delete interface_game;
 		interface_game = NULL;
 		return NULL;
 	}
 }
 
-bool LevelInterface::init(MyGame* ngame, Config* nConfig) {
-	game = ngame;
-	level = game->getLevel();
+bool LevelInterface::init() {
 	if (!Layer::init()) { return false; }
-	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	state = State::IDLE;
 	game_state = INTRO;
-	configClass = nConfig; // ((AppDelegate*)Application::getInstance())->getConfigClass();
-	Json::Value config = configClass->getConfigValues(Config::ConfigType::GENERAL);
 
-	initParametersMenu(config);
-	initLoseMenu(configClass->getSettings()->getLanguage(), configClass->getConfigValues(Config::ConfigType::BUTTON), configClass->getConfigValues(Config::ConfigType::ADVICE));
-	initWinMenu(config);
+	initParametersMenu();
+	initLoseMenu(configClass->getConfigValues(Config::ConfigType::ADVICE));
+	initWinMenu();
 	initRightPanel();
-	initLabels(config);
-	initStartMenu(config);
-	initDialoguesFromLevel(config);
+	initLabels();
+	initStartMenu();
+	initDialoguesFromLevel();
 
 	addRewardLayout();
-
-	addBlackMask(visibleSize);
+	addBlackMask();
 	selectedTower = nullptr;
 
 	addEvents();
@@ -83,8 +76,9 @@ void LevelInterface::addRewardLayout()
 	addChild(reward_layout, 1, "reward_layout");
 }
 
-void LevelInterface::addBlackMask(cocos2d::Size &visibleSize)
+void LevelInterface::addBlackMask()
 {
+	cocos2d::Size visibleSize = settings->getVisibleSize();
 	addChild(ui::Layout::create(), 3, "black_mask");
 	ui::Button* mask = ui::Button::create("res/buttons/mask.png");
 	mask->setScaleX(visibleSize.width / mask->getContentSize().width);
@@ -388,21 +382,21 @@ void LevelInterface::reset() {
 		removeChild(dialogues, 1);
 		delete dialogues;
 	}
-	initDialoguesFromLevel(config);
+	initDialoguesFromLevel();
 	rightPanel->reset();
 	removeChildByName("menu_win");
-	initWinMenu(config);
+	initWinMenu();
 	challenges = ChallengeHandler::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
-		[level->getWorldId()]["levels"][level->getLevelId()]["challenges"], level);
+		[level->getWorldId()]["levels"][level->getLevelId()]["challenges"], level, settings);
 	levelInfo->reset(challenges);
 }
 
-void LevelInterface::initParametersMenu(const Json::Value& config) {
+void LevelInterface::initParametersMenu() {
 	pauseMenu = LevelParametersMenu::create(game, configClass);
 	addChild(pauseMenu, 4, "menu_pause");
 }
 
-void LevelInterface::initStartMenu(const Json::Value& config) {
+void LevelInterface::initStartMenu() {
 	startMenu = StartMenu::create(this, level->getLevelId());
 	addChild(startMenu, 2, "start");
 }
@@ -411,21 +405,21 @@ void LevelInterface::showLabelInformation() {
 	levelInfo->showProgress();
 }
 
-void LevelInterface::initLabels(const Json::Value& config) {
+void LevelInterface::initLabels() {
 	challenges = ChallengeHandler::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
-		[level->getWorldId()]["levels"][level->getLevelId()]["challenges"], level);
+		[level->getWorldId()]["levels"][level->getLevelId()]["challenges"], level, settings);
 
 	levelInfo = LevelInfo::create(challenges);
 	addChild(levelInfo, 2, "label_information");
 }
 
-void LevelInterface::initLoseMenu(const std::string& language, const Json::Value& buttons, const Json::Value& advice) {
-	loseMenu = LoseMenu::create(game, language, buttons, advice);
+void LevelInterface::initLoseMenu(const Json::Value& advice) {
+	loseMenu = LoseMenu::create(game, settings, advice);
 	addChild(loseMenu, 4, "menu_lose");
 }
 
-void LevelInterface::initWinMenu(const Json::Value& config) {
-	winMenu = WinMenu::create(game);
+void LevelInterface::initWinMenu() {
+	winMenu = WinMenu::create(game, settings);
 	addChild(winMenu, 4, "menu_win");
 }
 
@@ -490,7 +484,7 @@ void LevelInterface::showTowerInfo() {
 		towerPanel->runAction(Sequence::create(scale_to, removeAndCreateLayout, nullptr));
 	}
 	else {
-		towerPanel = TowerInformationPanel::create(game, selectedTower, configClass);
+		towerPanel = TowerInformationPanel::create(game, selectedTower, settings);
 		addChild(towerPanel, 1, "information_tower");
 		towerPanel->setScale(0);
 		auto scale_to = ScaleTo::create(0.125f, 1.f);
@@ -547,7 +541,7 @@ void LevelInterface::setListening(bool listening) {
 }
 
 void LevelInterface::generateHolySugar(Vec2 pos) {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Size visibleSize = settings->getVisibleSize();
 
 	Node* node = Node::create();
 	ui::Button* sugar = ui::Button::create("res/buttons/holy_sugar.png", "res/buttons/holy_sugar.png", "res/buttons/holy_sugar.png");
@@ -584,7 +578,7 @@ void LevelInterface::generateHolySugar(Vec2 pos) {
 		nullptr));
 	sugar->addTouchEventListener([&, node, sugar](Ref* sender, ui::Widget::TouchEventType type) {
 		if (type == ui::Widget::TouchEventType::ENDED) {
-			Size visibleSize = Director::getInstance()->getVisibleSize();
+			Size visibleSize = settings->getVisibleSize();
 
 			EaseIn* move = EaseIn::create(MoveTo::create(1.5f, Vec2(visibleSize.width / 2, visibleSize.height)), 2);
 			EaseIn* scale = EaseIn::create(ScaleTo::create(1.5f, 0.01f), 2);
@@ -597,8 +591,7 @@ void LevelInterface::generateHolySugar(Vec2 pos) {
 }
 
 void LevelInterface::startRewarding(Vec2 pos) {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	std::string language = configClass->getSettings()->getLanguage();
+	Size visibleSize = settings->getVisibleSize();
 	Json::Value rootSave = configClass->getSaveValues();
 	Json::Value level_config = configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
 		[level->getWorldId()]["levels"][level->getLevelId()];
@@ -637,19 +630,18 @@ void LevelInterface::startRewarding(Vec2 pos) {
 				auto reward = RewardTower::create(level_config["reward"]["file"].asString(), level_config["reward"]["tower_name"].asString(),
 					pos,
 					[&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
-					if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-						endGame();
-					}
-				}
-				);
+						if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+							endGame();
+						}
+					},
+					settings
+					);
 				reward_layout->addChild(reward, 2);
 				reward->animate();
 			}
 
 			// Add a Tap to continue to inform the user what to do.
-			auto tapToContinue = Label::createWithTTF(
-				configClass->getConfigValues(Config::ConfigType::BUTTON)
-				["tap_continue"][language].asString(), "fonts/LICABOLD.ttf", 35.f * visibleSize.width / 1280);
+			auto tapToContinue = Label::createWithTTF(settings->getButton("tap_continue"), "fonts/LICABOLD.ttf", 35.f * visibleSize.width / 1280);
 			tapToContinue->setPosition(Vec2(visibleSize.width * 3 / 8, visibleSize.height / 15 + tapToContinue->getContentSize().height / 2));
 			tapToContinue->setColor(Color3B::WHITE);
 			tapToContinue->setVisible(true);
@@ -664,16 +656,14 @@ void LevelInterface::startRewarding(Vec2 pos) {
 	else {
 		game_state = DONE;
 	}
-
 }
 
-void LevelInterface::initDialoguesFromLevel(const Json::Value& config) {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
+void LevelInterface::initDialoguesFromLevel() {
 	if (configClass->getSettings()->isDialoguesEnabled()) {
 		Settings* dialgouesSettings = Settings::create(configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"]
 			[level->getWorldId()]["levels"][level->getLevelId()]["dialogues_file"].asString());
 		if (dialgouesSettings->getSettingsMap()["introDialogue"].size() != 0) {
-			dialogues = Dialogue::createFromConfig(dialgouesSettings->getSettingsMap()["introDialogue"]);
+			dialogues = Dialogue::createFromConfig(dialgouesSettings->getSettingsMap()["introDialogue"], settings);
 			addChild(dialogues, 1, "dialogue");
 			dialogues->launch();
 			game_state = INTRO;
@@ -698,6 +688,11 @@ int LevelInterface::getSugarQuantity()
 int LevelInterface::getLifeQuantity()
 {
 	return level->getLife();
+}
+
+GUISettings * LevelInterface::getGUISettings()
+{
+	return settings;
 }
 
 void LevelInterface::handleDeadDango() {

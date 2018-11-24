@@ -3,8 +3,8 @@
 #include "../Interface/LevelInterface.h"
 #include "../../../Config/Config.h"
 
-SaucerTutorial::SaucerTutorial(Config* config, LevelInterface* levelInterface, Level* level) :
-	DialogueTutorial(config->getGameTutorialSettings()),
+SaucerTutorial::SaucerTutorial(Config* config, LevelInterface* levelInterface, Level* level, GUISettings* guiSettings) :
+	DialogueTutorial(config->getGameTutorialSettings(), guiSettings),
 	levelInterface(levelInterface),
 	level(level),
 	config(config)
@@ -52,7 +52,7 @@ bool SaucerTutorial::isDone() {
 void SaucerTutorial::startDialogues() {
 	running = true;
 	levelInterface->pauseLevel();
-	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["saucer"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["saucer"]["dialogue"], guiSettings);
 	levelInterface->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	levelInterface->hideStartMenu();

@@ -11,25 +11,25 @@ TowerInformationPanel::~TowerInformationPanel()
 	delete nextLevelInfos;
 }
 
-TowerInformationPanel * TowerInformationPanel::create(MyGame* game, Tower * tower, Config* config)
+TowerInformationPanel * TowerInformationPanel::create(MyGame* game, Tower * tower, GUISettings* settings)
 {
 	TowerInformationPanel* panel = new TowerInformationPanel();
-	if (panel->init(game, tower, config)) {
+	if (panel->init(game, tower, settings)) {
 		return panel;
 	}
 	delete panel;
 	return nullptr;
 }
 
-bool TowerInformationPanel::init(MyGame* cGame, Tower * cTower, Config* cConfig)
+bool TowerInformationPanel::init(MyGame* cGame, Tower * cTower, GUISettings* guiSettings)
 {
-	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+	cocos2d::Size visibleSize = guiSettings->getVisibleSize();
 
 	game = cGame;
 	level = cGame->getLevel();
 	menu = cGame->getMenu();
 	tower = cTower;
-	configClass = cConfig;
+	this->guiSettings = guiSettings;
 	settings = tower->getTowerSettings();
 
 	createMainPanel(visibleSize);
@@ -49,8 +49,7 @@ void TowerInformationPanel::setTower(Tower* newTower) {
 	tower = newTower;
 	currentLevelInfos->setTower(tower);
 	nextLevelInfos->setTower(tower);
-	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-	setPanelPosition(visibleSize);
+	setPanelPosition(guiSettings->getVisibleSize());
 }
 
 void TowerInformationPanel::createMainPanel(cocos2d::Size &visibleSize) {
@@ -63,10 +62,7 @@ void TowerInformationPanel::createMainPanel(cocos2d::Size &visibleSize) {
 }
 
 void TowerInformationPanel::createCurrentLevelPanel(cocos2d::Size &visibleSize) {
-	const auto config = configClass->getConfigValues(Config::ConfigType::BUTTON);
-	std::string language = configClass->getSettings()->getLanguage();
-
-	currentLevelInfos = CurrentLevelPanel::create(configClass, spriteWidth, tower);
+	currentLevelInfos = CurrentLevelPanel::create(spriteWidth, tower, guiSettings);
 	currentLevelInfos->setContentSize(cocos2d::Size(mainPanel->getContentSize().width * mainPanel->getScaleX() / 3,
 		mainPanel->getContentSize().height * mainPanel->getScaleY() * 3 / 4));
 	currentLevelInfos->setPosition(cocos2d::Vec2(-mainPanel->getContentSize().width * mainPanel->getScaleX() * 0.3,
@@ -75,7 +71,7 @@ void TowerInformationPanel::createCurrentLevelPanel(cocos2d::Size &visibleSize) 
 	addChild(currentLevelInfos, 2, "currentLevelInfos");
 }
 
-void TowerInformationPanel::setPanelPosition(cocos2d::Size &visibleSize)
+void TowerInformationPanel::setPanelPosition(const cocos2d::Size &visibleSize)
 {
 	double position_x = tower->getPosition().x;
 	double position_y = tower->getPosition().y + mainPanel->getContentSize().height * mainPanel->getScaleY() / 2 +
@@ -91,20 +87,16 @@ void TowerInformationPanel::setPanelPosition(cocos2d::Size &visibleSize)
 }
 
 void TowerInformationPanel::createNextLevelPanel(cocos2d::Size &visibleSize) {
-	std::string language = configClass->getSettings()->getLanguage();
-	const auto config = configClass->getConfigValues(Config::ConfigType::BUTTON);
 	const auto spec_config = tower->getSpecConfig();
 	cocos2d::Size nextLevelSize = cocos2d::Size(mainPanel->getContentSize().width * mainPanel->getScaleX() / 3,
 		mainPanel->getContentSize().height * mainPanel->getScaleY() * 3 / 4);
-	nextLevelInfos = NextLevelPanel::create(configClass, spriteWidth, tower, nextLevelSize);
+	nextLevelInfos = NextLevelPanel::create(spriteWidth, tower, nextLevelSize, guiSettings);
 	nextLevelInfos->setPosition(cocos2d::Vec2(0, nextLevelInfos->getContentSize().height / 2));
 
 	addChild(nextLevelInfos, 2, "next_level_layout");
 }
 
 void TowerInformationPanel::createLockLayout(cocos2d::Size &visibleSize) {
-	std::string language = configClass->getSettings()->getLanguage();
-	const auto config = configClass->getConfigValues(Config::ConfigType::BUTTON);
 
 	lockedLayout = cocos2d::LayerColor::create();
 	lockedLayout->setContentSize(cocos2d::Size(mainPanel->getContentSize().width * mainPanel->getScaleX() / 3,
@@ -113,7 +105,7 @@ void TowerInformationPanel::createLockLayout(cocos2d::Size &visibleSize) {
 	std::string s = Json::Value(settings->getXP(tower->getLevel() + 1)).asString();
 	int dot_pos = s.find('.');
 	s = s.substr(0, dot_pos);
-	cocos2d::Label* locked_label = cocos2d::Label::createWithTTF(config["locked"][language].asString() + "\n" + Json::Value(tower->getCurrentXP()).asString() + "/" +
+	cocos2d::Label* locked_label = cocos2d::Label::createWithTTF(guiSettings->getButton("locked") + "\n" + Json::Value(tower->getCurrentXP()).asString() + "/" +
 		s,
 		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	locked_label->setColor(cocos2d::Color3B::BLACK);
@@ -129,7 +121,6 @@ void TowerInformationPanel::createLockLayout(cocos2d::Size &visibleSize) {
 }
 
 void TowerInformationPanel::createDescriptionLayout(cocos2d::Size &visibleSize) {
-	const auto config = configClass->getConfigValues(Config::ConfigType::BUTTON);
 	const auto spec_config = tower->getSpecConfig();
 
 	descriptionLayout = cocos2d::LayerColor::create();
@@ -137,7 +128,7 @@ void TowerInformationPanel::createDescriptionLayout(cocos2d::Size &visibleSize) 
 		mainPanel->getContentSize().height * mainPanel->getScaleY() * 3 / 4));
 	descriptionLayout->setPosition(cocos2d::Vec2(0, descriptionLayout->getContentSize().height / 2));
 	auto description_label = cocos2d::Label::createWithTTF(spec_config["last_level_description_" +
-		configClass->getSettings()->getLanguage()].asString(),
+		guiSettings->getLanguage()].asString(),
 		"fonts/LICABOLD.ttf", 20 * visibleSize.width / 1280);
 	description_label->setColor(cocos2d::Color3B::BLACK);
 	description_label->setAlignment(cocos2d::TextHAlignment::CENTER);
@@ -161,7 +152,7 @@ void TowerInformationPanel::createNextLevelButton(cocos2d::Size &visibleSize) {
 	addChild(nextLevelButton, 1, "next_level_button");
 	nextLevelButton->addTouchEventListener([&](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
 		if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-			std::string language = configClass->getSettings()->getLanguage();
+			std::string language = guiSettings->getLanguage();
 			unsigned int towerLevel = tower->getLevel();
 			if ((int)level->getQuantity() >= settings->getCost(towerLevel + 1) &&
 				towerLevel < settings->getMaxExistingLevel())
@@ -193,9 +184,6 @@ void TowerInformationPanel::addTowerActionToTracker(std::string towerAction)
 }
 
 void TowerInformationPanel::createSellButton(cocos2d::Size &visibleSize) {
-	std::string language = configClass->getSettings()->getLanguage();
-	const auto config = configClass->getConfigValues(Config::ConfigType::BUTTON);
-
 	auto sell = cocos2d::ui::Button::create("res/buttons/sell.png");
 	sell->setScaleX(mainPanel->getContentSize().width * mainPanel->getScaleX() / sell->getContentSize().width * 0.3);
 	sell->setScaleY(mainPanel->getContentSize().height * mainPanel->getScaleY() / sell->getContentSize().height * 0.3);
@@ -213,7 +201,7 @@ void TowerInformationPanel::createSellButton(cocos2d::Size &visibleSize) {
 	});
 	addChild(sell, 1);
 
-	auto sell_label = cocos2d::Label::createWithTTF(config["sell"][language].asString(),
+	auto sell_label = cocos2d::Label::createWithTTF(guiSettings->getButton("sell"),
 		"fonts/LICABOLD.ttf", 25 * visibleSize.width / 1280);
 	sell_label->enableOutline(cocos2d::Color4B::BLACK, 2);
 	sell_label->setAlignment(cocos2d::TextHAlignment::CENTER);
@@ -299,11 +287,10 @@ void TowerInformationPanel::update() {
 	unsigned int towerLevel = tower->getLevel();
 	
 	if(towerLevel < tower->getMaxLevel()) {
-		std::string language = configClass->getSettings()->getLanguage();
 		std::string s = Json::Value(settings->getXP(towerLevel + 1)).asString();
 		int dot_pos = s.find('.');
 		s = s.substr(0, dot_pos);
-		std::string lockedWord = configClass->getConfigValues(Config::ConfigType::BUTTON)["locked"][language].asString();
+		std::string lockedWord = guiSettings->getButton("locked");
 		std::string towerXP = Json::Value(tower->getCurrentXP()).asString();
 		if (((cocos2d::Label*)lockedLayout->getChildByName("locked_label"))->getString() !=
 			lockedWord + "\n" + towerXP + "/" + s) {

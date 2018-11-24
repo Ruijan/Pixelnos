@@ -2,12 +2,13 @@
 #include "../../../AppDelegate.h"
 #include "../Skills.h"
 
-SkillTutorial::SkillTutorial(TutorialSettings* settings, Skills* skillTree) :
+SkillTutorial::SkillTutorial(TutorialSettings* settings, Skills* skillTree, GUISettings* guiSettings) :
 	running(false),
 	settings(settings),
 	skillTree(skillTree),
 	dialogues(nullptr),
-	showingHand(false)
+	showingHand(false),
+	guiSettings(guiSettings)
 {
 }
 
@@ -42,10 +43,9 @@ bool SkillTutorial::isDone() {
 void SkillTutorial::startDialogues() {
 	running = true;
 	addBlackMask();
-	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["skills"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["skills"]["dialogue"], guiSettings);
 	skillTree->addChild(dialogues, 2, "dialogue");
 	dialogues->launch();
-	
 }
 
 void SkillTutorial::addBlackMask()
@@ -69,7 +69,7 @@ void SkillTutorial::showHowToBuySkill()
 	skillTree->removeChild(dialogues);
 	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 	cocos2d::Sprite* hand = createHand(visibleSize);
-	
+
 	auto select_skill = cocos2d::CallFunc::create([this]() {
 		skillTree->selectSkill(1);
 	});

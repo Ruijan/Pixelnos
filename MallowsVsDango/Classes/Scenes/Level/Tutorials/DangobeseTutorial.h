@@ -6,7 +6,7 @@ class LevelInterface;
 class Level;
 class DangobeseTutorial : public DialogueTutorial {
 public:
-	DangobeseTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level);
+	DangobeseTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level, GUISettings* guiSettings);
 	bool isDone();
 	bool areConditionsMet();
 	virtual ~DangobeseTutorial ();

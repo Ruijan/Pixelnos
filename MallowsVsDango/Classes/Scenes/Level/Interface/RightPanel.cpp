@@ -290,7 +290,7 @@ std::pair<std::string, cocos2d::Sprite*> RightPanel::getTowerFromPoint(cocos2d::
 	return item;
 }
 
-void RightPanel::displayTowerInfos(std::string item_name, const std::string& language) { //configClass->getSettings()->getLanguage()
+void RightPanel::displayTowerInfos(std::string item_name, const std::string& language) { 
 	if (item_name != "") {
 		getChildByName("informations")->setVisible(true);
 		cocos2d::Node* batch = getChildByName("informations")->getChildByName("animation");

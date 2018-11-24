@@ -7,7 +7,7 @@ class Config;
 
 class SaucerTutorial : public DialogueTutorial {
 public:
-	SaucerTutorial(Config* config, LevelInterface* levelInterface, Level* level);
+	SaucerTutorial(Config* config, LevelInterface* levelInterface, Level* level, GUISettings* guiSettings);
 	virtual ~SaucerTutorial();
 	void update(float dt);
 	bool isDone();

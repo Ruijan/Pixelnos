@@ -9,6 +9,7 @@
 #include "../../Config/json.h"
 #include <chrono>
 #include <ostream>
+#include "../../GUI/GUISettings.h"
 
 typedef std::pair <std::string, std::string> Speech;
 
@@ -85,6 +86,8 @@ class Dialogue: public cocos2d::Layer{
 		cocos2d::EventListenerTouchOneByOne* listener;
 		cocos2d::Action* cAction;
 
+		GUISettings* settings;
+
 	protected:
 		/**
 		*  @brief Update emotion bubble when needed (look at the current speech index)
@@ -101,7 +104,7 @@ class Dialogue: public cocos2d::Layer{
 		* @param emotion vector of emotion, NORMAL or ANGRY.
 		*/
 		Dialogue(std::vector<std::string> text, std::vector<std::string>speakers, 
-			std::vector<Direction> direction, std::vector<Emotion> emotion);
+			std::vector<Direction> direction, std::vector<Emotion> emotion, GUISettings* settings);
 		/**
 		* @brief Destructor of the class
 		*/
@@ -110,7 +113,7 @@ class Dialogue: public cocos2d::Layer{
 		* @brief Initialize a Dialogue from a configuration value and return it.
 		* @return Dialogue fully initialize from a configuration value.
 		*/
-		static Dialogue* createFromConfig(Json::Value config);
+		static Dialogue* createFromConfig(Json::Value config, GUISettings* settings);
 		/**
 		* @brief Handle what is happening when the user touches the screen:
 		*	- when the text is currently displaying, it show eveything at once

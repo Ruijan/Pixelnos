@@ -3,8 +3,8 @@
 #include "../Interface/LevelInterface.h"
 
 
-UpgradeTutorial::UpgradeTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level) :
-	DialogueTutorial(settings),
+UpgradeTutorial::UpgradeTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level, GUISettings* guiSettings) :
+	DialogueTutorial(settings, guiSettings),
 	levelInterface(levelInterface),
 	level(level),
 	selectedTower(nullptr)
@@ -52,7 +52,7 @@ void UpgradeTutorial::startDialogues()
 	if (selectedTower != nullptr) {
 		levelInterface->pauseLevel();
 		levelInterface->setSelectedTower(selectedTower);
-		dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["upgrade"]["dialogue"]);
+		dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["upgrade"]["dialogue"], guiSettings);
 		levelInterface->addChild(dialogues, 1, "dialogue");
 		dialogues->launch();
 		levelInterface->hideStartMenu();

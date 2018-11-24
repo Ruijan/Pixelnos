@@ -1,7 +1,7 @@
 #include "MultiPathsTutorial.h"
 
-MultiPathsTutorial::MultiPathsTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level) :
-	DialogueTutorial(settings),
+MultiPathsTutorial::MultiPathsTutorial(TutorialSettings* settings, LevelInterface* levelInterface, Level* level, GUISettings* guiSettings) :
+	DialogueTutorial(settings, guiSettings),
 	levelInterface(levelInterface),
 	level(level)
 {
@@ -10,7 +10,7 @@ MultiPathsTutorial::MultiPathsTutorial(TutorialSettings* settings, LevelInterfac
 void MultiPathsTutorial::startDialogues() {
 	running = true;
 	levelInterface->pauseLevel();
-	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["multi_paths"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["multi_paths"]["dialogue"], guiSettings);
 	levelInterface->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	levelInterface->hideStartMenu();

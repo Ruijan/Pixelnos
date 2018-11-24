@@ -4,7 +4,7 @@
 class LevelInterface;
 class SugarTutorial : public DialogueTutorial {
 public:
-	SugarTutorial(TutorialSettings* settings, LevelInterface* levelInterface);
+	SugarTutorial(TutorialSettings* settings, LevelInterface* levelInterface, GUISettings* guiSettings);
 	virtual ~SugarTutorial();
 	bool isDone();
 

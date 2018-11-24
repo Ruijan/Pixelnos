@@ -3,14 +3,15 @@
 
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
+#include "../AdvancedScene.h"
 #include "../../Lib/Translationable.h"
 #include "../../Config/Config.h"
 
-class StoryMenu : public cocos2d::Scene, public Translationable
+class StoryMenu : public AdvancedScene, public Translationable
 {
 	public:
-	static StoryMenu* create(Config* config);
-	virtual bool init(Config * config);
+	static StoryMenu* create(Config* config, GUISettings* settings);
+	virtual bool init(Config * config, GUISettings* settings);
 	virtual ~StoryMenu();
 	virtual void switchLanguage();
 	virtual void onEnterTransitionDidFinish();

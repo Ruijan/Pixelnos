@@ -41,11 +41,11 @@ public:
 		NEXT_LEVEL
 	};
 
-	LevelInterface();
+	LevelInterface(MyGame* ngame, Config* config);
 	~LevelInterface();
-	virtual bool init(MyGame* ngame, Config* config);
+	virtual bool init();
 	void addRewardLayout();
-	void addBlackMask(cocos2d::Size &visibleSize);
+	void addBlackMask();
 	void addEvents();
 	static LevelInterface* create(MyGame* ngame, Config* config);
 
@@ -71,7 +71,7 @@ public:
 	int getSugarQuantity();
 	int getLifeQuantity();
 	ParametersMenu* getPauseMenu() { return pauseMenu; };
-
+	GUISettings* getGUISettings();
 
 	void setGameState(GameState g_state);
 	void setSelectedTower(Tower* tower);
@@ -97,7 +97,6 @@ public:
 
 	void displayStartMenuIfInTitleState();
 
-
 private:
 	cocos2d::EventListenerTouchOneByOne* listener;
 
@@ -121,18 +120,19 @@ private:
 	ChallengeHandler* challenges;
 
 	Config* configClass;
+	GUISettings* settings;
 
 protected:
 	void moveSelectedTurret(cocos2d::Vec2 pos);
 	bool isOnTower(cocos2d::Vec2 pos);
 
-	void initParametersMenu(const Json::Value& config);
-	void initLoseMenu(const std::string& language, const Json::Value& buttons, const Json::Value& advice);
-	void initWinMenu(const Json::Value& config);
+	void initParametersMenu();
+	void initLoseMenu(const Json::Value& advice);
+	void initWinMenu();
 	void initRightPanel();
-	void initLabels(const Json::Value& config);
-	void initStartMenu(const Json::Value& config);
-	void initDialoguesFromLevel(const Json::Value& config);
+	void initLabels();
+	void initStartMenu();
+	void initDialoguesFromLevel();
 
 	bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
 	void unselectDango();

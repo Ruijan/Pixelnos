@@ -12,24 +12,25 @@
 
 USING_NS_CC;
 
-StoryMenu * StoryMenu::create(Config * config)
+StoryMenu * StoryMenu::create(Config * config, GUISettings* settings)
 {
 	StoryMenu* storyMenu = new StoryMenu();
-	if (storyMenu->init(config)) {
+	if (storyMenu->init(config, settings)) {
 		return storyMenu;
 	}
 	delete storyMenu;
 	return nullptr;
 }
 
-bool StoryMenu::init(Config * config) {
-	if (!Scene::init()) { return false; }
+bool StoryMenu::init(Config * config, GUISettings* settings) {
+	if (!AdvancedScene::init(settings)) { return false; }
 	configClass = config;
-	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Size visibleSize = settings->getVisibleSize();
+	Json::Value level_config = configClass->getConfigValues(Config::ConfigType::LEVEL);
 	Json::Value root = ((AppDelegate*)Application::getInstance())->getSave(); //load save file
 
 	tutorial_running = false;
-	std::string language = configClass->getSettings()->getLanguage();
+	
 
 	addChild(ui::Layout::create(), 3, "black_mask");
 	ui::Button* mask = ui::Button::create("res/buttons/mask.png");
@@ -68,8 +69,7 @@ bool StoryMenu::init(Config * config) {
 	worlds->setPosition(Vec2(visibleSize.width / 2 - worlds->getContentSize().width / 2,
 		visibleSize.height / 2 - worlds->getContentSize().height / 2));
 
-	Json::Value level_config = configClass->getConfigValues(Config::ConfigType::LEVEL);
-	Json::Value buttons = configClass->getConfigValues(Config::ConfigType::BUTTON);
+	
 
 	int worlds_count = level_config["worlds"].size();
 
@@ -95,7 +95,7 @@ bool StoryMenu::init(Config * config) {
 		if (level_config["worlds"][i]["levels"].size() == 0) {
 			world->setEnabled(false);
 			ui::Text* label = ui::Text::create(
-				buttons["soon"][language].asString(),
+				settings->getButton("soon"),
 				"fonts/Marker Felt.ttf", visibleSize.width / 20);
 			label->setColor(Color3B(192, 192, 192));
 			label->enableOutline(Color4B::BLACK, 5);
@@ -103,7 +103,7 @@ bool StoryMenu::init(Config * config) {
 			page->addChild(label, 2, "label");
 		}
 		else {
-			ui::Text* label = ui::Text::create(level_config["worlds"][i]["name_" + language].asString(),
+			ui::Text* label = ui::Text::create(level_config["worlds"][i]["name_" + settings->getLanguage()].asString(),
 				"fonts/LICABOLD.ttf", visibleSize.width / 20);
 			label->setColor(Color3B::YELLOW);
 			label->enableOutline(Color4B::BLACK, 5);
@@ -208,8 +208,8 @@ bool StoryMenu::init(Config * config) {
 	shop->setAnchorPoint(Vec2(1.f, 0.f));
 	getChildByName("interface")->addChild(shop);
 
-	auto settings = StoryParametersMenu::create(configClass);
-	addChild(settings, 3, "settings");
+	auto settingsMenu = StoryParametersMenu::create(configClass);
+	addChild(settingsMenu, 3, "settings");
 
 	ui::Button* show_setting = ui::Button::create("res/buttons/settings2.png");
 	show_setting->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
@@ -250,7 +250,7 @@ void StoryMenu::selectLevelCallBack(Ref* sender, ui::Widget::TouchEventType type
 void StoryMenu::onEnterTransitionDidFinish() {
 	Scene::onEnterTransitionDidFinish();
 	scheduleUpdate();
-	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Size visibleSize = settings->getVisibleSize();
 
 	for (unsigned int i(0); i < configClass->getConfigValues(Config::ConfigType::LEVEL)["worlds"].size(); ++i) {
 		((ui::PageView*)getChildByName("worlds"))->getItem(i)->getChildByName("layout")->getChildByName("world")->
@@ -270,7 +270,7 @@ void StoryMenu::showCredit(Ref* sender) {
 }
 
 void StoryMenu::initLevels(ui::Layout* page, int id_world) {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Size visibleSize = settings->getVisibleSize();
 
 	double ratioX = visibleSize.width / 1280;
 	double ratioY = visibleSize.height / 720;
@@ -350,6 +350,7 @@ void StoryMenu::update(float dt) {
 void StoryMenu::updateTutorial(float dt) {
 	auto save = configClass->getSaveValues();
 	auto config = configClass->getConfigValues(Config::ConfigType::SKILLTUTORIAL);
+	Size visibleSize = settings->getVisibleSize();
 
 	if (!configClass->getSkillTutorialSettings()->isTutorialComplete("skills") &&
 		save["c_level"].asInt() >= config["skills"]["level"].asInt() &&
@@ -358,10 +359,10 @@ void StoryMenu::updateTutorial(float dt) {
 		if (getChildByName("dialogue") == nullptr && !tutorial_running &&
 			!configClass->getSkillTutorialSettings()->isTutorialRunning("skills")) {
 			Json::Value save = ((AppDelegate*)Application::getInstance())->getSave();
-			addChild(Dialogue::createFromConfig(config["skills"]["dialogue"]), 3, "dialogue");
+			addChild(Dialogue::createFromConfig(config["skills"]["dialogue"], settings), 3, "dialogue");
 			((Dialogue*)getChildByName("dialogue"))->launch();
 			tutorial_running = true;
-			Size visibleSize = Director::getInstance()->getVisibleSize();
+			
 
 			configClass->getSkillTutorialSettings()->startTutorial("skills");
 
@@ -377,7 +378,6 @@ void StoryMenu::updateTutorial(float dt) {
 			((Dialogue*)getChildByName("dialogue"))->update();
 			if (((Dialogue*)getChildByName("dialogue"))->hasFinished()) {
 				removeChildByName("dialogue");
-				Size visibleSize = Director::getInstance()->getVisibleSize();
 
 				// hand showing what to do
 				Sprite* hand = Sprite::create("res/buttons/hand.png");

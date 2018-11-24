@@ -1,7 +1,7 @@
 #include "LevelParametersMenu.h"
 #include "../../../SceneManager.h"
 
-LevelParametersMenu * LevelParametersMenu::create(MyGame * game, Config * config)
+LevelParametersMenu * LevelParametersMenu::create(MyGame * game, Config* config)
 {
 	LevelParametersMenu* menu = new (std::nothrow) LevelParametersMenu(game, config);
 	if (menu && menu->init())
@@ -13,8 +13,8 @@ LevelParametersMenu * LevelParametersMenu::create(MyGame * game, Config * config
 	return nullptr;
 }
 
-LevelParametersMenu::LevelParametersMenu(MyGame * game, Config * config):
-	ParametersMenu(config), game(game)
+LevelParametersMenu::LevelParametersMenu(MyGame * game, Config* config):
+	ParametersMenu(config->getSettings(), config->getGUISettings()), game(game)
 {
 }
 
@@ -48,7 +48,7 @@ void LevelParametersMenu::handleAlwaysShowGridButton(cocos2d::ui::Widget::TouchE
 void LevelParametersMenu::handleMovingGridButton(cocos2d::ui::Widget::TouchEventType type)
 {
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-		config->getSettings()->enableMovingGrid(true);
+		gameSettings->enableMovingGrid(true);
 		if (game != nullptr) {
 			game->getLevel()->showGrid(false);
 		}
@@ -58,7 +58,7 @@ void LevelParametersMenu::handleMovingGridButton(cocos2d::ui::Widget::TouchEvent
 void LevelParametersMenu::handleNeverShowGridButton(cocos2d::ui::Widget::TouchEventType type)
 {
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-		config->getSettings()->enableNeverGrid(true);
+		gameSettings->enableNeverGrid(true);
 		if (game != nullptr) {
 			game->getLevel()->showGrid(false);
 		}

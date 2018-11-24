@@ -3,8 +3,8 @@
 #include "../Interface/LevelInterface.h"
 
 
-DangorillaTutorial::DangorillaTutorial(TutorialSettings* settings, LevelInterface * levelInterface, Level* level) :
-	DialogueTutorial(settings),
+DangorillaTutorial::DangorillaTutorial(TutorialSettings* settings, LevelInterface * levelInterface, Level* level, GUISettings* guiSettings) :
+	DialogueTutorial(settings, guiSettings),
 	level(level),
 	levelInterface(levelInterface)
 {
@@ -34,7 +34,7 @@ void DangorillaTutorial::startDialogues()
 {
 	running = true;
 	level->pause();
-	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["dangorilla"]["dialogue"]);
+	dialogues = Dialogue::createFromConfig(settings->getSettingsMap()["dangorilla"]["dialogue"], guiSettings);
 	levelInterface->addChild(dialogues, 1, "dialogue");
 	dialogues->launch();
 	levelInterface->hideStartMenu();

@@ -3,14 +3,16 @@
 
 #include "cocos2d.h"
 #include "../../Lib/Translationable.h"
-
+#include "../../GUI/GUISettings.h"
+#include "ui/CocosGUI.h"
+#include <spine/spine-cocos2dx.h>
 
 class LoadingScreen : public cocos2d::LayerGradient, public Translationable
 {
 public:
-	LoadingScreen();
+	LoadingScreen(GUISettings * settings);
 	virtual ~LoadingScreen();
-	static LoadingScreen* create();
+	static LoadingScreen* create(GUISettings * settings);
 	virtual void switchLanguage();
 	bool init();
 
@@ -18,6 +20,11 @@ public:
 	void stop();
 
 	void setLoadingPercent(double percent);
+
+protected:
+	GUISettings * settings;
+	spine::SkeletonAnimation* dangobeseSkeleton;
+	cocos2d::ui::LoadingBar* loadingBar;
 };
 
 #endif

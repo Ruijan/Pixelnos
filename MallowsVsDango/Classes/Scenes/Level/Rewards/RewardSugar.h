@@ -28,7 +28,6 @@ public:
 	* @param damages amount of damages that will be inflicted.
 	*/
 	virtual void animate();
-
 };
 
 #endif

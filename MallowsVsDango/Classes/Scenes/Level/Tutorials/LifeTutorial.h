@@ -4,7 +4,7 @@
 class LevelInterface;
 class LifeTutorial : public DialogueTutorial {
 public:
-	LifeTutorial(TutorialSettings* settings, LevelInterface* levelInterface);
+	LifeTutorial(TutorialSettings* settings, LevelInterface* levelInterface, GUISettings* guiSettings);
 	bool isDone();
 	virtual ~LifeTutorial();
 

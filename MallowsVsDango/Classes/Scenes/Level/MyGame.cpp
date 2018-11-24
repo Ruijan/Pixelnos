@@ -14,11 +14,11 @@ MyGame::~MyGame()
 }
 
 
-MyGame* MyGame::create(Config* config) {
+MyGame* MyGame::create(Config* config, GUISettings* settings) {
 
 	MyGame* game = new MyGame();
 
-	if (game->init(config))
+	if (game->init(config, settings))
 	{
 		game->autorelease();
 		return game;
@@ -31,18 +31,18 @@ MyGame* MyGame::create(Config* config) {
 	}
 }
 // on "init" you need to initialize your instance
-bool MyGame::init(Config* nconfig)
+bool MyGame::init(Config* nconfig, GUISettings* settings)
 {
 	config = nconfig;
 	// 1. super init first of the Mother Fucking Class
-	if (!CCScene::init())
+	if (!AdvancedScene::init(settings))
 	{
 		return false;
 	}
 
 	// we have to do it here and not in the constructor because the scene has to be
 	// initialize before
-	loadingScreen = LoadingScreen::create();
+	loadingScreen = LoadingScreen::create(settings);
 	addChild(loadingScreen, 3);
 
 	return true;

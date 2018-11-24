@@ -8,6 +8,7 @@
 #include "LoadingScreen.h"
 #include "../../Lib/Translationable.h"
 #include "Tutorials/Tutorial.h"
+#include "../AdvancedScene.h"
 
 
 struct LevelTrackingEvent {
@@ -26,7 +27,7 @@ struct LevelTrackingEvent {
  * Cocos2d Scene that handle a level, the interface and the different possible
  * actions from a game: load images, save progress, add experience and so on.
  */
-class MyGame : public cocos2d::Scene, public Loader, public Translationable
+class MyGame : public AdvancedScene, public Loader, public Translationable
 {
 
 private:
@@ -55,7 +56,7 @@ public:
 	MyGame();
 	virtual ~MyGame();
 
-	virtual bool init(Config* nconfig);
+	virtual bool init(Config* nconfig, GUISettings* settings);
 	virtual bool initLevel(int level_id, int world_id);
 
 	void loadNewLevel(int level_id, int world_id);
@@ -88,7 +89,7 @@ public:
 	virtual void switchLanguage();
 	void unlockTowers();
 
-	static MyGame* create(Config* config);
+	static MyGame* create(Config* config, GUISettings* settings);
 };
 
 #endif // __Game_SCENE_H__

@@ -8,6 +8,7 @@
 #include "Lib/Translationable.h"
 #include "Scenes/Level/MyGame.h"
 #include "Config/Config.h"
+#include "GUI/GUISettings.h"
 
 class SceneManager
 {
@@ -38,6 +39,7 @@ private:
 	Config* configClass;
 	cocos2d::Scene* currentscene;
 	int c_index;
+	GUISettings* settings;
 };
 
 #endif

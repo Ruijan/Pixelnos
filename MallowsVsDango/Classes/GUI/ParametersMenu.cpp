@@ -1,9 +1,9 @@
 #include "ParametersMenu.h"
 #include "../AppDelegate.h"
 
-ParametersMenu* ParametersMenu::create(Config* config)
+ParametersMenu* ParametersMenu::create(GameSettings* gameSettings, GUISettings* guiSettings)
 {
-	ParametersMenu* menu = new (std::nothrow) ParametersMenu(config);
+	ParametersMenu* menu = new (std::nothrow) ParametersMenu(gameSettings, guiSettings);
 	if (menu && menu->init())
 	{
 		menu->autorelease();
@@ -13,44 +13,44 @@ ParametersMenu* ParametersMenu::create(Config* config)
 	return nullptr;
 }
 
-ParametersMenu::ParametersMenu(Config* config) :
-	config(config)
+ParametersMenu::ParametersMenu(GameSettings* gameSettings, GUISettings* guiSettings) :
+	gameSettings(gameSettings),
+	guiSettings(guiSettings)
 {}
 
 bool ParametersMenu::init() {
 	bool initialized = cocos2d::ui::Layout::init();
-	const cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+	const cocos2d::Size visibleSize = guiSettings->getVisibleSize();
 	setPosition(cocos2d::Vec2(visibleSize.width / 2, visibleSize.height * 1.5));
-	Json::Value buttons = config->getConfigValues(Config::ConfigType::BUTTON);
 	AudioController* audioController = ((AppDelegate*)cocos2d::Application::getInstance())->getAudioController();
 
 	addBlackMask(visibleSize);
 	addPanel(visibleSize, 0.45);
-	addTitle(buttons, visibleSize);
-	addBottomButtons(buttons);
-	soundControllers.push_back(createSoundController(buttons["music"][config->getSettings()->getLanguage()].asString(), visibleSize, AudioController::SOUNDTYPE::MUSIC));
-	soundControllers.push_back(createSoundController(buttons["effects"][config->getSettings()->getLanguage()].asString(), visibleSize, AudioController::SOUNDTYPE::EFFECT));
-	addMusicLoopCheckBox(buttons, visibleSize, audioController);
-	addGlobalSettings(buttons, visibleSize);
+	addTitle(visibleSize);
+	addBottomButtons();
+	soundControllers.push_back(createSoundController(guiSettings->getButton("music"), visibleSize, AudioController::SOUNDTYPE::MUSIC));
+	soundControllers.push_back(createSoundController(guiSettings->getButton("effects"), visibleSize, AudioController::SOUNDTYPE::EFFECT));
+	addMusicLoopCheckBox(visibleSize, audioController);
+	addGlobalSettings(visibleSize);
 	return initialized;
 }
 
-void ParametersMenu::addBottomButtons(Json::Value &buttons)
+void ParametersMenu::addBottomButtons()
 {
-	addLeftButton(buttons["resume"][config->getSettings()->getLanguage()].asString());
-	addRightButton(buttons["main_menu"][config->getSettings()->getLanguage()].asString());
+	addLeftButton(guiSettings->getButton("resume"));
+	addRightButton(guiSettings->getButton("main_menu"));
 }
 
-void ParametersMenu::addMusicLoopCheckBox(Json::Value &buttons, const cocos2d::Size &visibleSize, AudioController * audioController)
+void ParametersMenu::addMusicLoopCheckBox(const cocos2d::Size &visibleSize, AudioController * audioController)
 {
-	checkboxLoop = createCheckBoxWithLabel(buttons["loop_music"][config->getSettings()->getLanguage()].asString(), visibleSize, 0);
+	checkboxLoop = createCheckBoxWithLabel(guiSettings->getButton("loop_music"), visibleSize, 0);
 	audioController->addCheckBoxLoop(checkboxLoop);
 	addChild(checkboxLoop, 6, "LoopEnable");
 }
 
-void ParametersMenu::addTitle(Json::Value &buttons, const cocos2d::Size &visibleSize)
+void ParametersMenu::addTitle(const cocos2d::Size &visibleSize)
 {
-	cocos2d::Label* title = cocos2d::Label::createWithTTF(buttons["settings"][config->getSettings()->getLanguage()].asString(), "fonts/LICABOLD.ttf", 45.0f * visibleSize.width / 1280);
+	cocos2d::Label* title = cocos2d::Label::createWithTTF(guiSettings->getButton("settings"), "fonts/LICABOLD.ttf", 45.0f * visibleSize.width / 1280);
 	title->setColor(cocos2d::Color3B::BLACK);
 	title->setPosition(0, panelSize.height / 2 - title->getContentSize().height);
 	addChild(title, 2, "title");
@@ -64,13 +64,13 @@ cocos2d::Label* ParametersMenu::createLabelForGridCheckBox(std::string title, do
 	return label;
 }
 
-void ParametersMenu::addGlobalSettings(Json::Value &buttons, const cocos2d::Size &visibleSize)
+void ParametersMenu::addGlobalSettings(const cocos2d::Size &visibleSize)
 {
 	double fontSize = 30.f * visibleSize.width / 1280;
-	cocos2d::Label* always_show_grid = createLabelForGridCheckBox(buttons["grid_always"][config->getSettings()->getLanguage()].asString(), fontSize);
-	cocos2d::Label* moving_show_grid = createLabelForGridCheckBox(buttons["grid_move"][config->getSettings()->getLanguage()].asString(), fontSize);
-	cocos2d::Label* never_show_grid = createLabelForGridCheckBox(buttons["grid_never"][config->getSettings()->getLanguage()].asString(), fontSize);
-	cocos2d::Label* show_grid = createLabelForGridCheckBox(buttons["show_grid"][config->getSettings()->getLanguage()].asString(), fontSize);
+	cocos2d::Label* always_show_grid = createLabelForGridCheckBox(guiSettings->getButton("grid_always"), fontSize);
+	cocos2d::Label* moving_show_grid = createLabelForGridCheckBox(guiSettings->getButton("grid_move"), fontSize);
+	cocos2d::Label* never_show_grid = createLabelForGridCheckBox(guiSettings->getButton("grid_never"), fontSize);
+	cocos2d::Label* show_grid = createLabelForGridCheckBox(guiSettings->getButton("show_grid"), fontSize);
 	addChild(always_show_grid, 2);
 	addChild(moving_show_grid, 2);
 	addChild(never_show_grid, 2);
@@ -92,19 +92,19 @@ void ParametersMenu::addGlobalSettings(Json::Value &buttons, const cocos2d::Size
 		show_grid->getContentSize().height * 3 / 4);
 
 	auto checkboxAlwaysGrid = createNormalCheckBox(visibleSize, cocos2d::Vec2(always_show_grid->getPosition().x, show_grid->getPosition().y));
-	config->getSettings()->addAlwaysGridCheckbox(checkboxAlwaysGrid);
+	gameSettings->addAlwaysGridCheckbox(checkboxAlwaysGrid);
 	checkboxAlwaysGrid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		handleAlwaysShowGridButton(type);
 	});
 
 	auto checkboxNeverGrid = createNormalCheckBox(visibleSize, cocos2d::Vec2(never_show_grid->getPosition().x, show_grid->getPosition().y));
-	config->getSettings()->addNeverGridButton(checkboxNeverGrid);
+	gameSettings->addNeverGridButton(checkboxNeverGrid);
 	checkboxNeverGrid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		handleNeverShowGridButton(type);
 	});
 
 	auto checkboxMovingGrid = createNormalCheckBox(visibleSize, cocos2d::Vec2(moving_show_grid->getPosition().x, show_grid->getPosition().y));
-	config->getSettings()->addMovingGridButton(checkboxMovingGrid);
+	gameSettings->addMovingGridButton(checkboxMovingGrid);
 	checkboxMovingGrid->addTouchEventListener([&](Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
 		handleMovingGridButton(type);
 	});
@@ -117,11 +117,11 @@ void ParametersMenu::addGlobalSettings(Json::Value &buttons, const cocos2d::Size
 	lastObjectPosition = show_grid->getPosition();
 	lastObjectSize = show_grid->getContentSize();
 
-	auto checkBoxLimit = createCheckBoxWithLabel(buttons["auto_limit"][config->getSettings()->getLanguage()].asString(), visibleSize, 0);
-	config->getSettings()->addLimitButton(checkBoxLimit);
+	auto checkBoxLimit = createCheckBoxWithLabel(guiSettings->getButton("auto_limit"), visibleSize, 0);
+	gameSettings->addLimitButton(checkBoxLimit);
 
-	auto checkBoxDialogues = createCheckBoxWithLabel(buttons["play_dialogues"][config->getSettings()->getLanguage()].asString(), visibleSize, 0);
-	config->getSettings()->addDialogueButton(checkBoxDialogues);
+	auto checkBoxDialogues = createCheckBoxWithLabel(guiSettings->getButton("play_dialogues"), visibleSize, 0);
+	gameSettings->addDialogueButton(checkBoxDialogues);
 
 	addChild(checkBoxLimit, 6, "LimitEnable");
 	addChild(checkBoxDialogues, 6, "DialogueEnable");
@@ -132,21 +132,21 @@ void ParametersMenu::addGlobalSettings(Json::Value &buttons, const cocos2d::Size
 void ParametersMenu::handleAlwaysShowGridButton(cocos2d::ui::Widget::TouchEventType type)
 {
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-		config->getSettings()->enableAlwaysGrid(true);
+		gameSettings->enableAlwaysGrid(true);
 	}
 }
 
 void ParametersMenu::handleMovingGridButton(cocos2d::ui::Widget::TouchEventType type)
 {
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-		config->getSettings()->enableMovingGrid(true);
+		gameSettings->enableMovingGrid(true);
 	}
 }
 
 void ParametersMenu::handleNeverShowGridButton(cocos2d::ui::Widget::TouchEventType type)
 {
 	if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-		config->getSettings()->enableNeverGrid(true);
+		gameSettings->enableNeverGrid(true);
 	}
 }
 
@@ -244,6 +244,6 @@ ParametersMenu::~ParametersMenu() {
 		audioController->removeCheckBox(soundController.second);
 	}
 	for (cocos2d::ui::CheckBox* checkbox : settingsCheckboxes) {
-		config->getSettings()->removeCheckbox(checkbox);
+		gameSettings->removeCheckbox(checkbox);
 	}
 }
