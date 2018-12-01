@@ -130,6 +130,11 @@ class Dialogue: public cocos2d::Layer{
 		* @brief Create the required images, launch the actions and start the dialogue.
 		*/
 		void launch();
+		void addSpeechBubble(cocos2d::Size &visibleSize);
+		void addCurrentHead(cocos2d::Size &visibleSize);
+		void addSpeechLabel(cocos2d::Size &visibleSize);
+		void addTapToContinueLabel(cocos2d::Size &visibleSize);
+		void addSkipButton(cocos2d::Size &visibleSize);
 		/**
 		* @brief Handle all the state cases over time.
 		*/
