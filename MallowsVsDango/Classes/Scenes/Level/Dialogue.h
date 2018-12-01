@@ -104,7 +104,7 @@ class Dialogue: public cocos2d::Layer{
 		* @param emotion vector of emotion, NORMAL or ANGRY.
 		*/
 		Dialogue(std::vector<std::string> text, std::vector<std::string>speakers, 
-			std::vector<Direction> direction, std::vector<Emotion> emotion, GUISettings* settings);
+			std::vector<Direction>& direction, std::vector<Emotion>& emotion, GUISettings* settings);
 		/**
 		* @brief Destructor of the class
 		*/

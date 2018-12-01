@@ -226,9 +226,12 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Scenes\Level\Wall.cpp" />
     <ClCompile Include="..\Classes\Scenes\SceneFactory.cpp" />
     <ClCompile Include="..\Classes\Scenes\Shop\Shop.cpp" />
+    <ClCompile Include="..\Classes\Scenes\SkillTree\BuyLayout.cpp" />
+    <ClCompile Include="..\Classes\Scenes\SkillTree\LeftPanel.cpp" />
     <ClCompile Include="..\Classes\Scenes\SkillTree\RequirementDescription.cpp" />
     <ClCompile Include="..\Classes\Scenes\SkillTree\Skills.cpp" />
     <ClCompile Include="..\Classes\Scenes\SkillTree\Tutorials\SkillTutorial.cpp" />
+    <ClCompile Include="..\Classes\Scenes\SkillTree\ValidationLayout.cpp" />
     <ClCompile Include="..\Classes\Scenes\StoryMenu\StoryMenu.cpp" />
     <ClCompile Include="..\Classes\Scenes\StoryMenu\StoryParametersMenu.cpp" />
     <ClCompile Include="..\Classes\Scenes\Welcome\MainMenu.cpp" />
@@ -315,9 +318,12 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Scenes\SceneFactory.h" />
     <ClInclude Include="..\Classes\Scenes\AdvancedScene.h" />
     <ClInclude Include="..\Classes\Scenes\Shop\Shop.h" />
+    <ClInclude Include="..\Classes\Scenes\SkillTree\BuyLayout.h" />
+    <ClInclude Include="..\Classes\Scenes\SkillTree\LeftPanel.h" />
     <ClInclude Include="..\Classes\Scenes\SkillTree\RequirementDescription.h" />
     <ClInclude Include="..\Classes\Scenes\SkillTree\Skills.h" />
     <ClInclude Include="..\Classes\Scenes\SkillTree\Tutorials\SkillTutorial.h" />
+    <ClInclude Include="..\Classes\Scenes\SkillTree\ValidationLayout.h" />
     <ClInclude Include="..\Classes\Scenes\StoryMenu\StoryMenu.h" />
     <ClInclude Include="..\Classes\Scenes\StoryMenu\StoryParametersMenu.h" />
     <ClInclude Include="..\Classes\Scenes\Welcome\MainMenu.h" />

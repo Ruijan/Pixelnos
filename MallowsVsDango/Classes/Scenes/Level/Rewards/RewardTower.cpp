@@ -3,9 +3,9 @@
 
 USING_NS_CC;
 
-RewardTower::RewardTower(std::string towername) : VisualReward(), tower_name(towername) {}
+RewardTower::RewardTower(std::string& towername) : VisualReward(), tower_name(towername) {}
 
-RewardTower* RewardTower::create(std::string nfile, std::string towername, cocos2d::Vec2 pos,
+RewardTower* RewardTower::create(std::string& nfile, std::string& towername, cocos2d::Vec2 pos,
 	const cocos2d::ui::Widget::ccWidgetTouchCallback& callback, GUISettings* settings) {
 	RewardTower* reward = new RewardTower(towername);
 	if (reward->init()) {

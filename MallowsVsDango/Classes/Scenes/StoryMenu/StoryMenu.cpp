@@ -56,12 +56,12 @@ bool StoryMenu::init(Config * config, GUISettings* settings) {
 	addChild(sugar_sprite1, 2);
 
 	//current sugar info
-	Label* sugar_amount = Label::createWithTTF("x " + root["holy_sugar"].asString(), "fonts/LICABOLD.ttf", round(visibleSize.width / 25));
-	sugar_amount->setColor(Color3B::YELLOW);
-	sugar_amount->enableOutline(Color4B::BLACK, 2);
-	sugar_amount->setPosition(sugar_sprite1->getPosition() +
+	Label* sugarAmount = Label::createWithTTF("x " + root["holy_sugar"].asString(), "fonts/LICABOLD.ttf", round(visibleSize.width / 25));
+	sugarAmount->setColor(Color3B::YELLOW);
+	sugarAmount->enableOutline(Color4B::BLACK, 2);
+	sugarAmount->setPosition(sugar_sprite1->getPosition() +
 		Vec2(sugar_sprite1->getContentSize().width * sugar_sprite1->getScaleX() / 2 + visibleSize.width / 20, 0));
-	addChild(sugar_amount, 2, "sugar_amount");
+	addChild(sugarAmount, 2, "sugarAmount");
 
 	// Pages
 	ui::PageView* worlds = ui::PageView::create();

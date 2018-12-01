@@ -7,7 +7,7 @@ class GUISettings: public Settings {
 
 public: 
 	GUISettings();
-	void init(const std::string& settingsFilename, std::string language);
+	void init(const std::string& settingsFilename, const std::string language);
 	void update();
 	const cocos2d::Size& getVisibleSize();
 	const Json::Value& getButtons();

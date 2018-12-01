@@ -1,7 +1,7 @@
 #include "GUISettings.h"
 
 
-void GUISettings::init(const std::string & settingsFilename, std::string language)
+void GUISettings::init(const std::string & settingsFilename, const std::string language)
 {
 	Settings::init(settingsFilename);
 	this->language = language;

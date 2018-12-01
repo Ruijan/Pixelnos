@@ -81,7 +81,6 @@ bool StartMenu::init(LevelInterface* levelInterface, int levelId) {
 	bool initialized = cocos2d::ui::Layout::init();
 	this->levelInterface = levelInterface;
 	settings = levelInterface->getGUISettings();
-	std::string language = settings->getLanguage();
 
 	addTitleLabel(levelId);
 	addAdviceLabel();

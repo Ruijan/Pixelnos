@@ -121,7 +121,7 @@ cocos2d::CallFunc * SkillTutorial::createShowSkillFunction(cocos2d::Sprite * han
 			running = false;
 		});
 		cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-		cocos2d::Vec2 pos = cocos2d::Vec2(visibleSize.width, visibleSize.height) / 2 + skillTree->getChildByName("validate_buy")->getChildByName("validate_button")->getPosition();
+		cocos2d::Vec2 pos = cocos2d::Vec2(visibleSize.width, visibleSize.height) / 2 + skillTree->getChildByName("validationLayout")->getChildByName("validate_button")->getPosition();
 		hand->runAction(cocos2d::Sequence::create(
 			cocos2d::DelayTime::create(0.25f),
 			cocos2d::MoveTo::create(1.f, pos),

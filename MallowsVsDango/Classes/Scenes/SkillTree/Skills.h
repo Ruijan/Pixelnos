@@ -8,6 +8,9 @@
 #include "Tutorials/SkillTutorial.h"
 #include "RequirementDescription.h"
 #include "../AdvancedScene.h"
+#include "BuyLayout.h"
+#include "ValidationLayout.h"
+#include "LeftPanel.h"
 
 class Skills : public AdvancedScene
 {
@@ -15,13 +18,13 @@ public:
 	static Skills* create(Config* config, GUISettings* settings);
 	virtual bool init(Config* config, GUISettings* settings);
 	void createRequirementDescription(Config* configClass);
+	void updateRequirementDescriptionPosition();
 	void initSkillTreeProperties(Json::Value &savedSkills, Json::Value &talents);
 	void createLeftPanelForSkillDescrition(Json::Value &savedSkills);
-	
-	void createSkillDescription(cocos2d::Node * yLastElement);
-	void createSugarAmountLabel(Json::Value & savedSkills, cocos2d::Node * xLastElement, cocos2d::Node * yLastElement);
 	void createBuyingButtonLayout();
 	void createValidationLayout();
+	void validationCallBack(cocos2d::Ref * pSender, cocos2d::ui::Widget::TouchEventType type);
+	void buyButtonCallBack(cocos2d::Ref * pSender, cocos2d::ui::Widget::TouchEventType type);
 	void addBlackMask();
 	void createBackToMainMenuButton();
 	void addBackground();
@@ -41,14 +44,9 @@ protected:
 	int getSavedSkillPosFromID(int id);
 	void setTalentBtnBought(cocos2d::ui::Button* btn);
 
-	cocos2d::Label* createTitle();
-	cocos2d::Sprite* createSugarSprite(cocos2d::Node * xLastElement, cocos2d::Node * yLastElement);
-	cocos2d::Label* createSkillNameLabel(cocos2d::Node * yLastElement);
-	cocos2d::Sprite* createSkillInformationPanel();
 	void removeSelectedEffectFromSkillButton();
 	void addSelectedEffectToSkillButton(cocos2d::ui::Button * talent_btn);
 	void updateBuyingLayoutVisibility(Json::Value &talent);
-	void updateSkillDescription(Json::Value &talent);
 	void updateBuyingCapacity(Json::Value &talent, Json::Value &save_root);
 	bool hasEnoughHolySugar(Json::Value &talent, Json::Value &save_root);
 	void initSkillTree();
@@ -63,10 +61,10 @@ protected:
 	Json::Value currentTalent;
 	std::map<int, cocos2d::ui::Button*> talentButtons;
 	Config* configClass;
-	cocos2d::ui::Layout* buyingLayout;
-	cocos2d::Label* skillDescription;
+	BuyLayout* buyingLayout;
+	ValidationLayout* validationLayout;
 	SkillTutorial* tutorial;
-
+	LeftPanel* leftPanel;
 	RequirementDescription* requirementDescription;
 };
 #endif

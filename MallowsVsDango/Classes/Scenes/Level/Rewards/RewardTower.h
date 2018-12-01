@@ -19,7 +19,7 @@ public:
 	* @param n_hp number or hitpoints the wall can take
 	* @param n_max_hp number or hitpoints the wall can take at maximum
 	*/
-	RewardTower(std::string towername);
+	RewardTower(std::string& towername);
 
 	/**
 	* @brief Destructor. Nothing to be done here.
@@ -31,7 +31,7 @@ public:
 	* to be improved when we will have the skill tree and real save file.
 	* @return A pointer to the wall.
 	*/
-	static RewardTower* create(std::string file, std::string towername, cocos2d::Vec2 pos,
+	static RewardTower* create(std::string& file, std::string& towername, cocos2d::Vec2 pos,
 		const cocos2d::ui::Widget::ccWidgetTouchCallback& callback, GUISettings* settings);
 
 	/**

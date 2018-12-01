@@ -21,69 +21,25 @@ bool MainMenu::init(Config* config, GUISettings* settings)
 	Size visibleSize = settings->getVisibleSize();
 	std::string language = settings->getLanguage();
 
-	/*loading sprites, setting position, scaling for main menu*/
+	addLoadingBackground(visibleSize);
+	addBackgroungLogo(visibleSize);
+	addBackground(visibleSize);
+	addFlash(visibleSize);
+	addBattleBackground(visibleSize);
+	addVersus(visibleSize);
+	addMallowsText(visibleSize);
+	addDangoText(visibleSize);
+	addStartButton(settings, visibleSize);
+	addLanguages(visibleSize, language);
+	addUsername(visibleSize, settings);
+	startSequenceOfAnimation(visibleSize);
 
-	Sprite* loadingBackground = Sprite::create("res/background/crissXcross.png");
-	loadingBackground->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-	loadingBackground->setScale(visibleSize.width / loadingBackground->getContentSize().width);
-	addChild(loadingBackground, 1, "logo_background");
+	return true;
 
-	Sprite* bglogo = Sprite::create("res/background/logo.png");
-	addChild(bglogo, 1, "logo");
-	bglogo->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-	bglogo->setScale((visibleSize.width / 2) / bglogo->getContentSize().width);
-	bglogo->setOpacity(0.0);
+}
 
-	Sprite* bg1 = Sprite::create("res/background/menu_background1.png");
-	addChild(bg1, 1, "first_background");
-	bg1->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-	bg1->setScale((visibleSize.width) / bg1->getContentSize().width);
-	bg1->setOpacity(0.0);
-
-	Sprite* flash = Sprite::create("res/background/flash.png");
-	addChild(flash, 3);
-	flash->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-	flash->setScaleX((visibleSize.width) / flash->getContentSize().width);
-	flash->setScaleY((visibleSize.height) / flash->getContentSize().height);
-	flash->setOpacity(0.0);
-
-	Sprite* bg2 = Sprite::create("res/background/menu_background_battle.png");
-	addChild(bg2, 1, "last_background");
-	bg2->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-	bg2->setScale((visibleSize.width) / bg2->getContentSize().width);
-	bg2->setOpacity(0.0);
-
-	Sprite* vs = Sprite::create("res/background/vs_bubble.png");
-	addChild(vs, 1, "vs");
-	vs->setPosition(-visibleSize.width / 4, visibleSize.height * (9.0 / 12.0));
-	vs->setScale((visibleSize.width) / 7 / vs->getContentSize().width);
-	vs->setOpacity(0.0);
-
-	Sprite* mallowstxt = Sprite::create("res/background/mallowstextgreen.png");
-	addChild(mallowstxt, 2, "mallowstxt");
-	mallowstxt->setPosition(visibleSize.width / 2, visibleSize.height / 1.15);
-	mallowstxt->setOpacity(0.0);
-	mallowstxt->setScale(visibleSize.width * 0.75 / mallowstxt->getContentSize().width);
-	float coeff1 = visibleSize.width*0.5 / mallowstxt->getContentSize().width;
-
-	Sprite* dangotxt = Sprite::create("res/background/dangotext2.png");
-	addChild(dangotxt, 2, "dangotxt");
-	dangotxt->setPosition(visibleSize.width / 2, visibleSize.height / 1.55);
-	dangotxt->setOpacity(0.0);
-	dangotxt->setScale(visibleSize.width * 0.75 / dangotxt->getContentSize().width);
-	float coeff2 = visibleSize.width*0.35 / dangotxt->getContentSize().width;
-
-	cocos2d::ui::Button* button = ui::Button::create();
-	button->setTitleText(settings->getButton("start"));
-	button->setTitleColor(Color3B::YELLOW);
-	button->setTitleFontName("fonts/LICABOLD.ttf");
-	button->setTitleFontSize(75.f* visibleSize.width / 960);
-	button->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 4));
-	button->setOpacity(0.0);
-	Label* start_label = button->getTitleRenderer();
-	start_label->enableOutline(Color4B::BLACK, 2.f * visibleSize.width / 1280);
-	button->addTouchEventListener(CC_CALLBACK_2(MainMenu::menuContinueCallback, this));
-
+void MainMenu::addLanguages(cocos2d::Size &visibleSize, std::string &language)
+{
 	cocos2d::ui::Button* language_button = ui::Button::create("res/buttons/yellow_button.png");
 	language_button->setScale(visibleSize.width * 0.2 / language_button->getContentSize().width);
 	int nb_languages = configClass->getConfigValues(Config::ConfigType::GENERAL)["languages"].size();
@@ -125,18 +81,61 @@ bool MainMenu::init(Config* config, GUISettings* settings)
 		}
 	});
 	cocos2d::ui::Layout* layout = ui::Layout::create();
-	language = configClass->getSettings()->getLanguage();
-	Action* username_show = DelayTime::create(0.01f);
+
+
+
+	addChild(layout, 1, "interface");
+	layout->addChild(button, 1, "start");
+	layout->addChild(language_button, 1, "language");
+	layout->addChild(list_languages_levels, 1, "list_language");
+	initLanguageList();
+}
+
+void MainMenu::startSequenceOfAnimation(cocos2d::Size &visibleSize)
+{
+	float coeff1 = visibleSize.width*0.5 / mallowstxt->getContentSize().width;
+	float coeff2 = visibleSize.width*0.35 / dangotxt->getContentSize().width;
+	TargetedAction* fadein = TargetedAction::create(backgroundLogo, FadeIn::create(1.0f));
+	TargetedAction* delay = TargetedAction::create(backgroundLogo, DelayTime::create(1.0f));
+	TargetedAction* fadeout = TargetedAction::create(backgroundLogo, FadeOut::create(1.0f));
+
+	TargetedAction* fadeinbg1 = TargetedAction::create(background, FadeIn::create(1.0f));
+	TargetedAction* fadeintxt1 = TargetedAction::create(mallowstxt, Spawn::createWithTwoActions(FadeIn::create(1.0f), EaseElasticOut::create(ScaleTo::create(1.0f, coeff1))));
+	TargetedAction* fadeintxt2 = TargetedAction::create(dangotxt, Spawn::createWithTwoActions(FadeIn::create(1.0f), EaseElasticOut::create(ScaleTo::create(1.0f, coeff2))));
+
+	TargetedAction* fadeinvs = TargetedAction::create(vs, FadeIn::create(0.3f));
+	TargetedAction* actionvs = TargetedAction::create(vs, Spawn::createWithTwoActions(MoveTo::create(1.0f, Vec2(visibleSize.width * (8.0 / 12.0), visibleSize.height * (9.0 / 12.0))), RotateTo::create(1.0f, 720)));
+
+	TargetedAction* fadeinf = TargetedAction::create(flash, FadeIn::create(0.f));
+	TargetedAction* fadeoutf1 = TargetedAction::create(flash, FadeOut::create(0.3f));
+	TargetedAction* fadeinf1 = TargetedAction::create(flash, FadeIn::create(0.3f));
+
+	TargetedAction* fadeinbg2 = TargetedAction::create(battleBackground, FadeIn::create(0.0f));
+	Spawn* actionbg2 = Spawn::createWithTwoActions(fadeoutf1, fadeinbg2);
+
+	TargetedAction* fadeinbutton = TargetedAction::create(button, FadeIn::create(1.0f));
+	Action* username_show = Spawn::createWithTwoActions(TargetedAction::create(mask, FadeIn::create(0.1f)),
+		TargetedAction::create(layout_username, 
+			EaseBackOut::create(
+				MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2)))));
+	/*action sequence*/
+	auto sequence = Sequence::create(fadein, delay, fadeout, fadeinbg1, fadeintxt1, fadeintxt2, fadeinvs, actionvs,
+		fadeinf, fadeoutf1, fadeinf, fadeoutf1, fadeinf, actionbg2, username_show, fadeinbutton, nullptr);
+	backgroundLogo->runAction(sequence);
+}
+
+void MainMenu::addUsername(cocos2d::Size &visibleSize, GUISettings * settings)
+{
 	if (configClass->getUsername() == "") {
 		addChild(ui::Layout::create(), 2, "black_mask");
-		ui::Button* mask = ui::Button::create("res/buttons/mask.png");
+		mask = ui::Button::create("res/buttons/mask.png");
 		mask->setScaleX(visibleSize.width / mask->getContentSize().width);
 		mask->setScaleY(visibleSize.height / mask->getContentSize().height);
 		mask->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 		mask->setOpacity(0.0f);
 		getChildByName("black_mask")->addChild(mask);
 
-		ui::Layout* layout_username = ui::Layout::create();
+		layout_username = ui::Layout::create();
 		addChild(layout_username, 3, "layout_username");
 		ui::Button* panel = ui::Button::create("res/buttons/centralMenuPanel2.png");
 		panel->setZoomScale(0);
@@ -215,45 +214,94 @@ bool MainMenu::init(Config* config, GUISettings* settings)
 		validate_username->setScale(panel->getContentSize().width*panel->getScaleX() / 2 / validate_username->getContentSize().width);
 		validate_username->setPosition(Vec2(0, -panel->getContentSize().height*panel->getScaleY() / 3));
 		layout_username->addChild(validate_username, 2, "validate_username");
-		username_show = Spawn::createWithTwoActions(TargetedAction::create(mask, FadeIn::create(0.1f)),
-			TargetedAction::create(layout_username, EaseBackOut::create(MoveTo::create(0.5f, Vec2(visibleSize.width / 2, visibleSize.height / 2)))));
+
 	}
+}
 
+void MainMenu::addStartButton(GUISettings * settings, cocos2d::Size &visibleSize)
+{
+	button = ui::Button::create();
+	button->setTitleText(settings->getButton("start"));
+	button->setTitleColor(Color3B::YELLOW);
+	button->setTitleFontName("fonts/LICABOLD.ttf");
+	button->setTitleFontSize(75.f* visibleSize.width / 960);
+	button->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 4));
+	button->setOpacity(0.0);
+	Label* start_label = button->getTitleRenderer();
+	start_label->enableOutline(Color4B::BLACK, 2.f * visibleSize.width / 1280);
+	button->addTouchEventListener(CC_CALLBACK_2(MainMenu::menuContinueCallback, this));
+}
 
-	addChild(layout, 1, "interface");
-	layout->addChild(button, 1, "start");
-	layout->addChild(language_button, 1, "language");
-	layout->addChild(list_languages_levels, 1, "list_language");
-	initLanguageList();
-	/*actions of sprites, fadein/out, flash*/
+void MainMenu::addDangoText(cocos2d::Size &visibleSize)
+{
+	dangotxt = Sprite::create("res/background/dangotext2.png");
+	addChild(dangotxt, 2, "dangotxt");
+	dangotxt->setPosition(visibleSize.width / 2, visibleSize.height / 1.55);
+	dangotxt->setOpacity(0.0);
+	dangotxt->setScale(visibleSize.width * 0.75 / dangotxt->getContentSize().width);
+}
 
-	TargetedAction* fadein = TargetedAction::create(bglogo, FadeIn::create(1.0f));
-	TargetedAction* delay = TargetedAction::create(bglogo, DelayTime::create(1.0f));
-	TargetedAction* fadeout = TargetedAction::create(bglogo, FadeOut::create(1.0f));
+void MainMenu::addMallowsText(cocos2d::Size &visibleSize)
+{
+	mallowstxt = Sprite::create("res/background/mallowstextgreen.png");
+	addChild(mallowstxt, 2, "mallowstxt");
+	mallowstxt->setPosition(visibleSize.width / 2, visibleSize.height / 1.15);
+	mallowstxt->setOpacity(0.0);
+	mallowstxt->setScale(visibleSize.width * 0.75 / mallowstxt->getContentSize().width);
+}
 
-	TargetedAction* fadeinbg1 = TargetedAction::create(bg1, FadeIn::create(1.0f));
-	TargetedAction* fadeintxt1 = TargetedAction::create(mallowstxt, Spawn::createWithTwoActions(FadeIn::create(1.0f), EaseElasticOut::create(ScaleTo::create(1.0f, coeff1))));
-	TargetedAction* fadeintxt2 = TargetedAction::create(dangotxt, Spawn::createWithTwoActions(FadeIn::create(1.0f), EaseElasticOut::create(ScaleTo::create(1.0f, coeff2))));
+void MainMenu::addVersus(cocos2d::Size &visibleSize)
+{
+	vs = Sprite::create("res/background/vs_bubble.png");
+	addChild(vs, 1, "vs");
+	vs->setPosition(-visibleSize.width / 4, visibleSize.height * (9.0 / 12.0));
+	vs->setScale((visibleSize.width) / 7 / vs->getContentSize().width);
+	vs->setOpacity(0.0);
+}
 
-	TargetedAction* fadeinvs = TargetedAction::create(vs, FadeIn::create(0.3f));
-	TargetedAction* actionvs = TargetedAction::create(vs, Spawn::createWithTwoActions(MoveTo::create(1.0f, Vec2(visibleSize.width * (8.0 / 12.0), visibleSize.height * (9.0 / 12.0))), RotateTo::create(1.0f, 720)));
+void MainMenu::addBattleBackground(cocos2d::Size &visibleSize)
+{
+	battleBackground = Sprite::create("res/background/menu_background_battle.png");
+	addChild(battleBackground, 1, "last_background");
+	battleBackground->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	battleBackground->setScale((visibleSize.width) / battleBackground->getContentSize().width);
+	battleBackground->setOpacity(0.0);
+}
 
-	TargetedAction* fadeinf = TargetedAction::create(flash, FadeIn::create(0.f));
-	TargetedAction* fadeoutf1 = TargetedAction::create(flash, FadeOut::create(0.3f));
-	TargetedAction* fadeinf1 = TargetedAction::create(flash, FadeIn::create(0.3f));
+void MainMenu::addFlash(cocos2d::Size &visibleSize)
+{
+	flash = Sprite::create("res/background/flash.png");
+	addChild(flash, 3);
+	flash->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	flash->setScaleX((visibleSize.width) / flash->getContentSize().width);
+	flash->setScaleY((visibleSize.height) / flash->getContentSize().height);
+	flash->setOpacity(0.0);
+}
 
-	TargetedAction* fadeinbg2 = TargetedAction::create(bg2, FadeIn::create(0.0f));
-	Spawn* actionbg2 = Spawn::createWithTwoActions(fadeoutf1, fadeinbg2);
+void MainMenu::addBackground(cocos2d::Size &visibleSize)
+{
+	background = Sprite::create("res/background/menu_background1.png");
+	addChild(background, 1, "first_background");
+	background->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	background->setScale((visibleSize.width) / background->getContentSize().width);
+	background->setOpacity(0.0);
+}
 
-	TargetedAction* fadeinbutton = TargetedAction::create(button, FadeIn::create(1.0f));
+void MainMenu::addLoadingBackground(cocos2d::Size &visibleSize)
+{
+	Sprite* loadingBackground = Sprite::create("res/background/crissXcross.png");
+	loadingBackground->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	loadingBackground->setScale(visibleSize.width / loadingBackground->getContentSize().width);
+	addChild(loadingBackground, 1, "logo_background");
+}
 
-	/*action sequence*/
-	auto sequence = Sequence::create(fadein, delay, fadeout, fadeinbg1, fadeintxt1, fadeintxt2, fadeinvs, actionvs,
-		fadeinf, fadeoutf1, fadeinf, fadeoutf1, fadeinf, actionbg2, username_show, fadeinbutton, nullptr);
-	bglogo->runAction(sequence);
-
-	return true;
-
+void MainMenu::addBackgroungLogo(cocos2d::Size &visibleSize)
+{
+	backgroundLogo = Sprite::create("res/background/logo.png");
+	addChild(backgroundLogo, 1, "logo");
+	backgroundLogo->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	backgroundLogo->setScale((visibleSize.width / 2) / backgroundLogo->getContentSize().width);
+	backgroundLogo->setOpacity(0.0);
 }
 
 void MainMenu::update(float dt) {

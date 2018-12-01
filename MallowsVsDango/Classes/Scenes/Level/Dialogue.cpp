@@ -7,7 +7,7 @@ using namespace std::chrono;
 using namespace std;
 
 Dialogue::Dialogue(std::vector<string> text, std::vector<std::string>speakers, 
-	std::vector<Direction> direction, std::vector<Emotion> emotion, GUISettings* settings) :
+	std::vector<Direction>& direction, std::vector<Emotion>& emotion, GUISettings* settings) :
 running(false), finished(false), posCurrentCaract(0), currentSpeech(0), type(PROGRESSIVE), 
 speech(nullptr), state(HEAD_APPEAR), directions(direction), emotions(emotion){
 
