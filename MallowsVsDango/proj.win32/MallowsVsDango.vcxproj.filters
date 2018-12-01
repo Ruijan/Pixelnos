@@ -10,35 +10,14 @@
     <Filter Include="src">
       <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Level">
-      <UniqueIdentifier>{0749f000-a3e1-4c53-9e2f-d42db3316365}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Dangos">
-      <UniqueIdentifier>{bbf851c5-fb5d-4498-a222-6b3ed2f2f9f3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Towers">
-      <UniqueIdentifier>{891a0868-eeb4-4dc0-b5a5-526083f3f782}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Lib">
       <UniqueIdentifier>{0db9581b-6169-4959-9a15-d05b46d0c52e}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Config">
       <UniqueIdentifier>{924099d1-ee8c-4c26-83b5-999cdd975316}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Scenes">
-      <UniqueIdentifier>{3a020402-1e26-4da4-bbc6-0cf93235c00d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Level\Rewards">
-      <UniqueIdentifier>{3b525c15-5496-457c-9a32-a9886912dd6e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\GUI">
       <UniqueIdentifier>{185d32f8-940c-4af5-a2f5-f604609807b2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Level\Tutorials">
-      <UniqueIdentifier>{9804e8f6-c059-4423-9378-66ba7b38ad68}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Level\Tutorials\DialogueTutorials">
-      <UniqueIdentifier>{30805d16-c90f-4f49-b359-5c90a73b03ab}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Config\Settings">
       <UniqueIdentifier>{0b1d3ec2-8cac-4723-b3d6-d7dfb3263b37}</UniqueIdentifier>
@@ -46,23 +25,62 @@
     <Filter Include="src\Config\Exceptions">
       <UniqueIdentifier>{b0a15a94-ed98-4ea3-b60a-be15d5ae0531}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Level\Interface">
-      <UniqueIdentifier>{c3bffcbd-d4e7-48b2-bf1f-5a6262db3b8d}</UniqueIdentifier>
+    <Filter Include="src\Scenes">
+      <UniqueIdentifier>{3dc9650b-5c89-4c8a-84f3-b11ae79a491b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Towers\GUI">
-      <UniqueIdentifier>{1b5826c0-a8f3-4b7b-8410-31b33921d619}</UniqueIdentifier>
+    <Filter Include="src\Scenes\Level">
+      <UniqueIdentifier>{265550e4-e4ca-45a4-b4f3-1cdafb2f68fe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Towers\Exception">
-      <UniqueIdentifier>{d03282c2-fc5a-4f38-8506-bbb36b64b879}</UniqueIdentifier>
+    <Filter Include="src\Scenes\Credits">
+      <UniqueIdentifier>{28c4560e-699b-433b-b903-e13ffd9da15e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Dangos\GUI">
-      <UniqueIdentifier>{9d660e7c-c80e-4e5d-b211-7f16d2588740}</UniqueIdentifier>
+    <Filter Include="src\Scenes\LevelEditor">
+      <UniqueIdentifier>{f352509b-c4a2-43bd-9237-c24880422106}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Towers\Attacks">
-      <UniqueIdentifier>{b9181e05-0afe-4d04-a1e3-a3a594d99660}</UniqueIdentifier>
+    <Filter Include="src\Scenes\Shop">
+      <UniqueIdentifier>{d76926e7-e840-4393-8d08-fb859b6a6383}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Towers\Attacks\ThrowableAttacks">
-      <UniqueIdentifier>{fd1d4b78-9f89-4086-a59d-28f555826924}</UniqueIdentifier>
+    <Filter Include="src\Scenes\SkillTree">
+      <UniqueIdentifier>{0ade6f3c-90ae-4cdf-862b-95bb493c9ab8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes\Welcome">
+      <UniqueIdentifier>{7de69a10-0f4f-4cce-9833-1eda841aa6f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes\StoryMenu">
+      <UniqueIdentifier>{bef82e42-7550-475e-8a78-4ad1c8e2fdb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes\Level\Dangos">
+      <UniqueIdentifier>{43e95b75-ef6f-4553-a7a0-97af7a07453f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes\Level\Interface">
+      <UniqueIdentifier>{94d56099-dac5-44dc-b67f-1aa02500ae60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes\Level\Rewards">
+      <UniqueIdentifier>{a1d203db-e92d-4091-8cd0-88af3026d52f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes\Level\Towers">
+      <UniqueIdentifier>{1097410a-e573-493d-a991-c8221ed5c2ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes\Level\Tutorials">
+      <UniqueIdentifier>{0081f322-d568-459a-936a-41d2eca3c505}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes\Level\Dangos\GUI">
+      <UniqueIdentifier>{238df7e5-de21-4926-878f-483ea7fce745}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes\Level\Towers\Attacks">
+      <UniqueIdentifier>{9dc80a67-c50f-491f-8244-325b13009442}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes\Level\Towers\Exception">
+      <UniqueIdentifier>{5d603bd4-0452-4634-a329-190b9d7bcadf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes\Level\Towers\GUI">
+      <UniqueIdentifier>{e3e580e7-9dbb-44d0-8c91-60a2f7c02d6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes\Level\Towers\Attacks\ThrowableAttacks">
+      <UniqueIdentifier>{68ab2cd9-8574-49b4-80c1-b61f98fbde9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes\SkillTree\Tutorials">
+      <UniqueIdentifier>{0ccfe80f-bcb9-4890-bd70-3d3bc0706fd5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -71,24 +89,6 @@
     </ClCompile>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Cell.cpp">
-      <Filter>src\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\DangoGenerator.cpp">
-      <Filter>src\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Level.cpp">
-      <Filter>src\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Dangos\Dango.cpp">
-      <Filter>src\Dangos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Dangos\Dangobese.cpp">
-      <Filter>src\Dangos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Dangos\Dangosimple.cpp">
-      <Filter>src\Dangos</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Lib\AudioSlider.cpp">
       <Filter>src\Lib</Filter>
@@ -111,116 +111,17 @@
     <ClCompile Include="..\Classes\Config\jsoncpp.cpp">
       <Filter>src\Config</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Cutter.cpp">
-      <Filter>src\Towers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Tower.cpp">
-      <Filter>src\Towers</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\SceneManager.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Wall.cpp">
-      <Filter>src\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Saucer.cpp">
-      <Filter>src\Towers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Bomber.cpp">
-      <Filter>src\Towers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Scenes\CreditScreen.cpp">
-      <Filter>src\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Scenes\LevelEditor.cpp">
-      <Filter>src\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Scenes\LoadingScreen.cpp">
-      <Filter>src\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Scenes\MainMenu.cpp">
-      <Filter>src\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Scenes\MyGame.cpp">
-      <Filter>src\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Scenes\Skills.cpp">
-      <Filter>src\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Scenes\StoryMenu.cpp">
-      <Filter>src\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Dialogue.cpp">
-      <Filter>src\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Scenes\Shop.cpp">
-      <Filter>src\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Config\NetworkController.cpp">
       <Filter>src\Config</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Dangos\Dangorille.cpp">
-      <Filter>src\Dangos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\ChallengeHandler.cpp">
-      <Filter>src\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Rewards\RewardTower.cpp">
-      <Filter>src\Level\Rewards</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Rewards\VisualReward.cpp">
-      <Filter>src\Level\Rewards</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Rewards\RewardSugar.cpp">
-      <Filter>src\Level\Rewards</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Towers\TowerFactory.cpp">
-      <Filter>src\Towers</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\GUI\ParametersMenu.cpp">
       <Filter>src\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\GUI\StoryParametersMenu.cpp">
-      <Filter>src\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Tutorials\Tutorial.cpp">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Tutorials\TowerPositioningTutorial.cpp">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Tutorials\SugarTutorial.cpp">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Tutorials\LifeTutorial.cpp">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Tutorials\SaucerTutorial.cpp">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Tutorials\UpgradeTutorial.cpp">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Tutorials\MultiPathsTutorial.cpp">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Tutorials\DangorillaTutorial.cpp">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Tutorials\DangobeseTutorial.cpp">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Tutorials\DialogueTutorial.cpp">
-      <Filter>src\Level\Tutorials\DialogueTutorials</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Level\Tutorials\TutorialFactory.cpp">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\GUI\CentralMenu.cpp">
       <Filter>src\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Scenes\SceneFactory.cpp">
-      <Filter>src\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Config\Settings\GameSettings.cpp">
       <Filter>src\Config\Settings</Filter>
@@ -231,71 +132,212 @@
     <ClCompile Include="..\Classes\Config\Settings\Settings.cpp">
       <Filter>src\Config\Settings</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Level\Interface\LoseMenu.cpp">
-      <Filter>src\Level\Interface</Filter>
+    <ClCompile Include="..\Classes\Scenes\Credits\CreditScreen.cpp">
+      <Filter>src\Scenes\Credits</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Level\Interface\StartMenu.cpp">
-      <Filter>src\Level\Interface</Filter>
+    <ClCompile Include="..\Classes\Scenes\LevelEditor\LevelEditor.cpp">
+      <Filter>src\Scenes\LevelEditor</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Level\Interface\WinMenu.cpp">
-      <Filter>src\Level\Interface</Filter>
+    <ClCompile Include="..\Classes\Scenes\StoryMenu\StoryMenu.cpp">
+      <Filter>src\Scenes\StoryMenu</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Level\Interface\LevelInterface.cpp">
-      <Filter>src\Level\Interface</Filter>
+    <ClCompile Include="..\Classes\Scenes\Welcome\MainMenu.cpp">
+      <Filter>src\Scenes\Welcome</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Level\Interface\RightPanel.cpp">
-      <Filter>src\Level\Interface</Filter>
+    <ClCompile Include="..\Classes\Scenes\SkillTree\Skills.cpp">
+      <Filter>src\Scenes\SkillTree</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Level\Interface\LevelInfo.cpp">
-      <Filter>src\Level\Interface</Filter>
+    <ClCompile Include="..\Classes\Scenes\Shop\Shop.cpp">
+      <Filter>src\Scenes\Shop</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\GUI\TowerInformationPanel.cpp">
-      <Filter>src\Towers\GUI</Filter>
+    <ClCompile Include="..\Classes\Scenes\SceneFactory.cpp">
+      <Filter>src\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\GUI\CurrentLevelPanel.cpp">
-      <Filter>src\Towers\GUI</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\Cell.cpp">
+      <Filter>src\Scenes\Level</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Config\Settings\TowerSettings.cpp">
-      <Filter>src\Config\Settings</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\ChallengeHandler.cpp">
+      <Filter>src\Scenes\Level</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\GUI\NextLevelPanel.cpp">
-      <Filter>src\Towers\GUI</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\DangoGenerator.cpp">
+      <Filter>src\Scenes\Level</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Dangos\GUI\DangoInformationPanel.cpp">
-      <Filter>src\Dangos\GUI</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\Dialogue.cpp">
+      <Filter>src\Scenes\Level</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Dangos\Monkey.cpp">
-      <Filter>src\Dangos</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\Level.cpp">
+      <Filter>src\Scenes\Level</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Dangos\GUI\SpecialAttackAnnouncement.cpp">
-      <Filter>src\Dangos\GUI</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\LoadingScreen.cpp">
+      <Filter>src\Scenes\Level</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Attacks\Attack.cpp">
-      <Filter>src\Towers\Attacks</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\MyGame.cpp">
+      <Filter>src\Scenes\Level</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Attacks\Effect.cpp">
-      <Filter>src\Towers\Attacks</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\Wall.cpp">
+      <Filter>src\Scenes\Level</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Attacks\Suckable.cpp">
-      <Filter>src\Towers\Attacks</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\Interface\LevelInfo.cpp">
+      <Filter>src\Scenes\Level\Interface</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Attacks\Slash.cpp">
-      <Filter>src\Towers\Attacks</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\Interface\LevelInterface.cpp">
+      <Filter>src\Scenes\Level\Interface</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Attacks\DeepSlash.cpp">
-      <Filter>src\Towers\Attacks</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\Interface\LoseMenu.cpp">
+      <Filter>src\Scenes\Level\Interface</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Attacks\ThrowableAttacks\ThrowableAttack.cpp">
-      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\Interface\RightPanel.cpp">
+      <Filter>src\Scenes\Level\Interface</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Attacks\ThrowableAttacks\ChocoSpit.cpp">
-      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\Interface\StartMenu.cpp">
+      <Filter>src\Scenes\Level\Interface</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Attacks\ThrowableAttacks\WaterBall.cpp">
-      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\Interface\WinMenu.cpp">
+      <Filter>src\Scenes\Level\Interface</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Towers\Attacks\ThrowableAttacks\WaterBombBall.cpp">
-      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    <ClCompile Include="..\Classes\Scenes\Level\Dangos\GUI\DangoInformationPanel.cpp">
+      <Filter>src\Scenes\Level\Dangos\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Dangos\GUI\SpecialAttackAnnouncement.cpp">
+      <Filter>src\Scenes\Level\Dangos\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Dangos\Dango.cpp">
+      <Filter>src\Scenes\Level\Dangos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Dangos\Dangobese.cpp">
+      <Filter>src\Scenes\Level\Dangos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Dangos\Dangorille.cpp">
+      <Filter>src\Scenes\Level\Dangos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Dangos\Dangosimple.cpp">
+      <Filter>src\Scenes\Level\Dangos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Dangos\Monkey.cpp">
+      <Filter>src\Scenes\Level\Dangos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Tutorials\DangobeseTutorial.cpp">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Tutorials\DangorillaTutorial.cpp">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Tutorials\DialogueTutorial.cpp">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Tutorials\LifeTutorial.cpp">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Tutorials\MultiPathsTutorial.cpp">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Tutorials\SaucerTutorial.cpp">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Tutorials\SugarTutorial.cpp">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Tutorials\TowerPositioningTutorial.cpp">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Tutorials\Tutorial.cpp">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Tutorials\TutorialFactory.cpp">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Tutorials\UpgradeTutorial.cpp">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\Bomber.cpp">
+      <Filter>src\Scenes\Level\Towers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\Cutter.cpp">
+      <Filter>src\Scenes\Level\Towers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\Saucer.cpp">
+      <Filter>src\Scenes\Level\Towers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\Tower.cpp">
+      <Filter>src\Scenes\Level\Towers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\TowerFactory.cpp">
+      <Filter>src\Scenes\Level\Towers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Rewards\RewardSugar.cpp">
+      <Filter>src\Scenes\Level\Rewards</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Rewards\RewardTower.cpp">
+      <Filter>src\Scenes\Level\Rewards</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Rewards\VisualReward.cpp">
+      <Filter>src\Scenes\Level\Rewards</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\Attacks\DeepSlash.cpp">
+      <Filter>src\Scenes\Level\Towers\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\Attacks\Effect.cpp">
+      <Filter>src\Scenes\Level\Towers\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\Attacks\Slash.cpp">
+      <Filter>src\Scenes\Level\Towers\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\Attacks\Suckable.cpp">
+      <Filter>src\Scenes\Level\Towers\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\Attacks\ThrowableAttacks\ChocoSpit.cpp">
+      <Filter>src\Scenes\Level\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\Attacks\ThrowableAttacks\ThrowableAttack.cpp">
+      <Filter>src\Scenes\Level\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\Attacks\ThrowableAttacks\WaterBall.cpp">
+      <Filter>src\Scenes\Level\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\Attacks\ThrowableAttacks\WaterBombBall.cpp">
+      <Filter>src\Scenes\Level\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\Attacks\Attack.cpp">
+      <Filter>src\Scenes\Level\Towers\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\GUI\CurrentLevelPanel.cpp">
+      <Filter>src\Scenes\Level\Towers\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\GUI\NextLevelPanel.cpp">
+      <Filter>src\Scenes\Level\Towers\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\GUI\TowerInformationPanel.cpp">
+      <Filter>src\Scenes\Level\Towers\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Towers\TowerSettings.cpp">
+      <Filter>src\Scenes\Level\Towers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\Level\Interface\LevelParametersMenu.cpp">
+      <Filter>src\Scenes\Level\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\StoryMenu\StoryParametersMenu.cpp">
+      <Filter>src\Scenes\StoryMenu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\SkillTree\Tutorials\SkillTutorial.cpp">
+      <Filter>src\Scenes\SkillTree\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\SkillTree\RequirementDescription.cpp">
+      <Filter>src\Scenes\SkillTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GUI\GUISettings.cpp">
+      <Filter>src\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\AdvancedScene.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\SkillTree\BuyLayout.cpp">
+      <Filter>src\Scenes\SkillTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\SkillTree\ValidationLayout.cpp">
+      <Filter>src\Scenes\SkillTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\SkillTree\LeftPanel.cpp">
+      <Filter>src\Scenes\SkillTree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -304,24 +346,6 @@
     </ClInclude>
     <ClInclude Include="..\Classes\AppDelegate.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Cell.h">
-      <Filter>src\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\DangoGenerator.h">
-      <Filter>src\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Level.h">
-      <Filter>src\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Dangos\Dango.h">
-      <Filter>src\Dangos</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Dangos\Dangobese.h">
-      <Filter>src\Dangos</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Dangos\Dangosimple.h">
-      <Filter>src\Dangos</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Lib\AudioSlider.h">
       <Filter>src\Lib</Filter>
@@ -347,119 +371,20 @@
     <ClInclude Include="..\Classes\Config\json-forwards.h">
       <Filter>src\Config</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Cutter.h">
-      <Filter>src\Towers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Tower.h">
-      <Filter>src\Towers</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\SceneManager.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Wall.h">
-      <Filter>src\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Saucer.h">
-      <Filter>src\Towers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Bomber.h">
-      <Filter>src\Towers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Scenes\CreditScreen.h">
-      <Filter>src\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Scenes\LevelEditor.h">
-      <Filter>src\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Scenes\LoadingScreen.h">
-      <Filter>src\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Scenes\MainMenu.h">
-      <Filter>src\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Scenes\MyGame.h">
-      <Filter>src\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Scenes\Skills.h">
-      <Filter>src\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Scenes\StoryMenu.h">
-      <Filter>src\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Dialogue.h">
-      <Filter>src\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Scenes\Shop.h">
-      <Filter>src\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Config\NetworkController.h">
       <Filter>src\Config</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Dangos\Dangorille.h">
-      <Filter>src\Dangos</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\Lib\Translationable.h">
       <Filter>src\Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\ChallengeHandler.h">
-      <Filter>src\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Rewards\RewardTower.h">
-      <Filter>src\Level\Rewards</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Rewards\VisualReward.h">
-      <Filter>src\Level\Rewards</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Rewards\RewardSugar.h">
-      <Filter>src\Level\Rewards</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Towers\TowerFactory.h">
-      <Filter>src\Towers</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GUI\ParametersMenu.h">
       <Filter>src\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\GUI\StoryParametersMenu.h">
-      <Filter>src\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Tutorials\Tutorial.h">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Tutorials\SugarTutorial.h">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Tutorials\TowerPositioningTutorial.h">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Tutorials\LifeTutorial.h">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Tutorials\SaucerTutorial.h">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Tutorials\UpgradeTutorial.h">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Tutorials\MultiPathsTutorial.h">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Tutorials\DangorillaTutorial.h">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Tutorials\DangobeseTutorial.h">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Tutorials\DialogueTutorial.h">
-      <Filter>src\Level\Tutorials\DialogueTutorials</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Level\Tutorials\TutorialFactory.h">
-      <Filter>src\Level\Tutorials</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\GUI\CentralMenu.h">
       <Filter>src\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Scenes\SceneFactory.h">
-      <Filter>src\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Config\Settings\TutorialSettings.h">
       <Filter>src\Config\Settings</Filter>
@@ -476,74 +401,215 @@
     <ClInclude Include="..\Classes\Config\Settings\Settings.h">
       <Filter>src\Config\Settings</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Level\Interface\LoseMenu.h">
-      <Filter>src\Level\Interface</Filter>
+    <ClInclude Include="..\Classes\Scenes\Credits\CreditScreen.h">
+      <Filter>src\Scenes\Credits</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Level\Interface\StartMenu.h">
-      <Filter>src\Level\Interface</Filter>
+    <ClInclude Include="..\Classes\Scenes\LevelEditor\LevelEditor.h">
+      <Filter>src\Scenes\LevelEditor</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Level\Interface\WinMenu.h">
-      <Filter>src\Level\Interface</Filter>
+    <ClInclude Include="..\Classes\Scenes\StoryMenu\StoryMenu.h">
+      <Filter>src\Scenes\StoryMenu</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Level\Interface\LevelInterface.h">
-      <Filter>src\Level\Interface</Filter>
+    <ClInclude Include="..\Classes\Scenes\Welcome\MainMenu.h">
+      <Filter>src\Scenes\Welcome</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Level\Interface\RightPanel.h">
-      <Filter>src\Level\Interface</Filter>
+    <ClInclude Include="..\Classes\Scenes\SkillTree\Skills.h">
+      <Filter>src\Scenes\SkillTree</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Level\Interface\LevelInfo.h">
-      <Filter>src\Level\Interface</Filter>
+    <ClInclude Include="..\Classes\Scenes\Shop\Shop.h">
+      <Filter>src\Scenes\Shop</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\GUI\TowerInformationPanel.h">
-      <Filter>src\Towers\GUI</Filter>
+    <ClInclude Include="..\Classes\Scenes\SceneFactory.h">
+      <Filter>src\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\GUI\CurrentLevelPanel.h">
-      <Filter>src\Towers\GUI</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\Cell.h">
+      <Filter>src\Scenes\Level</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\GUI\NextLevelPanel.h">
-      <Filter>src\Towers\GUI</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\ChallengeHandler.h">
+      <Filter>src\Scenes\Level</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Config\Settings\TowerSettings.h">
-      <Filter>src\Config\Settings</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\DangoGenerator.h">
+      <Filter>src\Scenes\Level</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Exception\TowerTypeException.h">
-      <Filter>src\Towers\Exception</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\Dialogue.h">
+      <Filter>src\Scenes\Level</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Dangos\GUI\DangoInformationPanel.h">
-      <Filter>src\Dangos\GUI</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\Level.h">
+      <Filter>src\Scenes\Level</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Dangos\Monkey.h">
-      <Filter>src\Dangos</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\LoadingScreen.h">
+      <Filter>src\Scenes\Level</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Dangos\GUI\SpecialAttackAnnouncement.h">
-      <Filter>src\Dangos\GUI</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\MyGame.h">
+      <Filter>src\Scenes\Level</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Attacks\Attack.h">
-      <Filter>src\Towers\Attacks</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\Wall.h">
+      <Filter>src\Scenes\Level</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Attacks\Effect.h">
-      <Filter>src\Towers\Attacks</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\Interface\LevelInfo.h">
+      <Filter>src\Scenes\Level\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Attacks\Suckable.h">
-      <Filter>src\Towers\Attacks</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\Interface\LevelInterface.h">
+      <Filter>src\Scenes\Level\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Attacks\Slash.h">
-      <Filter>src\Towers\Attacks</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\Interface\LoseMenu.h">
+      <Filter>src\Scenes\Level\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Attacks\DeepSlash.h">
-      <Filter>src\Towers\Attacks</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\Interface\RightPanel.h">
+      <Filter>src\Scenes\Level\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Attacks\ThrowableAttacks\ThrowableAttack.h">
-      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\Interface\StartMenu.h">
+      <Filter>src\Scenes\Level\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Attacks\ThrowableAttacks\ChocoSpit.h">
-      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\Interface\WinMenu.h">
+      <Filter>src\Scenes\Level\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Attacks\ThrowableAttacks\WaterBall.h">
-      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\Dangos\GUI\DangoInformationPanel.h">
+      <Filter>src\Scenes\Level\Dangos\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Towers\Attacks\ThrowableAttacks\WaterBombBall.h">
-      <Filter>src\Towers\Attacks\ThrowableAttacks</Filter>
+    <ClInclude Include="..\Classes\Scenes\Level\Dangos\GUI\SpecialAttackAnnouncement.h">
+      <Filter>src\Scenes\Level\Dangos\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Dangos\Dango.h">
+      <Filter>src\Scenes\Level\Dangos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Dangos\Dangobese.h">
+      <Filter>src\Scenes\Level\Dangos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Dangos\Dangorille.h">
+      <Filter>src\Scenes\Level\Dangos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Dangos\Dangosimple.h">
+      <Filter>src\Scenes\Level\Dangos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Dangos\Monkey.h">
+      <Filter>src\Scenes\Level\Dangos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Tutorials\DangobeseTutorial.h">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Tutorials\DangorillaTutorial.h">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Tutorials\DialogueTutorial.h">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Tutorials\LifeTutorial.h">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Tutorials\MultiPathsTutorial.h">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Tutorials\SaucerTutorial.h">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Tutorials\SugarTutorial.h">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Tutorials\TowerPositioningTutorial.h">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Tutorials\Tutorial.h">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Tutorials\TutorialFactory.h">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Tutorials\UpgradeTutorial.h">
+      <Filter>src\Scenes\Level\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Bomber.h">
+      <Filter>src\Scenes\Level\Towers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Cutter.h">
+      <Filter>src\Scenes\Level\Towers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Saucer.h">
+      <Filter>src\Scenes\Level\Towers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Tower.h">
+      <Filter>src\Scenes\Level\Towers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\TowerFactory.h">
+      <Filter>src\Scenes\Level\Towers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Rewards\RewardSugar.h">
+      <Filter>src\Scenes\Level\Rewards</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Rewards\RewardTower.h">
+      <Filter>src\Scenes\Level\Rewards</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Rewards\VisualReward.h">
+      <Filter>src\Scenes\Level\Rewards</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Attacks\Attack.h">
+      <Filter>src\Scenes\Level\Towers\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Attacks\DeepSlash.h">
+      <Filter>src\Scenes\Level\Towers\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Attacks\Effect.h">
+      <Filter>src\Scenes\Level\Towers\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Attacks\Slash.h">
+      <Filter>src\Scenes\Level\Towers\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Attacks\Suckable.h">
+      <Filter>src\Scenes\Level\Towers\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Attacks\ThrowableAttacks\ChocoSpit.h">
+      <Filter>src\Scenes\Level\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Attacks\ThrowableAttacks\ThrowableAttack.h">
+      <Filter>src\Scenes\Level\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Attacks\ThrowableAttacks\WaterBall.h">
+      <Filter>src\Scenes\Level\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Attacks\ThrowableAttacks\WaterBombBall.h">
+      <Filter>src\Scenes\Level\Towers\Attacks\ThrowableAttacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\Exception\TowerTypeException.h">
+      <Filter>src\Scenes\Level\Towers\Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\GUI\CurrentLevelPanel.h">
+      <Filter>src\Scenes\Level\Towers\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\GUI\NextLevelPanel.h">
+      <Filter>src\Scenes\Level\Towers\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\GUI\TowerInformationPanel.h">
+      <Filter>src\Scenes\Level\Towers\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Towers\TowerSettings.h">
+      <Filter>src\Scenes\Level\Towers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\Level\Interface\LevelParametersMenu.h">
+      <Filter>src\Scenes\Level\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\StoryMenu\StoryParametersMenu.h">
+      <Filter>src\Scenes\StoryMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\SkillTree\Tutorials\SkillTutorial.h">
+      <Filter>src\Scenes\SkillTree\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\SkillTree\RequirementDescription.h">
+      <Filter>src\Scenes\SkillTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GUI\GUISettings.h">
+      <Filter>src\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\AdvancedScene.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\SkillTree\BuyLayout.h">
+      <Filter>src\Scenes\SkillTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\SkillTree\ValidationLayout.h">
+      <Filter>src\Scenes\SkillTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\SkillTree\LeftPanel.h">
+      <Filter>src\Scenes\SkillTree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

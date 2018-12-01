@@ -9,8 +9,8 @@
 #include "network/HttpClient.h"
 #include "Settings/GameSettings.h"
 #include "Settings/TutorialSettings.h"
-#include "Settings/TowerSettings.h"
-#include "../Towers/Tower.h"
+#include "../GUI/GUISettings.h"
+
 
 class NetworkController;
 struct LevelTrackingEvent;
@@ -32,7 +32,6 @@ public:
 		ADVICE,
 		TOWER,
 		DANGO,
-		BUTTON,
 		CHALLENGE,
 		TALENT,
 		LEVEL
@@ -172,13 +171,12 @@ public:
 	GameSettings* getSettings();
 	TutorialSettings* getGameTutorialSettings();
 	TutorialSettings* getSkillTutorialSettings();
-	TowerSettings* getTowerSettings(Tower::TowerType type);
+	GUISettings* getGUISettings();
 
 private:
 	Json::Value conf_general;
 	Json::Value conf_advice;
 	Json::Value conf_challenge;
-	Json::Value conf_button;
 	Json::Value conf_tower;
 	Json::Value conf_dango;
 	Json::Value conf_level;
@@ -208,7 +206,7 @@ private:
 	GameSettings* settings;
 	TutorialSettings* gameTutorialSettings;
 	TutorialSettings* skillTutorialSettings;
-	std::map<Tower::TowerType, TowerSettings*> towersSettings;
+	GUISettings* guiSettings;
 };
 
 #endif

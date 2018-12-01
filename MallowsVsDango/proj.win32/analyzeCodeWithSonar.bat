@@ -1,3 +1,3 @@
-SonarQube.Scanner.MSBuild.exe begin /k:"Pixelnos" /d:sonar.organization="ruijan-github" /d:sonar.cfamily.build-wrapper-output=bw-output /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="d152479b62d6154f0f9dc625b8d39126e31d6856" /d:sonar.sources="Classes" /d:sonar.exclusions="cocos2d"
+SonarQube.Scanner.MSBuild.exe begin /k:"Pixelnos" /d:sonar.organization="ruijan-github" /d:sonar.cfamily.build-wrapper-output=bw-output /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="d152479b62d6154f0f9dc625b8d39126e31d6856"  /d:sonar.exclusions="**/cocos2d/**/**/*"
 build-wrapper-win-x86-64.exe --out-dir bw-output MsBuild.exe /t:Build /m
-SonarQube.Scanner.MSBuild.exe end /d:sonar.login="d152479b62d6154f0f9dc625b8d39126e31d6856"
+SonarQube.Scanner.MSBuild.exe end /d:sonar.login="1ae7fc169aa9245415e71ecfd3be303212ccb257"
