@@ -14,12 +14,12 @@ public:
 
 protected:
 	virtual bool init(MyGame* game, GUISettings* settings);
-	void addTowerExperiences();
+	void addTowerExperiences(const cocos2d::Size& visibleSize);
 	void addWinMallowsImages();
-	void addTowerLoadingExp(std::string & towerName, Json::Value &root, Json::Value &towerConfig);
-	void addRewardSugar();
-	void addStars();
-	void addYouWinLabel();
+	void addTowerLoadingExp(std::string & towerName, Json::Value &root);
+	void addRewardSugar(const cocos2d::Size& visibleSize);
+	void addStars(const cocos2d::Size& visibleSize);
+	void addYouWinLabel(const cocos2d::Size& visibleSize);
 	virtual void rightButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type);
 	virtual void leftButtonCallback(cocos2d::Ref *pSender, cocos2d::ui::Widget::TouchEventType type);
 	void updateIncrementXP(cocos2d::Label* exp_label, cocos2d::ui::LoadingBar* loading_bar, std::string tower_name,

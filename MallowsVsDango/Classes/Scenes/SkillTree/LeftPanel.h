@@ -23,4 +23,5 @@ protected:
 	GUISettings * settings;
 	cocos2d::Label* skillDescription;
 	cocos2d::Label* sugarAmount;
+	cocos2d::Size visibleSize;
 };

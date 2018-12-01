@@ -17,7 +17,7 @@ WinMenu * WinMenu::create(MyGame* game, GUISettings* settings)
 
 void WinMenu::showWin()
 {
-	cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+	cocos2d::Size visibleSize = settings->getVisibleSize();
 	auto* showAction = cocos2d::TargetedAction::create(this, cocos2d::EaseBackOut::create(
 		cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(visibleSize.width / 2, visibleSize.height / 2))));
 	Json::Value root = ((AppDelegate*)cocos2d::Application::getInstance())->getSave();
@@ -129,24 +129,22 @@ bool WinMenu::init(MyGame* game, GUISettings* settings)
 	addPanel(visibleSize, 0.55);
 	addLeftButton(settings->getButton("next_level"));
 	addRightButton(settings->getButton("main_menu"));
-	addYouWinLabel();
-	addStars();
-	addRewardSugar();
-	addTowerExperiences();
+	addYouWinLabel(visibleSize);
+	addStars(visibleSize);
+	addRewardSugar(visibleSize);
+	addTowerExperiences(visibleSize);
 	addWinMallowsImages();
 	return initialized;
 }
 
-void WinMenu::addTowerExperiences()
+void WinMenu::addTowerExperiences(const cocos2d::Size& visibleSize)
 {
-	cocos2d::Size visibleSize = settings->getVisibleSize();
 	Json::Value root = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getSaveValues()["towers"];
-	Json::Value towerConfig = ((AppDelegate*)cocos2d::Application::getInstance())->getConfigClass()->getConfigValues(Config::ConfigType::TOWER);
 	previousObjectPos = previousObjectPos - cocos2d::Vec2(0, previousObjectSize.height);
 	std::vector<std::string> towerNames = root.getMemberNames();
 	for (auto towerName : towerNames) {
 		if (root[towerName]["unlocked"].asBool()) {
-			addTowerLoadingExp(towerName, root, towerConfig);
+			addTowerLoadingExp(towerName, root);
 		}
 	}
 }
@@ -170,7 +168,7 @@ void WinMenu::addWinMallowsImages()
 	addChild(win_mallow3, 2, "win_mallow3");
 }
 
-void WinMenu::addTowerLoadingExp(std::string & towerName, Json::Value &root, Json::Value &towerConfig)
+void WinMenu::addTowerLoadingExp(std::string & towerName, Json::Value &root)
 {
 	cocos2d::Size visibleSize = settings->getVisibleSize();
 	cocos2d::Label* exp_tower = cocos2d::Label::createWithTTF("Exp " + towerName, "fonts/LICABOLD.ttf", 40.f * visibleSize.width / 1280);
@@ -213,9 +211,8 @@ void WinMenu::addTowerLoadingExp(std::string & towerName, Json::Value &root, Jso
 	previousObjectPos.y = exp_tower->getPosition().y - exp_tower->getContentSize().height / 2;
 }
 
-void WinMenu::addRewardSugar()
+void WinMenu::addRewardSugar(const cocos2d::Size& visibleSize)
 {
-	cocos2d::Size visibleSize = settings->getVisibleSize();
 	cocos2d::Label* rewardSugar = cocos2d::Label::createWithTTF(settings->getButton("holy_sugar"),
 		"fonts/LICABOLD.ttf", 40.f * visibleSize.width / 1280);
 	rewardSugar->enableOutline(cocos2d::Color4B::BLACK, 2);
@@ -241,7 +238,7 @@ void WinMenu::addRewardSugar()
 	addChild(holySugar, 2, "holySugar");
 }
 
-void WinMenu::addStars()
+void WinMenu::addStars(const cocos2d::Size& visibleSize)
 {
 	cocos2d::Sprite* star_left = cocos2d::Sprite::create("res/levels/rewards/star_empty.png");
 	star_left->setScale(panel->getContentSize().width * panel->getScaleX() / 8 / star_left->getContentSize().width);
@@ -251,7 +248,7 @@ void WinMenu::addStars()
 	star_left->setRotation(-35);
 	cocos2d::Sprite* star_middle = cocos2d::Sprite::create("res/levels/rewards/star_empty.png");
 	star_middle->setScale(panel->getContentSize().width * panel->getScaleX() / 7 / star_middle->getContentSize().width);
-	star_middle->setPosition(cocos2d::Vec2(0, star_left->getPosition().y + settings->getVisibleSize().width / 45));
+	star_middle->setPosition(cocos2d::Vec2(0, star_left->getPosition().y + visibleSize.width / 45));
 	cocos2d::Sprite* star_right = cocos2d::Sprite::create("res/levels/rewards/star_empty.png");
 	star_right->setScale(panel->getContentSize().width * panel->getScaleX() / 8 / star_right->getContentSize().width);
 	star_right->setRotation(35);
@@ -263,10 +260,10 @@ void WinMenu::addStars()
 	previousObjectSize = star_middle->getContentSize() * star_middle->getScale();
 }
 
-void WinMenu::addYouWinLabel()
+void WinMenu::addYouWinLabel(const cocos2d::Size& visibleSize)
 {
 	youWinLabel = cocos2d::Label::createWithTTF(settings->getButton("level_cleared"),
-		"fonts/LICABOLD.ttf", 60.f * settings->getVisibleSize().width / 1280);
+		"fonts/LICABOLD.ttf", 60.f * visibleSize.width / 1280);
 	youWinLabel->enableOutline(cocos2d::Color4B::BLACK, 2);
 	youWinLabel->setPosition(0, panel->getContentSize().height*panel->getScaleY() * 0.35);
 	youWinLabel->setColor(cocos2d::Color3B::YELLOW);
