@@ -4,3 +4,5 @@ languages:
 exclude:
 - /MallowsVsDango/Classes/Config/jsoncpp.cpp
 - /MallowsVsDango/Classes/Config/json.h
+- /MallowsVsDango/proj.win32/*
+- /MallowsVsDango/Resources/*
