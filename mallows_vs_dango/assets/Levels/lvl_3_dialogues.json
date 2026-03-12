@@ -1,0 +1,21 @@
+{
+  "level_id": 3,
+  "introDialogue": [
+    {
+      "emotion": [
+        "NORMAL",
+        "ANGRY"
+      ],
+      "speaker": "res/turret/GeneralMashmalow.png",
+      "side": "LEFT",
+      "text_en": [
+        "It can't be a coincidence. Two skirmishes the same day...",
+        "We are at WAR! \n Protect the Mighty Sweety Kingdom !"
+      ],
+      "text_fr": [
+        "Ce n'est pas une coincidence. Deux escarmouches dans la même journée...",
+        "Nous sommes en GUERRE ! \n Protégez le Grand Royaume Sucré !"
+      ]
+    }
+  ]
+}

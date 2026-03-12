@@ -1,0 +1,334 @@
+{
+   "backgrounds" : [
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "res/levels/background/forest.png",
+         "position" : [ 0, 0 ],
+         "rotation" : 0,
+         "scale" : [ 1.2990100383758545, 1.2990100383758545 ],
+         "zorder" : 0
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "res/levels/background/filter.png",
+         "position" : [ 0, 0 ],
+         "rotation" : 0,
+         "scale" : [ 1.2990100383758545, 1.2990100383758545 ],
+         "zorder" : 0
+      }
+   ],
+   "dangosChain" : [
+      [
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0"
+      ],
+      [
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0"
+      ],
+      [
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple0",
+         "dangosimple1"
+      ]
+   ],
+   "dangosPath" : [
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+   ],
+   "dangosTime" : [
+      [ 1.75, 1.75, 1.75, 1.75, 1.75, 1.75, 1.75, 1.75, 1.75, 1.75 ],
+      [ 2, 0.75, 2, 0.75, 2, 2, 2, 2, 2, 0.75 ],
+      [ 3, 0.75, 0.75, 3, 0.75, 0.75, 3, 0.75, 0.75, 2 ]
+   ],
+   "level_name" : "Level 1",
+   "nbwaves" : 3,
+   "objects" : [
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "vindicator.png",
+         "position" : [ 438.17803955078125, 36.514835357666016 ],
+         "rotation" : 0,
+         "scale" : [ 0.75858044624328613, 0.75858044624328613 ],
+         "zorder" : 0
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "pathv4.png",
+         "position" : [ -182.57418823242188, -36.514835357666016 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 1
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "path_lb.png",
+         "position" : [ -182.57418823242188, 36.514835357666016 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 2
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "path7.png",
+         "position" : [ -255.60385131835938, 36.514835357666016 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 3
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "path6.png",
+         "position" : [ -328.633544921875, 36.514835357666016 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 4
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "path5.png",
+         "position" : [ -401.6632080078125, 36.514835357666016 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 5
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "path_tr.png",
+         "position" : [ -182.57418823242188, -109.54450988769531 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 6
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "path5.png",
+         "position" : [ -109.54450988769531, -109.54450988769531 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 7
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "path6.png",
+         "position" : [ -36.514835357666016, -109.54450988769531 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 8
+      },
+      {
+         "flipped" : [ true, true ],
+         "image_name" : "path5.png",
+         "position" : [ 36.514835357666016, -109.54450988769531 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 9
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "path_lt.png",
+         "position" : [ 109.54450988769531, -109.54450988769531 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 10
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "path_br.png",
+         "position" : [ 109.54450988769531, -36.514835357666016 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 11
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "path7.png",
+         "position" : [ 182.57418823242188, -36.514835357666016 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 12
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "path6.png",
+         "position" : [ 255.60385131835938, -36.514835357666016 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 13
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "path5.png",
+         "position" : [ 328.633544921875, -36.514835357666016 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 14
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "path6.png",
+         "position" : [ 401.6632080078125, -36.514835357666016 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 15
+      },
+      {
+         "flipped" : [ false, true ],
+         "image_name" : "path7.png",
+         "position" : [ 473.75, -37.5 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 16
+      },
+      {
+         "flipped" : [ false, true ],
+         "image_name" : "path7.png",
+         "position" : [ -475, 36.25 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 17
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "grass8.png",
+         "position" : [ -308.75, 263.75 ],
+         "rotation" : 0,
+         "scale" : [ 1, 1 ],
+         "zorder" : 18
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "grass6.png",
+         "position" : [ -213.75, 267.5 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 19
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "grass5.png",
+         "position" : [ -82.5, -22.5 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 20
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "grass4.png",
+         "position" : [ 251.25, -258.75 ],
+         "rotation" : 0,
+         "scale" : [ 1, 1 ],
+         "zorder" : 21
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "grass3.png",
+         "position" : [ -361.25, 266.25 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 22
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "grass2.png",
+         "position" : [ -277.5, -48.75 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 23
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "grass6.png",
+         "position" : [ 188.75, -287.5 ],
+         "rotation" : 270,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 24
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "grass5.png",
+         "position" : [ 287.5, -328.75 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 25
+      },
+      {
+         "flipped" : [ true, false ],
+         "image_name" : "grass7.png",
+         "position" : [ 351.25, -265 ],
+         "rotation" : 0,
+         "scale" : [ 1, 1 ],
+         "zorder" : 26
+      },
+      {
+         "flipped" : [ false, true ],
+         "image_name" : "grass5.png",
+         "position" : [ -156.25, -267.5 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 27
+      },
+      {
+         "flipped" : [ false, false ],
+         "image_name" : "grass2.png",
+         "position" : [ 275, 255 ],
+         "rotation" : 0,
+         "scale" : [ 0.60858058929443359, 0.60858058929443359 ],
+         "zorder" : 28
+      }
+   ],
+   "paths" : [
+      {
+         "path" : [
+            [ -547.7225341796875, 36.514835357666016 ],
+            [ -474.69287109375, 36.514835357666016 ],
+            [ -401.6632080078125, 36.514835357666016 ],
+            [ -328.633544921875, 36.514835357666016 ],
+            [ -255.60385131835938, 36.514835357666016 ],
+            [ -182.57418823242188, 36.514835357666016 ],
+            [ -182.57418823242188, -36.514835357666016 ],
+            [ -182.57418823242188, -109.54450988769531 ],
+            [ -109.54450988769531, -109.54450988769531 ],
+            [ -36.514835357666016, -109.54450988769531 ],
+            [ 36.514835357666016, -109.54450988769531 ],
+            [ 109.54450988769531, -109.54450988769531 ],
+            [ 109.54450988769531, -36.514835357666016 ],
+            [ 182.57418823242188, -36.514835357666016 ],
+            [ 255.60385131835938, -36.514835357666016 ],
+            [ 328.633544921875, -36.514835357666016 ],
+            [ 401.6632080078125, -36.514835357666016 ],
+            [ 474.69287109375, -36.514835357666016 ],
+            [ 547.7225341796875, -36.514835357666016 ]
+         ],
+         "path_name" : "path_1"
+      }
+   ],
+   "resolution" : {
+      "height" : 800,
+      "width" : 1280
+   }
+}

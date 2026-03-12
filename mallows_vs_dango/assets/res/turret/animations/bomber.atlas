@@ -1,0 +1,174 @@
+
+bomber.png
+size: 1024,64
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+body_bomber_white
+  rotate: true
+  xy: 2, 2
+  size: 60, 65
+  orig: 60, 65
+  offset: 0, 0
+  index: -1
+green_bomb
+  rotate: true
+  xy: 553, 32
+  size: 30, 33
+  orig: 30, 33
+  offset: 0, 0
+  index: -1
+left_arm_bomber
+  rotate: true
+  xy: 234, 7
+  size: 23, 37
+  orig: 23, 37
+  offset: 0, 0
+  index: -1
+left_arm_bomber_2
+  rotate: true
+  xy: 195, 4
+  size: 26, 37
+  orig: 26, 37
+  offset: 0, 0
+  index: -1
+left_eye_bomber
+  rotate: false
+  xy: 666, 47
+  size: 31, 15
+  orig: 31, 15
+  offset: 0, 0
+  index: -1
+left_eye_bomber_enraged
+  rotate: false
+  xy: 273, 5
+  size: 26, 25
+  orig: 26, 25
+  offset: 0, 0
+  index: -1
+lens_cap
+  rotate: false
+  xy: 411, 35
+  size: 60, 27
+  orig: 60, 27
+  offset: 0, 0
+  index: -1
+lens_cap_inversed
+  rotate: false
+  xy: 133, 3
+  size: 60, 27
+  orig: 60, 27
+  offset: 0, 0
+  index: -1
+lens_l
+  rotate: false
+  xy: 517, 32
+  size: 34, 30
+  orig: 34, 30
+  offset: 0, 0
+  index: -1
+pupil_eye_bomber
+  rotate: false
+  xy: 329, 21
+  size: 11, 9
+  orig: 11, 9
+  offset: 0, 0
+  index: -1
+red_bomb
+  rotate: false
+  xy: 69, 2
+  size: 30, 28
+  orig: 30, 28
+  offset: 0, 0
+  index: -1
+right_arm_bomber
+  rotate: true
+  xy: 627, 39
+  size: 23, 37
+  orig: 23, 37
+  offset: 0, 0
+  index: -1
+right_arm_bomber_2
+  rotate: true
+  xy: 588, 36
+  size: 26, 37
+  orig: 26, 37
+  offset: 0, 0
+  index: -1
+right_eye_bomber
+  rotate: false
+  xy: 699, 47
+  size: 31, 15
+  orig: 31, 15
+  offset: 0, 0
+  index: -1
+right_eye_bomber_enraged
+  rotate: false
+  xy: 301, 6
+  size: 26, 24
+  orig: 26, 24
+  offset: 0, 0
+  index: -1
+shadow
+  rotate: false
+  xy: 349, 26
+  size: 60, 36
+  orig: 60, 36
+  offset: 0, 0
+  index: -1
+sieve
+  rotate: false
+  xy: 69, 32
+  size: 68, 30
+  orig: 68, 30
+  offset: 0, 0
+  index: -1
+sieve_2
+  rotate: false
+  xy: 139, 32
+  size: 68, 30
+  orig: 68, 30
+  offset: 0, 0
+  index: -1
+sieve_2_inversed
+  rotate: false
+  xy: 209, 32
+  size: 68, 30
+  orig: 68, 30
+  offset: 0, 0
+  index: -1
+sieve_inversed
+  rotate: false
+  xy: 279, 32
+  size: 68, 30
+  orig: 68, 30
+  offset: 0, 0
+  index: -1
+smile_bomber
+  rotate: false
+  xy: 732, 52
+  size: 25, 10
+  orig: 25, 10
+  offset: 0, 0
+  index: -1
+swing_effect
+  rotate: true
+  xy: 473, 27
+  size: 35, 42
+  orig: 35, 42
+  offset: 0, 0
+  index: -1
+underline_eye
+  rotate: false
+  xy: 411, 26
+  size: 30, 7
+  orig: 30, 7
+  offset: 0, 0
+  index: -1
+yellow_bomb
+  rotate: false
+  xy: 101, 2
+  size: 30, 28
+  orig: 30, 28
+  offset: 0, 0
+  index: -1

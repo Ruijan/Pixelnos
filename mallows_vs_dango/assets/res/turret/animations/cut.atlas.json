@@ -1,0 +1,129 @@
+{
+  "texture": "cut.png",
+  "size": [
+    1090,
+    453
+  ],
+  "frames": [
+    {
+      "name": "cut_000.png",
+      "x": 0,
+      "y": 0,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_001.png",
+      "x": 218,
+      "y": 0,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_002.png",
+      "x": 436,
+      "y": 0,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_003.png",
+      "x": 654,
+      "y": 0,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_004.png",
+      "x": 872,
+      "y": 0,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_005.png",
+      "x": 0,
+      "y": 151,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_006.png",
+      "x": 218,
+      "y": 151,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_007.png",
+      "x": 436,
+      "y": 151,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_008.png",
+      "x": 654,
+      "y": 151,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_009.png",
+      "x": 872,
+      "y": 151,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_010.png",
+      "x": 0,
+      "y": 302,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_011.png",
+      "x": 218,
+      "y": 302,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_012.png",
+      "x": 436,
+      "y": 302,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_013.png",
+      "x": 654,
+      "y": 302,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    },
+    {
+      "name": "cut_014.png",
+      "x": 872,
+      "y": 302,
+      "w": 218,
+      "h": 151,
+      "rotated": false
+    }
+  ]
+}

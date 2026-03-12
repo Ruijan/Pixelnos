@@ -1,0 +1,72 @@
+{
+  "Untouchable": {
+    "name_fr": "Intouchable",
+    "name_en": "Untouchable",
+    "description_fr": "Ne pas perdre de point de vie",
+    "description_en": "Do not lose hit points",
+    "image": "res/buttons/Challenges/untouchable.png"
+  },
+  "Perfectionist": {
+    "name_fr": "Perfectioniste",
+    "name_en": "Perfectionist",
+    "description_fr": "Aucun mur ne doit perdre de point de vie",
+    "description_en": "Walls must not lose hit point",
+    "image": "res/buttons/Challenges/perfectionist.png"
+  },
+  "Misanthrope": {
+    "name_fr": "Misanthrope",
+    "name_en": "Misanthrope",
+    "description_fr": "Ne pas placer de tourelle côte à côte",
+    "description_en": "Towers must not be placed side by side",
+    "image": "res/buttons/Challenges/misanthrope.png"
+  },
+  "Philanthrope": {
+    "name_fr": "Philanthrope",
+    "name_en": "Philanthrope",
+    "description_fr": "Placer les tours côte à côte",
+    "description_en": "Place towers side by side",
+    "image": "res/buttons/Challenges/philanthrope.png"
+  },
+  "Stingy": {
+    "name_fr": "Avare",
+    "name_en": "Stingy",
+    "description_fr": "Ne pas utiliser plus de %i sucres",
+    "description_en": "Do not use more than %i sugars",
+    "image": "res/buttons/Challenges/stingy.png"
+  },
+  "Believer": {
+    "name_fr": "Confiant",
+    "name_en": "Believer",
+    "description_fr": "Ne pas placer plus de %i tourelles",
+    "description_en": "Do not place more than %i towers",
+    "image": "res/buttons/Challenges/believer.png"
+  },
+  "Discriminant": {
+    "name_fr": "Discriminant",
+    "name_en": "Discriminant",
+    "description_fr": "Ne pas utiliser de tourelles %s",
+    "description_en": "Do not place towers %s",
+    "image": "res/buttons/Challenges/discriminant.png"
+  },
+  "Narrow": {
+    "name_fr": "Borné",
+    "name_en": "Narrow",
+    "description_fr": "Utiliser uniquement des tourelles %s",
+    "description_en": "Only use towers %s",
+    "image": "res/buttons/Challenges/narrow.png"
+  },
+  "Reckless": {
+    "name_fr": "Téméraire",
+    "name_en": "Reckless",
+    "description_fr": "Ne pas placer de tourelles à plus d'une case du chemin",
+    "description_en": "Do not place towers farther than one cell away from path",
+    "image": "res/buttons/Challenges/reckless.png"
+  },
+  "Barbarian": {
+    "name_fr": "Barbare",
+    "name_en": "Barbarian",
+    "description_fr": "Ne pas améliorer les tourelles",
+    "description_en": "Do not upgrade towers",
+    "image": "res/buttons/Challenges/barbarian.png"
+  }
+}

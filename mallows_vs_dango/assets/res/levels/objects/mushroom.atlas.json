@@ -1,0 +1,41 @@
+{
+  "texture": "mushroom.png",
+  "size": [
+    324,
+    125
+  ],
+  "frames": [
+    {
+      "name": "blue_mushroom.png",
+      "x": 100,
+      "y": 1,
+      "w": 159,
+      "h": 114,
+      "rotated": false
+    },
+    {
+      "name": "grass.png",
+      "x": 261,
+      "y": 74,
+      "w": 28,
+      "h": 38,
+      "rotated": false
+    },
+    {
+      "name": "red_mushroom.png",
+      "x": 1,
+      "y": 1,
+      "w": 123,
+      "h": 97,
+      "rotated": true
+    },
+    {
+      "name": "red_mushroom2.png",
+      "x": 261,
+      "y": 1,
+      "w": 71,
+      "h": 62,
+      "rotated": true
+    }
+  ]
+}
