@@ -38,45 +38,12 @@ impl Plugin for StatesPlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<AppState>()
             .add_sub_state::<GamePhase>()
-            .add_systems(OnEnter(AppState::Loading), on_enter_loading)
-            .add_systems(OnEnter(AppState::MainMenu), on_enter_main_menu)
-            .add_systems(OnEnter(AppState::StoryMenu), on_enter_story_menu)
-            .add_systems(OnEnter(AppState::SkillTree), on_enter_skill_tree)
-            .add_systems(OnEnter(AppState::Shop), on_enter_shop)
-            .add_systems(OnEnter(AppState::Credits), on_enter_credits)
-            .add_systems(OnEnter(AppState::InGame), on_enter_in_game)
-            .add_systems(OnEnter(AppState::LevelEditor), on_enter_level_editor);
+            // Transition from Loading -> MainMenu once configs are loaded
+            .add_systems(OnEnter(AppState::Loading), transition_to_main_menu);
     }
 }
 
-fn on_enter_loading() {
-    info!("Entering Loading state");
-}
-
-fn on_enter_main_menu() {
-    info!("Entering MainMenu state");
-}
-
-fn on_enter_story_menu() {
-    info!("Entering StoryMenu state");
-}
-
-fn on_enter_skill_tree() {
-    info!("Entering SkillTree state");
-}
-
-fn on_enter_shop() {
-    info!("Entering Shop state");
-}
-
-fn on_enter_credits() {
-    info!("Entering Credits state");
-}
-
-fn on_enter_in_game() {
-    info!("Entering InGame state");
-}
-
-fn on_enter_level_editor() {
-    info!("Entering LevelEditor state");
+fn transition_to_main_menu(mut next_state: ResMut<NextState<AppState>>) {
+    info!("Configs loaded, transitioning to MainMenu");
+    next_state.set(AppState::MainMenu);
 }
