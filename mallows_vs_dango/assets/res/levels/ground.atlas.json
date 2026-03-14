@@ -1,0 +1,177 @@
+{
+  "texture": "ground.png",
+  "size": [
+    600,
+    600
+  ],
+  "frames": [
+    {
+      "name": "grass1.png",
+      "x": 0,
+      "y": 0,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "grass2.png",
+      "x": 120,
+      "y": 0,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "grass3.png",
+      "x": 240,
+      "y": 0,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "grass4.png",
+      "x": 360,
+      "y": 0,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "grass5.png",
+      "x": 480,
+      "y": 0,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "grass6.png",
+      "x": 0,
+      "y": 120,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "grass7.png",
+      "x": 120,
+      "y": 120,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "grass8.png",
+      "x": 240,
+      "y": 120,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "path4.png",
+      "x": 360,
+      "y": 120,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "path5.png",
+      "x": 480,
+      "y": 120,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "path6.png",
+      "x": 0,
+      "y": 240,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "path7.png",
+      "x": 120,
+      "y": 240,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "path_br.png",
+      "x": 240,
+      "y": 240,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "path_lb.png",
+      "x": 360,
+      "y": 240,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "path_lt.png",
+      "x": 480,
+      "y": 240,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "path_tr.png",
+      "x": 0,
+      "y": 360,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "pathv1.png",
+      "x": 120,
+      "y": 360,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "pathv2.png",
+      "x": 240,
+      "y": 360,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "pathv3.png",
+      "x": 360,
+      "y": 360,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "pathv4.png",
+      "x": 480,
+      "y": 360,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    },
+    {
+      "name": "vindicator.png",
+      "x": 0,
+      "y": 480,
+      "w": 120,
+      "h": 120,
+      "rotated": false
+    }
+  ]
+}

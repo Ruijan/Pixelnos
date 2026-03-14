@@ -1,0 +1,36 @@
+{
+  "languages": [
+    "en",
+    "fr"
+  ],
+  "play_dialogue": true,
+  "play_sound": true,
+  "sound_transition": [
+    [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "none", "none", "none", "none" ],
+    [ "music/On-Tiptoe.mp3.mp3", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "none", "none", "none", "none", "none" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3", "music/On-Tiptoe.mp3.mp3" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "music/On-Tiptoe.mp3.mp3", "none", "none", "none" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "none", "music/On-Tiptoe.mp3.mp3", "none", "none" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "none", "none", "music/On-Tiptoe.mp3.mp3", "none" ],
+    [ "none", "music/bensound-jazzyfrenchy.mp3.mp3", "none", "none", "none", "none", "none", "music/On-Tiptoe.mp3.mp3" ]
+  ],
+  "wall": {
+    "max_hp": 5,
+    "sprites": [
+      "res/levels/wall_wood_0.png",
+      "res/levels/wall_wood_1.png"
+    ]
+  },
+  "configuration_files": {
+    "tower": "res/config_towers.json",
+    "dango": "res/config_dangos.json",
+    "challenge": "res/config_challenges.json",
+    "talent": "res/config_talents.json",
+    "button": "res/config_buttons.json",
+    "advice": "res/config_advice.json",
+    "level": "res/config_levels.json",
+    "gameTutorial": "res/config_game_tutorials.json",
+    "skillsTutorial": "res/config_skills_tutorials.json"
+  }
+}

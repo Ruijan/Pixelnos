@@ -1,0 +1,81 @@
+{
+  "texture": "trees.png",
+  "size": [
+    2336,
+    1766
+  ],
+  "frames": [
+    {
+      "name": "arbre 1.png",
+      "x": 594,
+      "y": 1361,
+      "w": 514,
+      "h": 403,
+      "rotated": false
+    },
+    {
+      "name": "arbre 2.png",
+      "x": 2,
+      "y": 2,
+      "w": 838,
+      "h": 1205,
+      "rotated": false
+    },
+    {
+      "name": "arbre2.2.png",
+      "x": 1599,
+      "y": 87,
+      "w": 735,
+      "h": 1056,
+      "rotated": false
+    },
+    {
+      "name": "arbre4.png",
+      "x": 667,
+      "y": 2,
+      "w": 1040,
+      "h": 997,
+      "rotated": false
+    },
+    {
+      "name": "arbre5.png",
+      "x": 2,
+      "y": 1179,
+      "w": 372,
+      "h": 546,
+      "rotated": false
+    },
+    {
+      "name": "pierre1.png",
+      "x": 1406,
+      "y": 1139,
+      "w": 670,
+      "h": 419,
+      "rotated": false
+    },
+    {
+      "name": "pierre2.png",
+      "x": 652,
+      "y": 992,
+      "w": 794,
+      "h": 400,
+      "rotated": false
+    },
+    {
+      "name": "pierre3.png",
+      "x": 2,
+      "y": 2,
+      "w": 202,
+      "h": 126,
+      "rotated": false
+    },
+    {
+      "name": "pierre4.png",
+      "x": 2,
+      "y": 130,
+      "w": 168,
+      "h": 160,
+      "rotated": false
+    }
+  ]
+}

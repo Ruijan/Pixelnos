@@ -1,0 +1,97 @@
+
+cutter.png
+size: 1024,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Asset 10hdpi
+  rotate: false
+  xy: 604, 379
+  size: 205, 120
+  orig: 205, 120
+  offset: 0, 0
+  index: -1
+Asset 11hdpi
+  rotate: false
+  xy: 2, 2
+  size: 188, 107
+  orig: 188, 107
+  offset: 0, 0
+  index: -1
+Asset 12hdpi
+  rotate: false
+  xy: 404, 279
+  size: 171, 81
+  orig: 171, 81
+  offset: 0, 0
+  index: -1
+Asset 13hdpi
+  rotate: true
+  xy: 376, 227
+  size: 31, 26
+  orig: 31, 26
+  offset: 0, 0
+  index: -1
+Asset 14hdpi
+  rotate: false
+  xy: 876, 386
+  size: 45, 44
+  orig: 45, 44
+  offset: 0, 0
+  index: -1
+Asset 15hdpi
+  rotate: false
+  xy: 192, 7
+  size: 74, 34
+  orig: 74, 34
+  offset: 0, 0
+  index: -1
+Asset 16hdpi
+  rotate: false
+  xy: 2, 111
+  size: 372, 147
+  orig: 372, 147
+  offset: 0, 0
+  index: -1
+Asset 5hdpi
+  rotate: true
+  xy: 811, 432
+  size: 67, 138
+  orig: 67, 138
+  offset: 0, 0
+  index: -1
+Asset 6hdpi
+  rotate: false
+  xy: 811, 373
+  size: 63, 57
+  orig: 63, 57
+  offset: 0, 0
+  index: -1
+Asset 7hdpi
+  rotate: false
+  xy: 951, 443
+  size: 66, 56
+  orig: 66, 56
+  offset: 0, 0
+  index: -1
+Asset 8hdpi
+  rotate: true
+  xy: 192, 43
+  size: 66, 138
+  orig: 66, 138
+  offset: 0, 0
+  index: -1
+Asset 9hdpi
+  rotate: false
+  xy: 404, 362
+  size: 198, 137
+  orig: 198, 137
+  offset: 0, 0
+  index: -1
+shadow
+  rotate: false
+  xy: 2, 260
+  size: 400, 239
+  orig: 400, 239
+  offset: 0, 0
+  index: -1

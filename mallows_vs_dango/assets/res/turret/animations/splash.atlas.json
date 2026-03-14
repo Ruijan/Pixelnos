@@ -1,0 +1,129 @@
+{
+  "texture": "splash.png",
+  "size": [
+    1548,
+    2005
+  ],
+  "frames": [
+    {
+      "name": "splash_000.png",
+      "x": 0,
+      "y": 0,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_001.png",
+      "x": 516,
+      "y": 0,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_002.png",
+      "x": 1032,
+      "y": 0,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_003.png",
+      "x": 0,
+      "y": 401,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_004.png",
+      "x": 516,
+      "y": 401,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_005.png",
+      "x": 1032,
+      "y": 401,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_006.png",
+      "x": 0,
+      "y": 802,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_007.png",
+      "x": 516,
+      "y": 802,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_008.png",
+      "x": 1032,
+      "y": 802,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_009.png",
+      "x": 0,
+      "y": 1203,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_010.png",
+      "x": 516,
+      "y": 1203,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_011.png",
+      "x": 1032,
+      "y": 1203,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_012.png",
+      "x": 0,
+      "y": 1604,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_013.png",
+      "x": 516,
+      "y": 1604,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    },
+    {
+      "name": "splash_014.png",
+      "x": 1032,
+      "y": 1604,
+      "w": 516,
+      "h": 401,
+      "rotated": false
+    }
+  ]
+}

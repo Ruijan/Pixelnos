@@ -1,0 +1,97 @@
+{
+  "texture": "forest.png",
+  "size": [
+    3531,
+    1882
+  ],
+  "frames": [
+    {
+      "name": "plant1.png",
+      "x": 801,
+      "y": 1,
+      "w": 618,
+      "h": 952,
+      "rotated": false
+    },
+    {
+      "name": "plant2.png",
+      "x": 1421,
+      "y": 1,
+      "w": 618,
+      "h": 952,
+      "rotated": false
+    },
+    {
+      "name": "plant3.png",
+      "x": 2744,
+      "y": 1,
+      "w": 570,
+      "h": 786,
+      "rotated": true
+    },
+    {
+      "name": "plant4.png",
+      "x": 2744,
+      "y": 573,
+      "w": 570,
+      "h": 786,
+      "rotated": true
+    },
+    {
+      "name": "tree_stump1.png",
+      "x": 1510,
+      "y": 955,
+      "w": 771,
+      "h": 924,
+      "rotated": false
+    },
+    {
+      "name": "tree_stump2.png",
+      "x": 2886,
+      "y": 1145,
+      "w": 736,
+      "h": 600,
+      "rotated": true
+    },
+    {
+      "name": "tree_stump3.png",
+      "x": 2283,
+      "y": 1145,
+      "w": 736,
+      "h": 601,
+      "rotated": true
+    },
+    {
+      "name": "tree_stump4.png",
+      "x": 1,
+      "y": 1,
+      "w": 798,
+      "h": 965,
+      "rotated": false
+    },
+    {
+      "name": "tree_stump5.png",
+      "x": 772,
+      "y": 968,
+      "w": 736,
+      "h": 849,
+      "rotated": false
+    },
+    {
+      "name": "tree_stump6.png",
+      "x": 2041,
+      "y": 1,
+      "w": 701,
+      "h": 819,
+      "rotated": false
+    },
+    {
+      "name": "wood_info.png",
+      "x": 1,
+      "y": 968,
+      "w": 769,
+      "h": 865,
+      "rotated": false
+    }
+  ]
+}
