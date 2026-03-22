@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use mallows_vs_dango::audio::AudioPlugin;
 use mallows_vs_dango::config::ConfigPlugin;
+use mallows_vs_dango::game::GameScenePlugin;
 use mallows_vs_dango::scenes::{CreditsPlugin, MainMenuPlugin, StoryMenuPlugin};
 use mallows_vs_dango::states::StatesPlugin;
 use mallows_vs_dango::ui::TransitionPlugin;
@@ -32,6 +33,7 @@ fn main() {
         .add_plugins(MainMenuPlugin)
         .add_plugins(CreditsPlugin)
         .add_plugins(StoryMenuPlugin)
+        .add_plugins(GameScenePlugin)
         // Global setup
         .add_systems(Startup, setup_camera)
         .run();

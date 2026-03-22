@@ -375,7 +375,9 @@ fn handle_story_menu_buttons(
 }
 
 fn handle_level_buttons(
+    mut commands: Commands,
     mut menu_state: ResMut<StoryMenuState>,
+    mut transition: ResMut<SceneTransition>,
     query: Query<(&Interaction, &LevelButton), Changed<Interaction>>,
 ) {
     for (interaction, level_btn) in &query {
@@ -386,6 +388,15 @@ fn handle_level_buttons(
             );
             menu_state.selected_world_id = level_btn.world_id;
             menu_state.selected_level_id = level_btn.level_id;
+
+            // Set SelectedLevel resource and transition to InGame
+            commands.insert_resource(
+                crate::game::game_scene::SelectedLevel {
+                    world_id: level_btn.world_id,
+                    level_id: level_btn.level_id,
+                },
+            );
+            transition.go_to(AppState::InGame);
         }
     }
 }
